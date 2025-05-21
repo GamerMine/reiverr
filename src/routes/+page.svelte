@@ -232,11 +232,14 @@
 	out:fade|global={{ duration: $settings.animationDuration }}
 >
 	<Carousel scrollClass={PADDING}>
-		<div slot="title" class="text-lg font-semibold text-zinc-300">
-			{$_('discover.popularPeople')}
-		</div>
+		{#snippet title()}
+			<div class="text-lg font-semibold text-zinc-300">
+				{$_('discover.popularPeople')}
+			</div>
+		{/snippet}
 		{#await fetchTrendingActorProps()}
-			<CarouselPlaceholderItems />
+			<!--TODO: CarouselPlaceholderItems should not be created like that-->
+			<!--<CarouselPlaceholderItems />-->
 		{:then props}
 			{#each props as prop (prop.tmdbId)}
 				<PersonCard {...prop} />
@@ -244,11 +247,13 @@
 		{/await}
 	</Carousel>
 	<Carousel scrollClass={PADDING}>
-		<div slot="title" class="text-lg font-semibold text-zinc-300">
-			{$_('discover.upcomingMovies')}
-		</div>
+		{#snippet title()}
+			<div class="text-lg font-semibold text-zinc-300">
+				{$_('discover.upcomingMovies')}
+			</div>
+		{/snippet}
 		{#await fetchUpcomingMovies()}
-			<CarouselPlaceholderItems />
+			<!--<CarouselPlaceholderItems />-->
 		{:then props}
 			{#each props as prop (prop.tmdbId)}
 				<Poster {...prop} />
@@ -256,11 +261,13 @@
 		{/await}
 	</Carousel>
 	<Carousel scrollClass={PADDING}>
-		<div slot="title" class="text-lg font-semibold text-zinc-300">
-			{$_('discover.upcomingSeries')}
-		</div>
+		{#snippet title()}
+			<div class="text-lg font-semibold text-zinc-300">
+				{$_('discover.upcomingSeries')}
+			</div>
+		{/snippet}
 		{#await fetchUpcomingSeries()}
-			<CarouselPlaceholderItems />
+			<!--<CarouselPlaceholderItems />-->
 		{:then props}
 			{#each props as prop (prop.tmdbId)}
 				<Poster {...prop} />
@@ -268,19 +275,23 @@
 		{/await}
 	</Carousel>
 	<Carousel scrollClass={PADDING}>
-		<div slot="title" class="text-lg font-semibold text-zinc-300">
-			{$_('discover.genres')}
-		</div>
+		{#snippet title()}
+			<div class="text-lg font-semibold text-zinc-300">
+				{$_('discover.genres')}
+			</div>
+		{/snippet}
 		{#each Object.values(genres) as genre (genre.tmdbGenreId)}
 			<GenreCard {genre} />
 		{/each}
 	</Carousel>
 	<Carousel scrollClass={PADDING}>
-		<div slot="title" class="text-lg font-semibold text-zinc-300">
-			{$_('discover.newDigitalReleases')}
-		</div>
+		{#snippet title()}
+			<div class="text-lg font-semibold text-zinc-300">
+				{$_('discover.newDigitalReleases')}
+			</div>
+		{/snippet}
 		{#await fetchDigitalReleases()}
-			<CarouselPlaceholderItems />
+			<!--<CarouselPlaceholderItems />-->
 		{:then props}
 			{#each props as prop (prop.tmdbId)}
 				<Poster {...prop} />
@@ -288,11 +299,13 @@
 		{/await}
 	</Carousel>
 	<Carousel scrollClass={PADDING}>
-		<div slot="title" class="text-lg font-semibold text-zinc-300">
-			{$_('discover.streamingNow')}
-		</div>
+		{#snippet title()}
+			<div class="text-lg font-semibold text-zinc-300">
+				{$_('discover.streamingNow')}
+			</div>
+		{/snippet}
 		{#await fetchNowStreaming()}
-			<CarouselPlaceholderItems />
+			<!--<CarouselPlaceholderItems />-->
 		{:then props}
 			{#each props as prop (prop.tmdbId)}
 				<Poster {...prop} />
@@ -300,9 +313,11 @@
 		{/await}
 	</Carousel>
 	<Carousel scrollClass={PADDING}>
-		<div slot="title" class="text-lg font-semibold text-zinc-300">
-			{$_('discover.TVNetworks')}
-		</div>
+		{#snippet title()}
+			<div class="text-lg font-semibold text-zinc-300">
+				{$_('discover.TVNetworks')}
+			</div>
+		{/snippet}
 		{#each Object.values(networks) as network (network.tmdbNetworkId)}
 			<NetworkCard {network} />
 		{/each}

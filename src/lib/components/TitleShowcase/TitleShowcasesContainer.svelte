@@ -14,7 +14,7 @@
 	import TitleShowcaseVisuals from './TitleShowcaseVisuals.svelte';
 	import PageDots from '../PageDots.svelte';
 	import IconButton from '../IconButton.svelte';
-	import { ChevronRight } from 'radix-icons-svelte';
+	import { ChevronLeft, ChevronRight } from 'radix-icons-svelte';
 
 	let hideUI = false;
 
@@ -46,14 +46,14 @@
 							? {
 									type: 'movie',
 									subtitle: item.Genres?.join(', ') || ''
-							  }
+								}
 							: {
 									type: 'series',
 									subtitle:
 										(item?.IndexNumber && 'Episode ' + item.IndexNumber) ||
 										item.Genres?.join(', ') ||
 										''
-							  })
+								})
 					} as const;
 				})
 			)
@@ -65,13 +65,11 @@
 		}
 	});
 
-	let popularMovies: (
-		| {
-				movie: Awaited<ReturnType<typeof getTmdbPopularMovies>>[0];
-				lazyRuntime: Promise<number>;
-				lazyTrailerId: Promise<string | undefined>;
-		  }
-	)[] = [];
+	let popularMovies: {
+		movie: Awaited<ReturnType<typeof getTmdbPopularMovies>>[0];
+		lazyRuntime: Promise<number>;
+		lazyTrailerId: Promise<string | undefined>;
+	}[] = [];
 
 	/**
 	 * Here we load a list of popular movies:
@@ -110,18 +108,15 @@
 	$: visibleShowcaseMovie = clampedPopularMovies[showcaseIndex];
 
 	async function onNext() {
-		showcaseIndex = (showcaseIndex + 1) % (await tmdbPopularMoviesPromise).length;
+		showcaseIndex = (showcaseIndex + 1) % 10;
 	}
 
 	async function onPrevious() {
-		showcaseIndex =
-			(showcaseIndex - 1 + (await tmdbPopularMoviesPromise).length) %
-			(await tmdbPopularMoviesPromise).length;
+		showcaseIndex = (showcaseIndex - 1 + 10) % 10;
 	}
 
 	async function onJump(index: number) {
 		showcaseIndex = index;
-		console.log(showcaseIndex);
 	}
 
 	// Cycle movies every 5 seconds
@@ -137,6 +132,18 @@
 </script>
 
 <div class="h-screen flex flex-col relative pb-6 gap-6 xl:gap-8 overflow-hidden">
+	{#if !hideUI}
+		<div class="absolute top-1/2 right-6 z-10 hover:bg-stone-700/80 hover:rounded-4xl ease-in-out duration-300">
+			<IconButton on:click={onNext}>
+				<ChevronRight size={38} />
+			</IconButton>
+		</div>
+		<div class="absolute top-1/2 left-6 z-10 hover:bg-stone-700/80 hover:rounded-4xl ease-in-out duration-300">
+			<IconButton on:click={onPrevious}>
+				<ChevronLeft size={38} />
+			</IconButton>
+		</div>
+	{/if}
 	<div
 		class={classNames(
 			'flex-1 grid grid-cols-[1fr_max-content] grid-rows-[1fr_max-content] items-end gap-6',
@@ -169,13 +176,6 @@
 					{onPrevious}
 					{onNext}
 				/>
-				{#if !hideUI}
-					<div class="absolute top-1/2 right-0 z-10">
-						<IconButton on:click={onNext}>
-							<ChevronRight size={38} />
-						</IconButton>
-					</div>
-				{/if}
 			</div>
 
 			{#key movie?.id}
@@ -194,7 +194,9 @@
 	>
 		{#if !continueWatchingEmpty}
 			<Carousel gradientFromColor="from-transparent" scrollClass={PADDING}>
-				<div slot="title" class="text-lg font-semibold text-zinc-300">Continue Watching</div>
+				{#snippet title()}
+					<div class="text-lg font-semibold text-zinc-300">Continue Watching</div>
+				{/snippet}
 				{#await nextUpProps}
 					<CarouselPlaceholderItems />
 				{:then props}

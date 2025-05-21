@@ -7,6 +7,10 @@
 	}
 }
 
+@utility scrollbar-hide {
+	@apply [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden
+}
+
 a {
 	@reference hover:bg-amber-200;
 }

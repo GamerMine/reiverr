@@ -3,25 +3,47 @@
 	import IconButton from '../IconButton.svelte';
 	import { ChevronLeft, ChevronRight } from 'radix-icons-svelte';
 	import classNames from 'classnames';
+	import { tick } from 'svelte';
 
-	export let gradientFromColor = 'from-stone-950';
-	export let heading = '';
+	let {
+		gradientFromColor = 'from-stone-950',
+		scrollClass = '',
+		heading = '',
+		children,
+		title,
+		...rest
+	} = $props();
 
-	let carousel: HTMLDivElement | undefined;
-	let scrollX = 0;
-	export let scrollClass = '';
+	let carousel: HTMLDivElement | undefined = $state();
+	let carousel_scroll_width = $state(false);
+
+	let scrollX = $state(0);
+
+	$effect.pre(() => {
+		tick();
+		if (carousel) {
+			const observer = new ResizeObserver((entries) => {
+				for (const entry of entries) {
+					carousel_scroll_width = entry.target.scrollWidth <= entry.target.clientWidth;
+				}
+			});
+
+			observer.observe(carousel);
+		}
+	});
 </script>
 
-<div class={classNames('flex flex-col gap-4 group/carousel', $$restProps.class)}>
+<div class={classNames('flex flex-col gap-4 group/carousel', rest.class)}>
 	<div class={'flex justify-between items-center gap-4 ' + scrollClass}>
-		<slot name="title">
+		{@render title?.()}
+		{#if !title}
 			<div class="font-semibold text-xl">{heading}</div>
-		</slot>
+		{/if}
 		<div
 			class={classNames(
 				'flex gap-2 sm:opacity-0 transition-opacity sm:group-hover/carousel:opacity-100',
 				{
-					hidden: (carousel?.scrollWidth || 0) === (carousel?.clientWidth || 0)
+					hidden: carousel_scroll_width
 				}
 			)}
 		>
@@ -45,14 +67,16 @@
 	<div class="relative">
 		<div
 			class={classNames(
-				'flex overflow-x-scroll items-center overflow-y-visible gap-4 relative scrollbar-hide p-1',
+				'flex overflow-x-scroll items-center overflow-y-visible scrollbar-hide gap-4 relative p-1',
 				scrollClass
 			)}
 			bind:this={carousel}
 			tabindex="-1"
-			on:scroll={() => (scrollX = carousel?.scrollLeft || scrollX)}
+			onscroll={() => {
+				scrollX = carousel?.scrollLeft || scrollX;
+			}}
 		>
-			<slot />
+			{@render children?.()}
 		</div>
 		{#if scrollX > 50}
 			<div
