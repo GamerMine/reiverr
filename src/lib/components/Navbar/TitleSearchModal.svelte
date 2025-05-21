@@ -75,7 +75,7 @@
 			bind:this={inputElement}
 			on:input={handleInput}
 			type="text"
-			class="flex-1 bg-transparent font-light outline-none"
+			class="flex-1 bg-transparent font-light outline-hidden"
 			placeholder={$_('search.placeHolder')}
 		/>
 	</ModalHeader>
@@ -91,14 +91,14 @@
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<!-- svelte-ignore a11y-no-static-element-interactions -->
 				<a
-					class="flex px-4 py-2 gap-4 hover:bg-lighten focus-visible:bg-lighten cursor-pointer outline-none"
+					class="flex px-4 py-2 gap-4 hover:bg-lighten focus-visible:bg-lighten cursor-pointer outline-hidden"
 					href={`/${result.type}/${result.tmdbId}`}
 					on:click={handleClose}
 				>
 					<div
 						style={"background-image: url('" + TMDB_POSTER_SMALL + result.posterUri + "');"}
-						class="bg-center bg-cover w-16 h-24 rounded-sm"
-					/>
+						class="bg-center bg-cover w-16 h-24 rounded-xs"
+					></div>
 					<div class="flex-1 flex flex-col gap-1">
 						<div class="flex gap-2">
 							<div class="font-normal tracking-wide">{result.title}</div>

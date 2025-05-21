@@ -246,7 +246,7 @@
 				class="flex gap-2 items-center flex-row-reverse justify-end lg:flex-row lg:justify-start"
 			>
 				{#if $jellyfinItemStore.loading || $sonarrSeriesStore.loading}
-					<div class="placeholder h-10 w-48 rounded-xl" />
+					<div class="placeholder h-10 w-48 rounded-xl"></div>
 				{:else}
 					<OpenInButton
 						title={tmdbSeries?.name}
@@ -289,7 +289,7 @@
 						{@const isSelected = season?.season_number === visibleSeasonNumber}
 						<button
 							class={classNames(
-								'font-medium tracking-wide transition-colors flex-shrink-0 flex items-center gap-1',
+								'font-medium tracking-wide transition-colors shrink-0 flex items-center gap-1',
 								{
 									'text-zinc-200': isSelected && seasonSelectVisible,
 									'text-zinc-500 hover:text-zinc-200 cursor-pointer':
@@ -333,7 +333,7 @@
 												watched: jellyfinData.watched,
 												progress: jellyfinData.progress,
 												jellyfinId: jellyfinData.jellyfinId
-										  }
+											}
 										: {}}
 									on:click={() => (visibleEpisodeIndex = i)}
 								/>
@@ -432,7 +432,7 @@
 							{download?.estimatedCompletionTime
 								? formatMinutesToTime(
 										(new Date(download?.estimatedCompletionTime).getTime() - Date.now()) / 1000 / 60
-								  )
+									)
 								: 'Stalled'}
 						</h2>
 					</div>
@@ -448,8 +448,8 @@
 				</div>
 			{:else if $sonarrSeriesStore.loading}
 				<div class="flex gap-4 flex-wrap col-span-4 sm:col-span-6 mt-4">
-					<div class="placeholder h-10 w-40 rounded-xl" />
-					<div class="placeholder h-10 w-40 rounded-xl" />
+					<div class="placeholder h-10 w-40 rounded-xl"></div>
+					<div class="placeholder h-10 w-40 rounded-xl"></div>
 				</div>
 			{/if}
 		</svelte:fragment>

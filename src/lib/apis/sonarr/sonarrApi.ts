@@ -22,17 +22,17 @@ export interface SonarrSeriesOptions {
 	rootFolderPath: string;
 	addOptions: {
 		monitor:
-		| 'unknown'
-		| 'all'
-		| 'future'
-		| 'missing'
-		| 'existing'
-		| 'firstSeason'
-		| 'latestSeason'
-		| 'pilot'
-		| 'monitorSpecials'
-		| 'unmonitorSpecials'
-		| 'none';
+			| 'unknown'
+			| 'all'
+			| 'future'
+			| 'missing'
+			| 'existing'
+			| 'firstSeason'
+			| 'latestSeason'
+			| 'pilot'
+			| 'monitorSpecials'
+			| 'unmonitorSpecials'
+			| 'none';
 		searchForMissingEpisodes: boolean;
 		searchForCutoffUnmetEpisodes: boolean;
 	};
@@ -58,14 +58,14 @@ function getSonarrApi() {
 
 export const getSonarrSeries = (): Promise<SonarrSeries[]> =>
 	getSonarrApi()
-		?.get('/api/v3/series', {
+		?.GET('/api/v3/series', {
 			params: {}
 		})
 		.then((r) => r.data || []) || Promise.resolve([]);
 
 export const getSonarrSeriesByTvdbId = (tvdbId: number): Promise<SonarrSeries | undefined> =>
 	getSonarrApi()
-		?.get('/api/v3/series', {
+		?.GET('/api/v3/series', {
 			params: {
 				query: {
 					tvdbId: tvdbId
@@ -76,7 +76,7 @@ export const getSonarrSeriesByTvdbId = (tvdbId: number): Promise<SonarrSeries | 
 
 export const getDiskSpace = (): Promise<DiskSpaceInfo[]> =>
 	getSonarrApi()
-		?.get('/api/v3/diskspace', {})
+		?.GET('/api/v3/diskspace', {})
 		.then((d) => d.data || []) || Promise.resolve([]);
 
 export const addSeriesToSonarr = async (tmdbId: number) => {
@@ -103,7 +103,7 @@ export const addSeriesToSonarr = async (tmdbId: number) => {
 	};
 
 	return getSonarrApi()
-		?.post('/api/v3/series', {
+		?.POST('/api/v3/series', {
 			params: {},
 			body: options
 		})
@@ -112,7 +112,7 @@ export const addSeriesToSonarr = async (tmdbId: number) => {
 
 export const cancelDownloadSonarrEpisode = async (downloadId: number) => {
 	const deleteResponse = await getSonarrApi()
-		?.del('/api/v3/queue/{id}', {
+		?.DELETE('/api/v3/queue/{id}', {
 			params: {
 				path: {
 					id: downloadId
@@ -130,7 +130,7 @@ export const cancelDownloadSonarrEpisode = async (downloadId: number) => {
 
 export const downloadSonarrEpisode = (guid: string, indexerId: number) =>
 	getSonarrApi()
-		?.post('/api/v3/release', {
+		?.POST('/api/v3/release', {
 			params: {},
 			body: {
 				indexerId,
@@ -141,7 +141,7 @@ export const downloadSonarrEpisode = (guid: string, indexerId: number) =>
 
 export const deleteSonarrEpisode = (id: number) =>
 	getSonarrApi()
-		?.del('/api/v3/episodefile/{id}', {
+		?.DELETE('/api/v3/episodefile/{id}', {
 			params: {
 				path: {
 					id
@@ -152,7 +152,7 @@ export const deleteSonarrEpisode = (id: number) =>
 
 export const getSonarrDownloads = (): Promise<SonarrDownload[]> =>
 	getSonarrApi()
-		?.get('/api/v3/queue', {
+		?.GET('/api/v3/queue', {
 			params: {
 				query: {
 					includeEpisode: true,
@@ -173,7 +173,7 @@ export const getSonarrDownloadsById = (sonarrId: number) =>
 
 export const removeFromSonarr = (id: number): Promise<boolean> =>
 	getSonarrApi()
-		?.del('/api/v3/series/{id}', {
+		?.DELETE('/api/v3/series/{id}', {
 			params: {
 				path: {
 					id
@@ -185,7 +185,7 @@ export const removeFromSonarr = (id: number): Promise<boolean> =>
 export const getSonarrEpisodes = async (seriesId: number) => {
 	const episodesPromise =
 		getSonarrApi()
-			?.get('/api/v3/episode', {
+			?.GET('/api/v3/episode', {
 				params: {
 					query: {
 						seriesId
@@ -196,7 +196,7 @@ export const getSonarrEpisodes = async (seriesId: number) => {
 
 	const episodeFilesPromise =
 		getSonarrApi()
-			?.get('/api/v3/episodefile', {
+			?.GET('/api/v3/episodefile', {
 				params: {
 					query: {
 						seriesId
@@ -216,7 +216,7 @@ export const getSonarrEpisodes = async (seriesId: number) => {
 
 export const fetchSonarrReleases = async (episodeId: number) =>
 	getSonarrApi()
-		?.get('/api/v3/release', {
+		?.GET('/api/v3/release', {
 			params: {
 				query: {
 					episodeId
@@ -227,7 +227,7 @@ export const fetchSonarrReleases = async (episodeId: number) =>
 
 export const fetchSonarrSeasonReleases = async (seriesId: number, seasonNumber: number) =>
 	getSonarrApi()
-		?.get('/api/v3/release', {
+		?.GET('/api/v3/release', {
 			params: {
 				query: {
 					seriesId,
@@ -240,7 +240,7 @@ export const fetchSonarrSeasonReleases = async (seriesId: number, seasonNumber: 
 export const fetchSonarrEpisodes = async (seriesId: number): Promise<SonarrEpisode[]> => {
 	return (
 		getSonarrApi()
-			?.get('/api/v3/episode', {
+			?.GET('/api/v3/episode', {
 				params: {
 					query: {
 						seriesId
@@ -309,8 +309,7 @@ export const getSonarrLanguageProfiles = async (
 		)
 		.then((res) => res.data || []);
 
-export const getSonarrMonitors = async (
-) => {
+export const getSonarrMonitors = async () => {
 	return [
 		'unknown',
 		'all',
@@ -322,12 +321,15 @@ export const getSonarrMonitors = async (
 		'pilot',
 		'monitorSpecials',
 		'unmonitorSpecials',
-		'none']
-}
+		'none'
+	];
+};
 
 export const getSonarrMonitor = async (id: number) => {
-	return getSonarrMonitors().then((r) => { return r[id] as string });
-}
+	return getSonarrMonitors().then((r) => {
+		return r[id] as string;
+	});
+};
 
 export function getSonarrPosterUrl(item: SonarrSeries, original = false) {
 	const url =

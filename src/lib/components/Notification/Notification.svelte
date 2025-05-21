@@ -19,29 +19,23 @@
 </script>
 
 <div
-	class={classNames(
-		'bg-opacity-60 rounded-lg backdrop-blur-xl overflow-hidden',
-		'flex flex-col w-72',
-		{
-			'bg-zinc-900': type === 'info',
-			'bg-red-900': type === 'error',
-			'bg-yellow-900': type === 'warning'
-		}
-	)}
+	class={classNames('rounded-lg backdrop-blur-xl overflow-hidden', 'flex flex-col w-72', {
+		'bg-zinc-900/60': type === 'info',
+		'bg-red-900/60': type === 'error',
+		'bg-yellow-900/60': type === 'warning'
+	})}
 	in:fly|global={{ duration: 150, x: 50 }}
 	out:fade|global={{ duration: 150 }}
 >
 	<div class="relative">
 		<div
-			class={classNames('left-0 absolute bg-zinc-200 bg-opacity-10 h-full w-full', {
+			class={classNames('left-0 absolute bg-zinc-200/10 h-full w-full', {
 				'animate-timer': duration
 			})}
 			style="animation-duration: {duration - 1000}ms;"
 			hidden={!duration}
-		/>
-		<div
-			class="relative z-[1] flex items-center justify-between bg-zinc-200 bg-opacity-10 p-1 px-3"
-		>
+		></div>
+		<div class="relative z-[1] flex items-center justify-between bg-zinc-200/10 p-1 px-3">
 			<div class="flex items-center gap-2">
 				{#if type !== 'info'}
 					<ExclamationTriangle size={12} />

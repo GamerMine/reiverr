@@ -50,7 +50,7 @@
 			src={TMDB_IMAGES_ORIGINAL + getBackdropUri(titleInformation.backdropUriCandidates)}
 			class="h-full"
 		>
-			<div class="absolute inset-0 bg-darken" />
+			<div class="absolute inset-0 bg-darken"></div>
 		</LazyImg>
 	{/if}
 </div>
@@ -62,7 +62,7 @@
 >
 	{#if titleInformation}
 		<LazyImg src={TMDB_IMAGES_ORIGINAL + titleInformation.posterPath} class="h-full">
-			<div class="absolute inset-0 bg-darken" />
+			<div class="absolute inset-0 bg-darken"></div>
 		</LazyImg>
 	{/if}
 </div>
@@ -103,7 +103,7 @@
 					</div>
 				</div>
 			{/if}
-			<div class="absolute inset-0 bg-gradient-to-t from-stone-950 to-30%" />
+			<div class="absolute inset-0 bg-gradient-to-t from-stone-950 to-30%"></div>
 			<div class="z-[1] flex-1 flex justify-end gap-8 items-end max-w-screen-2xl mx-auto">
 				{#if titleInformation}
 					<div
@@ -112,11 +112,11 @@
 							TMDB_POSTER_SMALL +
 							titleInformation.posterPath +
 							"')"}
-					/>
+					></div>
 				{:else}
 					<div
 						class="aspect-[2/3] w-52 bg-center bg-cover rounded-md hidden sm:block placeholder"
-					/>
+					></div>
 				{/if}
 				<div class="flex-1 flex gap-4 justify-between flex-col lg:flex-row lg:items-end">
 					<div>
@@ -133,7 +133,7 @@
 							<h1 class="text-4xl sm:text-5xl md:text-6xl placeholder-text mt-2">Placeholder</h1>
 						{/if}
 					</div>
-					<div class="flex-shrink-0">
+					<div class="shrink-0">
 						<slot name="title-right" />
 					</div>
 				</div>
@@ -202,7 +202,7 @@
 							<h1 class="font-semibold text-xl sm:text-2xl placeholder-text">Placeholder</h1>
 						</div>
 						<div class="flex">
-							<div class="mr-4 placeholder w-1 flex-shrink-0 rounded" />
+							<div class="mr-4 placeholder w-1 shrink-0 rounded-sm"></div>
 							<p class="text-sm sm:text-base placeholder-text">
 								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sit amet sem eget
 								dolor lobortis mollis. Aliquam semper imperdiet mi nec viverra. Praesent ac ligula
@@ -216,8 +216,8 @@
 			<slot name="info-components" />
 			<slot name="servarr-components">
 				<div class="flex gap-4 flex-wrap col-span-4 sm:col-span-6 mt-4">
-					<div class="placeholder h-10 w-40 rounded-xl" />
-					<div class="placeholder h-10 w-40 rounded-xl" />
+					<div class="placeholder h-10 w-40 rounded-xl"></div>
+					<div class="placeholder h-10 w-40 rounded-xl"></div>
 				</div>
 			</slot>
 		</div>

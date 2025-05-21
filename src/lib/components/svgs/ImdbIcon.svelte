@@ -1,7 +1,7 @@
 <svg
 	xmlns="http://www.w3.org/2000/svg"
 	viewBox="0 0 448 512"
-	class={$$restProps.class || 'h-10 w-10 flex-shrink-0'}
+	class={$$restProps.class || 'h-10 w-10 shrink-0'}
 >
 	<style>
 		svg {

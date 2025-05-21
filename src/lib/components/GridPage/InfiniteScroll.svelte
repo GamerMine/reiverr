@@ -28,4 +28,4 @@
 	});
 </script>
 
-<div bind:this={loadMoreElement} id="svelte-infinite-scroll" style="width: 0;" />
+<div bind:this={loadMoreElement} id="svelte-infinite-scroll" style="width: 0;"></div>

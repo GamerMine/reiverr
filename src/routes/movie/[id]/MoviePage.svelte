@@ -63,7 +63,7 @@
 		return {
 			tmdbRecommendationProps: await tmdbRecommendationProps,
 			tmdbSimilarProps: await tmdbSimilarProps,
-			castProps: await castPropsPromise,	
+			castProps: await castPropsPromise
 		};
 	}
 
@@ -94,7 +94,7 @@
 
 {#await data}
 	<TitlePageLayout {isModal} {handleCloseModal} />
-{:then movie }
+{:then movie}
 	<TitlePageLayout
 		titleInformation={{
 			tmdbId,
@@ -138,7 +138,7 @@
 				class="flex gap-2 items-center flex-row-reverse justify-end lg:flex-row lg:justify-start"
 			>
 				{#if $jellyfinItemStore.loading || $radarrMovieStore.loading}
-					<div class="placeholder h-10 w-48 rounded-xl" />
+					<div class="placeholder h-10 w-48 rounded-xl"></div>
 				{:else}
 					{@const jellyfinItem = $jellyfinItemStore.item}
 					{@const radarrMovie = $radarrMovieStore.item}
@@ -243,7 +243,7 @@
 							{download?.estimatedCompletionTime
 								? formatMinutesToTime(
 										(new Date(download.estimatedCompletionTime).getTime() - Date.now()) / 1000 / 60
-								  )
+									)
 								: 'Stalled'}
 						</h2>
 					</div>
@@ -259,8 +259,8 @@
 				</div>
 			{:else if $radarrMovieStore.loading}
 				<div class="flex gap-4 flex-wrap col-span-4 sm:col-span-6 mt-4">
-					<div class="placeholder h-10 w-40 rounded-xl" />
-					<div class="placeholder h-10 w-40 rounded-xl" />
+					<div class="placeholder h-10 w-40 rounded-xl"></div>
+					<div class="placeholder h-10 w-40 rounded-xl"></div>
 				</div>
 			{/if}
 		</svelte:fragment>
@@ -273,7 +273,9 @@
 				</Carousel>
 
 				<Carousel gradientFromColor="from-stone-950">
-					<div slot="title" class="font-medium text-lg">{$_('library.content.recommendations')}</div>
+					<div slot="title" class="font-medium text-lg">
+						{$_('library.content.recommendations')}
+					</div>
 					<CarouselPlaceholderItems />
 				</Carousel>
 
@@ -293,7 +295,9 @@
 
 				{#if tmdbRecommendationProps?.length}
 					<Carousel gradientFromColor="from-stone-950">
-						<div slot="title" class="font-medium text-lg">{$_('library.content.recommendations')}</div>
+						<div slot="title" class="font-medium text-lg">
+							{$_('library.content.recommendations')}
+						</div>
 						{#each tmdbRecommendationProps as prop}
 							<Card {...prop} openInModal={isModal} />
 						{/each}
@@ -302,7 +306,9 @@
 
 				{#if tmdbSimilarProps?.length}
 					<Carousel gradientFromColor="from-stone-950">
-						<div slot="title" class="font-medium text-lg">{$_('library.content.similarSeries')}</div>
+						<div slot="title" class="font-medium text-lg">
+							{$_('library.content.similarSeries')}
+						</div>
 						{#each tmdbSimilarProps as prop}
 							<Card {...prop} openInModal={isModal} />
 						{/each}

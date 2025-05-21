@@ -80,16 +80,16 @@
 {#if $contextMenu === id}
 	{#key fixedPosition}
 		<div
-			class={`${position} z-50 my-2 px-1 py-1 bg-zinc-800 bg-opacity-50 rounded-lg backdrop-blur-xl flex flex-col w-max`}
+			class={`${position} z-50 my-2 px-1 py-1 bg-zinc-800/50 rounded-lg backdrop-blur-xl flex flex-col w-max`}
 			style={position === 'fixed'
 				? `left: ${
 						fixedPosition.x - (fixedPosition.x > windowWidth / 2 ? menu?.clientWidth : 0)
-				  }px; top: ${
+					}px; top: ${
 						fixedPosition.y - (fixedPosition.y > windowHeight / 2 ? menu?.clientHeight : 0)
-				  }px;`
+					}px;`
 				: menu?.getBoundingClientRect()?.left > windowWidth / 2
-				? `right: 0;${fixedPosition.y > windowHeight / 2 ? 'bottom: 100%;' : ''}`
-				: `left: 0;${fixedPosition.y > windowHeight / 2 ? 'bottom: 100%;' : ''}`}
+					? `right: 0;${fixedPosition.y > windowHeight / 2 ? 'bottom: 100%;' : ''}`
+					: `left: 0;${fixedPosition.y > windowHeight / 2 ? 'bottom: 100%;' : ''}`}
 			bind:this={menu}
 			in:fly|global={{ y: 5, duration: 100, delay: anchored ? 0 : 100 }}
 			out:fly|global={{ y: 5, duration: 100 }}

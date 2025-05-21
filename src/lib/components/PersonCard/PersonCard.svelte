@@ -31,13 +31,12 @@
 		}
 	}}
 >
-	<div
-		class="mx-auto rounded-full overflow-hidden flex-shrink-0 aspect-square w-full bg-zinc-200 bg-opacity-20"
-	>
+	<div class="mx-auto rounded-full overflow-hidden shrink-0 aspect-square w-full bg-zinc-200/20">
 		<div
 			style={"background-image: url('" + TMDB_PROFILE_SMALL + backdropUri + "')"}
-			class="bg-center bg-cover group-hover:scale-105 group-focus-visible:scale-105 transition-transform w-full h-full"
-		/>
+			class="bg-center bg-cover group-hover:scale-105 group-focus-visible:scale-105 transition-transform
+			w-full h-full"
+		></div>
 	</div>
 	<div>
 		<h2 class="text-sm text-zinc-300 font-medium line-clamp-1">{subtitle}</h2>

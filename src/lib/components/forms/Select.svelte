@@ -8,13 +8,10 @@
 </script>
 
 <div
-	class={classNames(
-		'relative w-max min-w-[8rem] h-min bg-zinc-600 bg-opacity-20 rounded-lg overflow-hidden',
-		{
-			'opacity-50': disabled,
-			'animate-pulse pointer-events-none': loading
-		}
-	)}
+	class={classNames('relative w-max min-w-[8rem] h-min bg-zinc-600/20 rounded-lg overflow-hidden', {
+		'opacity-50': disabled,
+		'animate-pulse pointer-events-none': loading
+	})}
 >
 	<select
 		on:change

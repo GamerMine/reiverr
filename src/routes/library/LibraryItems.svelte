@@ -213,7 +213,7 @@
 			bind:this={searchInput}
 			bind:value={searchQuery}
 			placeholder="Seach in library"
-			class="appearance-none mx-2.5 my-2.5 px-10 bg-transparent outline-none placeholder:text-zinc-400 font-medium w-full"
+			class="appearance-none mx-2.5 my-2.5 px-10 bg-transparent outline-hidden placeholder:text-zinc-400 font-medium w-full"
 		/>
 	</div>
 {/if}
@@ -223,7 +223,7 @@
 		<UiCarousel>
 			<div class="flex gap-6 text-lg font-medium text-zinc-400">
 				<button
-					class={classNames('hover:text-zinc-300 selectable rounded px-1 -mx-1', {
+					class={classNames('hover:text-zinc-300 selectable rounded-sm px-1 -mx-1', {
 						'text-zinc-200': openTab === 'available'
 					})}
 					on:click={() => handleTabChange('available')}
@@ -231,7 +231,7 @@
 					{$_('library.available')}
 				</button>
 				<button
-					class={classNames('hover:text-zinc-300 selectable rounded px-1 -mx-1', {
+					class={classNames('hover:text-zinc-300 selectable rounded-sm px-1 -mx-1', {
 						'text-zinc-200': openTab === 'watched'
 					})}
 					on:click={() => handleTabChange('watched')}
@@ -239,7 +239,7 @@
 					{$_('library.watched')}
 				</button>
 				<button
-					class={classNames('hover:text-zinc-300 selectable rounded px-1 -mx-1', {
+					class={classNames('hover:text-zinc-300 selectable rounded-sm px-1 -mx-1', {
 						'text-zinc-200': openTab === 'unavailable'
 					})}
 					on:click={() => handleTabChange('unavailable')}
@@ -248,7 +248,7 @@
 				</button>
 			</div>
 		</UiCarousel>
-		<div class="flex items-center gap-3 justify-end flex-shrink-0 flex-initial relative">
+		<div class="flex items-center gap-3 justify-end shrink-0 flex-initial relative">
 			<ContextMenu heading="Sort By" position="absolute">
 				<svelte:fragment slot="menu">
 					{#each SORT_OPTIONS as sortOption}
@@ -303,8 +303,8 @@
 					{openTab === 'available'
 						? 'Your Jellyfin library items will appear here.'
 						: openTab === 'watched'
-						? 'Your watched Jellyfin items will appear here.'
-						: "Your Radarr and Sonarr items that aren't available will appear here."}
+							? 'Your watched Jellyfin items will appear here.'
+							: "Your Radarr and Sonarr items that aren't available will appear here."}
 				</div>
 			{/each}
 		{/if}
@@ -312,7 +312,9 @@
 
 	{#if !libraryLoading && posterProps.length > 0}
 		<div class="mx-auto my-4">
-			<Button on:click={() => (page = page + 1)} disabled={!hasMore}>{$_('library.loadMore')}</Button>
+			<Button on:click={() => (page = page + 1)} disabled={!hasMore}
+				>{$_('library.loadMore')}</Button
+			>
 		</div>
 	{/if}
 </div>

@@ -13,9 +13,9 @@
 		'hover:bg-opacity-30 transition-colors',
 		'flex items-center gap-2',
 		{
-			'bg-green-500 bg-opacity-20 text-green-200 border-green-900': type === 'success',
-			'bg-red-500 bg-opacity-20 text-red-200 border-red-900': type === 'error',
-			'bg-zinc-600 border-zinc-800 bg-opacity-20': type === 'base',
+			'bg-green-500/20 text-green-200 border-green-900': type === 'success',
+			'bg-red-500/20 text-red-200 border-red-900': type === 'error',
+			'bg-zinc-600/20 border-zinc-800': type === 'base',
 			'cursor-not-allowed opacity-75 pointer-events-none': disabled || loading
 		},
 		$$restProps.class

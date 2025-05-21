@@ -1,31 +1,36 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@layer base {
+	button:not(:disabled),
+	[role="button"]:not(:disabled) {
+		cursor: pointer;
+	}
+}
 
 a {
-	@apply hover:text-amber-200;
+	@reference hover:bg-amber-200;
 }
 
 .placeholder {
-	@apply bg-zinc-700 bg-opacity-40 animate-pulse;
+	@reference bg-zinc-700/40 animate-pulse;
 }
 
 .placeholder-image {
-	@apply bg-zinc-700 bg-opacity-75;
+	@reference bg-zinc-700/75;
 }
 
 .placeholder-text {
-	@apply bg-zinc-700 bg-opacity-40 animate-pulse text-transparent rounded-lg select-none;
+	@reference bg-zinc-700/40 animate-pulse text-transparent rounded-lg select-none;
 }
 
 .selectable {
-	@apply focus-visible:outline outline-2 outline-[#f0cd6dc2] outline-offset-2;
+	@reference focus-visible:outline outline-2 outline-[#f0cd6dc2] outline-offset-2;
 }
 
 .peer-selectable {
-	@apply peer-focus-visible:outline outline-2 outline-[#f0cd6dc2] outline-offset-2;
+	@reference peer-focus-visible:outline outline-2 outline-[#f0cd6dc2] outline-offset-2;
 }
 
 .selectable-explicit {
-	@apply focus-within:outline outline-2 outline-[#f0cd6dc2] outline-offset-2;
+	@reference focus-within:outline outline-2 outline-[#f0cd6dc2] outline-offset-2;
 }

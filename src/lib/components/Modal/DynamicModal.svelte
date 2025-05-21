@@ -1,7 +1,6 @@
 <script lang="ts">
 	import classNames from 'classnames';
-	import { modalStack } from '../../stores/modal.store';
-	import { fade } from 'svelte/transition';
+	import { modalStack } from '$lib/stores/modal.store';
 	import { onDestroy } from 'svelte';
 
 	function handleShortcuts(event: KeyboardEvent) {
@@ -32,9 +31,11 @@
 
 	{#if modal.group === modal.id}
 		<div
-			class="fixed inset-0 bg-stone-950 bg-opacity-80 z-20"
-			transition:fade|global={{ duration: 150 }}
-		/>
+			class="fixed inset-0 bg-stone-950/80 z-20"
+			transition:fade|global={{
+				duration: 150
+			}}
+		></div>
 	{/if}
 
 	<!-- svelte-ignore a11y-no-static-element-interactions -->

@@ -38,7 +38,7 @@
 		}
 	}}
 	class={classNames(
-		'relative flex rounded-xl selectable group hover:text-inherit flex-shrink-0 overflow-hidden text-left',
+		'relative flex rounded-xl selectable group hover:text-inherit shrink-0 overflow-hidden text-left',
 		{
 			'aspect-video': orientation === 'landscape',
 			'aspect-[2/3]': orientation === 'portrait',
@@ -66,7 +66,7 @@
 	/> -->
 	<div
 		class={classNames(
-			'flex-1 flex flex-col justify-between bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity z-[1]',
+			'flex-1 flex flex-col justify-between bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity z-[1]',
 			{
 				'py-2 px-3': true
 			}
@@ -80,7 +80,7 @@
 				</div>
 			</slot>
 			<slot name="top-right">
-				<div />
+				<div></div>
 			</slot>
 		</div>
 		<div class="flex justify-self-end justify-between">
@@ -94,7 +94,7 @@
 				</div>
 			</slot>
 			<slot name="bottom-right">
-				<div />
+				<div></div>
 			</slot>
 		</div>
 	</div>

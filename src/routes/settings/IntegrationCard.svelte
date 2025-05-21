@@ -20,7 +20,7 @@
 				'bg-zinc-600': status === 'disconnected',
 				'bg-amber-500': status === 'error'
 			})}
-		/>
+		></div>
 	</div>
 	<slot />
 </div>

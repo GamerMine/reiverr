@@ -92,7 +92,7 @@
 					class="absolute inset-0"
 				/>
 			{/await}
-			<div class="absolute inset-0 bg-gradient-to-t from-stone-950 to-80% to-darken" />
+			<div class="absolute inset-0 bg-gradient-to-t from-stone-950 to-80% to-darken"></div>
 			<div
 				class="max-w-screen-2xl mx-auto relative z-[1] px-2 md:px-8 pt-32 xl:pt-56 pb-12 overflow-hidden"
 			>
@@ -103,15 +103,15 @@
 				</h1>
 				<div class="flex gap-4 items-end">
 					{#await showcasePromise}
-						<div class="w-32 aspect-[2/3] placeholder rounded-lg shadow-lg" />
+						<div class="w-32 aspect-[2/3] placeholder rounded-lg shadow-lg"></div>
 						<div class="flex flex-col gap-2">
 							<div class="placeholder-text w-20">Placeholder</div>
 							<div class="placeholder-text w-[50vw] text-3xl sm:text-4xl md:text-5xl">
 								Placeholder
 							</div>
 							<div class="flex gap-2 mt-2">
-								<div class="placeholder-text w-28 h-10" />
-								<div class="placeholder-text w-28 h-10" />
+								<div class="placeholder-text w-28 h-10"></div>
+								<div class="placeholder-text w-28 h-10"></div>
 							</div>
 						</div>
 					{:then showcase}
@@ -119,8 +119,8 @@
 							style={"background-image: url('" +
 								(showcase ? getJellyfinPosterUrl(showcase) : '') +
 								"');"}
-							class="w-32 aspect-[2/3] rounded-lg bg-center bg-cover flex-shrink-0 shadow-lg"
-						/>
+							class="w-32 aspect-[2/3] rounded-lg bg-center bg-cover shrink-0 shadow-lg"
+						></div>
 						<div>
 							<p class="text-zinc-400 font-medium">{$_('discover.LatestAddition')}</p>
 							<h1 class="text-3xl sm:text-4xl md:text-5xl font-semibold">
@@ -131,7 +131,7 @@
 									type="primary"
 									on:click={() => showcase?.Id && playerState.streamJellyfinId(showcase?.Id)}
 								>
-								{$_('library.content.play')}<ChevronRight size={20} />
+									{$_('library.content.play')}<ChevronRight size={20} />
 								</Button>
 								<Button
 									href={`/${showcase?.Type === 'Movie' ? 'movie' : 'series'}/${

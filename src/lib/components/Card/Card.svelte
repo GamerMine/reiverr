@@ -45,7 +45,7 @@
 	</svelte:fragment>
 	<button
 		class={classNames(
-			'rounded overflow-hidden relative shadow-lg shrink-0 aspect-video selectable hover:text-inherit flex flex-col justify-between group placeholder-image',
+			'rounded-sm overflow-hidden relative shadow-lg shrink-0 aspect-video selectable hover:text-inherit flex flex-col justify-between group placeholder-image',
 			'p-2 px-3 gap-2',
 			{
 				'h-40': size === 'md',
@@ -63,8 +63,9 @@
 	>
 		<div
 			style={"background-image: url('" + backdropUrl + "')"}
-			class="absolute inset-0 bg-center bg-cover group-hover:scale-105 group-focus-visible:scale-105 transition-transform"
-		/>
+			class="absolute inset-0 bg-center bg-cover group-hover:scale-105 group-focus-visible:scale-105
+			transition-transform"
+		></div>
 		<div
 			class={classNames(
 				'absolute inset-0 transition-opacity bg-darken sm:bg-opacity-100 bg-opacity-50',
@@ -72,7 +73,7 @@
 					'opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100': available
 				}
 			)}
-		/>
+		></div>
 		<div
 			class="flex flex-col justify-between flex-1 transition-opacity cursor-pointer relative opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100"
 		>
@@ -98,7 +99,7 @@
 							<div class="text-sm text-zinc-200">
 								{progress
 									? formatMinutesToTime(runtimeMinutes - runtimeMinutes * (progress / 100)) +
-									  ' left'
+										' left'
 									: formatMinutesToTime(runtimeMinutes)}
 							</div>
 						</div>

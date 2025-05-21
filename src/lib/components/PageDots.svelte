@@ -5,8 +5,8 @@
 	export let index: number;
 	export let length: number;
 	export let onJump: (index: number) => void;
-	export let onPrevious: () => void = () => {};
-	export let onNext: () => void = () => {};
+	//	export let onPrevious: () => void = () => {};
+	//	export let onNext: () => void = () => {};
 </script>
 
 <div class="flex gap-1">

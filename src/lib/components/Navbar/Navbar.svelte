@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { Cross1, HamburgerMenu, MagnifyingGlass, Person } from 'radix-icons-svelte';
 	import classNames from 'classnames';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import TitleSearchModal from './TitleSearchModal.svelte';
 	import IconButton from '../IconButton.svelte';
 	import { fade } from 'svelte/transition';
-	import { modalStack } from '../../stores/modal.store';
+	import { modalStack } from '$lib/stores/modal.store';
 	import { _ } from 'svelte-i18n';
 
 	let y = 0;
@@ -15,9 +15,9 @@
 	let isMobileMenuVisible = false;
 
 	function getLinkStyle(path: string) {
-		return classNames('selectable rounded-sm px-2 -mx-2 sm:text-base text-xl', {
-			'text-amber-200': $page.url.pathname === path,
-			'hover:text-zinc-50 cursor-pointer': $page.url.pathname !== path
+		return classNames('selectable rounded-xs px-2 -mx-2 sm:text-base text-xl', {
+			'text-amber-200': page.url.pathname === path,
+			'hover:text-zinc-50 cursor-pointer': page.url.pathname !== path
 		});
 	}
 
@@ -38,7 +38,7 @@
 			'fixed px-8 inset-x-0 grid-cols-[min-content_1fr_min-content] items-center z-10',
 			'transition-all',
 			{
-				'bg-stone-900 bg-opacity-50 backdrop-blur-2xl': !isMobileMenuVisible && !transparent,
+				'bg-stone-900/50 backdrop-blur-2xl': !isMobileMenuVisible && !transparent,
 				'h-16': !transparent,
 				'h-16 sm:h-24': transparent
 			}
@@ -51,27 +51,27 @@
 <div class={classNames(baseStyle, 'hidden sm:grid')}>
 	<a
 		href="/"
-		class="hidden sm:flex gap-2 items-center hover:text-inherit selectable rounded-sm px-2 -mx-2"
+		class="hidden sm:flex gap-2 items-center hover:text-inherit selectable rounded-xs px-2 -mx-2"
 	>
-		<div class="rounded-full bg-amber-300 h-4 w-4" />
+		<div class="rounded-full bg-amber-300 h-4 w-4"></div>
 		<h1 class="font-display uppercase font-semibold tracking-wider text-xl">Reiverr</h1>
 	</a>
 	<div
 		class="flex items-center justify-center gap-4 md:gap-8 font-normal text-sm tracking-wider text-zinc-200"
 	>
-		<a href="/" class={$page && getLinkStyle('/')}>
+		<a href="/" class={page && getLinkStyle('/')}>
 			{$_('navbar.home')}
 		</a>
-		<!-- <a href="/discover" class={$page && getLinkStyle('/discover')}>
+		<!-- <a href="/discover" class={page && getLinkStyle('/discover')}>
 			{$_('navbar.discover')}
 		</a> -->
-		<a href="/library" class={$page && getLinkStyle('/library')}>
+		<a href="/library" class={page && getLinkStyle('/library')}>
 			{$_('navbar.library')}
 		</a>
-		<a href="/sources" class={$page && getLinkStyle('/sources')}>
+		<a href="/sources" class={page && getLinkStyle('/sources')}>
 			{$_('navbar.sources')}
 		</a>
-		<a href="/settings" class={$page && getLinkStyle('/settings')}>
+		<a href="/settings" class={page && getLinkStyle('/settings')}>
 			{$_('navbar.settings')}
 		</a>
 	</div>
@@ -86,11 +86,11 @@
 </div>
 
 <div class={classNames(baseStyle, ' grid sm:hidden')}>
-	<a href="/" class="flex gap-2 items-center hover:text-inherit selectable rounded-sm px-2 -mx-2">
-		<div class="rounded-full bg-amber-300 h-4 w-4" />
+	<a href="/" class="flex gap-2 items-center hover:text-inherit selectable rounded-xs px-2 -mx-2">
+		<div class="rounded-full bg-amber-300 h-4 w-4"></div>
 		<h1 class="font-display uppercase font-semibold tracking-wider text-xl">Reiverr</h1>
 	</a>
-	<div />
+	<div></div>
 	<div class="flex items-center gap-2">
 		<IconButton on:click={openSearchModal}>
 			<MagnifyingGlass size={20} />
@@ -110,38 +110,38 @@
 
 {#if isMobileMenuVisible}
 	<div
-		class="fixed inset-0 pt-16 bottom-0 bg-stone-900 bg-opacity-50 backdrop-blur-2xl z-[9] grid grid-rows-3 transition-all ease-linear"
+		class="fixed inset-0 pt-16 bottom-0 bg-stone-900/50 backdrop-blur-2xl z-[9] grid grid-rows-3 transition-all ease-linear"
 		transition:fade={{ duration: 150 }}
 	>
 		<div class="row-span-2 flex flex-col gap-4 items-center justify-center">
-			<a on:click={() => (isMobileMenuVisible = false)} href="/" class={$page && getLinkStyle('/')}>
+			<a on:click={() => (isMobileMenuVisible = false)} href="/" class={page && getLinkStyle('/')}>
 				{$_('navbar.home')}
 			</a>
 			<a
 				on:click={() => (isMobileMenuVisible = false)}
 				href="/discover"
-				class={$page && getLinkStyle('/discover')}
+				class={page && getLinkStyle('/discover')}
 			>
 				{$_('navbar.discover')}
 			</a>
 			<a
 				on:click={() => (isMobileMenuVisible = false)}
 				href="/library"
-				class={$page && getLinkStyle('/library')}
+				class={page && getLinkStyle('/library')}
 			>
 				{$_('navbar.library')}
 			</a>
 			<a
 				on:click={() => (isMobileMenuVisible = false)}
 				href="/sources"
-				class={$page && getLinkStyle('/sources')}
+				class={page && getLinkStyle('/sources')}
 			>
 				{$_('navbar.sources')}
 			</a>
 			<a
 				on:click={() => (isMobileMenuVisible = false)}
 				href="/settings"
-				class={$page && getLinkStyle('/settings')}
+				class={page && getLinkStyle('/settings')}
 			>
 				{$_('navbar.settings')}
 			</a>

@@ -59,14 +59,14 @@
 				transition:fade={{ duration: 200 }}
 				class={'absolute inset-y-0 left-0 w-0 sm:w-16 md:w-24 bg-gradient-to-r ' +
 					gradientFromColor}
-			/>
+			></div>
 		{/if}
 		{#if carousel && scrollX < carousel?.scrollWidth - carousel?.clientWidth - 50}
 			<div
 				transition:fade={{ duration: 200 }}
 				class={'absolute inset-y-0 right-0 w-0 sm:w-16 md:w-24 bg-gradient-to-l ' +
 					gradientFromColor}
-			/>
+			></div>
 		{/if}
 	</div>
 </div>

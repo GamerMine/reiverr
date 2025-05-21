@@ -22,6 +22,6 @@
 	<div
 		style={"background-image: url('/genres/" + genre.name + ".jpg')"}
 		class="absolute inset-0 bg-center bg-cover sm:peer-hover:scale-105 transition-transform"
-	/>
-	<div class="absolute inset-0 bg-darken bg-opacity-60" />
+	></div>
+	<div class="absolute inset-0 bg-darken/60"></div>
 </a>

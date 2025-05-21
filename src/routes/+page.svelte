@@ -59,14 +59,14 @@
 							? {
 									type: 'movie',
 									subtitle: item.Genres?.join(', ') || ''
-							  }
+								}
 							: {
 									type: 'series',
 									subtitle:
 										(item?.IndexNumber && 'Episode ' + item.IndexNumber) ||
 										item.Genres?.join(', ') ||
 										''
-							  })
+								})
 					} as const;
 				})
 			)
@@ -113,7 +113,7 @@
 			? items.filter(
 					async (item) =>
 						!(await jellyfinItemsPromise).find((i) => i.ProviderIds?.Tmdb === String(item.id))
-			  )
+				)
 			: items;
 
 		return Promise.all(filtered.map(async (item) => getPosterProps(item, type))).then((props) =>
@@ -121,7 +121,7 @@
 		);
 	};
 
-	const trendingItemsPromise = TmdbApiOpen.get('/3/trending/all/{time_window}', {
+	const trendingItemsPromise = TmdbApiOpen.GET('/3/trending/all/{time_window}', {
 		params: {
 			path: {
 				time_window: 'day'
@@ -135,7 +135,7 @@
 	const fetchTrendingProps = () => trendingItemsPromise.then(fetchCardProps);
 
 	const fetchTrendingActorProps = () =>
-		TmdbApiOpen.get('/3/trending/person/{time_window}', {
+		TmdbApiOpen.GET('/3/trending/person/{time_window}', {
 			params: {
 				path: {
 					time_window: 'week'
@@ -155,7 +155,7 @@
 			);
 
 	const fetchUpcomingMovies = () =>
-		TmdbApiOpen.get('/3/discover/movie', {
+		TmdbApiOpen.GET('/3/discover/movie', {
 			params: {
 				query: {
 					'primary_release_date.gte': formatDateToYearMonthDay(new Date()),
@@ -170,7 +170,7 @@
 			.then(fetchCardProps);
 
 	const fetchUpcomingSeries = () =>
-		TmdbApiOpen.get('/3/discover/tv', {
+		TmdbApiOpen.GET('/3/discover/tv', {
 			params: {
 				query: {
 					'first_air_date.gte': formatDateToYearMonthDay(new Date()),
@@ -184,7 +184,7 @@
 			.then((i) => fetchCardProps(i, 'series'));
 
 	const fetchDigitalReleases = () =>
-		TmdbApiOpen.get('/3/discover/movie', {
+		TmdbApiOpen.GET('/3/discover/movie', {
 			params: {
 				query: {
 					with_release_type: 4,
@@ -200,7 +200,7 @@
 			.then(fetchCardProps);
 
 	const fetchNowStreaming = () =>
-		TmdbApiOpen.get('/3/discover/tv', {
+		TmdbApiOpen.GET('/3/discover/tv', {
 			params: {
 				query: {
 					'air_date.gte': formatDateToYearMonthDay(new Date()),

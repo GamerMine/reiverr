@@ -16,7 +16,12 @@
 	import { _ } from 'svelte-i18n';
 	import { settings } from '$lib/stores/settings.store';
 
-	const GENDER_OPTIONS = [$_('library.personPage.notSet'), $_('library.personPage.female'), $_('library.personPage.male'), $_('library.personPage.nonBinary')] as const;
+	const GENDER_OPTIONS = [
+		$_('library.personPage.notSet'),
+		$_('library.personPage.female'),
+		$_('library.personPage.male'),
+		$_('library.personPage.nonBinary')
+	] as const;
 
 	export let tmdbId: number;
 	export let isModal = false;
@@ -164,7 +169,7 @@
 						<div class="flex flex-wrap gap-2">
 							{#each tmdbSocials ?? [] as Prop}
 								<a href={Prop.url} target="_blank">
-									<Prop.icon class="h-6 w-6 flex-shrink-0 text-white" />
+									<Prop.icon class="h-6 w-6 shrink-0 text-white" />
 								</a>
 							{/each}
 						</div>
@@ -227,6 +232,6 @@
 			</div>
 		</svelte:fragment>
 
-		<div slot="servarr-components" />
+		<div slot="servarr-components"></div>
 	</TitlePageLayout>
 {/await}

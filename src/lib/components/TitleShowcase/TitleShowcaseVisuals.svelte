@@ -66,11 +66,13 @@
 				in:fly={{ y: -5, delay: ANIMATION_DURATION, duration: ANIMATION_DURATION }}
 				out:fly={{ y: 5, duration: ANIMATION_DURATION }}
 			>
-				<p class="flex-shrink-0">{releaseDate.getFullYear()}</p>
+				<p class="shrink-0">{releaseDate.getFullYear()}</p>
 				<DotFilled />
-				<p class="flex-shrink-0">{loadingAdditionalDetails ? 'LOADING' : formatMinutesToTime(runtime)}</p>
+				<p class="shrink-0">
+					{loadingAdditionalDetails ? 'LOADING' : formatMinutesToTime(runtime)}
+				</p>
 				<DotFilled />
-				<p class="flex-shrink-0"><a href={tmdbUrl}>{tmdbRating.toFixed(1)} TMDB</a></p>
+				<p class="shrink-0"><a href={tmdbUrl}>{tmdbRating.toFixed(1)} TMDB</a></p>
 			</div>
 			<button
 				on:click={handleOpenTitle}
@@ -94,7 +96,7 @@
 		>
 			{#each genres.slice(0, 3) as genre}
 				<span
-					class="backdrop-blur-lg rounded-full bg-zinc-400 bg-opacity-20 p-1.5 px-4 font-medium text-sm flex-grow-0"
+					class="backdrop-blur-lg rounded-full bg-zinc-400/20 p-1.5 px-4 font-medium text-sm grow-0"
 				>
 					{genre}
 				</span>

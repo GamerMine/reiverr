@@ -19,4 +19,4 @@
 	})}
 	style={'animation-delay: ' + ((index * 100) % 2000) + 'ms;'}
 	transition:fade|global
-/>
+></div>

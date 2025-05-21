@@ -379,11 +379,9 @@
 		in:fade|global={{ duration: 500, delay: 1200, easing: linear }}
 	>
 		<!-- svelte-ignore a11y-media-has-caption -->
-		<video
+		<video>
 			bind:this={video}
-			bind:paused
-			bind:duration
-			on:timeupdate={() =>
+			bind:paused bind:duration on:timeupdate={() =>
 				(displayedTime = !seeking && videoLoaded ? video.currentTime : displayedTime)}
 			on:progress={() => handleBuffer()}
 			on:play={() => {
@@ -393,13 +391,11 @@
 				video.currentTime = displayedTime;
 				videoLoaded = true;
 			}}
-			bind:volume
-			bind:muted={mute}
-			class="sm:w-full sm:h-full"
-			playsinline={true}
+			bind:volume bind:muted={mute}
+			class="sm:w-full sm:h-full" playsinline={true}
 			on:dblclick|preventDefault={() => (fullscreen = !fullscreen)}
 			on:click={() => (paused = !paused)}
-		/>
+		</video>
 
 		{#if uiVisible}
 			<!-- Video controls -->
@@ -413,7 +409,7 @@
 						<span class="whitespace-nowrap tabular-nums"
 							>{secondsToTime(displayedTime, duration > 3600)}</span
 						>
-						<div class="flex-grow">
+						<div class="grow">
 							<Slider
 								bind:primaryValue={displayedTime}
 								secondaryValue={bufferedTime}

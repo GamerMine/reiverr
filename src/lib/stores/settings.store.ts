@@ -65,7 +65,7 @@ export const defaultSettings: SettingsValues = {
 		qualityProfileId: 0,
 		rootFolderPath: '',
 		monitor: 0,
-		StartSearch: false,
+		StartSearch: false
 	},
 	jellyfin: {
 		apiKey: null,

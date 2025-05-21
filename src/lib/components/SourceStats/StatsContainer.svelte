@@ -23,7 +23,10 @@
 	})}
 	style={'background-color: ' + color + ';'}
 >
-	<div class="absolute left-0 inset-y-0 bg-[#ffffff22]" style={'width: ' + fillPercentage + '%;'} />
+	<div
+		class="absolute left-0 inset-y-0 bg-[#ffffff22]"
+		style={'width: ' + fillPercentage + '%;'}
+	></div>
 	{#if large}
 		<slot name="icon" />
 	{/if}

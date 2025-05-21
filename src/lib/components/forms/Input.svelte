@@ -14,7 +14,7 @@
 	}
 
 	const baseStyles =
-		'appearance-none p-1 px-3 selectable border border-zinc-800 rounded-lg bg-zinc-600 bg-opacity-20 text-zinc-200 placeholder:text-zinc-700';
+		'appearance-none p-1 px-3 selectable border border-zinc-800 rounded-lg bg-zinc-600/20 text-zinc-200 placeholder:text-zinc-700';
 </script>
 
 <div class="relative">

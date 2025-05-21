@@ -15,7 +15,7 @@
 			allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 			allowfullscreen
 			tabindex="-1"
-		/>
+		></iframe>
 	</div>
 </div>
 

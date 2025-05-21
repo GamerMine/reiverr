@@ -67,7 +67,7 @@
 	<button
 		on:click
 		class={classNames(
-			'aspect-video bg-center bg-cover rounded-lg overflow-hidden transition-opacity shadow-lg selectable flex-shrink-0 placeholder-image relative',
+			'aspect-video bg-center bg-cover rounded-lg overflow-hidden transition-opacity shadow-lg selectable shrink-0 placeholder-image relative',
 			'flex flex-col px-2 lg:px-3 py-2 gap-2 text-left',
 			{
 				'h-44': size === 'md',
@@ -89,7 +89,7 @@
 					'bg-gradient-to-t from-darken': !!jellyfinId
 				}
 			)}
-		/>
+		></div>
 		<div
 			class={classNames(
 				'flex-1 flex flex-col justify-between relative group-hover:opacity-0 group-focus-visible:opacity-0 transition-all',
@@ -145,7 +145,7 @@
 				</slot>
 				<slot name="right-bottom">
 					{#if watched}
-						<div class="flex-shrink-0">
+						<div class="shrink-0">
 							<Check size={20} class="opacity-80" />
 						</div>
 					{/if}

@@ -72,7 +72,7 @@
 			class={classNames('fixed inset-0 bg-cover bg-center z-[-1]')}
 			in:fade={{ duration: ANIMATION_DURATION * 2 }}
 			out:fade={{ duration: ANIMATION_DURATION * 2, delay: ANIMATION_DURATION }}
-		/>
+		></div>
 	{/key}
 {/if}
 {#if trailerId && $settings.autoplayTrailers && trailerMounted}
@@ -88,8 +88,9 @@
 {/if}
 {#if UIVisible}
 	<div
-		class="absolute inset-0 bg-gradient-to-t from-stone-950 from-10% via-darken via-60% to-darken z-[-1]"
-	/>
+		class="absolute inset-0 bg-gradient-to-t from-stone-950 from-10% via-darken via-60% to-darken
+		z-[-1]"
+	></div>
 {:else if !UIVisible}
-	<div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-darken z-[-1]" />
+	<div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-darken z-[-1]"></div>
 {/if}
