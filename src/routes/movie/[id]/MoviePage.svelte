@@ -165,7 +165,7 @@
 				<p class="text-zinc-400 text-sm">{$_('library.content.directedBy')}</p>
 				<h2 class="font-medium">
 					{movie?.credits.crew
-						?.filter((c) => c.job == 'Director')
+						?.filter((c) => c.job === 'Director')
 						.map((p) => p.name)
 						.join(', ')}
 				</h2>

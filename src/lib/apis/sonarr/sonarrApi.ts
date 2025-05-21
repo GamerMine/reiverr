@@ -91,7 +91,7 @@ export const addSeriesToSonarr = async (tmdbId: number) => {
 		title: tmdbSeries.name,
 		tvdbId: tmdbSeries.external_ids.tvdb_id,
 		qualityProfileId: get(settings)?.sonarr.qualityProfileId || 0,
-		monitored: monitorType != 'none' ? true : false,
+		monitored: monitorType != 'none',
 		addOptions: {
 			monitor: monitorType ? (monitorType as any) : 'none',
 			searchForMissingEpisodes: search ? search : false,

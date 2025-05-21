@@ -1,10 +1,8 @@
 <script lang="ts">
 	import { TMDB_IMAGES_ORIGINAL, TMDB_POSTER_SMALL } from '$lib/constants';
-	import type { TitleId, TitleType } from '$lib/types';
+	import type { TitleType } from '$lib/types';
 	import classNames from 'classnames';
-	import { ChevronLeft, Cross2, DotFilled, ExternalLink } from 'radix-icons-svelte';
-	import Carousel from '../Carousel/Carousel.svelte';
-	import CarouselPlaceholderItems from '../Carousel/CarouselPlaceholderItems.svelte';
+	import { ChevronLeft, Cross2, ExternalLink } from 'radix-icons-svelte';
 	import IconButton from '../IconButton.svelte';
 	import LazyImg from '../LazyImg.svelte';
 	import TruncatedText from '../TruncatedText.svelte';

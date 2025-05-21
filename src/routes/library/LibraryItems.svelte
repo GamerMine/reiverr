@@ -1,11 +1,10 @@
 <script lang="ts">
 	import UiCarousel from '$lib/components/Carousel/UICarousel.svelte';
 	import IconButton from '$lib/components/IconButton.svelte';
-	import { settings } from '$lib/stores/settings.store';
 	import classNames from 'classnames';
-	import { fade, fly } from 'svelte/transition';
+	import { fly } from 'svelte/transition';
 	import { _ } from 'svelte-i18n';
-	import { CaretDown, ChevronDown, Cross2, Gear, MagnifyingGlass } from 'radix-icons-svelte';
+	import { ChevronDown, Cross2, MagnifyingGlass } from 'radix-icons-svelte';
 	import CardPlaceholder from '$lib/components/Card/CardPlaceholder.svelte';
 	import { tick, type ComponentProps } from 'svelte';
 	import Poster from '$lib/components/Poster/Poster.svelte';

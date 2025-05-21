@@ -27,10 +27,9 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { contextMenu } from '../ContextMenu/ContextMenu';
-	import ContextMenu from '../ContextMenu/ContextMenu.svelte';
 	import SelectableContextMenuItem from '../ContextMenu/SelectableContextMenuItem.svelte';
 	import IconButton from '../IconButton.svelte';
-	import { modalStack } from '../../stores/modal.store';
+	import { modalStack } from '$lib/stores/modal.store';
 	import Slider from './Slider.svelte';
 	import { playerState } from './VideoPlayer';
 	import { linear } from 'svelte/easing';
@@ -454,7 +453,7 @@
 									mute = !mute;
 								}}
 							>
-								{#if volume == 0 || mute}
+								{#if volume === 0 || mute}
 									<SpeakerOff size={20} />
 								{:else if volume < 0.25}
 									<SpeakerQuiet size={20} />

@@ -1,6 +1,4 @@
 <script lang="ts">
-	import classNames from 'classnames';
-
 	export let videoId: string;
 </script>
 

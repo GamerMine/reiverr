@@ -81,7 +81,7 @@ export const addMovieToRadarr = async (tmdbId: number) => {
 		year: Number(tmdbMovie.release_date?.slice(0, 4)),
 		tags: [],
 		addOptions: {
-			monitored: monitorMovie != 0 ? true : false,
+			monitored: monitorMovie != 0,
 			searchForMovie: search ? search : false
 		}
 	};
