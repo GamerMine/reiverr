@@ -282,7 +282,7 @@ export const getTmdbMovieRecommendations = (tmdbId: number) =>
 				movie_id: tmdbId
 			}
 		}
-	}).then((res) => res.data?.results || []);
+	}).then((res): TmdbMovie2[] => res.data?.results || []);
 
 export const getTmdbMovieSimilar = (tmdbId: number) =>
 	TmdbApiOpen.GET('/3/movie/{movie_id}/similar', {

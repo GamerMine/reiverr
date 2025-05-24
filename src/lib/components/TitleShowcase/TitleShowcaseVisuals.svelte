@@ -12,27 +12,46 @@
 
 	const ANIMATION_DURATION = $settings.animationDuration;
 
-	export let tmdbId: number;
-	export let type: TitleType;
+	let {
+		tmdbId,
+		type,
 
-	export let title: string;
-	export let genreIds: number[];
-	export let lazyRuntime: Promise<number>;
-	export let releaseDate: Date;
-	export let tmdbRating: number;
+		title,
+		genreIds,
+		lazyRuntime,
+		releaseDate,
+		tmdbRating,
 
-	export let posterUri: string;
+		posterUri,
 
-	export let hideUI = false;
+		hideUI = false
+	}: {
+		tmdbId: number;
+		type: TitleType;
 
-	let runtime = 0;
-	let loadingAdditionalDetails = true;
+		title: string;
+		genreIds: number[];
+		lazyRuntime: Promise<number>;
+		releaseDate: Date;
+		tmdbRating: number;
+
+		posterUri: string;
+
+		hideUI?: boolean;
+	} = $props();
+
+	let runtime = $state(0);
+	let loadingAdditionalDetails = $state(true);
+	let tmdbUrl: string = $state('');
+	let genres: string[] = $state([]);
 	lazyRuntime.then((rn) => (runtime = rn)).finally(() => (loadingAdditionalDetails = false));
 
-	$: tmdbUrl = `https://www.themoviedb.org/${type}/${tmdbId}`;
-	$: genres = genreIds
-		.map((gId) => TMDB_MOVIE_GENRES.find((g) => g.id === gId)?.name)
-		.filter<string>((g): g is string => typeof g === 'string');
+	$effect(() => {
+		tmdbUrl = `https://www.themoviedb.org/${type}/${tmdbId}`;
+		genres = genreIds
+			.map((gId) => TMDB_MOVIE_GENRES.find((g) => g.id === gId)?.name)
+			.filter<string>((g): g is string => typeof g === 'string');
+	});
 
 	function handleOpenTitle() {
 		openTitleModal({ type, id: tmdbId, provider: 'tmdb' });
@@ -75,7 +94,7 @@
 				<p class="shrink-0"><a href={tmdbUrl}>{tmdbRating.toFixed(1)} TMDB</a></p>
 			</div>
 			<button
-				on:click={handleOpenTitle}
+				onclick={handleOpenTitle}
 				class={classNames(
 					'text-left font-medium tracking-wider text-stone-200 hover:text-amber-200',
 					{

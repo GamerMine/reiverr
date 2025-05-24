@@ -13,15 +13,24 @@
 	import ContextMenuItem from './ContextMenuItem.svelte';
 	import { _ } from 'svelte-i18n';
 
-	export let jellyfinItem: JellyfinItem | undefined = undefined;
-	export let sonarrSeries: SonarrSeries | undefined = undefined;
-	export let radarrMovie: RadarrMovie | undefined = undefined;
+	let {
+		jellyfinItem = undefined,
+		sonarrSeries = undefined,
+		radarrMovie = undefined,
+		type,
+		tmdbId
+	}: {
+		jellyfinItem?: JellyfinItem;
+		sonarrSeries?: SonarrSeries;
+		radarrMovie?: RadarrMovie;
+		type: TitleType;
+		tmdbId: number;
+	} = $props();
 
-	export let type: TitleType;
-	export let tmdbId: number;
-
-	let watched = false;
-	$: watched = jellyfinItem?.UserData?.Played !== undefined ? jellyfinItem.UserData?.Played : false;
+	let watched = $state(false);
+	$effect(() => {
+		watched = jellyfinItem?.UserData?.Played !== undefined ? jellyfinItem.UserData?.Played : false;
+	});
 
 	function handleSetWatched() {
 		if (jellyfinItem?.Id) {
@@ -42,31 +51,31 @@
 	}
 </script>
 
-<ContextMenuItem on:click={handleSetWatched} disabled={!jellyfinItem?.Id || watched}>
+<ContextMenuItem onclick={handleSetWatched} disabled={!jellyfinItem?.Id || watched}>
 	{$_('library.LibraryItemContext.markWatched')}
 </ContextMenuItem>
-<ContextMenuItem on:click={handleSetUnwatched} disabled={!jellyfinItem?.Id || !watched}>
+<ContextMenuItem onclick={handleSetUnwatched} disabled={!jellyfinItem?.Id || !watched}>
 	{$_('library.LibraryItemContext.markUnwatched')}
 </ContextMenuItem>
 <ContextMenuDivider />
-<ContextMenuItem disabled={!jellyfinItem?.Id} on:click={handleOpenInJellyfin}>
+<ContextMenuItem disabled={!jellyfinItem?.Id} onclick={handleOpenInJellyfin}>
 	{$_('library.LibraryItemContext.openJellyfin')}
 </ContextMenuItem>
 {#if type === 'movie'}
 	<ContextMenuItem
 		disabled={!radarrMovie}
-		on:click={() => window.open($settings.radarr.baseUrl + '/movie/' + radarrMovie?.tmdbId)}
+		onclick={() => window.open($settings.radarr.baseUrl + '/movie/' + radarrMovie?.tmdbId)}
 	>
-	{$_('library.LibraryItemContext.openRadarr')}
+		{$_('library.LibraryItemContext.openRadarr')}
 	</ContextMenuItem>
 {:else}
 	<ContextMenuItem
 		disabled={!sonarrSeries}
-		on:click={() => window.open($settings.sonarr.baseUrl + '/series/' + sonarrSeries?.titleSlug)}
+		onclick={() => window.open($settings.sonarr.baseUrl + '/series/' + sonarrSeries?.titleSlug)}
 	>
-	{$_('library.LibraryItemContext.openSonarr')}
+		{$_('library.LibraryItemContext.openSonarr')}
 	</ContextMenuItem>
 {/if}
-<ContextMenuItem on:click={() => window.open(`https://www.themoviedb.org/${type}/${tmdbId}`)}>
+<ContextMenuItem onclick={() => window.open(`https://www.themoviedb.org/${type}/${tmdbId}`)}>
 	{$_('library.LibraryItemContext.openTMDB')}
 </ContextMenuItem>

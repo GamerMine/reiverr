@@ -2,6 +2,7 @@
 	import classNames from 'classnames';
 	import { modalStack } from '$lib/stores/modal.store';
 	import { onDestroy } from 'svelte';
+	import { fade } from 'svelte/transition';
 
 	function handleShortcuts(event: KeyboardEvent) {
 		if (event.key === 'Escape' && $modalStack.top) {
@@ -47,8 +48,7 @@
 				'opacity-0': hidden
 			}
 		)}
-		on:click|self={() => modalStack.close(modal.id)}
 	>
-		<svelte:component this={modal.component} {...modal.props} modalId={modal.id} />
+		<modal.component {...modal.props} modalId={modal.id} />
 	</div>
 {/each}

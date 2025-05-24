@@ -76,7 +76,7 @@
 	 *   * runtime & video data is not available as part of the initial request
 	 *   * If an additional detail request fails, we unload the movie from the showcase
 	 */
-	const tmdbPopularMoviesPromise = getTmdbPopularMovies().then(
+	getTmdbPopularMovies().then(
 		(movies) =>
 			(popularMovies = movies.map((movie) => {
 				const movieDetails = getTmdbMovie(movie.id || 0);
@@ -133,13 +133,17 @@
 
 <div class="h-screen flex flex-col relative pb-6 gap-6 xl:gap-8 overflow-hidden">
 	{#if !hideUI}
-		<div class="absolute top-1/2 right-6 z-10 hover:bg-stone-700/80 hover:rounded-4xl ease-in-out duration-300">
-			<IconButton on:click={onNext}>
+		<div
+			class="absolute top-1/2 right-6 z-10 hover:bg-white/15 hover:rounded-4xl ease-in-out duration-300"
+		>
+			<IconButton onclick={onNext}>
 				<ChevronRight size={38} />
 			</IconButton>
 		</div>
-		<div class="absolute top-1/2 left-6 z-10 hover:bg-stone-700/80 hover:rounded-4xl ease-in-out duration-300">
-			<IconButton on:click={onPrevious}>
+		<div
+			class="absolute top-1/2 left-6 z-10 hover:bg-white/15 hover:rounded-4xl ease-in-out duration-300"
+		>
+			<IconButton onclick={onPrevious}>
 				<ChevronLeft size={38} />
 			</IconButton>
 		</div>
@@ -169,13 +173,7 @@
 			<div
 				class="md:relative self-stretch flex justify-center items-end row-start-2 row-span-1 col-start-1 col-span-2 md:row-start-1 md:row-span-2 md:col-start-2 md:col-span-2"
 			>
-				<PageDots
-					index={showcaseIndex}
-					length={clampedPopularMovies.length}
-					{onJump}
-					{onPrevious}
-					{onNext}
-				/>
+				<PageDots index={showcaseIndex} length={clampedPopularMovies.length} {onJump} />
 			</div>
 
 			{#key movie?.id}
@@ -202,7 +200,7 @@
 				{:then props}
 					{#each props as prop}
 						<EpisodeCard
-							on:click={() => (window.location.href = `/${prop.type}/${prop.tmdbId}`)}
+							onclick={() => (window.location.href = `/${prop.type}/${prop.tmdbId}`)}
 							{...prop}
 							size="sm"
 						/>

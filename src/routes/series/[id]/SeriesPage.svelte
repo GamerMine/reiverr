@@ -33,13 +33,18 @@
 	import { capitalize, formatMinutesToTime, formatSize } from '$lib/utils';
 	import classNames from 'classnames';
 	import { Archive, ChevronLeft, ChevronRight, DotFilled, Plus } from 'radix-icons-svelte';
-	import type { ComponentProps } from 'svelte';
 	import { get } from 'svelte/store';
 	import { _ } from 'svelte-i18n';
 
-	export let titleId: TitleId;
-	export let isModal = false;
-	export let handleCloseModal: () => void = () => {};
+	let {
+		titleId,
+		isModal = false,
+		handleCloseModal = () => {}
+	}: {
+		titleId: TitleId;
+		isModal?: boolean;
+		handleCloseModal?: () => void;
+	} = $props();
 
 	const data = loadInitialPageData();
 	const recommendationData = preloadRecommendationData();
@@ -48,10 +53,10 @@
 	const sonarrSeriesStore = createSonarrSeriesStore(data.then((d) => d.tmdbSeries?.name || ''));
 	const sonarrDownloadStore = createSonarrDownloadStore(sonarrSeriesStore);
 
-	let seasonSelectVisible = false;
-	let visibleSeasonNumber: number = 1;
-	let visibleEpisodeIndex: number | undefined = undefined;
-	let nextJellyfinEpisode: JellyfinItem | undefined = undefined;
+	let seasonSelectVisible = $state(false);
+	let visibleSeasonNumber: number = $state(1);
+	let visibleEpisodeIndex: number | undefined = $state();
+	let nextJellyfinEpisode: JellyfinItem | undefined = $state();
 
 	const jellyfinEpisodeData: {
 		[key: string]: {
@@ -110,7 +115,7 @@
 			.then((r) => Promise.all(r.map(fetchCardTmdbProps)))
 			.then((r) => r.filter((p) => p.backdropUrl));
 
-		const castProps: ComponentProps<PersonCard>[] =
+		const castProps =
 			tmdbSeries?.aggregate_credits?.cast?.slice(0, 20)?.map((m) => ({
 				tmdbId: m.id || 0,
 				backdropUri: m.profile_path || '',
@@ -125,9 +130,7 @@
 		};
 	}
 
-	function preloadAndMapSeasonsData(
-		tmdbSeries: TmdbSeriesFull2 | undefined
-	): Promise<ComponentProps<EpisodeCard>[]>[] {
+	function preloadAndMapSeasonsData(tmdbSeries: TmdbSeriesFull2 | undefined) {
 		const tmdbSeasons = getTmdbSeriesSeasons(
 			tmdbSeries?.id || 0,
 			tmdbSeries?.number_of_seasons || 0
@@ -157,7 +160,7 @@
 		await sonarrSeriesStore.refreshIn();
 	}
 
-	let addToSonarrLoading = false;
+	let addToSonarrLoading = $state(false);
 	async function addToSonarr() {
 		const tmdbId = await data.then((d) => d.tmdbId);
 		addToSonarrLoading = true;
@@ -180,7 +183,7 @@
 
 	// Focus next episode on load
 	let didFocusNextEpisode = false;
-	$: {
+	$effect(() => {
 		if (episodeComponents && !didFocusNextEpisode) {
 			const episodeComponent = nextJellyfinEpisode?.IndexNumber
 				? episodeComponents[nextJellyfinEpisode?.IndexNumber - 1]
@@ -202,22 +205,22 @@
 				}
 			}
 		}
-	}
+	});
 </script>
 
 {#await data}
 	<TitlePageLayout {isModal} {handleCloseModal}>
-		<div slot="episodes-carousel">
+		{#snippet episodes_carousel()}
 			<Carousel
-				gradientFromColor="from-stone-950"
-				class={classNames('px-2 sm:px-4 lg:px-8', {
+				gradientFromColor="from-red-950"
+				klass={classNames('px-2 sm:px-4 lg:px-8', {
 					'2xl:px-0': !isModal
 				})}
 				heading="Episodes"
 			>
 				<CarouselPlaceholderItems />
 			</Carousel>
-		</div>
+		{/snippet}
 	</TitlePageLayout>
 {:then { tmdbId, tmdbUrl, tmdbSeries, seasonsData }}
 	<TitlePageLayout
@@ -233,15 +236,15 @@
 		{isModal}
 		{handleCloseModal}
 	>
-		<svelte:fragment slot="title-info">
+		{#snippet title_info()}
 			{new Date(tmdbSeries?.first_air_date || Date.now()).getFullYear()}
 			<DotFilled />
 			{tmdbSeries?.status}
 			<DotFilled />
 			<a href={tmdbUrl} target="_blank">{tmdbSeries?.vote_average?.toFixed(1)} TMDB</a>
-		</svelte:fragment>
+		{/snippet}
 
-		<svelte:fragment slot="title-right">
+		{#snippet title_right()}
 			<div
 				class="flex gap-2 items-center flex-row-reverse justify-end lg:flex-row lg:justify-start"
 			>
@@ -256,7 +259,7 @@
 						{tmdbId}
 					/>
 					{#if !!nextJellyfinEpisode}
-						<Button type="primary" on:click={playNextEpisode}>
+						<Button type="primary" onclick={playNextEpisode}>
 							<span>
 								{$_('library.content.play')}
 								{`S${nextJellyfinEpisode?.ParentIndexNumber}E${nextJellyfinEpisode?.IndexNumber}`}
@@ -264,89 +267,93 @@
 							<ChevronRight size={20} />
 						</Button>
 					{:else if !$sonarrSeriesStore.item && $settings.sonarr.apiKey && $settings.sonarr.baseUrl}
-						<Button type="primary" disabled={addToSonarrLoading} on:click={addToSonarr}>
+						<Button type="primary" disabled={addToSonarrLoading} onclick={addToSonarr}>
 							<span>{$_('library.content.addSonarr')}</span><Plus size={20} />
 						</Button>
 					{:else if $sonarrSeriesStore.item}
-						<Button type="primary" on:click={openRequestModal}>
+						<Button type="primary" onclick={openRequestModal}>
 							<span class="mr-2">{$_('library.content.requestSeries')}</span><Plus size={20} />
 						</Button>
 					{/if}
 				{/if}
 			</div>
-		</svelte:fragment>
+		{/snippet}
 
-		<div slot="episodes-carousel">
-			<Carousel
-				gradientFromColor="from-stone-950"
-				class={classNames('px-2 sm:px-4 lg:px-8', {
-					'2xl:px-0': !isModal
-				})}
-			>
-				<UiCarousel slot="title" class="flex gap-6">
-					{#each [...Array(tmdbSeries?.number_of_seasons || 0).keys()].map((i) => i + 1) as seasonNumber}
-						{@const season = tmdbSeries?.seasons?.find((s) => s.season_number === seasonNumber)}
-						{@const isSelected = season?.season_number === visibleSeasonNumber}
-						<button
-							class={classNames(
-								'font-medium tracking-wide transition-colors shrink-0 flex items-center gap-1',
-								{
-									'text-zinc-200': isSelected && seasonSelectVisible,
-									'text-zinc-500 hover:text-zinc-200 cursor-pointer':
-										(!isSelected || seasonSelectVisible === false) &&
-										tmdbSeries?.number_of_seasons !== 1,
-									'text-zinc-500 cursor-default': tmdbSeries?.number_of_seasons === 1,
-									hidden:
-										!seasonSelectVisible && visibleSeasonNumber !== (season?.season_number || 1)
-								}
-							)}
-							on:click={() => {
-								if (tmdbSeries?.number_of_seasons === 1) return;
+		{#snippet episodes_carousel()}
+			<div>
+				<Carousel
+					gradientFromColor="from-stone-950"
+					klass={classNames('px-2 sm:px-4 lg:px-8', {
+						'2xl:px-0': !isModal
+					})}
+				>
+					{#snippet title()}
+						<UiCarousel klass="flex gap-6">
+							{#each [...Array(tmdbSeries?.number_of_seasons || 0).keys()].map((i) => i + 1) as seasonNumber}
+								{@const season = tmdbSeries?.seasons?.find((s) => s.season_number === seasonNumber)}
+								{@const isSelected = season?.season_number === visibleSeasonNumber}
+								<button
+									class={classNames(
+										'font-medium tracking-wide transition-colors shrink-0 flex items-center gap-1',
+										{
+											'text-zinc-200': isSelected && seasonSelectVisible,
+											'text-zinc-500 hover:text-zinc-200 cursor-pointer':
+												(!isSelected || seasonSelectVisible === false) &&
+												tmdbSeries?.number_of_seasons !== 1,
+											'text-zinc-500 cursor-default': tmdbSeries?.number_of_seasons === 1,
+											hidden:
+												!seasonSelectVisible && visibleSeasonNumber !== (season?.season_number || 1)
+										}
+									)}
+									onclick={() => {
+										if (tmdbSeries?.number_of_seasons === 1) return;
 
-								if (seasonSelectVisible) {
-									visibleSeasonNumber = season?.season_number || 1;
-									seasonSelectVisible = false;
-								} else {
-									seasonSelectVisible = true;
-								}
-							}}
-						>
-							<ChevronLeft
-								size={20}
-								class={(seasonSelectVisible || tmdbSeries?.number_of_seasons === 1) && 'hidden'}
-							/>
-							Season {season?.season_number}
-						</button>
-					{/each}
-				</UiCarousel>
-				{#key visibleSeasonNumber}
-					{#await seasonsData[visibleSeasonNumber - 1]}
-						<CarouselPlaceholderItems />
-					{:then seasonEpisodes}
-						{#each seasonEpisodes || [] as props, i}
-							{@const jellyfinData = jellyfinEpisodeData[`S${visibleSeasonNumber}E${i + 1}`]}
-							<div bind:this={episodeComponents[i]}>
-								<EpisodeCard
-									{...props}
-									{...jellyfinData
-										? {
-												watched: jellyfinData.watched,
-												progress: jellyfinData.progress,
-												jellyfinId: jellyfinData.jellyfinId
-											}
-										: {}}
-									on:click={() => (visibleEpisodeIndex = i)}
-								/>
-							</div>
-						{:else}
+										if (seasonSelectVisible) {
+											visibleSeasonNumber = season?.season_number || 1;
+											seasonSelectVisible = false;
+										} else {
+											seasonSelectVisible = true;
+										}
+									}}
+								>
+									<ChevronLeft
+										size={20}
+										class={(seasonSelectVisible || tmdbSeries?.number_of_seasons === 1) && 'hidden'}
+									/>
+									Season {season?.season_number}
+								</button>
+							{/each}
+						</UiCarousel>
+					{/snippet}
+					{#key visibleSeasonNumber}
+						{#await seasonsData[visibleSeasonNumber - 1]}
 							<CarouselPlaceholderItems />
-						{/each}
-					{/await}
-				{/key}
-			</Carousel>
-		</div>
+						{:then seasonEpisodes}
+							{#each seasonEpisodes || [] as props, i}
+								{@const jellyfinData = jellyfinEpisodeData[`S${visibleSeasonNumber}E${i + 1}`]}
+								<div bind:this={episodeComponents[i]}>
+									<EpisodeCard
+										{...props}
+										{...jellyfinData
+											? {
+													watched: jellyfinData.watched,
+													progress: jellyfinData.progress,
+													jellyfinId: jellyfinData.jellyfinId
+												}
+											: {}}
+										onclick={() => (visibleEpisodeIndex = i)}
+									/>
+								</div>
+							{:else}
+								<CarouselPlaceholderItems />
+							{/each}
+						{/await}
+					{/key}
+				</Carousel>
+			</div>
+		{/snippet}
 
-		<svelte:fragment slot="info-components">
+		{#snippet info_components()}
 			<div class="col-span-2 lg:col-span-1">
 				<p class="text-zinc-400 text-sm">{$_('library.content.directedBy')}</p>
 				<h2 class="font-medium">{tmdbSeries?.created_by?.map((c) => c.name).join(', ')}</h2>
@@ -403,9 +410,9 @@
 					{tmdbSeries?.spoken_languages?.map((l) => capitalize(l.english_name || '')).join(', ')}
 				</h2>
 			</div>
-		</svelte:fragment>
+		{/snippet}
 
-		<svelte:fragment slot="servarr-components">
+		{#snippet servarr_components()}
 			{@const sonarrSeries = $sonarrSeriesStore.item}
 			{#if sonarrSeries}
 				{#if sonarrSeries?.statistics?.episodeFileCount}
@@ -439,7 +446,7 @@
 				{/if}
 
 				<div class="flex gap-4 flex-wrap col-span-4 sm:col-span-6 mt-4">
-					<Button on:click={openRequestModal}>
+					<Button onclick={openRequestModal}>
 						<span class="mr-2">{$_('library.content.requestSeries')}</span><Plus size={20} />
 					</Button>
 					<Button>
@@ -452,30 +459,38 @@
 					<div class="placeholder h-10 w-40 rounded-xl"></div>
 				</div>
 			{/if}
-		</svelte:fragment>
+		{/snippet}
 
-		<svelte:fragment slot="carousels">
+		{#snippet carousels()}
 			{#await recommendationData}
 				<Carousel gradientFromColor="from-stone-950">
-					<div slot="title" class="font-medium text-lg">{$_('library.content.castAndCrew')}</div>
+					{#snippet title()}
+						<div class="font-medium text-lg">{$_('library.content.castAndCrew')}</div>
+					{/snippet}
 					<CarouselPlaceholderItems />
 				</Carousel>
 
 				<Carousel gradientFromColor="from-stone-950">
-					<div slot="title" class="font-medium text-lg">
-						{$_('library.content.recommendations')}
-					</div>
+					{#snippet title()}
+						<div class="font-medium text-lg">
+							{$_('library.content.recommendations')}
+						</div>
+					{/snippet}
 					<CarouselPlaceholderItems />
 				</Carousel>
 
 				<Carousel gradientFromColor="from-stone-950">
-					<div slot="title" class="font-medium text-lg">{$_('library.content.similarSeries')}</div>
+					{#snippet title()}
+						<div class="font-medium text-lg">{$_('library.content.similarSeries')}</div>
+					{/snippet}
 					<CarouselPlaceholderItems />
 				</Carousel>
 			{:then { castProps, tmdbRecommendationProps, tmdbSimilarProps }}
 				{#if castProps?.length}
 					<Carousel gradientFromColor="from-stone-950">
-						<div slot="title" class="font-medium text-lg">{$_('library.content.castAndCrew')}</div>
+						{#snippet title()}
+							<div class="font-medium text-lg">{$_('library.content.castAndCrew')}</div>
+						{/snippet}
 						{#each castProps as prop}
 							<PersonCard {...prop} />
 						{/each}
@@ -484,9 +499,11 @@
 
 				{#if tmdbRecommendationProps?.length}
 					<Carousel gradientFromColor="from-stone-950">
-						<div slot="title" class="font-medium text-lg">
-							{$_('library.content.recommendations')}
-						</div>
+						{#snippet title()}
+							<div class="font-medium text-lg">
+								{$_('library.content.recommendations')}
+							</div>
+						{/snippet}
 						{#each tmdbRecommendationProps as prop}
 							<Card {...prop} openInModal={isModal} />
 						{/each}
@@ -495,15 +512,17 @@
 
 				{#if tmdbSimilarProps?.length}
 					<Carousel gradientFromColor="from-stone-950">
-						<div slot="title" class="font-medium text-lg">
-							{$_('library.content.similarSeries')}
-						</div>
+						{#snippet title()}
+							<div class="font-medium text-lg">
+								{$_('library.content.similarSeries')}
+							</div>
+						{/snippet}
 						{#each tmdbSimilarProps as prop}
 							<Card {...prop} openInModal={isModal} />
 						{/each}
 					</Carousel>
 				{/if}
 			{/await}
-		</svelte:fragment>
+		{/snippet}
 	</TitlePageLayout>
 {/await}

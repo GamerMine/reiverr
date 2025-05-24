@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	export let progress = 0;
-	let mounted = false;
+	let { progress = 0 }: { progress?: number } = $props();
+	let mounted = $state(false);
+
 	onMount(() => {
 		mounted = true;
 	});

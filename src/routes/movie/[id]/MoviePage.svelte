@@ -29,9 +29,11 @@
 	import type { ComponentProps } from 'svelte';
 	import { _ } from 'svelte-i18n';
 
-	export let tmdbId: number;
-	export let isModal = false;
-	export let handleCloseModal: () => void = () => {};
+	let {
+		tmdbId,
+		isModal = false,
+		handleCloseModal = () => {}
+	}: { tmdbId: number; isModal?: boolean; handleCloseModal?: () => void } = $props();
 
 	const tmdbUrl = 'https://www.themoviedb.org/movie/' + tmdbId;
 	const data = getTmdbMovie(tmdbId);
@@ -43,13 +45,13 @@
 
 	async function preloadRecommendationData() {
 		const tmdbRecommendationProps = getTmdbMovieRecommendations(tmdbId)
-			.then((r) => Promise.all(r.map(fetchCardTmdbProps)))
+			.then((r) => Promise.all<ComponentProps<typeof Card>>(r.map(fetchCardTmdbProps)))
 			.then((r) => r.filter((p) => p.backdropUrl));
 		const tmdbSimilarProps = getTmdbMovieSimilar(tmdbId)
 			.then((r) => Promise.all(r.map(fetchCardTmdbProps)))
 			.then((r) => r.filter((p) => p.backdropUrl));
 
-		const castPropsPromise: Promise<ComponentProps<PersonCard>[]> = data.then((m) =>
+		const castPropsPromise = data.then((m) =>
 			Promise.all(
 				m?.credits?.cast?.slice(0, 20).map((m) => ({
 					tmdbId: m.id || 0,
@@ -75,7 +77,7 @@
 		await radarrMovieStore.refreshIn();
 	}
 
-	let addToRadarrLoading = false;
+	let addToRadarrLoading = $state(false);
 	function addToRadarr() {
 		addToRadarrLoading = true;
 		addMovieToRadarr(tmdbId)
@@ -108,7 +110,7 @@
 		{isModal}
 		{handleCloseModal}
 	>
-		<svelte:fragment slot="title-info">
+		{#snippet title_info()}
 			{new Date(movie?.release_date || Date.now()).getFullYear()}
 			<DotFilled />
 			{@const progress = $jellyfinItemStore.item?.UserData?.PlayedPercentage}
@@ -119,8 +121,8 @@
 			{/if}
 			<DotFilled />
 			<a href={tmdbUrl} target="_blank">{movie?.vote_average?.toFixed(1)} TMDB</a>
-		</svelte:fragment>
-		<svelte:fragment slot="episodes-carousel">
+		{/snippet}
+		{#snippet episodes_carousel()}
 			{@const progress = $jellyfinItemStore.item?.UserData?.PlayedPercentage}
 			{#if progress}
 				<div
@@ -131,9 +133,9 @@
 					<ProgressBar {progress} />
 				</div>
 			{/if}
-		</svelte:fragment>
+		{/snippet}
 
-		<svelte:fragment slot="title-right">
+		{#snippet title_right()}
 			<div
 				class="flex gap-2 items-center flex-row-reverse justify-end lg:flex-row lg:justify-start"
 			>
@@ -144,23 +146,23 @@
 					{@const radarrMovie = $radarrMovieStore.item}
 					<OpenInButton title={movie?.title} {jellyfinItem} {radarrMovie} type="movie" {tmdbId} />
 					{#if jellyfinItem}
-						<Button type="primary" on:click={play}>
+						<Button type="primary" onclick={play}>
 							<span>{$_('library.content.play')}</span><ChevronRight size={20} />
 						</Button>
 					{:else if !radarrMovie && $settings.radarr.baseUrl && $settings.radarr.apiKey}
-						<Button type="primary" disabled={addToRadarrLoading} on:click={addToRadarr}>
+						<Button type="primary" disabled={addToRadarrLoading} onclick={addToRadarr}>
 							<span>{$_('library.content.addRadarr')}</span><Plus size={20} />
 						</Button>
 					{:else if radarrMovie}
-						<Button type="primary" on:click={openRequestModal}>
+						<Button type="primary" onclick={openRequestModal}>
 							<span class="mr-2">{$_('library.content.requestMovie')}</span><Plus size={20} />
 						</Button>
 					{/if}
 				{/if}
 			</div>
-		</svelte:fragment>
+		{/snippet}
 
-		<svelte:fragment slot="info-components">
+		{#snippet info_components()}
 			<div class="col-span-2 lg:col-span-1">
 				<p class="text-zinc-400 text-sm">{$_('library.content.directedBy')}</p>
 				<h2 class="font-medium">
@@ -214,9 +216,9 @@
 					{movie?.runtime} Minutes
 				</h2>
 			</div>
-		</svelte:fragment>
+		{/snippet}
 
-		<svelte:fragment slot="servarr-components">
+		{#snippet servarr_components()}
 			{@const radarrMovie = $radarrMovieStore.item}
 			{#if radarrMovie}
 				{#if radarrMovie?.movieFile?.quality}
@@ -250,7 +252,7 @@
 				{/if}
 
 				<div class="flex gap-4 flex-wrap col-span-4 sm:col-span-6 mt-4">
-					<Button on:click={openRequestModal}>
+					<Button onclick={openRequestModal}>
 						<span class="mr-2">{$_('library.content.requestMovie')}</span><Plus size={20} />
 					</Button>
 					<Button>
@@ -263,30 +265,38 @@
 					<div class="placeholder h-10 w-40 rounded-xl"></div>
 				</div>
 			{/if}
-		</svelte:fragment>
+		{/snippet}
 
-		<svelte:fragment slot="carousels">
+		{#snippet carousels()}
 			{#await recommendationData}
 				<Carousel gradientFromColor="from-stone-950">
-					<div slot="title" class="font-medium text-lg">{$_('library.content.castAndCrew')}</div>
+					{#snippet title()}
+						<div class="font-medium text-lg">{$_('library.content.castAndCrew')}</div>
+					{/snippet}
 					<CarouselPlaceholderItems />
 				</Carousel>
 
 				<Carousel gradientFromColor="from-stone-950">
-					<div slot="title" class="font-medium text-lg">
-						{$_('library.content.recommendations')}
-					</div>
+					{#snippet title()}
+						<div class="font-medium text-lg">
+							{$_('library.content.recommendations')}
+						</div>
+					{/snippet}
 					<CarouselPlaceholderItems />
 				</Carousel>
 
 				<Carousel gradientFromColor="from-stone-950">
-					<div slot="title" class="font-medium text-lg">{$_('library.content.similarSeries')}</div>
+					{#snippet title()}
+						<div class="font-medium text-lg">{$_('library.content.similarSeries')}</div>
+					{/snippet}
 					<CarouselPlaceholderItems />
 				</Carousel>
 			{:then { castProps, tmdbRecommendationProps, tmdbSimilarProps }}
 				{#if castProps?.length}
 					<Carousel gradientFromColor="from-stone-950">
-						<div slot="title" class="font-medium text-lg">{$_('library.content.castAndCrew')}</div>
+						{#snippet title()}
+							<div class="font-medium text-lg">{$_('library.content.castAndCrew')}</div>
+						{/snippet}
 						{#each castProps as prop}
 							<PersonCard {...prop} />
 						{/each}
@@ -295,9 +305,11 @@
 
 				{#if tmdbRecommendationProps?.length}
 					<Carousel gradientFromColor="from-stone-950">
-						<div slot="title" class="font-medium text-lg">
-							{$_('library.content.recommendations')}
-						</div>
+						{#snippet title()}
+							<div class="font-medium text-lg">
+								{$_('library.content.recommendations')}
+							</div>
+						{/snippet}
 						{#each tmdbRecommendationProps as prop}
 							<Card {...prop} openInModal={isModal} />
 						{/each}
@@ -306,15 +318,17 @@
 
 				{#if tmdbSimilarProps?.length}
 					<Carousel gradientFromColor="from-stone-950">
-						<div slot="title" class="font-medium text-lg">
-							{$_('library.content.similarSeries')}
-						</div>
+						{#snippet title()}
+							<div class="font-medium text-lg">
+								{$_('library.content.similarMovies')}
+							</div>
+						{/snippet}
 						{#each tmdbSimilarProps as prop}
 							<Card {...prop} openInModal={isModal} />
 						{/each}
 					</Carousel>
 				{/if}
 			{/await}
-		</svelte:fragment>
+		{/snippet}
 	</TitlePageLayout>
 {/await}

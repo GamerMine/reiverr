@@ -7,26 +7,55 @@
 	import LazyImg from '../LazyImg.svelte';
 	import { Star } from 'radix-icons-svelte';
 	import { openTitleModal } from '$lib/stores/modal.store';
+	import type { Snippet } from 'svelte';
 
-	export let tmdbId: number | undefined = undefined;
-	export let tvdbId: number | undefined = undefined;
-	export let openInModal = true;
-	export let jellyfinId: string = '';
-	export let type: TitleType = 'movie';
-	export let backdropUrl: string;
+	let {
+		tmdbId = undefined,
+		tvdbId = undefined,
+		openInModal = true,
+		jellyfinId = '',
+		type = 'movie',
+		backdropUrl,
 
-	export let title = '';
-	export let subtitle = '';
-	export let rating: number | undefined = undefined;
-	export let progress = 0;
+		title = '',
+		subtitle = '',
+		rating = undefined,
+		progress = 0,
 
-	export let shadow = false;
-	export let size: 'dynamic' | 'md' | 'lg' | 'sm' = 'md';
-	export let orientation: 'portrait' | 'landscape' = 'landscape';
+		shadow = false,
+		size = 'md',
+		orientation = 'landscape',
+
+		top_left = undefined,
+		top_right = undefined,
+		bottom_left = undefined,
+		bottom_right = undefined
+	}: {
+		tmdbId?: number;
+		tvdbId?: number;
+		openInModal?: boolean;
+		jellyfinId?: string;
+		type?: TitleType;
+		backdropUrl: string;
+
+		title?: string;
+		subtitle?: string;
+		rating?: number;
+		progress?: number;
+
+		shadow?: boolean;
+		size?: 'dynamic' | 'md' | 'lg' | 'sm';
+		orientation?: 'portrait' | 'landscape';
+
+		top_left?: Snippet;
+		top_right?: Snippet;
+		bottom_left?: Snippet;
+		bottom_right?: Snippet;
+	} = $props();
 </script>
 
 <button
-	on:click={() => {
+	onclick={() => {
 		if (openInModal) {
 			if (tmdbId) {
 				openTitleModal({ type, id: tmdbId, provider: 'tmdb' });
@@ -53,7 +82,7 @@
 		}
 	)}
 >
-	<LazyImg src={backdropUrl} class="absolute inset-0 group-hover:scale-105 transition-transform" />
+	<LazyImg src={backdropUrl} klass="absolute inset-0 group-hover:scale-105 transition-transform" />
 	<div
 		class="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity bg-black"
 		style="filter: blur(50px); transform: scale(3);"
@@ -73,18 +102,22 @@
 		)}
 	>
 		<div class="flex justify-self-start justify-between">
-			<slot name="top-left">
+			{@render top_left?.()}
+			{#if !top_left}
 				<div>
 					<h1 class="text-zinc-100 font-bold line-clamp-2 text-lg">{title}</h1>
 					<h2 class="text-zinc-300 text-sm font-medium line-clamp-2">{subtitle}</h2>
 				</div>
-			</slot>
-			<slot name="top-right">
+			{/if}
+
+			{@render top_right?.()}
+			{#if !top_right}
 				<div></div>
-			</slot>
+			{/if}
 		</div>
 		<div class="flex justify-self-end justify-between">
-			<slot name="bottom-left">
+			{@render bottom_left?.()}
+			{#if !bottom_left}
 				<div>
 					{#if rating}
 						<h2 class="flex items-center gap-1.5 text-sm text-zinc-300 font-medium">
@@ -92,10 +125,12 @@
 						</h2>
 					{/if}
 				</div>
-			</slot>
-			<slot name="bottom-right">
+			{/if}
+
+			{@render bottom_right?.()}
+			{#if !bottom_right}
 				<div></div>
-			</slot>
+			{/if}
 		</div>
 	</div>
 	<!-- <div
@@ -104,11 +139,11 @@
 	{#if jellyfinId}
 		<div class="absolute inset-0 flex items-center justify-center z-[1]">
 			<PlayButton
-				on:click={(e) => {
+				onclick={(e) => {
 					e.preventDefault();
 					jellyfinId && playerState.streamJellyfinId(jellyfinId);
 				}}
-				class="sm:opacity-0 group-hover:opacity-100 transition-opacity"
+				klass="sm:opacity-0 group-hover:opacity-100 transition-opacity"
 			/>
 		</div>
 	{/if}

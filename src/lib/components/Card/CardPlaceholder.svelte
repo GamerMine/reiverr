@@ -2,9 +2,15 @@
 	import classNames from 'classnames';
 	import { fade } from 'svelte/transition';
 
-	export let index = 0;
-	export let size: 'dynamic' | 'md' | 'lg' = 'md';
-	export let orientation: 'portrait' | 'landscape' = 'landscape';
+	let {
+		index = 0,
+		size = 'md',
+		orientation = 'landscape'
+	}: {
+		index?: number;
+		size?: 'dynamic' | 'md' | 'lg';
+		orientation: 'portrait' | 'landscape';
+	} = $props();
 </script>
 
 <div

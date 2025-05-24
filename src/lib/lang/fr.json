@@ -43,7 +43,20 @@
 			"runtime": "Durée",
 			"castAndCrew": "Casting",
 			"recommendations": "Recommandations",
-			"similarTitles": "Titres similaires"
+			"similarTitles": "Titres similaires",
+
+			"similarSeries": "Séries similaires",
+			"similarMovies": "Films similaires",
+			"viewLess": "Moins",
+			"viewAll": "Plus"
+		},
+		"LibraryItemContext": {
+			"markWatched": "Marquer comme vu",
+			"markUnwatched": "Marquer comme non vu",
+			"openJellyfin": "Ouvrir dans Jellyfin",
+			"openRadarr": "Ouvrir dans Radarr",
+			"openSonarr": "Ouvrir dans Sonarr",
+			"openTMDB": "Ouvrir dans TMDB"
 		}
 	},
 	"sources": {},

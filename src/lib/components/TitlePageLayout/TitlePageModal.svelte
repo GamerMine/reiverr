@@ -3,11 +3,10 @@
 	import { fly } from 'svelte/transition';
 	import MoviePage from '../../../routes/movie/[id]/MoviePage.svelte';
 	import SeriesPage from '../../../routes/series/[id]/SeriesPage.svelte';
-	import { modalStack } from '../../stores/modal.store';
+	import { modalStack } from '$lib/stores/modal.store';
 	import PersonPage from '../../../routes/person/[id]/PersonPage.svelte';
 
-	export let titleId: TitleId;
-	export let modalId: symbol;
+	let { titleId, modalId }: { titleId: TitleId; modalId: symbol } = $props();
 
 	function handleCloseModal() {
 		modalStack.close(modalId);

@@ -1,7 +1,19 @@
 <script lang="ts">
 	import classNames from 'classnames';
+	import type { Snippet } from 'svelte';
 
-	export let disabled = false;
+	let {
+		disabled = false,
+		klass = '',
+
+		onclick,
+		children
+	}: {
+		disabled?: boolean;
+		klass?: string;
+		onclick?: (e: MouseEvent) => void;
+		children: Snippet;
+	} = $props();
 </script>
 
 <button
@@ -11,9 +23,9 @@
 			'opacity-30 cursor-not-allowed pointer-events-none': disabled,
 			'cursor-pointer': !disabled
 		},
-		$$restProps.class
+		klass
 	)}
-	on:click
+	{onclick}
 >
-	<slot />
+	{@render children?.()}
 </button>

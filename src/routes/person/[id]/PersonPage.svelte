@@ -23,9 +23,15 @@
 		$_('library.personPage.nonBinary')
 	] as const;
 
-	export let tmdbId: number;
-	export let isModal = false;
-	export let handleCloseModal: () => void = () => {};
+	let {
+		tmdbId,
+		isModal = false,
+		handleCloseModal = () => {}
+	}: {
+		tmdbId: number;
+		isModal: boolean;
+		handleCloseModal: () => void;
+	} = $props();
 
 	const tmdbUrl = 'https://www.themoviedb.org/person/' + tmdbId;
 	const data = loadInitialPageData();
@@ -92,10 +98,7 @@
 			(value, index, self) => index === self.findIndex((t) => t.id === value.id)
 		);
 
-		let knownForProps: ComponentProps<Poster>[] = [
-			...(knownForMovies ?? []),
-			...(knownForSeries ?? [])
-		]
+		let knownForProps = [...(knownForMovies ?? []), ...(knownForSeries ?? [])]
 			.sort(
 				(a: any, b: any) =>
 					new Date(b.first_air_date || b.release_date || 0).getTime() -
@@ -150,7 +153,7 @@
 		{isModal}
 		{handleCloseModal}
 	>
-		<svelte:fragment slot="title-info">
+		{#snippet title_info()}
 			{#if person?.homepage}
 				<a href={person?.homepage} target="_blank">Homepage</a>
 				<DotFilled />
@@ -158,10 +161,10 @@
 			{#if movieCredits + seriesCredits + crewCredits > 0}
 				<p>{movieCredits + seriesCredits + crewCredits} Credits</p>
 			{/if}
-		</svelte:fragment>
-		<svelte:fragment slot="title-right" />
+		{/snippet}
+		{#snippet title_right()}{/snippet}
 
-		<svelte:fragment slot="info-components">
+		{#snippet info_components()}
 			{#if tmdbSocials}
 				<div class="col-span-2 lg:col-span-1">
 					<p class="text-zinc-400 text-sm">{$_('library.personPage.externalLinks')}</p>
@@ -215,23 +218,21 @@
 					</h2>
 				</div>
 			{/if} -->
-		</svelte:fragment>
+		{/snippet}
 
-		<svelte:fragment slot="carousels">
+		{#snippet carousels()}
 			<div class="max-w-screen-2xl 2xl:mx-auto w-full">
 				<Carousel gradientFromColor="from-stone-950">
-					<div slot="title" class="font-medium text-lg">{$_('library.personPage.knownFor')}</div>
-					{#await knownForProps}
-						<CarouselPlaceholderItems orientation="portrait" />
-					{:then props}
-						{#each props as prop}
-							<Poster orientation="portrait" {...prop} openInModal={isModal} />
-						{/each}
-					{/await}
+					{#snippet title()}
+						<div class="font-medium text-lg">{$_('library.personPage.knownFor')}</div>
+					{/snippet}
+					{#each knownForProps as prop}
+						<Poster orientation="portrait" {...prop} openInModal={isModal} />
+					{/each}
 				</Carousel>
 			</div>
-		</svelte:fragment>
+		{/snippet}
 
-		<div slot="servarr-components"></div>
+		{#snippet servarr_components()}{/snippet}
 	</TitlePageLayout>
 {/await}

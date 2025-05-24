@@ -108,7 +108,7 @@
 			poster_path?: string;
 		}[],
 		type: TitleType | undefined = undefined
-	): Promise<ComponentProps<Poster>[]> => {
+	): Promise<ComponentProps<typeof Poster>[]> => {
 		const filtered = $settings.discover.excludeLibraryItems
 			? items.filter(
 					async (item) =>
@@ -238,7 +238,7 @@
 			</div>
 		{/snippet}
 		{#await fetchTrendingActorProps()}
-			<!--TODO: CarouselPlaceholderItems should not be created like that-->
+			<!--TODO: CarouselPlaceholderItems should not be created like that, add an animation to show that it is loading-->
 			<!--<CarouselPlaceholderItems />-->
 		{:then props}
 			{#each props as prop (prop.tmdbId)}

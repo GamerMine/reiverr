@@ -8,20 +8,31 @@
 	import ContextMenuButton from '../ContextMenu/ContextMenuButton.svelte';
 	import LibraryItemContextItems from '../ContextMenu/LibraryItemContextItems.svelte';
 
-	export let title = '';
+	let {
+		title = '',
 
-	export let jellyfinItem: JellyfinItem | undefined = undefined;
-	export let sonarrSeries: SonarrSeries | undefined = undefined;
-	export let radarrMovie: RadarrMovie | undefined = undefined;
+		jellyfinItem = undefined,
+		sonarrSeries = undefined,
+		radarrMovie = undefined,
 
-	export let type: TitleType;
-	export let tmdbId: number;
+		type,
+		tmdbId
+	}: {
+		title?: string;
+
+		jellyfinItem?: JellyfinItem;
+		sonarrSeries?: SonarrSeries;
+		radarrMovie?: RadarrMovie;
+
+		type: TitleType;
+		tmdbId: number;
+	} = $props();
 </script>
 
 <ContextMenuButton heading={title}>
-	<svelte:fragment slot="menu">
+	{#snippet menu()}
 		<LibraryItemContextItems {jellyfinItem} {sonarrSeries} {radarrMovie} {type} {tmdbId} />
-	</svelte:fragment>
+	{/snippet}
 	<Button slim>
 		<DotsVertical size={24} />
 	</Button>

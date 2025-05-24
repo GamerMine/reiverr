@@ -16,15 +16,15 @@ a {
 }
 
 .placeholder {
-	@reference bg-zinc-700/40 animate-pulse;
+	@apply bg-zinc-700/40 animate-pulse;
 }
 
 .placeholder-image {
-	@reference bg-zinc-700/75;
+	@apply bg-zinc-800/75;
 }
 
 .placeholder-text {
-	@reference bg-zinc-700/40 animate-pulse text-transparent rounded-lg select-none;
+	@apply bg-zinc-700/40 animate-pulse text-transparent rounded-lg select-none;
 }
 
 .selectable {

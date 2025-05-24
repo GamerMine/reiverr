@@ -1,11 +1,12 @@
 import type { TitleId } from '$lib/types';
 import { writable } from 'svelte/store';
 import TitlePageModal from '../components/TitlePageLayout/TitlePageModal.svelte';
+import type { Component } from 'svelte';
 
 type ModalItem = {
 	id: symbol;
 	group: symbol;
-	component: ConstructorOfATypedSvelteComponent;
+	component: Component<any, any, any>;
 	props: Record<string, any>;
 };
 function createDynamicModalStack() {
@@ -31,7 +32,7 @@ function createDynamicModalStack() {
 	}
 
 	function create(
-		component: ConstructorOfATypedSvelteComponent,
+		component: Component<any, any, any>,
 		props: Record<string, any>,
 		group: symbol | undefined = undefined
 	) {

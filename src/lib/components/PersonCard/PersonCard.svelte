@@ -4,14 +4,25 @@
 	import { openTitleModal } from '$lib/stores/modal.store';
 	import classNames from 'classnames';
 
-	export let tmdbId: number;
-	export let type: TitleType = 'person';
-	export let backdropUri: string;
-	export let name: string;
-	export let subtitle: string;
-	export let size: 'dynamic' | 'md' | 'lg' = 'md';
+	let {
+		tmdbId,
+		type = 'person',
+		backdropUri,
+		name,
+		subtitle,
+		size = 'md',
 
-	export let openInModal = true;
+		openInModal = true
+	}: {
+		tmdbId: number;
+		type?: TitleType;
+		backdropUri: string;
+		name: string;
+		subtitle: string;
+		size?: 'dynamic' | 'md' | 'lg';
+
+		openInModal?: boolean;
+	} = $props();
 </script>
 
 <button
@@ -23,7 +34,7 @@
 			'w-full': size === 'dynamic'
 		}
 	)}
-	on:click={() => {
+	onclick={() => {
 		if (openInModal) {
 			openTitleModal({ type, id: tmdbId, provider: 'tmdb' });
 		} else {

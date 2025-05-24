@@ -9,7 +9,7 @@ import type { ComponentProps } from 'svelte';
 import type Card from './Card.svelte';
 import { TMDB_BACKDROP_SMALL } from '$lib/constants';
 
-export const fetchCardTmdbMovieProps = async (movie: TmdbMovie2): Promise<ComponentProps<Card>> => {
+export const fetchCardTmdbMovieProps = async (movie: TmdbMovie2): Promise<ComponentProps<typeof Card>> => {
 	const backdropUri = await getTmdbMovieBackdrop(movie.id || 0);
 
 	const movieAny = movie as any;
@@ -32,7 +32,7 @@ export const fetchCardTmdbMovieProps = async (movie: TmdbMovie2): Promise<Compon
 
 export const fetchCardTmdbSeriesProps = async (
 	series: TmdbSeries2
-): Promise<ComponentProps<Card>> => {
+): Promise<ComponentProps<typeof Card>> => {
 	const backdropUri = await getTmdbSeriesBackdrop(series.id || 0);
 
 	const seriesAny = series as any;
@@ -56,7 +56,7 @@ export const fetchCardTmdbSeriesProps = async (
 
 export const fetchCardTmdbProps = async (
 	item: TmdbSeries2 | TmdbMovie2
-): Promise<ComponentProps<Card>> => {
+): Promise<ComponentProps<typeof Card>> => {
 	if ('name' in item) return fetchCardTmdbSeriesProps(item);
 	return fetchCardTmdbMovieProps(item);
 };

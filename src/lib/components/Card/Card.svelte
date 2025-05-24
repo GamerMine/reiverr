@@ -12,21 +12,39 @@
 	import ContextMenu from '../ContextMenu/ContextMenu.svelte';
 	import LibraryItemContextItems from '../ContextMenu/LibraryItemContextItems.svelte';
 	import ProgressBar from '../ProgressBar.svelte';
+	import type { ComponentProps, Component } from 'svelte';
 
-	export let tmdbId: number;
-	export let type: TitleType = 'movie';
-	export let title: string;
-	export let genres: string[] = [];
-	export let runtimeMinutes = 0;
-	export let seasons = 0;
-	export let completionTime = '';
-	export let backdropUrl: string;
-	export let rating: number;
+	let {
+		tmdbId,
+		type = 'movie',
+		title,
+		genres = [],
+		runtimeMinutes = 0,
+		seasons = 0,
+		completionTime = '',
+		backdropUrl,
+		rating,
 
-	export let available = true;
-	export let progress = 0;
-	export let size: 'dynamic' | 'md' | 'lg' = 'md';
-	export let openInModal = true;
+		available = true,
+		progress = 0,
+		size = 'md',
+		openInModal = true
+	}: {
+		tmdbId: number;
+		type?: TitleType;
+		title: string;
+		genres?: string[];
+		runtimeMinutes?: number;
+		seasons?: number;
+		completionTime?: string;
+		backdropUrl: string;
+		rating: number;
+
+		available?: boolean;
+		progress?: number;
+		size?: 'dynamic' | 'md' | 'lg';
+		openInModal?: boolean;
+	} = $props();
 
 	let jellyfinItemStore = createJellyfinItemStore(tmdbId);
 	let radarrMovieStore = createRadarrMovieStore(tmdbId);
@@ -34,7 +52,7 @@
 </script>
 
 <ContextMenu heading={title}>
-	<svelte:fragment slot="menu">
+	{#snippet menu()}
 		<LibraryItemContextItems
 			jellyfinItem={$jellyfinItemStore.item}
 			radarrMovie={$radarrMovieStore.item}
@@ -42,7 +60,7 @@
 			{type}
 			{tmdbId}
 		/>
-	</svelte:fragment>
+	{/snippet}
 	<button
 		class={classNames(
 			'rounded-sm overflow-hidden relative shadow-lg shrink-0 aspect-video selectable hover:text-inherit flex flex-col justify-between group placeholder-image',
@@ -53,7 +71,7 @@
 				'w-full': size === 'dynamic'
 			}
 		)}
-		on:click={() => {
+		onclick={() => {
 			if (openInModal) {
 				openTitleModal({ type, id: tmdbId, provider: 'tmdb' });
 			} else {

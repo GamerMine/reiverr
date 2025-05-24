@@ -9,20 +9,49 @@
 	import PlayButton from '../PlayButton.svelte';
 	import ProgressBar from '../ProgressBar.svelte';
 	import { playerState } from '../VideoPlayer/VideoPlayer';
+	import type { Snippet } from 'svelte';
 
-	export let backdropUrl: string;
+	let {
+		backdropUrl,
 
-	export let title = '';
-	export let subtitle = '';
-	export let episodeNumber: string | undefined = undefined;
-	export let runtime = 0;
-	export let progress = 0;
-	export let watched = false;
-	export let airDate: Date | undefined = undefined;
+		title = '',
+		subtitle = '',
+		episodeNumber = undefined,
+		runtime = 0,
+		progress = 0,
+		watched = false,
+		airDate = undefined,
 
-	export let jellyfinId: string | undefined = undefined;
+		jellyfinId = undefined,
 
-	export let size: 'md' | 'sm' | 'dynamic' = 'md';
+		size = 'md',
+
+		onclick,
+		left_top = undefined,
+		right_top = undefined,
+		left_bottom = undefined,
+		right_bottom = undefined
+	}: {
+		backdropUrl: string;
+
+		title?: string;
+		subtitle?: string;
+		episodeNumber?: string;
+		runtime?: number;
+		progress?: number;
+		watched?: boolean;
+		airDate?: Date;
+
+		jellyfinId?: string;
+
+		size?: 'md' | 'sm' | 'dynamic';
+
+		onclick: (e: MouseEvent) => void;
+		left_top?: Snippet;
+		right_top?: Snippet;
+		left_bottom?: Snippet;
+		right_bottom?: Snippet;
+	} = $props();
 
 	function handleSetWatched() {
 		if (!jellyfinId) return;
@@ -49,23 +78,24 @@
 	}
 </script>
 
+<!-- TODO: Add translations -->
 <ContextMenu heading={subtitle}>
-	<svelte:fragment slot="menu">
+	{#snippet menu()}
 		<ContextMenuItem
-			on:click={handleSetWatched}
+			onclick={handleSetWatched}
 			disabled={!handleSetWatched || watched || !jellyfinId}
 		>
 			Mark as watched
 		</ContextMenuItem>
 		<ContextMenuItem
-			on:click={handleSetUnwatched}
+			onclick={handleSetUnwatched}
 			disabled={!handleSetUnwatched || !watched || !jellyfinId}
 		>
 			Mark as unwatched
 		</ContextMenuItem>
-	</svelte:fragment>
+	{/snippet}
 	<button
-		on:click
+		{onclick}
 		class={classNames(
 			'aspect-video bg-center bg-cover rounded-lg overflow-hidden transition-opacity shadow-lg selectable shrink-0 placeholder-image relative',
 			'flex flex-col px-2 lg:px-3 py-2 gap-2 text-left',
@@ -95,13 +125,14 @@
 				'flex-1 flex flex-col justify-between relative group-hover:opacity-0 group-focus-visible:opacity-0 transition-all',
 				'text-xs lg:text-sm font-medium text-zinc-300',
 				{
-					'opacity-8': !jellyfinId || watched
+					'opacity-15': !jellyfinId || watched
 				}
 			)}
 		>
 			<div class="flex justify-between items-center">
 				<div>
-					<slot name="left-top">
+					{@render left_top?.()}
+					{#if !left_top}
 						{#if airDate && airDate > new Date()}
 							<p>
 								{airDate.toLocaleString('en-US', {
@@ -114,10 +145,11 @@
 						{:else if episodeNumber}
 							<p>{episodeNumber}</p>
 						{/if}
-					</slot>
+					{/if}
 				</div>
 				<div>
-					<slot name="right-top">
+					{@render right_top?.()}
+					{#if !right_top}
 						{#if runtime && !progress}
 							<p>
 								{runtime.toFixed(0)} min
@@ -127,11 +159,12 @@
 								{(runtime - (runtime / 100) * progress).toFixed(0)} min left
 							</p>
 						{/if}
-					</slot>
+					{/if}
 				</div>
 			</div>
 			<div class="flex items-end justify-between">
-				<slot name="left-bottom">
+				{@render left_bottom?.()}
+				{#if !left_bottom}
 					<div class="flex flex-col items-start">
 						{#if subtitle}
 							<h2 class="text-zinc-300 text-sm font-medium">{subtitle}</h2>
@@ -142,14 +175,15 @@
 							</h1>
 						{/if}
 					</div>
-				</slot>
-				<slot name="right-bottom">
+				{/if}
+				{@render right_bottom?.()}
+				{#if !right_bottom}
 					{#if watched}
 						<div class="shrink-0">
 							<Check size={20} class="opacity-80" />
 						</div>
 					{/if}
-				</slot>
+				{/if}
 			</div>
 		</div>
 		{#if progress}
@@ -160,8 +194,8 @@
 		<div class="absolute inset-0 flex items-center justify-center">
 			{#if jellyfinId}
 				<PlayButton
-					on:click={handlePlay}
-					class="sm:opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity"
+					onclick={handlePlay}
+					klass="sm:opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity"
 				/>
 			{/if}
 		</div>

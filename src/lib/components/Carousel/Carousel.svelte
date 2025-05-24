@@ -3,15 +3,24 @@
 	import IconButton from '../IconButton.svelte';
 	import { ChevronLeft, ChevronRight } from 'radix-icons-svelte';
 	import classNames from 'classnames';
-	import { tick } from 'svelte';
+	import { type Snippet, tick } from 'svelte';
 
 	let {
 		gradientFromColor = 'from-stone-950',
 		scrollClass = '',
 		heading = '',
+		klass = '',
+
 		children,
-		title,
-		...rest
+		title = undefined
+	}: {
+		gradientFromColor?: string;
+		scrollClass?: string;
+		heading?: string;
+		klass?: string;
+
+		children: Snippet;
+		title?: Snippet;
 	} = $props();
 
 	let carousel: HTMLDivElement | undefined = $state();
@@ -33,7 +42,7 @@
 	});
 </script>
 
-<div class={classNames('flex flex-col gap-4 group/carousel', rest.class)}>
+<div class={classNames('flex flex-col gap-4 group/carousel', klass)}>
 	<div class={'flex justify-between items-center gap-4 ' + scrollClass}>
 		{@render title?.()}
 		{#if !title}
@@ -48,14 +57,14 @@
 			)}
 		>
 			<IconButton
-				on:click={() => {
+				onclick={() => {
 					carousel?.scrollTo({ left: scrollX - carousel?.clientWidth * 0.8, behavior: 'smooth' });
 				}}
 			>
 				<ChevronLeft size={20} />
 			</IconButton>
 			<IconButton
-				on:click={() => {
+				onclick={() => {
 					carousel?.scrollTo({ left: scrollX + carousel?.clientWidth * 0.8, behavior: 'smooth' });
 				}}
 			>
