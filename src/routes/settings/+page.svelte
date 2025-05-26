@@ -18,30 +18,32 @@
 
 	type Section = 'general' | 'integrations';
 
-	let openTab: Section = 'general';
+	let openTab: Section = $state('general');
 
-	let sonarrConnected = false;
-	let radarrConnected = false;
-	let jellyfinConnected = false;
+	let sonarrConnected = $state(false);
+	let radarrConnected = $state(false);
+	let jellyfinConnected = $state(false);
 
-	let values: SettingsValues;
+	let values: SettingsValues | undefined = $state();
 	let initialValues: SettingsValues;
 	settings.subscribe(async (v) => {
-		values = structuredClone(v);
-		initialValues = structuredClone(v);
+		values = structuredClone($state.snapshot(v));
+		initialValues = structuredClone($state.snapshot(v));
 		const s = updateSonarrHealth();
 		const r = updateRadarrHealth();
 		const j = updateJellyfinHealth();
 
 		await Promise.all([s, r, j]);
 
-		checkForPartialConfiguration(v);
+		checkForPartialConfiguration($state.snapshot(v));
 	});
 
-	let valuesChanged = false;
-	$: valuesChanged = JSON.stringify(initialValues) !== JSON.stringify(values);
+	let valuesChanged = $state(false);
+	$effect(() => {
+		valuesChanged = JSON.stringify(initialValues) !== JSON.stringify(values);
+	});
 
-	let submitLoading = false;
+	let submitLoading = $state(false);
 	function handleSubmit() {
 		if (submitLoading || !valuesChanged) return;
 		submitLoading = true;
@@ -49,49 +51,52 @@
 	}
 
 	async function submit() {
-		if (
-			values.sonarr.apiKey &&
-			values.sonarr.baseUrl &&
-			!(await getSonarrHealth(values.sonarr.baseUrl, values.sonarr.apiKey))
-		) {
-			createErrorNotification(
-				'Invalid Configuration',
-				'Could not connect to Sonarr. Check Sonarr credentials.'
-			);
-			return;
-		}
-
-		if (
-			values.radarr.apiKey &&
-			values.radarr.baseUrl &&
-			!(await getRadarrHealth(values.radarr.baseUrl, values.radarr.apiKey))
-		) {
-			createErrorNotification(
-				'Invalid Configuration',
-				'Could not connect to Radarr. Check Radarr credentials.'
-			);
-			return;
-		}
-
-		if (values.jellyfin.apiKey && values.jellyfin.baseUrl) {
-			if (!(await getJellyfinHealth(values.jellyfin.baseUrl, values.jellyfin.apiKey))) {
+		if (values) {
+			let value = values;
+			if (
+				value.sonarr.apiKey &&
+				value.sonarr.baseUrl &&
+				!(await getSonarrHealth(value.sonarr.baseUrl, value.sonarr.apiKey))
+			) {
 				createErrorNotification(
 					'Invalid Configuration',
-					'Could not connect to Jellyfin. Check Jellyfin credentials.'
+					'Could not connect to Sonarr. Check Sonarr credentials.'
 				);
 				return;
 			}
-			const users = await getJellyfinUsers(values.jellyfin.baseUrl, values.jellyfin.apiKey);
-			if (!users.find((u) => u.Id === values.jellyfin.userId)) values.jellyfin.userId = null;
+
+			if (
+				value.radarr.apiKey &&
+				value.radarr.baseUrl &&
+				!(await getRadarrHealth(value.radarr.baseUrl, value.radarr.apiKey))
+			) {
+				createErrorNotification(
+					'Invalid Configuration',
+					'Could not connect to Radarr. Check Radarr credentials.'
+				);
+				return;
+			}
+
+			if (value.jellyfin.apiKey && value.jellyfin.baseUrl) {
+				if (!(await getJellyfinHealth(value.jellyfin.baseUrl, value.jellyfin.apiKey))) {
+					createErrorNotification(
+						'Invalid Configuration',
+						'Could not connect to Jellyfin. Check Jellyfin credentials.'
+					);
+					return;
+				}
+				const users = await getJellyfinUsers(value.jellyfin.baseUrl, value.jellyfin.apiKey);
+				if (!users.find((u) => u.Id === values?.jellyfin.userId)) value.jellyfin.userId = null;
+			}
+
+			await updateSonarrHealth();
+			await updateRadarrHealth();
+			await updateJellyfinHealth();
+
+			axios.post('/api/settings', value).then(() => {
+				settings.set(value);
+			});
 		}
-
-		updateSonarrHealth();
-		updateRadarrHealth();
-		updateJellyfinHealth();
-
-		axios.post('/api/settings', values).then(() => {
-			settings.set(values);
-		});
 	}
 
 	function checkForPartialConfiguration(v: SettingsValues) {
@@ -116,47 +121,56 @@
 		if (error) createErrorNotification('Incomplete Configuration', error, 'warning');
 	}
 
-	async function updateSonarrHealth(reset = false): Promise<boolean> {
-		if (!values.sonarr.baseUrl || !values.sonarr.apiKey || reset) {
-			sonarrConnected = false;
-			return false;
+	async function updateSonarrHealth(reset = false): Promise<boolean | undefined> {
+		if (values) {
+			let value = values;
+			if (!value.sonarr.baseUrl || !value.sonarr.apiKey || reset) {
+				sonarrConnected = false;
+				return false;
+			}
+			return getSonarrHealth(
+				value.sonarr.baseUrl || undefined,
+				value.sonarr.apiKey || undefined
+			).then((ok) => {
+				sonarrConnected = ok;
+				return ok;
+			});
 		}
-		return getSonarrHealth(
-			values.sonarr.baseUrl || undefined,
-			values.sonarr.apiKey || undefined
-		).then((ok) => {
-			sonarrConnected = ok;
-			return ok;
-		});
 	}
 
-	async function updateRadarrHealth(reset = false): Promise<boolean> {
-		if (!values.radarr.baseUrl || !values.radarr.apiKey || reset) {
-			radarrConnected = false;
-			return false;
+	async function updateRadarrHealth(reset = false): Promise<boolean | undefined> {
+		if (values) {
+			let value = values;
+			if (!value.radarr.baseUrl || !value.radarr.apiKey || reset) {
+				radarrConnected = false;
+				return false;
+			}
+			return getRadarrHealth(
+				value.radarr.baseUrl || undefined,
+				value.radarr.apiKey || undefined
+			).then((ok) => {
+				radarrConnected = ok;
+				return ok;
+			});
 		}
-		return getRadarrHealth(
-			values.radarr.baseUrl || undefined,
-			values.radarr.apiKey || undefined
-		).then((ok) => {
-			radarrConnected = ok;
-			return ok;
-		});
 	}
 
-	async function updateJellyfinHealth(reset = false): Promise<boolean> {
-		if (!values.jellyfin.baseUrl || !values.jellyfin.apiKey || reset) {
-			jellyfinConnected = false;
-			return false;
-		}
+	async function updateJellyfinHealth(reset = false): Promise<boolean | undefined> {
+		if (values) {
+			let value = values;
+			if (!value.jellyfin.baseUrl || !value.jellyfin.apiKey || reset) {
+				jellyfinConnected = false;
+				return false;
+			}
 
-		return getJellyfinHealth(
-			values.jellyfin.baseUrl || undefined,
-			values.jellyfin.apiKey || undefined
-		).then((ok) => {
-			jellyfinConnected = ok;
-			return ok;
-		});
+			return getJellyfinHealth(
+				value.jellyfin.baseUrl || undefined,
+				value.jellyfin.apiKey || undefined
+			).then((ok) => {
+				jellyfinConnected = ok;
+				return ok;
+			});
+		}
 	}
 
 	const getNavButtonStyle = (section: Section) =>
@@ -195,19 +209,16 @@
 		<div class="flex flex-col gap-2">
 			<button
 				class="mb-6 text-lg font-medium flex items-center text-zinc-300 hover:text-zinc-200"
-				on:click={() => history.back()}
+				onclick={() => history.back()}
 			>
 				<ChevronLeft size={22} />
 				{$_('settings.navbar.settings')}
 			</button>
-			<button
-				on:click={() => (openTab = 'general')}
-				class={openTab && getNavButtonStyle('general')}
-			>
+			<button onclick={() => (openTab = 'general')} class={openTab && getNavButtonStyle('general')}>
 				{$_('settings.navbar.general')}
 			</button>
 			<button
-				on:click={() => (openTab = 'integrations')}
+				onclick={() => (openTab = 'integrations')}
 				class={openTab && getNavButtonStyle('integrations')}
 			>
 				{$_('settings.navbar.integrations')}
@@ -217,7 +228,7 @@
 			<FormButton
 				disabled={!valuesChanged}
 				loading={submitLoading}
-				on:click={handleSubmit}
+				onclick={handleSubmit}
 				type={valuesChanged ? 'success' : 'base'}
 			>
 				{$_('settings.misc.saveChanges')}
@@ -225,7 +236,7 @@
 			<FormButton
 				disabled={!valuesChanged}
 				type="error"
-				on:click={() => {
+				onclick={() => {
 					settings.set(initialValues);
 				}}
 			>
@@ -237,7 +248,7 @@
 	<div class="sm:hidden px-8 pt-20 pb-4 flex items-center justify-between">
 		<button
 			class="text-lg font-medium flex items-center text-zinc-300 hover:text-zinc-200"
-			on:click={() => history.back()}
+			onclick={() => history.back()}
 		>
 			<ChevronLeft size={22} />
 			{$_('settings.navbar.settings')}
@@ -253,11 +264,11 @@
 	<div class="flex-1 flex flex-col border-t border-zinc-800 justify-between">
 		<div class="overflow-y-scroll overflow-x-hidden px-8">
 			<div class="max-w-screen-md mx-auto mb-auto w-full">
-				{#if openTab === 'general'}
+				{#if openTab === 'general' && values}
 					<GeneralSettingsPage bind:values />
 				{/if}
 
-				{#if openTab === 'integrations'}
+				{#if openTab === 'integrations' && values}
 					<IntegrationSettingsPage
 						bind:values
 						{sonarrConnected}
@@ -272,10 +283,10 @@
 		</div>
 		<div class="flex items-center p-4 gap-8 justify-center text-zinc-500 bg-stone-950">
 			<div>v{version}</div>
-			<a target="_blank" href="https://github.com/aleksilassila/reiverr/releases">
+			<a target="_blank" href="https://github.com/GamerMine/reiverr/releases">
 				{$_('settings.misc.changelog')}
 			</a>
-			<a target="_blank" href="https://github.com/aleksilassila/reiverr">GitHub</a>
+			<a target="_blank" href="https://github.com/GamerMine/reiverr">GitHub</a>
 		</div>
 	</div>
 </div>

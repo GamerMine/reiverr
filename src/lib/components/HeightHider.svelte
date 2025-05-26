@@ -1,8 +1,12 @@
-<script>
+<script lang="ts">
 	import classNames from 'classnames';
+	import type { Snippet } from 'svelte';
 
-	export let visible = false;
-	export let duration = 300;
+	let {
+		visible = false,
+		duration = 300,
+		children
+	}: { visible?: boolean; duration?: number; children: Snippet } = $props();
 </script>
 
 <div
@@ -12,5 +16,5 @@
 	})}
 	style="transition-duration: {duration}ms;"
 >
-	<slot />
+	{@render children?.()}
 </div>

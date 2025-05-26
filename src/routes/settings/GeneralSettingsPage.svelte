@@ -7,7 +7,7 @@
 	import { ISO_REGIONS } from '$lib/utils/iso-regions';
 	import { _, dictionary } from 'svelte-i18n';
 
-	export let values: SettingsValues;
+	let { values = $bindable() }: { values: SettingsValues } = $props();
 </script>
 
 <div

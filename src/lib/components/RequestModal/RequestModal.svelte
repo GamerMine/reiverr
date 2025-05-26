@@ -7,28 +7,40 @@
 	} from '$lib/apis/sonarr/sonarrApi';
 	import { formatMinutesToTime, formatSize } from '$lib/utils';
 	import { DotFilled, Download, Plus } from 'radix-icons-svelte';
-	import { createEventDispatcher } from 'svelte';
 	import HeightHider from '../HeightHider.svelte';
 	import IconButton from '../IconButton.svelte';
-	import { modalStack } from '../../stores/modal.store';
+	import { modalStack } from '$lib/stores/modal.store';
 	import ModalContent from '../Modal/ModalContainer.svelte';
 	import ModalHeader from '../Modal/ModalHeader.svelte';
 
-	const dispatch = createEventDispatcher();
+	let {
+		modalId,
+		groupId = undefined,
 
-	export let modalId: symbol;
-	export let groupId: symbol | undefined = undefined;
+		title = 'Releases',
 
-	export let title = 'Releases';
+		radarrId = undefined,
+		sonarrEpisodeId = undefined,
+		seasonPack = undefined,
 
-	export let radarrId: number | undefined = undefined;
-	export let sonarrEpisodeId: number | undefined = undefined;
-	export let seasonPack: { sonarrId: number; seasonNumber: number } | undefined = undefined;
+		ondownload
+	}: {
+		modalId: symbol;
+		groupId?: symbol;
 
-	let showAllReleases = false;
-	let showDetailsId: string | null = null;
-	let downloadFetchingGuid: string | undefined;
-	let downloadingGuid: string | undefined;
+		title?: string;
+
+		radarrId?: number;
+		sonarrEpisodeId?: number;
+		seasonPack?: { sonarrId: number; seasonNumber: number };
+
+		ondownload: () => void;
+	} = $props();
+
+	let showAllReleases = $state(false);
+	let showDetailsId: string | null = $state(null);
+	let downloadFetchingGuid: string | undefined = $state();
+	let downloadingGuid: string | undefined = $state();
 
 	async function fetchReleases() {
 		if (!radarrId && !sonarrEpisodeId && !seasonPack) {
@@ -42,11 +54,11 @@
 		const releases = radarrId
 			? await fetchRadarrReleases(radarrId)
 			: sonarrEpisodeId
-			? await fetchSonarrReleases(sonarrEpisodeId as number)
-			: await fetchSonarrSeasonReleases(
-					seasonPack?.sonarrId as number,
-					seasonPack?.seasonNumber as number
-			  );
+				? await fetchSonarrReleases(sonarrEpisodeId as number)
+				: await fetchSonarrSeasonReleases(
+						seasonPack?.sonarrId as number,
+						seasonPack?.seasonNumber as number
+					);
 
 		let filtered = releases.slice();
 
@@ -71,7 +83,7 @@
 		downloadFetchingGuid = guid;
 		if (radarrId) {
 			downloadRadarrMovie(guid, indexerId).then((ok) => {
-				dispatch('download');
+				ondownload();
 				downloadFetchingGuid = undefined;
 				if (ok) {
 					downloadingGuid = guid;
@@ -79,7 +91,7 @@
 			});
 		} else {
 			downloadSonarrEpisode(guid, indexerId).then((ok) => {
-				dispatch('download');
+				ondownload();
 				downloadFetchingGuid = undefined;
 				if (ok) {
 					downloadingGuid = guid;
@@ -116,11 +128,11 @@
 			>
 				{#each showAllReleases ? releases : filtered as release}
 					<div>
-						<!-- svelte-ignore a11y-click-events-have-key-events -->
-						<!-- svelte-ignore a11y-no-static-element-interactions -->
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_static_element_interactions -->
 						<div
 							class="flex px-4 py-2 gap-4 hover:bg-lighten items-center justify-between cursor-pointer text-sm"
-							on:click={() => toggleShowDetails(release.guid || null)}
+							onclick={() => toggleShowDetails(release.guid || null)}
 						>
 							<div class="flex gap-4">
 								<div class="tracking-wide font-medium">{release.indexer}</div>
@@ -131,7 +143,7 @@
 								<div class="text-zinc-400">{formatSize(release?.size || 0)}</div>
 								{#if release.guid !== downloadingGuid}
 									<IconButton
-										on:click={() =>
+										onclick={() =>
 											release.guid &&
 											release.indexerId &&
 											handleDownload(release.guid, release.indexerId)}
@@ -166,12 +178,12 @@
 					</div>
 				{/each}
 			</div>
-			<!-- svelte-ignore a11y-no-static-element-interactions -->
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			{#if releasesSkipped > 0}
-				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<div
 					class="text-sm text-zinc-200 opacity-50 font-light px-4 py-2 hover:underline cursor-pointer"
-					on:click={toggleShowAll}
+					onclick={toggleShowAll}
 				>
 					{showAllReleases ? 'Show less' : `Show all ${releasesSkipped} releases`}
 				</div>

@@ -34,9 +34,9 @@
 				)?.[3]
 	);
 
-	let downloadProps: ComponentProps<Poster>[] = [];
-	$: {
-		const sonarrProps: ComponentProps<Poster>[] =
+	let downloadProps: ComponentProps<typeof Poster>[] = $state([]);
+	$effect(() => {
+		const sonarrProps: ComponentProps<typeof Poster>[] =
 			$servarrDownloadsStore.sonarrDownloads?.map((item) => ({
 				tvdbId: item.series.tvdbId,
 				title: item.series.title || '',
@@ -49,7 +49,7 @@
 				orientation: 'portrait'
 			})) || [];
 
-		const radarrProps: ComponentProps<Poster>[] =
+		const radarrProps: ComponentProps<typeof Poster>[] =
 			$servarrDownloadsStore.radarrDownloads?.map((item) => ({
 				tmdbId: item.movie.tmdbId,
 				title: item.movie.title || '',
@@ -61,7 +61,7 @@
 			})) || [];
 
 		downloadProps = [...(sonarrProps || []), ...(radarrProps || [])];
-	}
+	});
 </script>
 
 {#if noItems}
@@ -89,7 +89,7 @@
 			{#await showcasePromise then showcase}
 				<LazyImg
 					src={(showcase && getJellyfinBackdrop(showcase)) || PLACEHOLDER_BACKDROP}
-					class="absolute inset-0"
+					klass="absolute inset-0"
 				/>
 			{/await}
 			<div class="absolute inset-0 bg-gradient-to-t from-stone-950 to-80% to-darken"></div>
@@ -129,7 +129,7 @@
 							<div class="flex gap-2 mt-4">
 								<Button
 									type="primary"
-									on:click={() => showcase?.Id && playerState.streamJellyfinId(showcase?.Id)}
+									onclick={() => showcase?.Id && playerState.streamJellyfinId(showcase?.Id)}
 								>
 									{$_('library.content.play')}<ChevronRight size={20} />
 								</Button>

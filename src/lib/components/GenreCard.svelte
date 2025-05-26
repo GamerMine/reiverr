@@ -2,16 +2,16 @@
 	import type { Genre } from '$lib/discover';
 	import { capitalize } from '$lib/utils';
 
-	export let genre: Genre;
+	let { genre }: { genre: Genre } = $props();
 </script>
 
-<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <a
 	class="rounded-xl overflow-hidden relative shadow-2xl shrink-0 aspect-[21/9] selectable h-40 block max-w-[100%]"
 	href={`/discover/genre/${genre.name}`}
 >
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
-	<!-- svelte-ignore a11y-click-events-have-key-events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<div
 		class="h-full w-full flex flex-col items-center justify-center cursor-pointer p-2 px-3 relative z-[1] peer hover:text-white sm:hover:text-current"
 	>

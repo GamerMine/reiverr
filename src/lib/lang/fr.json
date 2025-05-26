@@ -76,16 +76,16 @@
 			"userInterface": {
 				"userInterface": "Interface utilisateur",
 				"language": "Langue",
-				"autoplayTrailers": "Bandes-annonces à lecture automatique",
+				"autoplayTrailers": "Lecture automatique des bandes annonce",
 				"animationDuration": "Durée de l'animation"
 			},
 			"discovery": {
 				"discovery": "Découverte",
 				"none": "Aucun",
 				"region": "Région",
-				"excludeLibraryItemsFromDiscovery": "Exclure les éléments de bibliothèque de Découverte",
+				"excludeLibraryItemsFromDiscovery": "Exclure la bibliothèque de Découverte",
 				"includedLanguages": "Langues incluses",
-				"includedLanguagesDescription": "Filtrer les résultats en fonction de la langue parlée. Utiliser les codes de langue ISO 639-1 séparés par des virgules. Laisser vide pour désactiver."
+				"includedLanguagesDescription": "Filtrer les résultats en fonction de la langue parlée. Prends les codes ISO 639-1 séparés par des virgules. Laisser vide pour désactiver."
 			}
 		},
 		"integrations": {
@@ -103,13 +103,18 @@
 				"rootFolder": "Dossier racine",
 				"qualityProfile": "Profil de qualité",
 				"languageProfile": "Profil linguistique",
-				"jellyfinUser": "Utilisateur de Jellyfin"
+				"jellyfinUser": "Utilisateur de Jellyfin",
+				"searchForMovie": "Recherche automatique du film sur Radarr"
 			}
 		},
 		"misc": {
 			"saveChanges": "Sauvegarder les modifications",
-			"resetToDefaults": "Réinitialiser les paramètres par défaut ",
+			"resetToDefaults": "Réinitialiser aux paramètres par défaut",
 			"changelog": "Journal des modifications"
 		}
+	},
+	"update": {
+		"updateAvailable": "est désormais disponible !",
+		"skipVersion": "Passer cette version"
 	}
 }

@@ -1,10 +1,25 @@
 <script lang="ts">
 	import classNames from 'classnames';
 	import { CaretDown } from 'radix-icons-svelte';
+	import type { Snippet } from 'svelte';
 
-	export let value: any = '';
-	export let disabled = false;
-	export let loading = false;
+	let {
+		value = $bindable(''),
+		disabled = false,
+		loading = false,
+
+		children = undefined,
+
+		onchange = () => {}
+	}: {
+		value?: any;
+		disabled?: boolean;
+		loading?: boolean;
+
+		children?: Snippet;
+
+		onchange?: () => void;
+	} = $props();
 </script>
 
 <div
@@ -14,7 +29,7 @@
 	})}
 >
 	<select
-		on:change
+		{onchange}
 		bind:value
 		class={classNames(
 			'relative appearance-none p-1 pl-3 pr-8 selectable border border-zinc-800 bg-transparent rounded-lg w-full z-[1]',
@@ -23,7 +38,7 @@
 			}
 		)}
 	>
-		<slot />
+		{@render children?.()}
 	</select>
 	<div class="absolute inset-y-0 right-2 flex items-center justify-center">
 		<CaretDown size={20} />

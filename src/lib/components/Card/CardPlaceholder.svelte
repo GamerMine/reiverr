@@ -9,7 +9,7 @@
 	}: {
 		index?: number;
 		size?: 'dynamic' | 'md' | 'lg';
-		orientation: 'portrait' | 'landscape';
+		orientation?: 'portrait' | 'landscape';
 	} = $props();
 </script>
 

@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition';
+	import type { Snippet } from 'svelte';
+
+	let { children }: { children: Snippet } = $props();
 </script>
 
 <div
@@ -7,5 +10,5 @@
 	in:fly|global={{ y: 20, duration: 200, delay: 200 }}
 	out:fly|global={{ y: 20, duration: 200 }}
 >
-	<slot />
+	{@render children?.()}
 </div>

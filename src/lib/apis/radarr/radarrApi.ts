@@ -69,7 +69,7 @@ export const addMovieToRadarr = async (tmdbId: number) => {
 
 	if (!tmdbMovie) throw new Error('Movie not found');
 	const monitorMovie = get(settings)?.radarr.monitor;
-	const search = get(settings)?.radarr.StartSearch;
+	const search = get(settings)?.radarr.startSearch;
 
 	const options: RadarrMovieOptions = {
 		qualityProfileId: get(settings)?.radarr.qualityProfileId || 0,
@@ -82,7 +82,7 @@ export const addMovieToRadarr = async (tmdbId: number) => {
 		tags: [],
 		addOptions: {
 			monitored: monitorMovie != 0,
-			searchForMovie: search ? search : false
+			searchForMovie: search
 		}
 	};
 

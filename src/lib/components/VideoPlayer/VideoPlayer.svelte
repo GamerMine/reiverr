@@ -35,11 +35,11 @@
 	import { linear } from 'svelte/easing';
 	import ContextMenuButton from '../ContextMenu/ContextMenuButton.svelte';
 
-	export let modalId: symbol;
+	let { modalId }: { modalId: symbol } = $props();
 
 	let qualityContextMenuId = Symbol();
 
-	let video: HTMLVideoElement;
+	let video: HTMLVideoElement | undefined;
 	let videoWrapper: HTMLDivElement;
 	let mouseMovementTimeout: NodeJS.Timeout;
 	let stopCallback: () => void;
@@ -49,7 +49,7 @@
 
 	// These functions are different in every browser
 	let reqFullscreenFunc: ((elem: HTMLElement) => void) | undefined = undefined;
-	let exitFullscreen: (() => void) | undefined = undefined;
+	let exitFullscreen: (() => void) | undefined = $state();
 	let fullscreenChangeEvent: string | undefined = undefined;
 	let getFullscreenElement: (() => HTMLElement) | undefined = undefined;
 
@@ -98,25 +98,27 @@
 		if (document.mozCancelFullScreen) exitFullscreen = () => document.mozCancelFullScreen();
 	}
 
-	let paused: boolean;
-	let duration: number = 0;
-	let displayedTime: number = 0;
-	let bufferedTime: number = 0;
+	let paused: boolean = $state(false);
+	let duration: number = $state(0);
+	let displayedTime: number = $state(0);
+	let bufferedTime: number = $state(0);
 
 	let videoLoaded: boolean = false;
-	let seeking: boolean = false;
-	let playerStateBeforeSeek: boolean;
+	let seeking: boolean = $state(false);
+	let playerStateBeforeSeek: boolean = $state(false);
 
-	let fullscreen: boolean = false;
-	let volume: number = 1;
-	let mute: boolean = false;
+	let fullscreen: boolean = $state(false);
+	let volume: number = $state(1);
+	let mute: boolean = $state(false);
 
-	let resolution: number = 1080;
-	let currentBitrate: number = 0;
+	let resolution: number = $state(1080);
+	let currentBitrate: number = $state(0);
 
 	let shouldCloseUi = false;
-	let uiVisible = true;
-	$: uiVisible = !shouldCloseUi || seeking || paused || $contextMenu === qualityContextMenuId;
+	let uiVisible = $state(true);
+	$effect(() => {
+		uiVisible = !shouldCloseUi || seeking || paused || $contextMenu === qualityContextMenuId;
+	});
 
 	const fetchPlaybackInfo = (
 		itemId: string,
@@ -130,7 +132,7 @@
 				item?.UserData?.PlaybackPositionTicks || Math.floor(displayedTime * 10_000_000),
 				maxBitrate || getQualities(item?.Height || 1080)[0].maxBitrate
 			).then(async (playbackInfo) => {
-				if (!playbackInfo) return;
+				if (!playbackInfo || !video) return;
 				const { playbackUri, playSessionId: sessionId, mediaSourceId, directPlay } = playbackInfo;
 
 				if (!playbackUri || !sessionId) {
@@ -215,7 +217,7 @@
 	}
 
 	function onSeekEnd() {
-		if (!seeking) return;
+		if (!seeking || !video) return;
 
 		paused = playerStateBeforeSeek;
 		seeking = false;
@@ -224,6 +226,7 @@
 	}
 
 	function handleBuffer() {
+		if (!video) return;
 		let timeRanges = video.buffered;
 		// Find the first one whose end time is after the current time
 		// (the time ranges given by the browser are normalized, which means
@@ -271,8 +274,8 @@
 		video.pause();
 		let timeBeforeLoad = video.currentTime;
 		let stateBeforeLoad = paused;
-		await reportProgress?.();
-		await deleteEncoding?.();
+		reportProgress?.();
+		deleteEncoding?.();
 		await fetchPlaybackInfo?.($playerState.jellyfinId, bitrate, false);
 		displayedTime = timeBeforeLoad;
 		paused = stateBeforeLoad;
@@ -312,13 +315,13 @@
 		if (fullscreen) exitFullscreen?.();
 	});
 
-	$: {
+	$effect(() => {
 		if (fullscreen && !getFullscreenElement?.()) {
 			if (reqFullscreenFunc) reqFullscreenFunc(videoWrapper);
 		} else if (getFullscreenElement?.()) {
 			if (exitFullscreen) exitFullscreen();
 		}
-	}
+	});
 
 	// We add a listener to the fullscreen change event to update the fullscreen variable
 	// since it can be changed by the user by other means than the button
@@ -345,9 +348,13 @@
 		} else if (event.key === ' ') {
 			paused = !paused;
 		} else if (event.key === 'ArrowLeft') {
-			video.currentTime -= 10;
+			if (video) {
+				video.currentTime -= 10;
+			}
 		} else if (event.key === 'ArrowRight') {
-			video.currentTime += 10;
+			if (video) {
+				video.currentTime += 10;
+			}
 		} else if (event.key === 'ArrowUp') {
 			volume = Math.min(volume + 0.1, 1);
 		} else if (event.key === 'ArrowDown') {
@@ -358,7 +365,7 @@
 
 <svelte:window on:keydown={handleShortcuts} />
 
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	class={classNames(
 		'bg-black w-screen h-[100dvh] sm:h-screen relative flex items-center justify-center',
@@ -369,38 +376,43 @@
 	in:fade|global={{ duration: 300, easing: linear }}
 	out:fade|global={{ duration: 200, easing: linear }}
 >
-	<!-- svelte-ignore a11y-click-events-have-key-events -->
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<div
 		class="w-screen h-screen flex items-center justify-center"
 		bind:this={videoWrapper}
-		on:mousemove={() => handleUserInteraction(false)}
-		on:touchend|preventDefault={() => handleUserInteraction(true)}
+		onmousemove={() => handleUserInteraction(false)}
+		ontouchend={(e) => {
+			e.preventDefault();
+			handleUserInteraction(true);
+		}}
 		in:fade|global={{ duration: 500, delay: 1200, easing: linear }}
 	>
-		<!-- svelte-ignore a11y-media-has-caption -->
-		<video>
-			bind:this={video}
-			bind:paused bind:duration on:timeupdate={() =>
-				(displayedTime = !seeking && videoLoaded ? video.currentTime : displayedTime)}
-			on:progress={() => handleBuffer()}
-			on:play={() => {
-				if (seeking) video?.pause();
-			}}
-			on:loadeddata={() => {
-				video.currentTime = displayedTime;
-				videoLoaded = true;
-			}}
-			bind:volume bind:muted={mute}
-			class="sm:w-full sm:h-full" playsinline={true}
-			on:dblclick|preventDefault={() => (fullscreen = !fullscreen)}
-			on:click={() => (paused = !paused)}
-		</video>
+		<!-- svelte-ignore a11y_media_has_caption -->
+		{#if video}
+			<video>
+				bind:this={video}
+				bind:paused bind:duration on:timeupdate={() =>
+					(displayedTime = !seeking && videoLoaded ? video.currentTime : displayedTime)}
+				on:progress={() => handleBuffer()}
+				on:play={() => {
+					if (seeking) video?.pause();
+				}}
+				on:loadeddata={() => {
+					video.currentTime = displayedTime;
+					videoLoaded = true;
+				}}
+				bind:volume bind:muted={mute}
+				class="sm:w-full sm:h-full" playsinline={true}
+				on:dblclick|preventDefault={() => (fullscreen = !fullscreen)}
+				on:click={() => (paused = !paused)}
+			</video>
+		{/if}
 
 		{#if uiVisible}
 			<!-- Video controls -->
 			<div
 				class="absolute bottom-0 w-screen bg-gradient-to-t from-black/[.8] via-60% via-black-opacity-80 to-transparent"
-				on:touchend|stopPropagation
+				ontouchend={(e) => e.stopPropagation()}
 				transition:fade={{ duration: 100 }}
 			>
 				<div class="flex flex-col items-center p-4 gap-2 w-full">
@@ -413,17 +425,17 @@
 								bind:primaryValue={displayedTime}
 								secondaryValue={bufferedTime}
 								max={duration}
-								on:mousedown={onSeekStart}
-								on:mouseup={onSeekEnd}
-								on:touchstart={onSeekStart}
-								on:touchend={onSeekEnd}
+								onmousedown={onSeekStart}
+								onmouseup={onSeekEnd}
+								ontouchstart={onSeekStart}
+								ontouchend={onSeekEnd}
 							/>
 						</div>
 						<span class="whitespace-nowrap tabular-nums">{secondsToTime(duration)}</span>
 					</div>
 
 					<div class="flex items-center justify-between mb-2 w-full">
-						<IconButton on:click={() => (paused = !paused)}>
+						<IconButton onclick={() => (paused = !paused)}>
 							{#if (!seeking && paused) || (seeking && playerStateBeforeSeek)}
 								<Play size={20} />
 							{:else}
@@ -433,23 +445,23 @@
 
 						<div class="flex items-center space-x-3">
 							<ContextMenuButton heading="Quality">
-								<svelte:fragment slot="menu">
+								{#snippet menu()}
 									{#each getQualities(resolution) as quality}
 										<SelectableContextMenuItem
 											selected={quality.maxBitrate === currentBitrate}
-											on:click={() => handleSelectQuality(quality.maxBitrate)}
+											onclick={() => handleSelectQuality(quality.maxBitrate)}
 										>
 											{quality.name}
 										</SelectableContextMenuItem>
 									{/each}
-								</svelte:fragment>
+								{/snippet}
 
 								<IconButton>
 									<Gear size={20} />
 								</IconButton>
 							</ContextMenuButton>
 							<IconButton
-								on:click={() => {
+								onclick={() => {
 									mute = !mute;
 								}}
 							>
@@ -468,7 +480,7 @@
 								<Slider bind:primaryValue={volume} secondaryValue={0} max={1} />
 							</div>
 
-							<IconButton on:click={handleRequestFullscreen}>
+							<IconButton onclick={handleRequestFullscreen}>
 								{#if fullscreen}
 									<ExitFullScreen size={20} />
 								{:else if !fullscreen && exitFullscreen}
@@ -484,7 +496,7 @@
 
 	{#if uiVisible}
 		<div class="absolute top-4 right-8 z-50" transition:fade={{ duration: 100 }}>
-			<IconButton on:click={handleClose}>
+			<IconButton onclick={handleClose}>
 				<Cross2 size={25} />
 			</IconButton>
 		</div>

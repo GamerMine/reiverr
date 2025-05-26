@@ -1,16 +1,27 @@
 <script lang="ts">
 	import classNames from 'classnames';
-	import { createEventDispatcher } from 'svelte';
 
-	const dispatcher = createEventDispatcher();
+	let {
+		type = 'text',
+		value = $bindable(type === 'text' ? '' : 0),
+		placeholder = '',
 
-	export let type: 'text' | 'number' = 'text';
-	export let value: any = type === 'text' ? '' : 0;
-	export let placeholder = '';
+		klass = '',
+
+		onchange = (_) => {}
+	}: {
+		type?: 'text' | 'number';
+		value?: any;
+		placeholder?: string;
+
+		klass?: string;
+
+		onchange?: (val: string) => void;
+	} = $props();
 
 	function handleChange(event: Event) {
 		value = (event.target as HTMLInputElement).value;
-		dispatcher('change', value);
+		onchange(value);
 	}
 
 	const baseStyles =
@@ -23,16 +34,16 @@
 			type="text"
 			{placeholder}
 			bind:value
-			on:input={handleChange}
-			class={classNames(baseStyles, $$restProps.class)}
+			oninput={handleChange}
+			class={classNames(baseStyles, klass)}
 		/>
 	{:else if type === 'number'}
 		<input
 			type="number"
 			{placeholder}
 			bind:value
-			on:input={handleChange}
-			class={classNames(baseStyles, 'w-28', $$restProps.class)}
+			oninput={handleChange}
+			class={classNames(baseStyles, 'w-28', klass)}
 		/>
 	{/if}
 </div>

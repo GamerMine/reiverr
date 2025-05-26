@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { Settings } from './entities/Settings';
-import { dev } from '$app/environment';
 
 class TypeOrm {
 	private static instance: Promise<DataSource | null> | null = null;

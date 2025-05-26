@@ -1,8 +1,7 @@
-<script>
+<script lang="ts">
 	import classNames from 'classnames';
 
-	export let value = '';
-	export let filled = false;
+	let { value = '', filled = false }: { value?: string; filled?: boolean } = $props();
 </script>
 
 <div

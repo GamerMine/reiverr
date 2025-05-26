@@ -3,12 +3,16 @@
 	import type { PageData } from './$types';
 	import SeriesPage from './SeriesPage.svelte';
 
-	export let data: PageData;
+	let { data }: { data: PageData } = $props();
 
-	let titleId: TitleId;
-	$: titleId = { provider: 'tmdb', id: data.tmdbId, type: 'series' };
+	let titleId: TitleId | undefined = $state();
+	$effect(() => {
+		titleId = { provider: 'tmdb', id: data.tmdbId, type: 'series' };
+	});
 </script>
 
 {#key titleId}
-	<SeriesPage {titleId} />
+	{#if titleId}
+		<SeriesPage {titleId} />
+	{/if}
 {/key}

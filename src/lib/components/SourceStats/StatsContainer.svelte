@@ -1,19 +1,35 @@
 <script lang="ts">
 	import classNames from 'classnames';
+	import type { Snippet } from 'svelte';
 
 	type Stat = {
 		title: string;
 		value: string;
 	};
 
-	export let title: string;
-	export let subtitle: string;
-	export let stats: Stat[] = [];
-	export let href = '#';
-	export let fillPercentage = 0;
+	let {
+		title,
+		subtitle,
+		stats = [],
+		href = '#',
+		fillPercentage = 0,
 
-	export let color: string = '#fde68a20';
-	export let large = false;
+		color = '#fde68a20',
+		large = false,
+
+		icon
+	}: {
+		title: string;
+		subtitle: string;
+		stats?: Stat[];
+		href?: string;
+		fillPercentage?: number;
+
+		color?: string;
+		large?: boolean;
+
+		icon: Snippet;
+	} = $props();
 </script>
 
 <div
@@ -28,7 +44,7 @@
 		style={'width: ' + fillPercentage + '%;'}
 	></div>
 	{#if large}
-		<slot name="icon" />
+		{@render icon?.()}
 	{/if}
 	<div
 		class={classNames('relative z-[1] flex flex-1 h-full', {

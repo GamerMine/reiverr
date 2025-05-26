@@ -9,20 +9,22 @@
 	import { networks, type Network } from '$lib/discover';
 	import InfiniteScroll from '$lib/components/GridPage/InfiniteScroll.svelte';
 
-	export let data: PageData;
+	let { data }: { data: PageData } = $props();
 
 	const network = networks[data.network] || undefined;
 
-	let currentPage: number = 1;
-	let totalPages: number = 1;
-	let isLoading: boolean = false;
-	let hasMoreSeries: boolean = false;
-	let networkSeriesProps: ComponentProps<Card>[] = [];
+	let currentPage: number = $state(1);
+	let totalPages: number = $state(1);
+	let isLoading: boolean = $state(false);
+	let hasMoreSeries: boolean = $state(false);
+	let networkSeriesProps: ComponentProps<typeof Card>[] = $state([]);
 
-	$: hasMoreSeries = currentPage < totalPages;
-	$: if (currentPage) {
-		fetchData();
-	}
+	$effect(() => {
+		hasMoreSeries = currentPage < totalPages;
+		if (currentPage) {
+			fetchData();
+		}
+	});
 
 	async function fetchData() {
 		isLoading = true;
@@ -32,7 +34,7 @@
 			networkSeriesProps = [...networkSeriesProps, ...result.networkSeriesProps];
 		} catch (error) {
 			console.error('Error fetching network series:', error);
-			// Handle error appropriately, e.g., show an error message to the user
+			// TODO: Handle error appropriately, e.g., show an error message to the user
 		} finally {
 			isLoading = false;
 		}
@@ -41,7 +43,7 @@
 	async function fetchNetworkSeries(
 		network: Network,
 		page: number
-	): Promise<{ totalPages: number; networkSeriesProps: ComponentProps<Card>[] }> {
+	): Promise<{ totalPages: number; networkSeriesProps: ComponentProps<typeof Card>[] }> {
 		const query: DiscoverTvQuery = {
 			with_networks: network.tmdbNetworkId,
 			page: page
@@ -74,12 +76,7 @@
 				<CardPlaceholder size="dynamic" {index} />
 			{/each}
 		{/if}
-		<InfiniteScroll
-			hasMore={hasMoreSeries}
-			threshold={200}
-			window={true}
-			on:loadMore={nextPageOnScrollEnd}
-		/>
+		<InfiniteScroll hasMore={hasMoreSeries} onloadMore={nextPageOnScrollEnd} />
 	{:else}
 		404
 	{/if}

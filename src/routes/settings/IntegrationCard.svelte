@@ -1,9 +1,20 @@
 <script lang="ts">
 	import classNames from 'classnames';
+	import type { Snippet } from 'svelte';
 
-	export let title: string;
-	export let href = '#';
-	export let status: 'connected' | 'disconnected' | 'error' = 'disconnected';
+	let {
+		title,
+		href = '#',
+		status = 'disconnected',
+
+		children
+	}: {
+		title: string;
+		href?: string;
+		status?: 'connected' | 'disconnected' | 'error';
+
+		children: Snippet;
+	} = $props();
 </script>
 
 <div
@@ -22,5 +33,5 @@
 			})}
 		></div>
 	</div>
-	<slot />
+	{@render children?.()}
 </div>

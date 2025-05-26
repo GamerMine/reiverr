@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let videoId: string;
+	let { videoId }: { videoId: string } = $props();
 </script>
 
 <div class="overflow-hidden w-full h-full">
@@ -9,7 +9,6 @@
 				videoId +
 				'?autoplay=1&mute=1&loop=1&controls=0&modestbranding=1&playsinline=1&rel=0&enablejsapi=1'}
 			title="YouTube video player"
-			frameborder="0"
 			allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 			allowfullscreen
 			tabindex="-1"
@@ -29,5 +28,6 @@
 		width: 300%;
 		height: 100%;
 		margin-left: -100%;
+		border: none;
 	}
 </style>

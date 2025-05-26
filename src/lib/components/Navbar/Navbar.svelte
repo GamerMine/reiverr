@@ -8,11 +8,11 @@
 	import { modalStack } from '$lib/stores/modal.store';
 	import { _ } from 'svelte-i18n';
 
-	let y = 0;
+	let y = $state(0);
 	let transparent = true;
-	let baseStyle = '';
+	let baseStyle = $state('');
 
-	let isMobileMenuVisible = false;
+	let isMobileMenuVisible = $state(false);
 
 	function getLinkStyle(path: string) {
 		return classNames('selectable rounded-xs px-2 -mx-2 sm:text-base text-xl', {
@@ -32,7 +32,7 @@
 		}
 	}
 
-	$: {
+	$effect(() => {
 		transparent = y <= 0;
 		baseStyle = classNames(
 			'fixed px-8 inset-x-0 grid-cols-[min-content_1fr_min-content] items-center z-10',
@@ -43,7 +43,7 @@
 				'h-16 sm:h-24': transparent
 			}
 		);
-	}
+	});
 </script>
 
 <svelte:window bind:scrollY={y} on:keydown={handleShortcuts} />
@@ -76,7 +76,7 @@
 		</a>
 	</div>
 	<div class="flex gap-2 items-center">
-		<IconButton on:click={openSearchModal}>
+		<IconButton onclick={openSearchModal}>
 			<MagnifyingGlass size={20} />
 		</IconButton>
 		<IconButton>
@@ -92,16 +92,16 @@
 	</a>
 	<div></div>
 	<div class="flex items-center gap-2">
-		<IconButton on:click={openSearchModal}>
+		<IconButton onclick={openSearchModal}>
 			<MagnifyingGlass size={20} />
 		</IconButton>
 
 		{#if isMobileMenuVisible}
-			<IconButton on:click={() => (isMobileMenuVisible = false)}>
+			<IconButton onclick={() => (isMobileMenuVisible = false)}>
 				<Cross1 size={20} />
 			</IconButton>
 		{:else}
-			<IconButton on:click={() => (isMobileMenuVisible = true)}>
+			<IconButton onclick={() => (isMobileMenuVisible = true)}>
 				<HamburgerMenu size={20} />
 			</IconButton>
 		{/if}
@@ -114,32 +114,32 @@
 		transition:fade={{ duration: 150 }}
 	>
 		<div class="row-span-2 flex flex-col gap-4 items-center justify-center">
-			<a on:click={() => (isMobileMenuVisible = false)} href="/" class={page && getLinkStyle('/')}>
+			<a onclick={() => (isMobileMenuVisible = false)} href="/" class={page && getLinkStyle('/')}>
 				{$_('navbar.home')}
 			</a>
 			<a
-				on:click={() => (isMobileMenuVisible = false)}
+				onclick={() => (isMobileMenuVisible = false)}
 				href="/discover"
 				class={page && getLinkStyle('/discover')}
 			>
 				{$_('navbar.discover')}
 			</a>
 			<a
-				on:click={() => (isMobileMenuVisible = false)}
+				onclick={() => (isMobileMenuVisible = false)}
 				href="/library"
 				class={page && getLinkStyle('/library')}
 			>
 				{$_('navbar.library')}
 			</a>
 			<a
-				on:click={() => (isMobileMenuVisible = false)}
+				onclick={() => (isMobileMenuVisible = false)}
 				href="/sources"
 				class={page && getLinkStyle('/sources')}
 			>
 				{$_('navbar.sources')}
 			</a>
 			<a
-				on:click={() => (isMobileMenuVisible = false)}
+				onclick={() => (isMobileMenuVisible = false)}
 				href="/settings"
 				class={page && getLinkStyle('/settings')}
 			>

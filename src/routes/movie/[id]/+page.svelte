@@ -2,10 +2,12 @@
 	import type { PageData } from './$types';
 	import MoviePage from './MoviePage.svelte';
 
-	export let data: PageData;
+	let { data }: { data: PageData } = $props();
 
-	let tmdbId: number;
-	$: tmdbId = Number(data.tmdbId);
+	let tmdbId: number = $state(0);
+	$effect(() => {
+		tmdbId = Number(data.tmdbId);
+	});
 </script>
 
 {#key tmdbId}

@@ -28,21 +28,23 @@
 	let itemsVisible: 'all' | 'movies' | 'shows' = 'all';
 	const sortBy = createLocalStorageStore<SortBy>('library-sort-by', 'Date Added');
 	const sortOrder = createLocalStorageStore<SortOrder>('library-sort-order', 'Descending');
-	let searchQuery = '';
+	let searchQuery = $state('');
 
-	let openTab: 'available' | 'watched' | 'unavailable' = 'available';
-	let page = 0;
+	let openTab: 'available' | 'watched' | 'unavailable' = $state('available');
+	let page = $state(0);
 
-	let searchVisible = false;
+	let searchVisible = $state(false);
 
-	let searchInput: HTMLInputElement | undefined;
+	let searchInput: HTMLInputElement | undefined = $state();
 
-	let libraryLoading = true;
-	let posterProps: ComponentProps<Poster>[] = [];
-	let hasMore = true;
-	$: loadPosterProps(openTab, page, $sortBy, $sortOrder, searchQuery);
+	let libraryLoading = $state(true);
+	let posterProps: ComponentProps<typeof Poster>[] = $state([]);
+	let hasMore = $state(true);
+	$effect(() => {
+		loadPosterProps(openTab, page, $sortBy, $sortOrder, searchQuery);
+	});
 
-	function getPropsFromJellyfinItem(item: JellyfinItem): ComponentProps<Poster> {
+	function getPropsFromJellyfinItem(item: JellyfinItem): ComponentProps<typeof Poster> {
 		return {
 			tmdbId: Number(item.ProviderIds?.Tmdb) || 0,
 			jellyfinId: item.Id,
@@ -56,7 +58,9 @@
 		};
 	}
 
-	function getPropsfromServarrItem(item: RadarrMovie | SonarrSeries): ComponentProps<Poster> {
+	function getPropsfromServarrItem(
+		item: RadarrMovie | SonarrSeries
+	): ComponentProps<typeof Poster> {
 		if ((<any>item)?.tmdbId) {
 			const movie = item as RadarrMovie;
 
@@ -124,7 +128,7 @@
 				}
 			});
 
-		let props: ComponentProps<Poster>[] = [];
+		let props: ComponentProps<typeof Poster>[] = [];
 
 		if (tab === 'available') {
 			props = await jellyfinItemsPromise.then((items) =>
@@ -185,9 +189,9 @@
 	async function handleShortcuts(event: KeyboardEvent) {
 		if (event.key === 'f' && (event.metaKey || event.ctrlKey)) {
 			event.preventDefault();
-			handleOpenSearch();
+			await handleOpenSearch();
 		} else if (event.key === 'Escape') {
-			handleCloseSearch();
+			await handleCloseSearch();
 		}
 	}
 </script>
@@ -204,7 +208,7 @@
 			<MagnifyingGlass size={20} />
 		</div>
 		<div class="absolute inset-y-0 right-4 flex items-center justify-center">
-			<IconButton on:click={handleCloseSearch}>
+			<IconButton onclick={handleCloseSearch}>
 				<Cross2 size={20} />
 			</IconButton>
 		</div>
@@ -225,7 +229,7 @@
 					class={classNames('hover:text-zinc-300 selectable rounded-sm px-1 -mx-1', {
 						'text-zinc-200': openTab === 'available'
 					})}
-					on:click={() => handleTabChange('available')}
+					onclick={() => handleTabChange('available')}
 				>
 					{$_('library.available')}
 				</button>
@@ -233,7 +237,7 @@
 					class={classNames('hover:text-zinc-300 selectable rounded-sm px-1 -mx-1', {
 						'text-zinc-200': openTab === 'watched'
 					})}
-					on:click={() => handleTabChange('watched')}
+					onclick={() => handleTabChange('watched')}
 				>
 					{$_('library.watched')}
 				</button>
@@ -241,7 +245,7 @@
 					class={classNames('hover:text-zinc-300 selectable rounded-sm px-1 -mx-1', {
 						'text-zinc-200': openTab === 'unavailable'
 					})}
-					on:click={() => handleTabChange('unavailable')}
+					onclick={() => handleTabChange('unavailable')}
 				>
 					{$_('library.unavailable')}
 				</button>
@@ -249,11 +253,11 @@
 		</UiCarousel>
 		<div class="flex items-center gap-3 justify-end shrink-0 flex-initial relative">
 			<ContextMenu heading="Sort By" position="absolute">
-				<svelte:fragment slot="menu">
+				{#snippet menu()}
 					{#each SORT_OPTIONS as sortOption}
 						<SelectableContextMenuItem
 							selected={$sortBy === sortOption}
-							on:click={() => {
+							onclick={() => {
 								sortBy.set(sortOption);
 								page = 0;
 							}}
@@ -265,7 +269,7 @@
 					{#each SORT_ORDER as order}
 						<SelectableContextMenuItem
 							selected={$sortOrder === order}
-							on:click={() => {
+							onclick={() => {
 								sortOrder.set(order);
 								page = 0;
 							}}
@@ -273,7 +277,7 @@
 							{order}
 						</SelectableContextMenuItem>
 					{/each}
-				</svelte:fragment>
+				{/snippet}
 				<IconButton>
 					<div class="flex gap-1 items-center">
 						{$sortBy}
@@ -281,7 +285,7 @@
 					</div>
 				</IconButton>
 			</ContextMenu>
-			<IconButton on:click={handleOpenSearch}>
+			<IconButton onclick={handleOpenSearch}>
 				<MagnifyingGlass size={20} />
 			</IconButton>
 		</div>
@@ -311,8 +315,7 @@
 
 	{#if !libraryLoading && posterProps.length > 0}
 		<div class="mx-auto my-4">
-			<Button on:click={() => (page = page + 1)} disabled={!hasMore}
-				>{$_('library.loadMore')}</Button
+			<Button onclick={() => (page = page + 1)} disabled={!hasMore}>{$_('library.loadMore')}</Button
 			>
 		</div>
 	{/if}

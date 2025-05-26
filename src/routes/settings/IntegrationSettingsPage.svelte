@@ -12,7 +12,7 @@
 	import Select from '$lib/components/forms/Select.svelte';
 	import { settings, type SettingsValues } from '$lib/stores/settings.store';
 	import classNames from 'classnames';
-	import { Switch, Trash } from 'radix-icons-svelte';
+	import { Trash } from 'radix-icons-svelte';
 	import IntegrationCard from './IntegrationCard.svelte';
 	import TestConnectionButton from './TestConnectionButton.svelte';
 	import { getRadarrQualityProfiles, getRadarrRootFolders } from '$lib/apis/radarr/radarrApi';
@@ -20,26 +20,38 @@
 	import { defaultSettings } from '$lib/stores/settings.store';
 	import Toggle from '$lib/components/forms/Toggle.svelte';
 
-	export let values: SettingsValues;
+	let {
+		values = $bindable(),
 
-	export let sonarrConnected: boolean;
-	export let radarrConnected: boolean;
-	export let jellyfinConnected: boolean;
+		sonarrConnected,
+		radarrConnected,
+		jellyfinConnected,
 
-	export let updateSonarrHealth: (reset?: boolean) => Promise<boolean>;
-	export let updateRadarrHealth: (reset?: boolean) => Promise<boolean>;
-	export let updateJellyfinHealth: (reset?: boolean) => Promise<boolean>;
+		updateSonarrHealth,
+		updateRadarrHealth,
+		updateJellyfinHealth
+	}: {
+		values: SettingsValues;
 
-	let sonarrRootFolders: undefined | { id: number; path: string }[] = undefined;
-	let sonarrQualityProfiles: undefined | { id: number; name: string }[] = undefined;
-	let sonarrLanguageProfiles: undefined | { id: number; name: string }[] = undefined;
-	let sonarrMonitors: undefined | { id: number; type: string }[] = undefined;
+		sonarrConnected: boolean;
+		radarrConnected: boolean;
+		jellyfinConnected: boolean;
 
-	let radarrRootFolders: undefined | { id: number; path: string }[] = undefined;
-	let radarrQualityProfiles: undefined | { id: number; name: string }[] = undefined;
-	let radarrMonitors: undefined | { id: number; type: string }[] = undefined;
+		updateSonarrHealth: (reset?: boolean) => Promise<boolean | undefined>;
+		updateRadarrHealth: (reset?: boolean) => Promise<boolean | undefined>;
+		updateJellyfinHealth: (reset?: boolean) => Promise<boolean | undefined>;
+	} = $props();
 
-	let jellyfinUsers: undefined | { id: string; name: string }[] = undefined;
+	let sonarrRootFolders: undefined | { id: number; path: string }[] = $state();
+	let sonarrQualityProfiles: undefined | { id: number; name: string }[] = $state();
+	let sonarrLanguageProfiles: undefined | { id: number; name: string }[] = $state();
+	let sonarrMonitors: undefined | { id: number; type: string }[] = $state();
+
+	let radarrRootFolders: undefined | { id: number; path: string }[] = $state();
+	let radarrQualityProfiles: undefined | { id: number; name: string }[] = $state();
+	let radarrMonitors: undefined | { id: number; type: string }[] = $state();
+
+	let jellyfinUsers: undefined | { id: string; name: string }[] = $state();
 
 	function handleRemoveIntegration(service: 'sonarr' | 'radarr' | 'jellyfin') {
 		if (service === 'sonarr') {
@@ -59,7 +71,7 @@
 		}
 	}
 
-	$: {
+	$effect(() => {
 		if (sonarrConnected) {
 			getSonarrRootFolders(
 				values.sonarr.baseUrl || undefined,
@@ -88,9 +100,7 @@
 				radarrMonitors = mon.map((p, index) => ({ id: index || 0, type: p || '' }));
 			});
 		}
-	}
 
-	$: {
 		if (radarrConnected) {
 			getRadarrRootFolders(
 				values.radarr.baseUrl || undefined,
@@ -106,9 +116,7 @@
 				radarrQualityProfiles = profiles.map((p) => ({ id: p.id || 0, name: p.name || '' }));
 			});
 		}
-	}
 
-	$: {
 		if (jellyfinConnected) {
 			getJellyfinUsers(
 				values.jellyfin.baseUrl || undefined,
@@ -117,7 +125,7 @@
 				jellyfinUsers = users.map((u) => ({ id: u.Id || '', name: u.Name || '' }));
 			});
 		}
-	}
+	});
 </script>
 
 <div class="grid grid-cols-2 gap-4">
@@ -145,9 +153,9 @@
 				</h2>
 				<Input
 					placeholder={'http://127.0.0.1:8989'}
-					class="w-full"
+					klass="w-full"
 					bind:value={values.sonarr.baseUrl}
-					on:change={() => updateSonarrHealth(true)}
+					onchange={() => updateSonarrHealth(true)}
 				/>
 			</div>
 			<div class="flex flex-col gap-1">
@@ -155,14 +163,14 @@
 					{$_('settings.integrations.apiKey')}
 				</h2>
 				<Input
-					class="w-full"
+					klass="w-full"
 					bind:value={values.sonarr.apiKey}
-					on:change={() => updateSonarrHealth(true)}
+					onchange={() => updateSonarrHealth(true)}
 				/>
 			</div>
 			<div class="grid grid-cols-[1fr_min-content] gap-2">
 				<TestConnectionButton handleHealthCheck={updateSonarrHealth} />
-				<FormButton on:click={() => handleRemoveIntegration('sonarr')} type="error">
+				<FormButton onclick={() => handleRemoveIntegration('sonarr')} type="error">
 					<Trash size={20} />
 				</FormButton>
 			</div>
@@ -226,7 +234,7 @@
 					</Select>
 				{/if}
 				<h2>Start searching for new episodes</h2>
-				{#if defaultSettings.sonarr.StartSearch == undefined}
+				{#if defaultSettings.sonarr.StartSearch === undefined}
 					<Select loading />
 				{:else}
 					<Toggle bind:checked={values.sonarr.StartSearch} />
@@ -247,9 +255,9 @@
 				</h2>
 				<Input
 					placeholder={'http://127.0.0.1:7878'}
-					class="w-full"
+					klass="w-full"
 					bind:value={values.radarr.baseUrl}
-					on:change={() => updateSonarrHealth(true)}
+					onchange={() => updateSonarrHealth(true)}
 				/>
 			</div>
 			<div class="flex flex-col gap-1">
@@ -257,14 +265,14 @@
 					{$_('settings.integrations.apiKey')}
 				</h2>
 				<Input
-					class="w-full"
+					klass="w-full"
 					bind:value={values.radarr.apiKey}
-					on:change={() => updateSonarrHealth(true)}
+					onchange={() => updateSonarrHealth(true)}
 				/>
 			</div>
 			<div class="grid grid-cols-[1fr_min-content] gap-2">
 				<TestConnectionButton handleHealthCheck={updateRadarrHealth} />
-				<FormButton on:click={() => handleRemoveIntegration('radarr')} type="error">
+				<FormButton onclick={() => handleRemoveIntegration('radarr')} type="error">
 					<Trash size={20} />
 				</FormButton>
 			</div>
@@ -294,6 +302,8 @@
 
 				<h2>
 					{$_('settings.integrations.options.qualityProfile')}
+					<!-- FIXME: Instead of selecting a profile that will be used by every movies. This settings should be either
+					 						removed or a default selection when a user tries to ask for a movie -->
 				</h2>
 				{#if !radarrQualityProfiles}
 					<Select loading />
@@ -305,6 +315,7 @@
 					</Select>
 				{/if}
 				<h2>Monitor Movies</h2>
+				<!-- FIXME: This should not be set by the user. A movie should be automatically monitored on Radarr -->
 				{#if !radarrMonitors}
 					<Select loading />
 				{:else}
@@ -314,11 +325,13 @@
 						{/each}
 					</Select>
 				{/if}
-				<h2>Start searching for new episodes</h2>
-				{#if defaultSettings.radarr.StartSearch == undefined}
+				<h2>{$_('settings.integrations.options.searchForMovie')}</h2>
+				<!-- FIXME: This should not be set by the user. A movie should be automatically searched on Radarr if it's
+											release date is older than the current date. Otherwise, it must be only marked as "monitored". -->
+				{#if defaultSettings.radarr.startSearch === undefined}
 					<Select loading />
 				{:else}
-					<Toggle bind:checked={values.radarr.StartSearch} />
+					<Toggle bind:checked={values.radarr.startSearch} />
 				{/if}
 			</div>
 		</IntegrationCard>
@@ -336,9 +349,9 @@
 				</h2>
 				<Input
 					placeholder={'http://127.0.0.1:8096'}
-					class="w-full"
+					klass="w-full"
 					bind:value={values.jellyfin.baseUrl}
-					on:change={() => updateSonarrHealth(true)}
+					onchange={() => updateSonarrHealth(true)}
 				/>
 			</div>
 			<div class="flex flex-col gap-1">
@@ -346,14 +359,14 @@
 					{$_('settings.integrations.apiKey')}
 				</h2>
 				<Input
-					class="w-full"
+					klass="w-full"
 					bind:value={values.jellyfin.apiKey}
-					on:change={() => updateSonarrHealth(true)}
+					onchange={() => updateSonarrHealth(true)}
 				/>
 			</div>
 			<div class="grid grid-cols-[1fr_min-content] gap-2">
 				<TestConnectionButton handleHealthCheck={updateJellyfinHealth} />
-				<FormButton on:click={() => handleRemoveIntegration('jellyfin')} type="error">
+				<FormButton onclick={() => handleRemoveIntegration('jellyfin')} type="error">
 					<Trash size={20} />
 				</FormButton>
 			</div>

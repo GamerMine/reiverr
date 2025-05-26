@@ -1,9 +1,7 @@
 <script lang="ts">
-	import { onMount, onDestroy, createEventDispatcher } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 
-	const dispatch = createEventDispatcher<{ loadMore: null }>();
-
-	export let hasMore: boolean | undefined = true;
+	let { hasMore = true, onloadMore }: { hasMore?: boolean; onloadMore: () => void } = $props();
 
 	let observer: IntersectionObserver;
 	let loadMoreElement: HTMLElement;
@@ -11,7 +9,7 @@
 	const loadMore = (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => {
 		entries.forEach((entry) => {
 			if (entry.isIntersecting && hasMore) {
-				dispatch('loadMore');
+				onloadMore();
 			}
 		});
 	};

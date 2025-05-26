@@ -1,17 +1,20 @@
 <script lang="ts">
 	import { ChevronRight } from 'radix-icons-svelte';
 	import Button from '../Button.svelte';
-	import { modalStack } from '../../stores/modal.store';
+	import { modalStack } from '$lib/stores/modal.store';
 	import ModalContainer from '../Modal/ModalContainer.svelte';
 	import ModalContent from '../Modal/ModalContent.svelte';
 	import ModalHeader from '../Modal/ModalHeader.svelte';
 	import EpisodeSelectModal from './EpisodeSelectModal.svelte';
 	import RequestModal from './RequestModal.svelte';
 
-	export let modalId: symbol;
-	export let sonarrId: number;
-	export let seasons: number;
-	export let heading = 'Seasons';
+	let {
+		modalId,
+		sonarrId,
+
+		seasons,
+		heading = 'Seasons'
+	}: { modalId: symbol; sonarrId: number; seasons: number; heading?: string } = $props();
 
 	function selectSeasonPack(seasonNumber: number) {
 		modalStack.create(
@@ -52,10 +55,10 @@
 						Season {seasonNumber}
 					</div>
 					<div class="flex gap-2">
-						<Button size="sm" type="tertiary" on:click={() => selectSeasonPack(seasonNumber)}>
+						<Button size="sm" type="tertiary" onclick={() => selectSeasonPack(seasonNumber)}>
 							<span>Season Packs</span><ChevronRight size={20} />
 						</Button>
-						<Button size="sm" type="tertiary" on:click={() => selectSeason(seasonNumber)}>
+						<Button size="sm" type="tertiary" onclick={() => selectSeason(seasonNumber)}>
 							<span>Episodes</span><ChevronRight size={20} />
 						</Button>
 					</div>

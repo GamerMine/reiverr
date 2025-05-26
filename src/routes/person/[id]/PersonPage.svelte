@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { getTmdbPerson } from '$lib/apis/tmdb/tmdbApi';
 	import Carousel from '$lib/components/Carousel/Carousel.svelte';
-	import CarouselPlaceholderItems from '$lib/components/Carousel/CarouselPlaceholderItems.svelte';
 	import Poster from '$lib/components/Poster/Poster.svelte';
 	import TitlePageLayout from '$lib/components/TitlePageLayout/TitlePageLayout.svelte';
 	import FacebookIcon from '$lib/components/svgs/FacebookIcon.svelte';
@@ -12,7 +11,6 @@
 	import YoutubeIcon from '$lib/components/svgs/YoutubeIcon.svelte';
 	import { TMDB_POSTER_SMALL } from '$lib/constants';
 	import { DotFilled, InstagramLogo } from 'radix-icons-svelte';
-	import type { ComponentProps } from 'svelte';
 	import { _ } from 'svelte-i18n';
 	import { settings } from '$lib/stores/settings.store';
 
@@ -29,8 +27,8 @@
 		handleCloseModal = () => {}
 	}: {
 		tmdbId: number;
-		isModal: boolean;
-		handleCloseModal: () => void;
+		isModal?: boolean;
+		handleCloseModal?: () => void;
 	} = $props();
 
 	const tmdbUrl = 'https://www.themoviedb.org/person/' + tmdbId;
@@ -136,6 +134,7 @@
 	}
 </script>
 
+<!-- TODO: When no data are available, show the that no data has been found on TMDB -->
 {#await data}
 	<TitlePageLayout {isModal} {handleCloseModal} />
 {:then { tmdbPerson, tmdbSocials, knownForProps, movieCredits, seriesCredits, crewCredits }}

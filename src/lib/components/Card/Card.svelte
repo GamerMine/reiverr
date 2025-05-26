@@ -12,7 +12,6 @@
 	import ContextMenu from '../ContextMenu/ContextMenu.svelte';
 	import LibraryItemContextItems from '../ContextMenu/LibraryItemContextItems.svelte';
 	import ProgressBar from '../ProgressBar.svelte';
-	import type { ComponentProps, Component } from 'svelte';
 
 	let {
 		tmdbId,

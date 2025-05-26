@@ -7,7 +7,7 @@
 	import StatsContainer from './StatsContainer.svelte';
 	import StatsPlaceholder from './StatsPlaceholder.svelte';
 
-	export let large = false;
+	let { large = false }: { large?: boolean } = $props();
 
 	async function fetchStats() {
 		const discSpacePromise = getDiskSpace();
@@ -54,6 +54,8 @@
 		fillPercentage={((spaceTotal - spaceLeft) / spaceTotal) * 100}
 		color="#8aacfd21"
 	>
-		<SonarrIcon slot="icon" class="absolute opacity-20 p-4 h-full inset-y-0 right-2" />
+		{#snippet icon()}
+			<SonarrIcon class="absolute opacity-20 p-4 h-full inset-y-0 right-2" />
+		{/snippet}
 	</StatsContainer>
 {/await}

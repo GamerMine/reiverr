@@ -138,7 +138,8 @@
 				"rootFolder": "Root Folder",
 				"qualityProfile": "Quality Profile",
 				"languageProfile": "Language Profile",
-				"jellyfinUser": "Jellyfin User"
+				"jellyfinUser": "Jellyfin User",
+				"searchForMovie": "Automatic movie search on Radarr"
 			}
 		},
 		"misc": {
@@ -146,5 +147,9 @@
 			"resetToDefaults": "Reset to Defaults ",
 			"changelog": "Changelog"
 		}
+	},
+	"update": {
+		"updateAvailable": "is now available!",
+		"skipVersion": "Skip this version"
 	}
 }

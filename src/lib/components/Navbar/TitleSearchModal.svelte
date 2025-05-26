@@ -10,12 +10,12 @@
 	import type { TitleType } from '$lib/types';
 	import { _ } from 'svelte-i18n';
 
-	export let modalId: symbol;
+	let { modalId }: { modalId: symbol } = $props();
 
-	let inputValue = '';
+	let inputValue = $state('');
 	let inputElement: HTMLInputElement;
 
-	let fetching = false;
+	let fetching = $state(false);
 	let resultProps:
 		| {
 				tmdbId: number;
@@ -26,7 +26,7 @@
 				year: number;
 				seasons?: number;
 		  }[]
-		| undefined = undefined;
+		| undefined = $state();
 
 	let searchTimeout: NodeJS.Timeout;
 
@@ -62,7 +62,9 @@
 		modalStack.close(modalId);
 	}
 
-	$: if (inputElement) inputElement.focus();
+	$effect(() => {
+		if (inputElement) inputElement.focus();
+	});
 
 	onMount(() => () => clearTimeout(searchTimeout));
 </script>
@@ -73,7 +75,7 @@
 		<input
 			bind:value={inputValue}
 			bind:this={inputElement}
-			on:input={handleInput}
+			oninput={handleInput}
 			type="text"
 			class="flex-1 bg-transparent font-light outline-hidden"
 			placeholder={$_('search.placeHolder')}
@@ -88,12 +90,12 @@
 	{:else}
 		<div class="py-2">
 			{#each resultProps.slice(0, 5) as result}
-				<!-- svelte-ignore a11y-click-events-have-key-events -->
-				<!-- svelte-ignore a11y-no-static-element-interactions -->
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
+				<!-- svelte-ignore a11y_no_static_element_interactions -->
 				<a
 					class="flex px-4 py-2 gap-4 hover:bg-lighten focus-visible:bg-lighten cursor-pointer outline-hidden"
 					href={`/${result.type}/${result.tmdbId}`}
-					on:click={handleClose}
+					onclick={handleClose}
 				>
 					<div
 						style={"background-image: url('" + TMDB_POSTER_SMALL + result.posterUri + "');"}

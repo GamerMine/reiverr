@@ -10,29 +10,37 @@
 	const TRAILER_LOAD_TIME = 1000;
 	const ANIMATION_DURATION = $settings.animationDuration;
 
-	export let tmdbId: number;
-	export let lazyTrailerId: Promise<string | undefined>;
-	export let backdropUri: string;
+	let {
+		tmdbId,
+		lazyTrailerId,
+		backdropUri,
+		UIVisible = true
+	}: {
+		tmdbId: number;
+		lazyTrailerId: Promise<string | undefined>;
+		backdropUri: string;
+		UIVisible?: boolean;
+	} = $props();
 
-	let scrollY: number;
-	let trailerMounted = false;
-	let trailerVisible = false;
-	let hoverTrailer = false;
-	export let UIVisible = true;
-	$: UIVisible = !(hoverTrailer && trailerVisible);
+	let scrollY: number = $state(0);
+	let trailerMounted = $state(false);
+	let trailerVisible = $state(false);
+	let hoverTrailer = $state(false);
 
-	let trailerId: string | undefined = undefined;
-	lazyTrailerId.then((v) => (trailerId = v));
-
-	let trailerShowTimeout: NodeJS.Timeout | undefined = undefined;
-	$: {
+	$effect(() => {
+		UIVisible = !(hoverTrailer && trailerVisible);
 		tmdbId;
 		trailerMounted = false;
 		trailerVisible = false;
 		UIVisible = true;
 
 		showTrailerDelayed();
-	}
+	});
+
+	let trailerId: string | undefined = $state();
+	lazyTrailerId.then((v) => (trailerId = v));
+
+	let trailerShowTimeout: NodeJS.Timeout | undefined = undefined;
 
 	function handleWindowScroll() {
 		if (scrollY > 100) hideTrailer();

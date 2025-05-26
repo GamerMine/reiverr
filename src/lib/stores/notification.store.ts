@@ -1,9 +1,10 @@
 import { writable } from 'svelte/store';
 import Notification from '$lib/components/Notification/Notification.svelte';
+import type { Component } from 'svelte';
 
 export type NotificationItem = {
 	id: symbol;
-	component: ConstructorOfATypedSvelteComponent;
+	component: Component<any, any, any>;
 	props: Record<string, any>;
 	timeout: NodeJS.Timeout | undefined;
 	duration: number;
@@ -14,7 +15,7 @@ function createNotificationStack() {
 	const stack = writable<NotificationItem[]>([]);
 
 	function create(
-		component: ConstructorOfATypedSvelteComponent,
+		component: Component<any, any, any>,
 		props: Record<string, any>,
 		duration = 5000
 	) {

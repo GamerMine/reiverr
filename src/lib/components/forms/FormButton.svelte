@@ -1,13 +1,33 @@
 <script lang="ts">
 	import classNames from 'classnames';
 	import { Update } from 'radix-icons-svelte';
-	export let type: 'base' | 'success' | 'error' = 'base';
-	export let loading = false;
-	export let disabled = false;
+	import type { Snippet } from 'svelte';
+
+	let {
+		type = 'base',
+		loading = false,
+		disabled = false,
+
+		klass = '',
+
+		children,
+
+		onclick = (_) => {}
+	}: {
+		type?: 'base' | 'success' | 'error';
+		loading?: boolean;
+		disabled?: boolean;
+
+		klass?: string;
+
+		children?: Snippet;
+
+		onclick?: (event: MouseEvent) => void;
+	} = $props();
 </script>
 
 <button
-	on:click
+	{onclick}
 	class={classNames(
 		'p-1.5 px-4 text-sm text-zinc-200 rounded-lg border',
 		'hover:bg-opacity-30 transition-colors',
@@ -18,11 +38,11 @@
 			'bg-zinc-600/20 border-zinc-800': type === 'base',
 			'cursor-not-allowed opacity-75 pointer-events-none': disabled || loading
 		},
-		$$restProps.class
+		klass
 	)}
 >
 	{#if loading}
 		<Update class="animate-spin" size={14} />
 	{/if}
-	<slot />
+	{@render children?.()}
 </button>

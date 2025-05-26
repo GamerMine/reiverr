@@ -1,12 +1,13 @@
 <script lang="ts">
 	import type { Network } from '$lib/discover';
 
-	export let network: Network;
+	let { network }: { network: Network } = $props();
 </script>
 
 <a
 	href={`/discover/network/${network.name}`}
 	class="block border rounded-xl h-52 w-96 bg-zinc-900 border-stone-700 cursor-pointer p-12 text-zinc-300 hover:text-amber-200 transition-all relative group selectable shrink-0 max-w-[100%]"
+	aria-label="network"
 >
 	<div
 		class="absolute inset-10 bg-zinc-300 sm:hover:bg-amber-200 sm:group-hover:scale-105

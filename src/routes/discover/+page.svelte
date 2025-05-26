@@ -34,7 +34,7 @@
 			poster_path?: string;
 		}[],
 		type: TitleType | undefined = undefined
-	): Promise<ComponentProps<Poster>[]> => {
+	): Promise<ComponentProps<typeof Poster>[]> => {
 		const filtered = $settings.discover.excludeLibraryItems
 			? items.filter(
 					async (item) =>
@@ -165,7 +165,7 @@
 		<Carousel
 			gradientFromColor="from-stone-950"
 			heading={$_('discover.trending')}
-			class="mx-2 sm:mx-8 2xl:mx-0"
+			klass="mx-2 sm:mx-8 2xl:mx-0"
 		>
 			{#await fetchTrendingProps()}
 				<CarouselPlaceholderItems size="lg" />
@@ -186,7 +186,7 @@
 	}}
 	out:fade|global={{ duration: $settings.animationDuration }}
 >
-	<Carousel class="mx-2 sm:mx-8 2xl:mx-0" heading={$_('discover.popularPeople')}>
+	<Carousel klass="mx-2 sm:mx-8 2xl:mx-0" heading={$_('discover.popularPeople')}>
 		{#await fetchTrendingActorProps()}
 			<CarouselPlaceholderItems />
 		{:then props}
@@ -195,7 +195,7 @@
 			{/each}
 		{/await}
 	</Carousel>
-	<Carousel class="mx-2 sm:mx-8 2xl:mx-0" heading={$_('discover.upcomingMovies')}>
+	<Carousel klass="mx-2 sm:mx-8 2xl:mx-0" heading={$_('discover.upcomingMovies')}>
 		{#await fetchUpcomingMovies()}
 			<CarouselPlaceholderItems />
 		{:then props}
@@ -204,7 +204,7 @@
 			{/each}
 		{/await}
 	</Carousel>
-	<Carousel class="mx-2 sm:mx-8 2xl:mx-0" heading={$_('discover.upcomingSeries')}>
+	<Carousel klass="mx-2 sm:mx-8 2xl:mx-0" heading={$_('discover.upcomingSeries')}>
 		{#await fetchUpcomingSeries()}
 			<CarouselPlaceholderItems />
 		{:then props}
@@ -213,12 +213,12 @@
 			{/each}
 		{/await}
 	</Carousel>
-	<Carousel class="mx-2 sm:mx-8 2xl:mx-0" heading={$_('discover.genres')}>
+	<Carousel klass="mx-2 sm:mx-8 2xl:mx-0" heading={$_('discover.genres')}>
 		{#each Object.values(genres) as genre (genre.tmdbGenreId)}
 			<GenreCard {genre} />
 		{/each}
 	</Carousel>
-	<Carousel class="mx-2 sm:mx-8 2xl:mx-0" heading={$_('discover.newDigitalReleases')}>
+	<Carousel klass="mx-2 sm:mx-8 2xl:mx-0" heading={$_('discover.newDigitalReleases')}>
 		{#await fetchDigitalReleases()}
 			<CarouselPlaceholderItems />
 		{:then props}
@@ -227,7 +227,7 @@
 			{/each}
 		{/await}
 	</Carousel>
-	<Carousel class="mx-2 sm:mx-8 2xl:mx-0" heading={$_('discover.streamingNow')}>
+	<Carousel klass="mx-2 sm:mx-8 2xl:mx-0" heading={$_('discover.streamingNow')}>
 		{#await fetchNowStreaming()}
 			<CarouselPlaceholderItems />
 		{:then props}
@@ -236,7 +236,7 @@
 			{/each}
 		{/await}
 	</Carousel>
-	<Carousel class="mx-2 sm:mx-8 2xl:mx-0" heading={$_('discover.TVNetworks')}>
+	<Carousel klass="mx-2 sm:mx-8 2xl:mx-0" heading={$_('discover.TVNetworks')}>
 		{#each Object.values(networks) as network (network.tmdbNetworkId)}
 			<NetworkCard {network} />
 		{/each}

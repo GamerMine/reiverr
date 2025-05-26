@@ -1,5 +1,6 @@
 <script lang="ts">
-	export let missingEnvironmentVariables: Record<string, boolean>;
+	let { missingEnvironmentVariables }: { missingEnvironmentVariables: Record<string, boolean> } =
+		$props();
 	import { _ } from 'svelte-i18n';
 </script>
 

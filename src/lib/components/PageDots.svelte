@@ -2,17 +2,19 @@
 	import classNames from 'classnames';
 	import { DotFilled } from 'radix-icons-svelte';
 
-	export let index: number;
-	export let length: number;
-	export let onJump: (index: number) => void;
+	let {
+		index,
+		length,
+		onJump
+	}: { index: number; length: number; onJump: (index: number) => void } = $props();
 	//	export let onPrevious: () => void = () => {};
 	//	export let onNext: () => void = () => {};
 </script>
 
 <div class="flex gap-1">
 	{#each Array.from({ length }) as _, i}
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<!-- svelte-ignore a11y-no-static-element-interactions -->
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<!-- <div
 			on:click={() => onJump(i)}
 			class={classNames(
@@ -25,7 +27,7 @@
 		>
 			<div class={classNames('h-[3px] bg-zinc-200 rounded-full', {})} />
 		</div> -->
-		<div on:click={() => onJump(i)}>
+		<div onclick={() => onJump(i)}>
 			<DotFilled
 				class={classNames(
 					'transition-transform hover:scale-150 hover:opacity-50 cursor-pointer text-zinc-200',

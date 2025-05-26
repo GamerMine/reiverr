@@ -1,7 +1,7 @@
 <script lang="ts">
 	import classNames from 'classnames';
 
-	export let large = false;
+	let { large = false }: { large?: boolean } = $props();
 </script>
 
 <div

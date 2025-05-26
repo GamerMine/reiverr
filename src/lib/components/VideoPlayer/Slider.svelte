@@ -1,11 +1,29 @@
 <script lang="ts">
-	export let min = 0;
-	export let max = 100;
-	export let step = 0.01;
-	export let primaryValue = 0;
-	export let secondaryValue = 0;
+	let {
+		min = 0,
+		max = 100,
+		step = 0.01,
+		primaryValue = $bindable(0),
+		secondaryValue = 0,
 
-	let progressBarOffset = 0;
+		onmouseup = () => {},
+		onmousedown = () => {},
+		ontouchstart = () => {},
+		ontouchend = () => {}
+	}: {
+		min?: number;
+		max?: number;
+		step?: number;
+		primaryValue?: number;
+		secondaryValue?: number;
+
+		onmouseup?: () => void;
+		onmousedown?: () => void;
+		ontouchstart?: () => void;
+		ontouchend?: () => void;
+	} = $props();
+
+	let progressBarOffset = $state(0);
 </script>
 
 <div class="h-1 relative group">
@@ -40,9 +58,9 @@
 		{max}
 		{step}
 		bind:value={primaryValue}
-		on:mouseup
-		on:mousedown
-		on:touchstart
-		on:touchend
+		{onmouseup}
+		{onmousedown}
+		{ontouchstart}
+		{ontouchend}
 	/>
 </div>

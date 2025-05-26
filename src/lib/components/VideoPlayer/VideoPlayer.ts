@@ -1,6 +1,6 @@
 import { jellyfinItemsStore } from '$lib/stores/data.store';
 import { writable } from 'svelte/store';
-import { modalStack } from '../../stores/modal.store';
+import { modalStack } from '$lib/stores/modal.store';
 import VideoPlayer from './VideoPlayer.svelte';
 
 const initialValue = { visible: false, jellyfinId: '' };

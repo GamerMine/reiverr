@@ -2,11 +2,16 @@
 	import classNames from 'classnames';
 	import { Check } from 'radix-icons-svelte';
 	import ContextMenuItem from './ContextMenuItem.svelte';
+	import type { Snippet } from 'svelte';
 
-	export let selected = false;
+	let {
+		selected = false,
+		children,
+		onclick
+	}: { selected?: boolean; children: Snippet; onclick: (e: MouseEvent) => void } = $props();
 </script>
 
-<ContextMenuItem on:click>
+<ContextMenuItem {onclick}>
 	<div class="flex items-center gap-2 justify-between cursor-pointer">
 		<Check
 			size={20}
@@ -16,7 +21,7 @@
 			})}
 		/>
 		<div class="flex items-center text-left w-32">
-			<slot />
+			{@render children?.()}
 		</div>
 	</div>
 </ContextMenuItem>

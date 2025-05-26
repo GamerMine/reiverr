@@ -30,7 +30,7 @@ export interface SettingsValues {
 		rootFolderPath: string;
 		qualityProfileId: number;
 		monitor: number;
-		StartSearch: boolean;
+		startSearch: boolean;
 	};
 	jellyfin: {
 		baseUrl: string | null;
@@ -54,7 +54,7 @@ export const defaultSettings: SettingsValues = {
 		apiKey: null,
 		baseUrl: null,
 		monitor: 0,
-		StartSearch: false,
+		StartSearch: true,
 		qualityProfileId: 0,
 		rootFolderPath: '',
 		languageProfileId: 0
@@ -64,8 +64,8 @@ export const defaultSettings: SettingsValues = {
 		baseUrl: null,
 		qualityProfileId: 0,
 		rootFolderPath: '',
-		monitor: 0,
-		StartSearch: false
+		monitor: 1,
+		startSearch: true
 	},
 	jellyfin: {
 		apiKey: null,

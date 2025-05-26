@@ -70,7 +70,7 @@ export class Settings extends BaseEntity {
 	@Column('integer', { default: defaultSettings.radarr.monitor })
 	radarrMonitor: number;
 
-	@Column('boolean', { default: defaultSettings.radarr.StartSearch })
+	@Column('boolean', { default: defaultSettings.radarr.startSearch })
 	radarrStartSearch: boolean;
 
 	// Jellyfin
@@ -126,7 +126,7 @@ export class Settings extends BaseEntity {
 				apiKey: settings.radarrApiKey,
 				baseUrl: settings.radarrBaseUrl,
 				monitor: settings.radarrMonitor,
-				StartSearch: settings.radarrStartSearch,
+				startSearch: settings.radarrStartSearch,
 				qualityProfileId: settings.radarrQualityProfileId,
 				rootFolderPath: settings.radarrRootFolderPath
 			},
@@ -166,7 +166,7 @@ export class Settings extends BaseEntity {
 		settings.radarrQualityProfileId = values.radarr.qualityProfileId;
 		settings.radarrRootFolderPath = values.radarr.rootFolderPath;
 		settings.radarrMonitor = values.radarr.monitor;
-		settings.radarrStartSearch = values.radarr.StartSearch;
+		settings.radarrStartSearch = values.radarr.startSearch;
 
 		settings.jellyfinApiKey = values.jellyfin.apiKey;
 		settings.jellyfinBaseUrl = values.jellyfin.baseUrl;

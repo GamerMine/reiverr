@@ -3,20 +3,20 @@
 	import { onDestroy, type ComponentProps } from 'svelte';
 	import { _ } from 'svelte-i18n';
 
-	export let handleHealthCheck: () => Promise<boolean>;
+	let { handleHealthCheck }: { handleHealthCheck: () => Promise<boolean | undefined> } = $props();
 
-	let type: ComponentProps<FormButton>['type'] = 'base';
-	let loading = false;
+	let type: ComponentProps<typeof FormButton>['type'] = $state('base');
+	let loading = $state(false);
 
 	let healthTimeout: NodeJS.Timeout;
-	$: {
+	$effect(() => {
 		if (type !== 'base') {
 			clearTimeout(healthTimeout);
 			healthTimeout = setTimeout(() => {
 				type = 'base';
 			}, 2000);
 		}
-	}
+	});
 
 	function handleClick() {
 		loading = true;
@@ -35,6 +35,6 @@
 	});
 </script>
 
-<FormButton {type} {loading} on:click={handleClick}
+<FormButton {type} {loading} onclick={handleClick}
 	>{$_('settings.integrations.testConnection')}</FormButton
 >

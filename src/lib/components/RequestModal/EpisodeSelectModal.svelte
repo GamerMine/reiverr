@@ -1,16 +1,18 @@
 <script lang="ts">
 	import { fetchSonarrEpisodes, type SonarrEpisode } from '$lib/apis/sonarr/sonarrApi';
-	import { modalStack } from '../../stores/modal.store';
+	import { modalStack } from '$lib/stores/modal.store';
 	import ModalContainer from '../Modal/ModalContainer.svelte';
 	import ModalContent from '../Modal/ModalContent.svelte';
 	import ModalHeader from '../Modal/ModalHeader.svelte';
 	import RequestModal from './RequestModal.svelte';
 
-	export let modalId: symbol;
-	export let groupId: symbol;
+	let {
+		modalId,
+		groupId,
 
-	export let sonarrId: number;
-	export let seasonNumber: number;
+		sonarrId,
+		seasonNumber
+	}: { modalId: symbol; groupId: symbol; sonarrId: number; seasonNumber: number } = $props();
 
 	async function fetchEpisodes(sonarrId: number, seasonNumber: number) {
 		return fetchSonarrEpisodes(sonarrId).then((episodes) =>
@@ -46,11 +48,11 @@
 					<div class="px-4 py-1 text-xs text-gray-400">No episodes</div>
 				{:else}
 					{#each episodes as episode}
-						<!-- svelte-ignore a11y-click-events-have-key-events -->
-						<!-- svelte-ignore a11y-no-static-element-interactions -->
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_static_element_interactions -->
 						<div
 							class="px-4 py-1 flex flex-row items-center justify-between cursor-pointer hover:bg-lighten"
-							on:click={() => selectEpisode(episode)}
+							onclick={() => selectEpisode(episode)}
 						>
 							<div class="flex flex-col gap-1">
 								<div class="text-sm font-medium">{episode.title}</div>

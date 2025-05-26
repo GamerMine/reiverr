@@ -2,10 +2,12 @@
 	import type { PageData } from './$types';
 	import PersonPage from './PersonPage.svelte';
 
-	export let data: PageData;
+	let { data }: { data: PageData } = $props();
 
-	let personId: number;
-	$: personId = Number(data.personId);
+	let personId: number = $state(0);
+	$effect(() => {
+		personId = Number(data.personId);
+	});
 </script>
 
 {#key personId}

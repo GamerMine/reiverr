@@ -1,18 +1,18 @@
 <script lang="ts">
 	import { ChevronLeft } from 'radix-icons-svelte';
-	import IconButton from '../IconButton.svelte';
 	import CardGrid from '../Card/CardGrid.svelte';
 	import CardPlaceholder from '../Card/CardPlaceholder.svelte';
 	import { capitalize } from '$lib/utils';
+	import type { Snippet } from 'svelte';
 
-	export let title: string;
+	let { title, children = undefined }: { title: string; children?: Snippet } = $props();
 </script>
 
 <div class="pt-24 p-8 bg-black">
 	<div class="flex flex-col gap-1 items-start">
 		<button
 			class="flex items-center cursor-pointer hover:text-zinc-200 text-zinc-400 transition-colors"
-			on:click={() => window?.history?.back()}
+			onclick={() => window?.history?.back()}
 		>
 			<ChevronLeft size={18} />
 			<h2 class="text-sm">Back</h2>
@@ -23,10 +23,11 @@
 
 <div class="p-8">
 	<CardGrid>
-		<slot>
+		{@render children?.()}
+		{#if !children}
 			{#each [...Array(20).keys()] as index (index)}
 				<CardPlaceholder size="dynamic" {index} />
 			{/each}
-		</slot>
+		{/if}
 	</CardGrid>
 </div>

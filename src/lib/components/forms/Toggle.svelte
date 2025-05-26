@@ -1,5 +1,5 @@
-<script>
-	export let checked = false;
+<script lang="ts">
+	let { checked = $bindable(false) }: { checked?: boolean } = $props();
 </script>
 
 <label class="relative inline-flex items-center cursor-pointer w-min h-min">

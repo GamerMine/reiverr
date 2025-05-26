@@ -5,13 +5,23 @@
 	import { fade, fly } from 'svelte/transition';
 	import IconButton from '../IconButton.svelte';
 
-	export let id: symbol;
+	let {
+		id,
 
-	export let title: string;
-	export let description: string;
-	export let duration = 0;
+		title,
+		description,
+		duration = 0,
 
-	export let type: 'info' | 'error' | 'warning' = 'info';
+		type = 'info'
+	}: {
+		id: symbol;
+
+		title: string;
+		description: string;
+		duration?: number;
+
+		type?: 'info' | 'error' | 'warning';
+	} = $props();
 
 	function handleClose() {
 		notificationStack.close(id);
@@ -42,7 +52,7 @@
 				{/if}
 				<h1 class="text-zinc-200 font-medium text-sm">{title}</h1>
 			</div>
-			<IconButton on:click={handleClose}>
+			<IconButton onclick={handleClose}>
 				<Cross2 size={15} />
 			</IconButton>
 		</div>
