@@ -114,7 +114,7 @@
 	let resolution: number = $state(1080);
 	let currentBitrate: number = $state(0);
 
-	let shouldCloseUi = false;
+	let shouldCloseUi = $state(false);
 	let uiVisible = $state(true);
 	$effect(() => {
 		uiVisible = !shouldCloseUi || seeking || paused || $contextMenu === qualityContextMenuId;
@@ -304,7 +304,6 @@
 		// with the video element until a change is made
 		paused = false;
 
-		console.log(video);
 		if (video && $playerState.jellyfinId) {
 			if (video.src === '') fetchPlaybackInfo($playerState.jellyfinId);
 		}
@@ -413,7 +412,6 @@
 			onclick={() => (paused = !paused)}
 		></video>
 
-		<!-- FIXME: The UI is never hidding   -->
 		{#if uiVisible}
 			<!-- Video controls -->
 			<div

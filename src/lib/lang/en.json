@@ -32,8 +32,17 @@
 		"watched": "Watched",
 		"unavailable": "Unavailable",
 		"loadMore": "Load More",
+		"search": "Search in library",
 		"sort": {
-			"byTitle": "By Title"
+			"sortBy": "Sort By",
+			"dateAdded": "Date Added",
+			"rating": "Rating",
+			"releaseDate": "Release Date",
+			"size": "Size",
+			"name": "Name",
+
+			"ascending": "Ascending",
+			"descending": "Descending"
 		},
 		"content": {
 			"movie": "Movie",

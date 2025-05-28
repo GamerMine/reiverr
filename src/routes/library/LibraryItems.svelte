@@ -18,16 +18,24 @@
 	import ContextMenuDivider from '$lib/components/ContextMenu/ContextMenuDivider.svelte';
 	import { createLocalStorageStore } from '$lib/stores/localstorage.store';
 
-	type SortBy = 'Date Added' | 'Rating' | 'Relase Date' | 'Size' | 'Name';
-	type SortOrder = 'Ascending' | 'Descending';
+	const SortBy = {
+		DateAdded: $_('library.sort.dateAdded'),
+		Rating: $_('library.sort.rating'),
+		ReleaseDate: $_('library.sort.releaseDate'),
+		Size: $_('library.sort.size'),
+		Name: $_('library.sort.name')
+	};
+
+	const SortOrder = {
+		Ascending: $_('library.sort.ascending'),
+		Descending: $_('library.sort.descending')
+	};
 
 	const PAGE_SIZE = 100;
-	const SORT_OPTIONS = ['Date Added', 'Rating', 'Relase Date', 'Size', 'Name'] as const;
-	const SORT_ORDER = ['Ascending', 'Descending'] as const;
 
 	let itemsVisible: 'all' | 'movies' | 'shows' = 'all';
-	const sortBy = createLocalStorageStore<SortBy>('library-sort-by', 'Date Added');
-	const sortOrder = createLocalStorageStore<SortOrder>('library-sort-order', 'Descending');
+	const sortBy = createLocalStorageStore<string>('library-sort-by', SortBy.DateAdded);
+	const sortOrder = createLocalStorageStore<string>('library-sort-order', SortOrder.Descending);
 	let searchQuery = $state('');
 
 	let openTab: 'available' | 'watched' | 'unavailable' = $state('available');
@@ -94,8 +102,8 @@
 	async function loadPosterProps(
 		tab: typeof openTab,
 		page: number,
-		sort: SortBy,
-		order: SortOrder,
+		sort: string,
+		order: string,
 		searchQuery: string
 	) {
 		if (page === 0) posterProps = [];
@@ -104,24 +112,24 @@
 			.then((i) => i.filter((i) => i.Name?.toLowerCase().includes(searchQuery.toLowerCase())) || [])
 			.then((i) => {
 				const sorted = i.sort((a, b) => {
-					if (sort === 'Date Added') {
+					if (sort === SortBy.DateAdded) {
 						return new Date(b.DateCreated || 0).getTime() - new Date(a.DateCreated || 0).getTime();
-					} else if (sort === 'Rating') {
+					} else if (sort === SortBy.Rating) {
 						return (b.CommunityRating || 0) - (a.CommunityRating || 0);
-					} else if (sort === 'Relase Date') {
+					} else if (sort === SortBy.ReleaseDate) {
 						return (
 							new Date(b.PremiereDate || 0).getTime() - new Date(a.PremiereDate || 0).getTime()
 						);
-					} else if (sort === 'Size') {
+					} else if (sort === SortBy.Size) {
 						return (b.RunTimeTicks || 0) - (a.RunTimeTicks || 0);
-					} else if (sort === 'Name') {
+					} else if (sort === SortBy.Name) {
 						return (b.Name || '').localeCompare(a.Name || '');
 					} else {
 						return 0;
 					}
 				});
 
-				if (order === 'Ascending') {
+				if (order === SortOrder.Ascending) {
 					return sorted.reverse();
 				} else {
 					return sorted;
@@ -215,7 +223,7 @@
 		<input
 			bind:this={searchInput}
 			bind:value={searchQuery}
-			placeholder="Seach in library"
+			placeholder={$_('library.search')}
 			class="appearance-none mx-2.5 my-2.5 px-10 bg-transparent outline-hidden placeholder:text-zinc-400 font-medium w-full"
 		/>
 	</div>
@@ -252,9 +260,9 @@
 			</div>
 		</UiCarousel>
 		<div class="flex items-center gap-3 justify-end shrink-0 flex-initial relative">
-			<ContextMenu heading="Sort By" position="absolute">
+			<ContextMenu heading={$_('library.sort.sortBy')} position="absolute">
 				{#snippet menu()}
-					{#each SORT_OPTIONS as sortOption}
+					{#each Object.values(SortBy) as sortOption}
 						<SelectableContextMenuItem
 							selected={$sortBy === sortOption}
 							onclick={() => {
@@ -266,7 +274,7 @@
 						</SelectableContextMenuItem>
 					{/each}
 					<ContextMenuDivider />
-					{#each SORT_ORDER as order}
+					{#each Object.values(SortOrder) as order}
 						<SelectableContextMenuItem
 							selected={$sortOrder === order}
 							onclick={() => {
