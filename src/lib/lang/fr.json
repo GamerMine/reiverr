@@ -15,13 +15,15 @@
 		"noResults": "Aucun résultat trouvé"
 	},
 	"discover": {
+		"LatestAddition": "Dernier ajout",
+		"continueWatching": "Continuer à regarder",
 		"trending": "Tendance",
 		"popularPeople": "Personnes populaires",
 		"upcomingMovies": "Films à venir",
 		"upcomingSeries": "Série à venir",
 		"genres": "Genres",
 		"newDigitalReleases": "Nouvelles versions numériques",
-		"streamingNow": "En streaming maintenant",
+		"streamingNow": "En cours de diffusion",
 		"TVNetworks": "Réseaux de télévision"
 	},
 	"library": {
@@ -29,8 +31,18 @@
 		"available": "Disponible",
 		"watched": "Regardé",
 		"unavailable": "Indisponible",
+		"loadMore": "Voir plus",
+		"search": "Rechercher dans la bibliothèque",
 		"sort": {
-			"byTitle": "Par titre"
+			"sortBy": "Trier par",
+			"dateAdded": "Date d'ajout",
+			"rating": "Note",
+			"releaseDate": "Date de sortie",
+			"size": "Taille",
+			"name": "Nom",
+
+			"ascending": "Ascendant",
+			"descending": "Descendant"
 		},
 		"content": {
 			"movie": "Film",
@@ -45,6 +57,7 @@
 			"recommendations": "Recommandations",
 			"similarTitles": "Titres similaires",
 
+			"play": "Lire",
 			"similarSeries": "Séries similaires",
 			"similarMovies": "Films similaires",
 			"viewLess": "Moins",

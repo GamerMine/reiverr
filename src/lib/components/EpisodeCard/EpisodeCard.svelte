@@ -78,7 +78,6 @@
 	}
 </script>
 
-<!-- TODO: Add translations -->
 <ContextMenu heading={subtitle}>
 	{#snippet menu()}
 		<ContextMenuItem
