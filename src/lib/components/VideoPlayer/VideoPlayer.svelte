@@ -413,7 +413,7 @@
 			onclick={() => (paused = !paused)}
 		></video>
 
-		<!-- FIXME: The UI is never hidding  -->
+		<!-- FIXME: The UI is never hidding   -->
 		{#if uiVisible}
 			<!-- Video controls -->
 			<div
