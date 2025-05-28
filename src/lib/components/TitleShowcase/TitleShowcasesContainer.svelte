@@ -14,7 +14,7 @@
 	import TitleShowcaseVisuals from './TitleShowcaseVisuals.svelte';
 	import PageDots from '../PageDots.svelte';
 	import IconButton from '../IconButton.svelte';
-	import { ChevronLeft, ChevronRight } from 'radix-icons-svelte';
+	import { ChevronLeft, ChevronRight } from 'svelte-radix';
 
 	let hideUI = false;
 
@@ -137,14 +137,14 @@
 			class="absolute top-1/2 right-6 z-10 hover:bg-white/15 hover:rounded-4xl ease-in-out duration-300"
 		>
 			<IconButton onclick={onNext}>
-				<ChevronRight size={38} />
+				<ChevronRight size="38" />
 			</IconButton>
 		</div>
 		<div
 			class="absolute top-1/2 left-6 z-10 hover:bg-white/15 hover:rounded-4xl ease-in-out duration-300"
 		>
 			<IconButton onclick={onPrevious}>
-				<ChevronLeft size={38} />
+				<ChevronLeft size="38" />
 			</IconButton>
 		</div>
 	{/if}

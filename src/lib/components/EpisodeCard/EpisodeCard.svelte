@@ -2,7 +2,7 @@
 	import { setJellyfinItemUnwatched, setJellyfinItemWatched } from '$lib/apis/jellyfin/jellyfinApi';
 	import { jellyfinItemsStore } from '$lib/stores/data.store';
 	import classNames from 'classnames';
-	import { Check } from 'radix-icons-svelte';
+	import { Check } from 'svelte-radix';
 	import { fade } from 'svelte/transition';
 	import ContextMenu from '../ContextMenu/ContextMenu.svelte';
 	import ContextMenuItem from '../ContextMenu/ContextMenuItem.svelte';
@@ -180,7 +180,7 @@
 				{#if !right_bottom}
 					{#if watched}
 						<div class="shrink-0">
-							<Check size={20} class="opacity-80" />
+							<Check size="20" class="opacity-80" />
 						</div>
 					{/if}
 				{/if}

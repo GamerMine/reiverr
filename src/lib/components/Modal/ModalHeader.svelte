@@ -1,7 +1,7 @@
 <script lang="ts">
 	import classNames from 'classnames';
 	import IconButton from '../IconButton.svelte';
-	import { ChevronLeft, Cross2 } from 'radix-icons-svelte';
+	import { ChevronLeft, Cross2 } from 'svelte-radix';
 	import type { Snippet } from 'svelte';
 
 	let {
@@ -28,13 +28,13 @@
 				tabindex={back ? 0 : -1}
 			>
 				{#if !!back}
-					<ChevronLeft size={20} />
+					<ChevronLeft size="20" />
 				{/if}
 				<h1 class="font-medium">{text}</h1>
 			</button>
 		{/if}
 	{/if}
 	<IconButton onclick={close}>
-		<Cross2 size={20} />
+		<Cross2 size="20" />
 	</IconButton>
 </div>

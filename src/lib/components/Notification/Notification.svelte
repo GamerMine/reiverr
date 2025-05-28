@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { notificationStack } from '$lib/stores/notification.store';
 	import classNames from 'classnames';
-	import { Cross2, ExclamationTriangle } from 'radix-icons-svelte';
+	import { Cross2, ExclamationTriangle } from 'svelte-radix';
 	import { fade, fly } from 'svelte/transition';
 	import IconButton from '../IconButton.svelte';
 
@@ -48,12 +48,12 @@
 		<div class="relative z-[1] flex items-center justify-between bg-zinc-200/10 p-1 px-3">
 			<div class="flex items-center gap-2">
 				{#if type !== 'info'}
-					<ExclamationTriangle size={12} />
+					<ExclamationTriangle size="12" />
 				{/if}
 				<h1 class="text-zinc-200 font-medium text-sm">{title}</h1>
 			</div>
 			<IconButton onclick={handleClose}>
-				<Cross2 size={15} />
+				<Cross2 size="15" />
 			</IconButton>
 		</div>
 	</div>

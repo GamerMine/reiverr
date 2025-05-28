@@ -1,7 +1,4 @@
-import { get, writable } from 'svelte/store';
-import type { SonarrSeries } from './apis/sonarr/sonarrApi';
-import type { RadarrMovie } from './apis/radarr/radarrApi';
-import { settings } from './stores/settings.store';
+import { writable } from 'svelte/store';
 
 export function formatMinutesToTime(minutes: number) {
 	const days = Math.floor(minutes / 60 / 24);
@@ -89,4 +86,8 @@ export function formatDateToYearMonthDay(date: Date) {
 export function capitalize(str: string) {
 	const strings = str.split(' ');
 	return strings.map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+}
+
+export function tmdbDataFormat(str: string): string {
+	return str.replace('& ', '').replace(' ', '_').replace('-', '_').toLowerCase();
 }

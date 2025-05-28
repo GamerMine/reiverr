@@ -23,7 +23,7 @@
 		SpeakerModerate,
 		SpeakerOff,
 		SpeakerQuiet
-	} from 'radix-icons-svelte';
+	} from 'svelte-radix';
 	import { onDestroy, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { contextMenu } from '../ContextMenu/ContextMenu';
@@ -39,7 +39,7 @@
 
 	let qualityContextMenuId = Symbol();
 
-	let video: HTMLVideoElement | undefined;
+	let video: HTMLVideoElement;
 	let videoWrapper: HTMLDivElement;
 	let mouseMovementTimeout: NodeJS.Timeout;
 	let stopCallback: () => void;
@@ -132,7 +132,7 @@
 				item?.UserData?.PlaybackPositionTicks || Math.floor(displayedTime * 10_000_000),
 				maxBitrate || getQualities(item?.Height || 1080)[0].maxBitrate
 			).then(async (playbackInfo) => {
-				if (!playbackInfo || !video) return;
+				if (!playbackInfo) return;
 				const { playbackUri, playSessionId: sessionId, mediaSourceId, directPlay } = playbackInfo;
 
 				if (!playbackUri || !sessionId) {
@@ -186,14 +186,14 @@
 					await reportJellyfinPlaybackProgress(
 						itemId,
 						sessionId,
-						video?.paused == true,
-						video?.currentTime * 10_000_000
+						video.paused == true,
+						video.currentTime * 10_000_000
 					);
 				};
 
 				if (progressInterval) clearInterval(progressInterval);
 				progressInterval = setInterval(() => {
-					video && video.readyState === 4 && video?.currentTime > 0 && sessionId && itemId;
+					video.readyState === 4 && video.currentTime > 0 && sessionId && itemId;
 					reportProgress();
 				}, 5000);
 
@@ -202,7 +202,7 @@
 				};
 
 				stopCallback = () => {
-					reportJellyfinPlaybackStopped(itemId, sessionId, video?.currentTime * 10_000_000);
+					reportJellyfinPlaybackStopped(itemId, sessionId, video.currentTime * 10_000_000);
 					deleteEncoding();
 				};
 			})
@@ -217,7 +217,7 @@
 	}
 
 	function onSeekEnd() {
-		if (!seeking || !video) return;
+		if (!seeking) return;
 
 		paused = playerStateBeforeSeek;
 		seeking = false;
@@ -226,7 +226,6 @@
 	}
 
 	function handleBuffer() {
-		if (!video) return;
 		let timeRanges = video.buffered;
 		// Find the first one whose end time is after the current time
 		// (the time ranges given by the browser are normalized, which means
@@ -241,7 +240,7 @@
 
 	function handleClose() {
 		playerState.close();
-		video?.pause();
+		video.pause();
 		clearInterval(progressInterval);
 		stopCallback?.();
 		modalStack.close(modalId);
@@ -267,7 +266,7 @@
 	}
 
 	async function handleSelectQuality(bitrate: number) {
-		if (!$playerState.jellyfinId || !video || seeking) return;
+		if (!$playerState.jellyfinId || seeking) return;
 		if (bitrate === currentBitrate) return;
 
 		currentBitrate = bitrate;
@@ -305,6 +304,7 @@
 		// with the video element until a change is made
 		paused = false;
 
+		console.log(video);
 		if (video && $playerState.jellyfinId) {
 			if (video.src === '') fetchPlaybackInfo($playerState.jellyfinId);
 		}
@@ -335,7 +335,7 @@
 		if (reqFullscreenFunc) {
 			fullscreen = !fullscreen;
 			// @ts-ignore
-		} else if (video?.webkitEnterFullScreen) {
+		} else if (video.webkitEnterFullScreen) {
 			// Edge case to allow fullscreen on iPhone
 			// @ts-ignore
 			video.webkitEnterFullScreen();
@@ -388,26 +388,32 @@
 		in:fade|global={{ duration: 500, delay: 1200, easing: linear }}
 	>
 		<!-- svelte-ignore a11y_media_has_caption -->
-		{#if video}
-			<video>
-				bind:this={video}
-				bind:paused bind:duration on:timeupdate={() =>
-					(displayedTime = !seeking && videoLoaded ? video.currentTime : displayedTime)}
-				on:progress={() => handleBuffer()}
-				on:play={() => {
-					if (seeking) video?.pause();
-				}}
-				on:loadeddata={() => {
-					video.currentTime = displayedTime;
-					videoLoaded = true;
-				}}
-				bind:volume bind:muted={mute}
-				class="sm:w-full sm:h-full" playsinline={true}
-				on:dblclick|preventDefault={() => (fullscreen = !fullscreen)}
-				on:click={() => (paused = !paused)}
-			</video>
-		{/if}
+		<video
+			bind:this={video}
+			bind:paused
+			bind:duration
+			ontimeupdate={() =>
+				(displayedTime = !seeking && videoLoaded ? video.currentTime : displayedTime)}
+			onprogress={() => handleBuffer()}
+			onplay={() => {
+				if (seeking) video?.pause();
+			}}
+			onloadeddata={() => {
+				video.currentTime = displayedTime;
+				videoLoaded = true;
+			}}
+			bind:volume
+			bind:muted={mute}
+			class="sm:w-full sm:h-full"
+			playsinline={true}
+			ondblclick={(e) => {
+				e.preventDefault();
+				fullscreen = !fullscreen;
+			}}
+			onclick={() => (paused = !paused)}
+		></video>
 
+		<!-- FIXME: The UI is never hidding  -->
 		{#if uiVisible}
 			<!-- Video controls -->
 			<div
@@ -437,9 +443,9 @@
 					<div class="flex items-center justify-between mb-2 w-full">
 						<IconButton onclick={() => (paused = !paused)}>
 							{#if (!seeking && paused) || (seeking && playerStateBeforeSeek)}
-								<Play size={20} />
+								<Play size="20" />
 							{:else}
-								<Pause size={20} />
+								<Pause size="20" />
 							{/if}
 						</IconButton>
 
@@ -457,7 +463,7 @@
 								{/snippet}
 
 								<IconButton>
-									<Gear size={20} />
+									<Gear size="20" />
 								</IconButton>
 							</ContextMenuButton>
 							<IconButton
@@ -466,13 +472,13 @@
 								}}
 							>
 								{#if volume === 0 || mute}
-									<SpeakerOff size={20} />
+									<SpeakerOff size="20" />
 								{:else if volume < 0.25}
-									<SpeakerQuiet size={20} />
+									<SpeakerQuiet size="20" />
 								{:else if volume < 0.9}
-									<SpeakerModerate size={20} />
+									<SpeakerModerate size="20" />
 								{:else}
-									<SpeakerLoud size={20} />
+									<SpeakerLoud size="20" />
 								{/if}
 							</IconButton>
 
@@ -482,9 +488,9 @@
 
 							<IconButton onclick={handleRequestFullscreen}>
 								{#if fullscreen}
-									<ExitFullScreen size={20} />
+									<ExitFullScreen size="20" />
 								{:else if !fullscreen && exitFullscreen}
-									<EnterFullScreen size={20} />
+									<EnterFullScreen size="20" />
 								{/if}
 							</IconButton>
 						</div>
@@ -497,7 +503,7 @@
 	{#if uiVisible}
 		<div class="absolute top-4 right-8 z-50" transition:fade={{ duration: 100 }}>
 			<IconButton onclick={handleClose}>
-				<Cross2 size={25} />
+				<Cross2 size="25" />
 			</IconButton>
 		</div>
 	{/if}

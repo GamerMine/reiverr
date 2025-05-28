@@ -2,7 +2,7 @@
 	import { TMDB_IMAGES_ORIGINAL, TMDB_POSTER_SMALL } from '$lib/constants';
 	import type { TitleType } from '$lib/types';
 	import classNames from 'classnames';
-	import { ChevronLeft, Cross2, ExternalLink } from 'radix-icons-svelte';
+	import { ChevronLeft, Cross2, ExternalLink } from 'svelte-radix';
 	import IconButton from '../IconButton.svelte';
 	import LazyImg from '../LazyImg.svelte';
 	import TruncatedText from '../TruncatedText.svelte';
@@ -109,18 +109,18 @@
 						class="absolute top-8 right-4 sm:right-8 z-10 hover:bg-white/15 hover:rounded-4xl ease-in-out duration-300"
 					>
 						<IconButton>
-							<ExternalLink size={20} />
+							<ExternalLink size="20" />
 						</IconButton>
 					</a>
 				{/if}
 				<div class="absolute top-8 left-4 sm:left-8 z-10">
 					<button class="flex items-center sm:hidden font-medium" onclick={handleCloseModal}>
-						<ChevronLeft size={20} />
+						<ChevronLeft size="20" />
 						Back
 					</button>
 					<div class="hidden sm:block hover:bg-white/15 hover:rounded-4xl ease-in-out duration-300">
 						<IconButton onclick={handleCloseModal}>
-							<Cross2 size={20} />
+							<Cross2 size="20" />
 						</IconButton>
 					</div>
 				</div>
@@ -219,8 +219,7 @@
 				</div>
 			{/if}
 		</div>
-		<div class="flex flex-col gap-6 max-w-screen-2xl 2xl:mx-auto">
-			<!-- TODO: Remove mx-auto as it's bugged when in modal and on firefox -->
+		<div class={classNames('max-w-screen-2xl', !isModal && 'self-center')}>
 			{@render carousels?.()}
 		</div>
 	</div>

@@ -3,7 +3,7 @@
 	import type { RadarrMovie } from '$lib/apis/radarr/radarrApi';
 	import type { SonarrSeries } from '$lib/apis/sonarr/sonarrApi';
 	import type { TitleType } from '$lib/types';
-	import { DotsVertical } from 'radix-icons-svelte';
+	import { DotsVertical } from 'svelte-radix';
 	import Button from '../Button.svelte';
 	import ContextMenuButton from '../ContextMenu/ContextMenuButton.svelte';
 	import LibraryItemContextItems from '../ContextMenu/LibraryItemContextItems.svelte';
@@ -34,6 +34,6 @@
 		<LibraryItemContextItems {jellyfinItem} {sonarrSeries} {radarrMovie} {type} {tmdbId} />
 	{/snippet}
 	<Button slim>
-		<DotsVertical size={24} />
+		<DotsVertical size="24" />
 	</Button>
 </ContextMenuButton>

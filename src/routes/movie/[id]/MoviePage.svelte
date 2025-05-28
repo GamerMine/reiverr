@@ -25,7 +25,7 @@
 	import { settings } from '$lib/stores/settings.store';
 	import { formatMinutesToTime, formatSize } from '$lib/utils';
 	import classNames from 'classnames';
-	import { Archive, ChevronRight, DotFilled, Plus } from 'radix-icons-svelte';
+	import { Archive, ChevronRight, DotFilled, Plus } from 'svelte-radix';
 	import type { ComponentProps } from 'svelte';
 	import { _ } from 'svelte-i18n';
 
@@ -147,15 +147,15 @@
 					<OpenInButton title={movie?.title} {jellyfinItem} {radarrMovie} type="movie" {tmdbId} />
 					{#if jellyfinItem}
 						<Button type="primary" onclick={play}>
-							<span>{$_('library.content.play')}</span><ChevronRight size={20} />
+							<span>{$_('library.content.play')}</span><ChevronRight size="20" />
 						</Button>
 					{:else if !radarrMovie && $settings.radarr.baseUrl && $settings.radarr.apiKey}
 						<Button type="primary" disabled={addToRadarrLoading} onclick={addToRadarr}>
-							<span>{$_('library.content.addRadarr')}</span><Plus size={20} />
+							<span>{$_('library.content.addRadarr')}</span><Plus size="20" />
 						</Button>
 					{:else if radarrMovie}
 						<Button type="primary" onclick={openRequestModal}>
-							<span class="mr-2">{$_('library.content.requestMovie')}</span><Plus size={20} />
+							<span class="mr-2">{$_('library.content.requestMovie')}</span><Plus size="20" />
 						</Button>
 					{/if}
 				{/if}
@@ -253,10 +253,10 @@
 
 				<div class="flex gap-4 flex-wrap col-span-4 sm:col-span-6 mt-4">
 					<Button onclick={openRequestModal}>
-						<span class="mr-2">{$_('library.content.requestMovie')}</span><Plus size={20} />
+						<span class="mr-2">{$_('library.content.requestMovie')}</span><Plus size="20" />
 					</Button>
 					<Button>
-						<span class="mr-2">{$_('library.content.manage')}</span><Archive size={20} />
+						<span class="mr-2">{$_('library.content.manage')}</span><Archive size="20" />
 					</Button>
 				</div>
 			{:else if $radarrMovieStore.loading}

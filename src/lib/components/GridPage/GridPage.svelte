@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ChevronLeft } from 'radix-icons-svelte';
+	import { ChevronLeft } from 'svelte-radix';
 	import CardGrid from '../Card/CardGrid.svelte';
 	import CardPlaceholder from '../Card/CardPlaceholder.svelte';
 	import { capitalize } from '$lib/utils';
@@ -14,7 +14,7 @@
 			class="flex items-center cursor-pointer hover:text-zinc-200 text-zinc-400 transition-colors"
 			onclick={() => window?.history?.back()}
 		>
-			<ChevronLeft size={18} />
+			<ChevronLeft size="18" />
 			<h2 class="text-sm">Back</h2>
 		</button>
 		<h1 class="font-bold text-5xl">{capitalize(title)}</h1>

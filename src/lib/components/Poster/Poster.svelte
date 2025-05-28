@@ -5,7 +5,7 @@
 	import ProgressBar from '../ProgressBar.svelte';
 	import { playerState } from '../VideoPlayer/VideoPlayer';
 	import LazyImg from '../LazyImg.svelte';
-	import { Star } from 'radix-icons-svelte';
+	import { Star } from 'svelte-radix';
 	import { openTitleModal } from '$lib/stores/modal.store';
 	import type { Snippet } from 'svelte';
 

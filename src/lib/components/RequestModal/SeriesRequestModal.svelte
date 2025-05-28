@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ChevronRight } from 'radix-icons-svelte';
+	import { ChevronRight } from 'svelte-radix';
 	import Button from '../Button.svelte';
 	import { modalStack } from '$lib/stores/modal.store';
 	import ModalContainer from '../Modal/ModalContainer.svelte';
@@ -56,10 +56,10 @@
 					</div>
 					<div class="flex gap-2">
 						<Button size="sm" type="tertiary" onclick={() => selectSeasonPack(seasonNumber)}>
-							<span>Season Packs</span><ChevronRight size={20} />
+							<span>Season Packs</span><ChevronRight size="20" />
 						</Button>
 						<Button size="sm" type="tertiary" onclick={() => selectSeason(seasonNumber)}>
-							<span>Episodes</span><ChevronRight size={20} />
+							<span>Episodes</span><ChevronRight size="20" />
 						</Button>
 					</div>
 				</div>

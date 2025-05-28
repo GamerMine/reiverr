@@ -6,7 +6,7 @@
 		fetchSonarrSeasonReleases
 	} from '$lib/apis/sonarr/sonarrApi';
 	import { formatMinutesToTime, formatSize } from '$lib/utils';
-	import { DotFilled, Download, Plus } from 'radix-icons-svelte';
+	import { DotFilled, Download, Plus } from 'svelte-radix';
 	import HeightHider from '../HeightHider.svelte';
 	import IconButton from '../IconButton.svelte';
 	import { modalStack } from '$lib/stores/modal.store';
@@ -149,11 +149,11 @@
 											handleDownload(release.guid, release.indexerId)}
 										disabled={downloadFetchingGuid === release.guid}
 									>
-										<Plus size={20} />
+										<Plus size="20" />
 									</IconButton>
 								{:else}
 									<div class="p-1">
-										<Download size={20} />
+										<Download size="20" />
 									</div>
 								{/if}
 							</div>
@@ -163,11 +163,11 @@
 								<div>
 									{release.title}
 								</div>
-								<DotFilled size={15} />
+								<DotFilled size="15" />
 								<div>{formatMinutesToTime(release.ageMinutes || 0)} old</div>
-								<DotFilled size={15} />
+								<DotFilled size="15" />
 								<div><b>{release.seeders} seeders</b> / {release.leechers} leechers</div>
-								<DotFilled size={15} />
+								<DotFilled size="15" />
 								{#if release.seeders}
 									<div>
 										{formatSize((release.size || 0) / release.seeders)} per seeder

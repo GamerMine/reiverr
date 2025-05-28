@@ -2,7 +2,7 @@
 	import type { TmdbMovie2, TmdbSeries2 } from '$lib/apis/tmdb/tmdbApi';
 	import { searchTmdbTitles } from '$lib/apis/tmdb/tmdbApi';
 	import { TMDB_POSTER_SMALL } from '$lib/constants';
-	import { MagnifyingGlass } from 'radix-icons-svelte';
+	import { MagnifyingGlass } from 'svelte-radix';
 	import { modalStack } from '$lib/stores/modal.store';
 	import ModalContent from '../Modal/ModalContainer.svelte';
 	import ModalHeader from '../Modal/ModalHeader.svelte';
@@ -71,7 +71,7 @@
 
 <ModalContent>
 	<ModalHeader close={handleClose}>
-		<MagnifyingGlass size={20} class="text-zinc-400" />
+		<MagnifyingGlass size="20" class="text-zinc-400" />
 		<input
 			bind:value={inputValue}
 			bind:this={inputElement}

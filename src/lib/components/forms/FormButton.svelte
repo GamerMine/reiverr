@@ -1,6 +1,6 @@
 <script lang="ts">
 	import classNames from 'classnames';
-	import { Update } from 'radix-icons-svelte';
+	import { Update } from 'svelte-radix';
 	import type { Snippet } from 'svelte';
 
 	let {
@@ -42,7 +42,7 @@
 	)}
 >
 	{#if loading}
-		<Update class="animate-spin" size={14} />
+		<Update class="animate-spin" size="14" />
 	{/if}
 	{@render children?.()}
 </button>

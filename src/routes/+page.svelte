@@ -12,7 +12,6 @@
 		TmdbApiOpen
 	} from '$lib/apis/tmdb/tmdbApi';
 	import Carousel from '$lib/components/Carousel/Carousel.svelte';
-	import CarouselPlaceholderItems from '$lib/components/Carousel/CarouselPlaceholderItems.svelte';
 	import GenreCard from '$lib/components/GenreCard.svelte';
 	import NetworkCard from '$lib/components/NetworkCard.svelte';
 	import PersonCard from '$lib/components/PersonCard/PersonCard.svelte';
@@ -26,6 +25,7 @@
 	import type { ComponentProps } from 'svelte';
 	import { _ } from 'svelte-i18n';
 	import { fade } from 'svelte/transition';
+	import { tmdbDataFormat } from '$lib/utils.js';
 
 	let continueWatchingVisible = true;
 
@@ -139,6 +139,9 @@
 			params: {
 				path: {
 					time_window: 'week'
+				},
+				query: {
+					language: $settings.language
 				}
 			}
 		})
@@ -150,7 +153,9 @@
 						tmdbId: actor.id || 0,
 						backdropUri: actor.profile_path || '',
 						name: actor.name || '',
-						subtitle: actor.known_for_department || ''
+						subtitle: actor.known_for_department
+							? $_('data.known_for_department.' + tmdbDataFormat(actor.known_for_department))
+							: $_('data.unknown')
 					}))
 			);
 

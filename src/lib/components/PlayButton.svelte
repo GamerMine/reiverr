@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { TriangleRight } from 'radix-icons-svelte';
+	import { TriangleRight } from 'svelte-radix';
 	import classNames from 'classnames';
 
 	let { onclick, klass = '' }: { onclick: (e: MouseEvent) => void; klass?: string } = $props();
@@ -14,5 +14,5 @@
 	)}
 	{onclick}
 >
-	<TriangleRight size={30} />
+	<TriangleRight size="30" />
 </div>

@@ -4,7 +4,7 @@
 	import classNames from 'classnames';
 	import { fly } from 'svelte/transition';
 	import { _ } from 'svelte-i18n';
-	import { ChevronDown, Cross2, MagnifyingGlass } from 'radix-icons-svelte';
+	import { ChevronDown, Cross2, MagnifyingGlass } from 'svelte-radix';
 	import CardPlaceholder from '$lib/components/Card/CardPlaceholder.svelte';
 	import { tick, type ComponentProps } from 'svelte';
 	import Poster from '$lib/components/Poster/Poster.svelte';
@@ -205,11 +205,11 @@
 		flex items-center text-zinc-300"
 	>
 		<div class="absolute inset-y-0 left-4 flex items-center justify-center">
-			<MagnifyingGlass size={20} />
+			<MagnifyingGlass size="20" />
 		</div>
 		<div class="absolute inset-y-0 right-4 flex items-center justify-center">
 			<IconButton onclick={handleCloseSearch}>
-				<Cross2 size={20} />
+				<Cross2 size="20" />
 			</IconButton>
 		</div>
 		<input
@@ -281,12 +281,12 @@
 				<IconButton>
 					<div class="flex gap-1 items-center">
 						{$sortBy}
-						<ChevronDown size={20} />
+						<ChevronDown size="20" />
 					</div>
 				</IconButton>
 			</ContextMenu>
 			<IconButton onclick={handleOpenSearch}>
-				<MagnifyingGlass size={20} />
+				<MagnifyingGlass size="20" />
 			</IconButton>
 		</div>
 	</div>

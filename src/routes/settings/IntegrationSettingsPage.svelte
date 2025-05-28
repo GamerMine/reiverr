@@ -12,7 +12,7 @@
 	import Select from '$lib/components/forms/Select.svelte';
 	import { settings, type SettingsValues } from '$lib/stores/settings.store';
 	import classNames from 'classnames';
-	import { Trash } from 'radix-icons-svelte';
+	import { Trash } from 'svelte-radix';
 	import IntegrationCard from './IntegrationCard.svelte';
 	import TestConnectionButton from './TestConnectionButton.svelte';
 	import { getRadarrQualityProfiles, getRadarrRootFolders } from '$lib/apis/radarr/radarrApi';
@@ -171,7 +171,7 @@
 			<div class="grid grid-cols-[1fr_min-content] gap-2">
 				<TestConnectionButton handleHealthCheck={updateSonarrHealth} />
 				<FormButton onclick={() => handleRemoveIntegration('sonarr')} type="error">
-					<Trash size={20} />
+					<Trash size="20" />
 				</FormButton>
 			</div>
 			<h1 class="border-b border-zinc-800 py-2">
@@ -273,7 +273,7 @@
 			<div class="grid grid-cols-[1fr_min-content] gap-2">
 				<TestConnectionButton handleHealthCheck={updateRadarrHealth} />
 				<FormButton onclick={() => handleRemoveIntegration('radarr')} type="error">
-					<Trash size={20} />
+					<Trash size="20" />
 				</FormButton>
 			</div>
 			<h1 class="border-b border-zinc-800 py-2">
@@ -367,7 +367,7 @@
 			<div class="grid grid-cols-[1fr_min-content] gap-2">
 				<TestConnectionButton handleHealthCheck={updateJellyfinHealth} />
 				<FormButton onclick={() => handleRemoveIntegration('jellyfin')} type="error">
-					<Trash size={20} />
+					<Trash size="20" />
 				</FormButton>
 			</div>
 			<h1 class="border-b border-zinc-800 py-2">{$_('settings.integrations.options.options')}</h1>

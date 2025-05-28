@@ -32,9 +32,10 @@
 	import type { TitleId } from '$lib/types';
 	import { capitalize, formatMinutesToTime, formatSize } from '$lib/utils';
 	import classNames from 'classnames';
-	import { Archive, ChevronLeft, ChevronRight, DotFilled, Plus } from 'radix-icons-svelte';
+	import { Archive, ChevronLeft, ChevronRight, DotFilled, Plus } from 'svelte-radix';
 	import { get } from 'svelte/store';
 	import { _ } from 'svelte-i18n';
+	import { tmdbDataFormat } from '$lib/utils.js';
 
 	let {
 		titleId,
@@ -239,7 +240,7 @@
 		{#snippet title_info()}
 			{new Date(tmdbSeries?.first_air_date || Date.now()).getFullYear()}
 			<DotFilled />
-			{tmdbSeries?.status}
+			{tmdbSeries?.status ? $_('data.status.' + tmdbDataFormat(tmdbSeries?.status)) : undefined}
 			<DotFilled />
 			<a href={tmdbUrl} target="_blank">{tmdbSeries?.vote_average?.toFixed(1)} TMDB</a>
 		{/snippet}
@@ -264,15 +265,15 @@
 								{$_('library.content.play')}
 								{`S${nextJellyfinEpisode?.ParentIndexNumber}E${nextJellyfinEpisode?.IndexNumber}`}
 							</span>
-							<ChevronRight size={20} />
+							<ChevronRight size="20" />
 						</Button>
 					{:else if !$sonarrSeriesStore.item && $settings.sonarr.apiKey && $settings.sonarr.baseUrl}
 						<Button type="primary" disabled={addToSonarrLoading} onclick={addToSonarr}>
-							<span>{$_('library.content.addSonarr')}</span><Plus size={20} />
+							<span>{$_('library.content.addSonarr')}</span><Plus size="20" />
 						</Button>
 					{:else if $sonarrSeriesStore.item}
 						<Button type="primary" onclick={openRequestModal}>
-							<span class="mr-2">{$_('library.content.requestSeries')}</span><Plus size={20} />
+							<span class="mr-2">{$_('library.content.requestSeries')}</span><Plus size="20" />
 						</Button>
 					{/if}
 				{/if}
@@ -280,77 +281,76 @@
 		{/snippet}
 
 		{#snippet episodes_carousel()}
-			<div>
-				<Carousel
-					gradientFromColor="from-stone-950"
-					klass={classNames('px-2 sm:px-4 lg:px-8', {
-						'2xl:px-0': !isModal
-					})}
-				>
-					{#snippet title()}
-						<UiCarousel klass="flex gap-6">
-							{#each [...Array(tmdbSeries?.number_of_seasons || 0).keys()].map((i) => i + 1) as seasonNumber}
-								{@const season = tmdbSeries?.seasons?.find((s) => s.season_number === seasonNumber)}
-								{@const isSelected = season?.season_number === visibleSeasonNumber}
-								<button
-									class={classNames(
-										'font-medium tracking-wide transition-colors shrink-0 flex items-center gap-1',
-										{
-											'text-zinc-200': isSelected && seasonSelectVisible,
-											'text-zinc-500 hover:text-zinc-200 cursor-pointer':
-												(!isSelected || seasonSelectVisible === false) &&
-												tmdbSeries?.number_of_seasons !== 1,
-											'text-zinc-500 cursor-default': tmdbSeries?.number_of_seasons === 1,
-											hidden:
-												!seasonSelectVisible && visibleSeasonNumber !== (season?.season_number || 1)
-										}
-									)}
-									onclick={() => {
-										if (tmdbSeries?.number_of_seasons === 1) return;
+			<Carousel
+				gradientFromColor="from-stone-950"
+				klass={classNames('px-2 sm:px-4 lg:px-8', {
+					'2xl:px-0': !isModal
+				})}
+			>
+				{#snippet title()}
+					<UiCarousel klass="flex gap-6">
+						{#each [...Array(tmdbSeries?.number_of_seasons || 0).keys()].map((i) => i + 1) as seasonNumber}
+							{@const season = tmdbSeries?.seasons?.find((s) => s.season_number === seasonNumber)}
+							{@const isSelected = season?.season_number === visibleSeasonNumber}
+							<button
+								class={classNames(
+									'font-medium tracking-wide transition-colors shrink-0 flex items-center gap-1',
+									{
+										'text-zinc-200': isSelected && seasonSelectVisible,
+										'text-zinc-500 hover:text-zinc-200 cursor-pointer':
+											(!isSelected || seasonSelectVisible === false) &&
+											tmdbSeries?.number_of_seasons !== 1,
+										'text-zinc-500 cursor-default': tmdbSeries?.number_of_seasons === 1,
+										hidden:
+											!seasonSelectVisible && visibleSeasonNumber !== (season?.season_number || 1)
+									}
+								)}
+								onclick={() => {
+									if (tmdbSeries?.number_of_seasons === 1) return;
 
-										if (seasonSelectVisible) {
-											visibleSeasonNumber = season?.season_number || 1;
-											seasonSelectVisible = false;
-										} else {
-											seasonSelectVisible = true;
-										}
-									}}
-								>
-									<ChevronLeft
-										size={20}
-										class={(seasonSelectVisible || tmdbSeries?.number_of_seasons === 1) && 'hidden'}
-									/>
-									Season {season?.season_number}
-								</button>
-							{/each}
-						</UiCarousel>
-					{/snippet}
-					{#key visibleSeasonNumber}
-						{#await seasonsData[visibleSeasonNumber - 1]}
+									if (seasonSelectVisible) {
+										visibleSeasonNumber = season?.season_number || 1;
+										seasonSelectVisible = false;
+									} else {
+										seasonSelectVisible = true;
+									}
+								}}
+							>
+								<ChevronLeft
+									size="20"
+									class={seasonSelectVisible || tmdbSeries?.number_of_seasons === 1 ? 'hidden' : ''}
+								/>
+								{$_('library.content.season')}
+								{season?.season_number}
+							</button>
+						{/each}
+					</UiCarousel>
+				{/snippet}
+				{#key visibleSeasonNumber}
+					{#await seasonsData[visibleSeasonNumber - 1]}
+						<CarouselPlaceholderItems />
+					{:then seasonEpisodes}
+						{#each seasonEpisodes || [] as props, i}
+							{@const jellyfinData = jellyfinEpisodeData[`S${visibleSeasonNumber}E${i + 1}`]}
+							<div bind:this={episodeComponents[i]}>
+								<EpisodeCard
+									{...props}
+									{...jellyfinData
+										? {
+												watched: jellyfinData.watched,
+												progress: jellyfinData.progress,
+												jellyfinId: jellyfinData.jellyfinId
+											}
+										: {}}
+									onclick={() => (visibleEpisodeIndex = i)}
+								/>
+							</div>
+						{:else}
 							<CarouselPlaceholderItems />
-						{:then seasonEpisodes}
-							{#each seasonEpisodes || [] as props, i}
-								{@const jellyfinData = jellyfinEpisodeData[`S${visibleSeasonNumber}E${i + 1}`]}
-								<div bind:this={episodeComponents[i]}>
-									<EpisodeCard
-										{...props}
-										{...jellyfinData
-											? {
-													watched: jellyfinData.watched,
-													progress: jellyfinData.progress,
-													jellyfinId: jellyfinData.jellyfinId
-												}
-											: {}}
-										onclick={() => (visibleEpisodeIndex = i)}
-									/>
-								</div>
-							{:else}
-								<CarouselPlaceholderItems />
-							{/each}
-						{/await}
-					{/key}
-				</Carousel>
-			</div>
+						{/each}
+					{/await}
+				{/key}
+			</Carousel>
 		{/snippet}
 
 		{#snippet info_components()}
@@ -447,10 +447,10 @@
 
 				<div class="flex gap-4 flex-wrap col-span-4 sm:col-span-6 mt-4">
 					<Button onclick={openRequestModal}>
-						<span class="mr-2">{$_('library.content.requestSeries')}</span><Plus size={20} />
+						<span class="mr-2">{$_('library.content.requestSeries')}</span><Plus size="20" />
 					</Button>
 					<Button>
-						<span class="mr-2">{$_('library.content.manage')}</span><Archive size={20} />
+						<span class="mr-2">{$_('library.content.manage')}</span><Archive size="20" />
 					</Button>
 				</div>
 			{:else if $sonarrSeriesStore.loading}

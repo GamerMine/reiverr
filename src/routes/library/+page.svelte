@@ -11,7 +11,7 @@
 	import { PLACEHOLDER_BACKDROP } from '$lib/constants';
 	import { jellyfinItemsStore, servarrDownloadsStore } from '$lib/stores/data.store';
 	import { settings } from '$lib/stores/settings.store';
-	import { ChevronRight } from 'radix-icons-svelte';
+	import { ChevronRight } from 'svelte-radix';
 	import type { ComponentProps } from 'svelte';
 	import { _ } from 'svelte-i18n';
 	import { fade } from 'svelte/transition';
@@ -131,14 +131,14 @@
 									type="primary"
 									onclick={() => showcase?.Id && playerState.streamJellyfinId(showcase?.Id)}
 								>
-									{$_('library.content.play')}<ChevronRight size={20} />
+									{$_('library.content.play')}<ChevronRight size="20" />
 								</Button>
 								<Button
 									href={`/${showcase?.Type === 'Movie' ? 'movie' : 'series'}/${
 										showcase?.ProviderIds?.Tmdb || showcase?.ProviderIds?.Tvdb
 									}`}
 								>
-									<span>{$_('titleShowcase.details')}</span><ChevronRight size={20} />
+									<span>{$_('titleShowcase.details')}</span><ChevronRight size="20" />
 								</Button>
 							</div>
 						</div>

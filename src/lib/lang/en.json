@@ -90,8 +90,8 @@
 			"notSet": "Not set",
 			"female": "Female",
 			"male": "Male",
-			"nonBinary": "Non-binary"
-
+			"nonBinary": "Non-binary",
+			"homepage": "Homepage"
 		}
 	},
 	"sources": {},
@@ -151,5 +151,31 @@
 	"update": {
 		"updateAvailable": "is now available!",
 		"skipVersion": "Skip this version"
+	},
+	"data": {
+		"unknown": "Unknown",
+		"known_for_department": {
+			"acting": "Acting",
+			"sound": "Sound",
+			"directing": "Directing",
+			"camera": "Camera",
+			"writing": "Writing",
+			"production": "Production",
+			"editing": "Editing",
+			"lighting": "Lighting",
+			"art": "Art",
+			"actors": "Acting",
+			"visual_effects": "Visual Effects",
+			"costume_make_up": "Costume & Make-Up",
+			"crew": "Crew"
+		},
+		"status": {
+			"returning_series": "Returning Series",
+			"planned": "Planned",
+			"in_production": "In Production",
+			"ended": "Ended",
+			"canceled": "Canceled",
+			"pilot": "Pilot"
+		}
 	}
 }

@@ -2,7 +2,7 @@
 	import { TMDB_POSTER_SMALL } from '$lib/constants';
 	import { formatMinutesToTime } from '$lib/utils';
 	import classNames from 'classnames';
-	import { DotFilled } from 'radix-icons-svelte';
+	import { DotFilled } from 'svelte-radix';
 	import { fly } from 'svelte/transition';
 	import Poster from '../Poster/Poster.svelte';
 	import type { TitleType } from '$lib/types';

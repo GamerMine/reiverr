@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { version } from '$app/environment';
 	import { createLocalStorageStore } from '$lib/stores/localstorage.store';
-	import { Cross2 } from 'radix-icons-svelte';
+	import { Cross2 } from 'svelte-radix';
 	import IconButton from './IconButton.svelte';
 	import axios from 'axios';
 	import Button from './Button.svelte';
@@ -44,7 +44,7 @@
 					{$_('update.skipVersion')}
 				</Button>
 				<IconButton onclick={() => (visible = false)}>
-					<Cross2 size={20} />
+					<Cross2 size="20" />
 				</IconButton>
 			</div>
 		</div>

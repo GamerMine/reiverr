@@ -9,7 +9,7 @@
 	import { settings, type SettingsValues } from '$lib/stores/settings.store';
 	import axios from 'axios';
 	import classNames from 'classnames';
-	import { ChevronLeft } from 'radix-icons-svelte';
+	import { ChevronLeft } from 'svelte-radix';
 	import GeneralSettingsPage from './GeneralSettingsPage.svelte';
 	import IntegrationSettingsPage from './IntegrationSettingsPage.svelte';
 	import { fade } from 'svelte/transition';
@@ -211,7 +211,7 @@
 				class="mb-6 text-lg font-medium flex items-center text-zinc-300 hover:text-zinc-200"
 				onclick={() => history.back()}
 			>
-				<ChevronLeft size={22} />
+				<ChevronLeft size="22" />
 				{$_('settings.navbar.settings')}
 			</button>
 			<button onclick={() => (openTab = 'general')} class={openTab && getNavButtonStyle('general')}>
@@ -250,7 +250,7 @@
 			class="text-lg font-medium flex items-center text-zinc-300 hover:text-zinc-200"
 			onclick={() => history.back()}
 		>
-			<ChevronLeft size={22} />
+			<ChevronLeft size="22" />
 			{$_('settings.navbar.settings')}
 		</button>
 		<Select bind:value={openTab}>

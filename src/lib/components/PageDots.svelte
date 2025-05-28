@@ -1,6 +1,6 @@
 <script lang="ts">
 	import classNames from 'classnames';
-	import { DotFilled } from 'radix-icons-svelte';
+	import { DotFilled } from 'svelte-radix';
 
 	let {
 		index,
@@ -36,7 +36,7 @@
 						'opacity-20': i !== index
 					}
 				)}
-				size={20}
+				size="20"
 			/>
 		</div>
 	{/each}

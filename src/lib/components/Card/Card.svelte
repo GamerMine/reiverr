@@ -7,7 +7,7 @@
 	import type { TitleType } from '$lib/types';
 	import { formatMinutesToTime } from '$lib/utils';
 	import classNames from 'classnames';
-	import { Clock, Star } from 'radix-icons-svelte';
+	import { Clock, Star } from 'svelte-radix';
 	import { openTitleModal } from '$lib/stores/modal.store';
 	import ContextMenu from '../ContextMenu/ContextMenu.svelte';
 	import LibraryItemContextItems from '../ContextMenu/LibraryItemContextItems.svelte';

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
 	import IconButton from '../IconButton.svelte';
-	import { ChevronLeft, ChevronRight } from 'radix-icons-svelte';
+	import { ChevronLeft, ChevronRight } from 'svelte-radix';
 	import classNames from 'classnames';
 	import { type Snippet, tick } from 'svelte';
 
@@ -61,14 +61,14 @@
 					carousel?.scrollTo({ left: scrollX - carousel?.clientWidth * 0.8, behavior: 'smooth' });
 				}}
 			>
-				<ChevronLeft size={20} />
+				<ChevronLeft size="20" />
 			</IconButton>
 			<IconButton
 				onclick={() => {
 					carousel?.scrollTo({ left: scrollX + carousel?.clientWidth * 0.8, behavior: 'smooth' });
 				}}
 			>
-				<ChevronRight size={20} />
+				<ChevronRight size="20" />
 			</IconButton>
 		</div>
 	</div>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Cross1, HamburgerMenu, MagnifyingGlass, Person } from 'radix-icons-svelte';
+	import { Cross1, HamburgerMenu, MagnifyingGlass, Person } from 'svelte-radix';
 	import classNames from 'classnames';
 	import { page } from '$app/state';
 	import TitleSearchModal from './TitleSearchModal.svelte';
@@ -77,10 +77,10 @@
 	</div>
 	<div class="flex gap-2 items-center">
 		<IconButton onclick={openSearchModal}>
-			<MagnifyingGlass size={20} />
+			<MagnifyingGlass size="20" />
 		</IconButton>
 		<IconButton>
-			<Person size={20} />
+			<Person size="20" />
 		</IconButton>
 	</div>
 </div>
@@ -93,16 +93,16 @@
 	<div></div>
 	<div class="flex items-center gap-2">
 		<IconButton onclick={openSearchModal}>
-			<MagnifyingGlass size={20} />
+			<MagnifyingGlass size="20" />
 		</IconButton>
 
 		{#if isMobileMenuVisible}
 			<IconButton onclick={() => (isMobileMenuVisible = false)}>
-				<Cross1 size={20} />
+				<Cross1 size="20" />
 			</IconButton>
 		{:else}
 			<IconButton onclick={() => (isMobileMenuVisible = true)}>
-				<HamburgerMenu size={20} />
+				<HamburgerMenu size="20" />
 			</IconButton>
 		{/if}
 	</div>

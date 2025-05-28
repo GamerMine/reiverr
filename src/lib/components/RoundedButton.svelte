@@ -1,6 +1,6 @@
 <script lang="ts">
 	import classNames from 'classnames';
-	import { ChevronRight } from 'radix-icons-svelte';
+	import { ChevronRight } from 'svelte-radix';
 	import type { Snippet } from 'svelte';
 
 	let {
@@ -29,7 +29,7 @@
 	{#if !disableIcon}
 		{@render icon?.()}
 		{#if !icon}
-			<ChevronRight size={20} />
+			<ChevronRight size="20" />
 		{/if}
 	{/if}
 </button>

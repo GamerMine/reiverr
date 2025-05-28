@@ -1,6 +1,6 @@
 <script lang="ts">
 	import classNames from 'classnames';
-	import { Check } from 'radix-icons-svelte';
+	import { Check } from 'svelte-radix';
 	import ContextMenuItem from './ContextMenuItem.svelte';
 	import type { Snippet } from 'svelte';
 
@@ -14,7 +14,7 @@
 <ContextMenuItem {onclick}>
 	<div class="flex items-center gap-2 justify-between cursor-pointer">
 		<Check
-			size={20}
+			size="20"
 			class={classNames({
 				'opacity-0': !selected,
 				'opacity-100': selected

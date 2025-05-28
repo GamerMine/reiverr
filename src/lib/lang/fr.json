@@ -48,7 +48,16 @@
 			"similarSeries": "Séries similaires",
 			"similarMovies": "Films similaires",
 			"viewLess": "Moins",
-			"viewAll": "Plus"
+			"viewAll": "Plus",
+			"networks": "Plateformes",
+
+			"firstAirDate": "Première date de diffusion",
+			"episodeRunTime": "Longueur des épisodes",
+			"nextAirDate": "Prochaine diffusion",
+			"lastAirDate": "Dernière diffusion",
+			"spokenLanguages": "Langue parlée",
+			"season": "Saison",
+			"available": "Disponible"
 		},
 		"LibraryItemContext": {
 			"markWatched": "Marquer comme vu",
@@ -57,6 +66,18 @@
 			"openRadarr": "Ouvrir dans Radarr",
 			"openSonarr": "Ouvrir dans Sonarr",
 			"openTMDB": "Ouvrir dans TMDB"
+		},
+		"personPage": {
+			"externalLinks": "Liens externes",
+			"birthday": "Date de naissance",
+			"knownFor": "Connu pour",
+			"placeOfBirth": "Lieu de naissance",
+			"gender": "Genre",
+			"notSet": "Non défini",
+			"female": "Femme",
+			"male": "Homme",
+			"nonBinary": "Non binaire",
+			"homepage": "Site web"
 		}
 	},
 	"sources": {},
@@ -116,5 +137,31 @@
 	"update": {
 		"updateAvailable": "est désormais disponible !",
 		"skipVersion": "Passer cette version"
+	},
+	"data": {
+		"unknown": "Inconnu",
+		"known_for_department": {
+			"acting": "Acteur",
+			"sound": "Son",
+			"directing": "Réalisation",
+			"camera": "Caméra",
+			"writing": "Scénario",
+			"production": "Production",
+			"editing": "Montage",
+			"lighting": "Éclairage",
+			"art": "Direction artistique",
+			"actors": "Acteur",
+			"visual_effects": "Effets visuels",
+			"costume_make_up": "Costumes et maquillage",
+			"crew": "Équipe technique"
+		},
+		"status": {
+			"returning_series": "En Cours",
+			"planned": "Prévu",
+			"in_production": "En Production",
+			"ended": "Terminée",
+			"canceled": "Annulée",
+			"pilot": "Épisode Pilote"
+		}
 	}
 }

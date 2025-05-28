@@ -10,9 +10,10 @@
 	import TwitterIcon from '$lib/components/svgs/TwitterIcon.svelte';
 	import YoutubeIcon from '$lib/components/svgs/YoutubeIcon.svelte';
 	import { TMDB_POSTER_SMALL } from '$lib/constants';
-	import { DotFilled, InstagramLogo } from 'radix-icons-svelte';
+	import { DotFilled, InstagramLogo } from 'svelte-radix';
 	import { _ } from 'svelte-i18n';
 	import { settings } from '$lib/stores/settings.store';
+	import { tmdbDataFormat } from '$lib/utils.js';
 
 	const GENDER_OPTIONS = [
 		$_('library.personPage.notSet'),
@@ -146,7 +147,9 @@
 			title: person?.name || 'Person',
 			backdropUriCandidates: [person?.profile_path ?? ''],
 			posterPath: person?.profile_path || '',
-			tagline: person?.known_for_department || person?.name || '',
+			tagline: person?.known_for_department
+				? $_('data.known_for_department.' + tmdbDataFormat(person?.known_for_department))
+				: person?.name || '',
 			overview: person?.biography || ''
 		}}
 		{isModal}
@@ -154,7 +157,7 @@
 	>
 		{#snippet title_info()}
 			{#if person?.homepage}
-				<a href={person?.homepage} target="_blank">Homepage</a>
+				<a href={person?.homepage} target="_blank">{$_('library.personPage.homepage')}</a>
 				<DotFilled />
 			{/if}
 			{#if movieCredits + seriesCredits + crewCredits > 0}
@@ -181,7 +184,9 @@
 			<div class="col-span-2 lg:col-span-1">
 				<p class="text-zinc-400 text-sm">{$_('library.personPage.knownFor')}</p>
 				<h2 class="font-medium">
-					{person?.known_for_department}
+					{person?.known_for_department
+						? $_('data.known_for_department.' + tmdbDataFormat(person?.known_for_department))
+						: $_('data.unknown')}
 				</h2>
 			</div>
 			<div class="col-span-2 lg:col-span-1">
