@@ -81,10 +81,7 @@ export class Settings extends BaseEntity {
 	@Column('text', { nullable: true, default: defaultSettings.jellyfin.apiKey })
 	jellyfinApiKey: string | null;
 
-	@Column('text', { nullable: true, default: defaultSettings.jellyfin.userId })
-	jellyfinUserId: string | null;
-
-	public static async get(name = 'default'): Promise<SettingsValues> {
+	public static async getClient(name = 'default'): Promise<SettingsValues> {
 		const settings = await this.findOne({ where: { name } });
 
 		if (!settings) {
@@ -95,6 +92,32 @@ export class Settings extends BaseEntity {
 		}
 
 		return this.getSettingsValues(settings);
+	}
+
+	public static async getJellyfinApiKey(name = 'default') {
+		const settings = await this.findOne({ where: { name } });
+
+		if (!settings) {
+			const defaultSettings = new Settings();
+			defaultSettings.name = 'default';
+			await defaultSettings.save();
+			return null;
+		}
+
+		return settings.jellyfinApiKey;
+	}
+
+	public static async getJellyfinBaseUrl(name = 'default') {
+		const settings = await this.findOne({ where: { name } });
+
+		if (!settings) {
+			const defaultSettings = new Settings();
+			defaultSettings.name = 'default';
+			await defaultSettings.save();
+			return null;
+		}
+
+		return settings.jellyfinBaseUrl;
 	}
 
 	static getSettingsValues(settings: Settings): SettingsValues {
@@ -132,9 +155,7 @@ export class Settings extends BaseEntity {
 			},
 			jellyfin: {
 				...defaultSettings.jellyfin,
-				apiKey: settings.jellyfinApiKey,
-				baseUrl: settings.jellyfinBaseUrl,
-				userId: settings.jellyfinUserId
+				baseUrl: settings.jellyfinBaseUrl
 			},
 			initialised: true
 		};
@@ -168,9 +189,12 @@ export class Settings extends BaseEntity {
 		settings.radarrMonitor = values.radarr.monitor;
 		settings.radarrStartSearch = values.radarr.startSearch;
 
-		settings.jellyfinApiKey = values.jellyfin.apiKey;
+		if (values.jellyfin.apiKey) {
+			settings.jellyfinApiKey = values.jellyfin.apiKey;
+		} else if (!values.jellyfin.baseUrl) {
+			settings.jellyfinApiKey = values.jellyfin.apiKey;
+		}
 		settings.jellyfinBaseUrl = values.jellyfin.baseUrl;
-		settings.jellyfinUserId = values.jellyfin.userId;
 
 		await settings.save();
 

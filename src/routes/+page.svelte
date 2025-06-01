@@ -1,16 +1,6 @@
 <script lang="ts">
-	import {
-		getJellyfinBackdrop,
-		getJellyfinContinueWatching,
-		getJellyfinNextUp,
-		type JellyfinItem
-	} from '$lib/apis/jellyfin/jellyfinApi';
-	import {
-		getPosterProps,
-		getTmdbMovie,
-		getTmdbPopularMovies,
-		TmdbApiOpen
-	} from '$lib/apis/tmdb/tmdbApi';
+	import { type JellyfinItem } from '$lib/apis/jellyfin/jellyfinApi';
+	import { getPosterProps, TmdbApiOpen } from '$lib/apis/tmdb/tmdbApi';
 	import Carousel from '$lib/components/Carousel/Carousel.svelte';
 	import GenreCard from '$lib/components/GenreCard.svelte';
 	import NetworkCard from '$lib/components/NetworkCard.svelte';
@@ -26,69 +16,6 @@
 	import { _ } from 'svelte-i18n';
 	import { fade } from 'svelte/transition';
 	import { tmdbDataFormat } from '$lib/utils.js';
-
-	let continueWatchingVisible = true;
-
-	const tmdbPopularMoviesPromise = getTmdbPopularMovies()
-		.then((movies) => Promise.all(movies.map((movie) => getTmdbMovie(movie.id || 0))))
-		.then((movies) => movies.filter((m) => !!m).slice(0, 10));
-
-	let nextUpP = getJellyfinNextUp();
-	let continueWatchingP = getJellyfinContinueWatching();
-
-	let nextUpProps = Promise.all([nextUpP, continueWatchingP])
-		.then(([nextUp, continueWatching]) => [
-			...(continueWatching || []),
-			...(nextUp?.filter((i) => !continueWatching?.find((c) => c.SeriesId === i.SeriesId)) || [])
-		])
-		.then((items) =>
-			Promise.all(
-				items?.map(async (item) => {
-					const parentSeries = await jellyfinItemsStore.promise.then((items) =>
-						items.find((i) => i.Id === item.SeriesId)
-					);
-
-					return {
-						tmdbId: Number(item.ProviderIds?.Tmdb) || Number(parentSeries?.ProviderIds?.Tmdb) || 0,
-						jellyfinId: item.Id,
-						backdropUrl: getJellyfinBackdrop(item),
-						title: item.Name || '',
-						progress: item.UserData?.PlayedPercentage || undefined,
-						runtime: item.RunTimeTicks ? item.RunTimeTicks / 10_000_000 / 60 : 0,
-						...(item.Type === 'Movie'
-							? {
-									type: 'movie',
-									subtitle: item.Genres?.join(', ') || ''
-								}
-							: {
-									type: 'series',
-									subtitle:
-										(item?.IndexNumber && 'Episode ' + item.IndexNumber) ||
-										item.Genres?.join(', ') ||
-										''
-								})
-					} as const;
-				})
-			)
-		);
-
-	nextUpProps.then((props) => {
-		if (props.length === 0) {
-			continueWatchingVisible = false;
-		}
-	});
-
-	let showcaseIndex = 0;
-
-	async function onNext() {
-		showcaseIndex = (showcaseIndex + 1) % (await tmdbPopularMoviesPromise).length;
-	}
-
-	async function onPrevious() {
-		showcaseIndex =
-			(showcaseIndex - 1 + (await tmdbPopularMoviesPromise).length) %
-			(await tmdbPopularMoviesPromise).length;
-	}
 
 	const jellyfinItemsPromise = new Promise<JellyfinItem[]>((resolve) => {
 		jellyfinItemsStore.subscribe((data) => {
@@ -120,19 +47,6 @@
 			props.filter((p) => p.backdropUrl)
 		);
 	};
-
-	const trendingItemsPromise = TmdbApiOpen.GET('/3/trending/all/{time_window}', {
-		params: {
-			path: {
-				time_window: 'day'
-			},
-			query: {
-				language: $settings.language
-			}
-		}
-	}).then((res) => res.data?.results || []);
-
-	const fetchTrendingProps = () => trendingItemsPromise.then(fetchCardProps);
 
 	const fetchTrendingActorProps = () =>
 		TmdbApiOpen.GET('/3/trending/person/{time_window}', {

@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
-import { Settings } from './entities/Settings';
+import { Settings } from './entities/Settings.server';
 
 class TypeOrm {
 	private static instance: Promise<DataSource | null> | null = null;
@@ -16,7 +16,7 @@ class TypeOrm {
 				database: 'config/reiverr.sqlite',
 				synchronize: true,
 				entities: [Settings],
-				logging: true
+				logging: false
 			})
 				.initialize()
 				.then((fulfilled) => {

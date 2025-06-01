@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { version } from '$app/environment';
 	import { beforeNavigate } from '$app/navigation';
-	import { getJellyfinHealth, getJellyfinUsers } from '$lib/apis/jellyfin/jellyfinApi';
+	import { jellyfinTestConnection } from '$lib/apis/jellyfin/jellyfinApi';
 	import { getRadarrHealth } from '$lib/apis/radarr/radarrApi';
 	import { getSonarrHealth } from '$lib/apis/sonarr/sonarrApi';
 	import FormButton from '$lib/components/forms/FormButton.svelte';
@@ -26,6 +26,7 @@
 
 	let values: SettingsValues | undefined = $state();
 	let initialValues: SettingsValues;
+
 	settings.subscribe(async (v) => {
 		values = structuredClone($state.snapshot(v));
 		initialValues = structuredClone($state.snapshot(v));
@@ -59,7 +60,7 @@
 				!(await getSonarrHealth(value.sonarr.baseUrl, value.sonarr.apiKey))
 			) {
 				createErrorNotification(
-					'Invalid Configuration',
+					$_('settings.misc.invalidConfiguration'),
 					'Could not connect to Sonarr. Check Sonarr credentials.'
 				);
 				return;
@@ -71,22 +72,31 @@
 				!(await getRadarrHealth(value.radarr.baseUrl, value.radarr.apiKey))
 			) {
 				createErrorNotification(
-					'Invalid Configuration',
+					$_('settings.misc.invalidConfiguration'),
 					'Could not connect to Radarr. Check Radarr credentials.'
 				);
 				return;
 			}
 
-			if (value.jellyfin.apiKey && value.jellyfin.baseUrl) {
-				if (!(await getJellyfinHealth(value.jellyfin.baseUrl, value.jellyfin.apiKey))) {
+			if (value.jellyfin.baseUrl) {
+				if (value.jellyfin.baseUrl.endsWith('/')) {
+					value.jellyfin.baseUrl = value.jellyfin.baseUrl.slice(
+						0,
+						value.jellyfin.baseUrl.length - 1
+					);
+				}
+				if (
+					!(await jellyfinTestConnection(
+						value.jellyfin.baseUrl,
+						value.jellyfin.apiKey || undefined
+					))
+				) {
 					createErrorNotification(
-						'Invalid Configuration',
-						'Could not connect to Jellyfin. Check Jellyfin credentials.'
+						$_('settings.misc.invalidConfiguration'),
+						$_('settings.misc.checkJellyfinCredentials')
 					);
 					return;
 				}
-				const users = await getJellyfinUsers(value.jellyfin.baseUrl, value.jellyfin.apiKey);
-				if (!users.find((u) => u.Id === values?.jellyfin.userId)) value.jellyfin.userId = null;
 			}
 
 			await updateSonarrHealth();
@@ -94,6 +104,7 @@
 			await updateJellyfinHealth();
 
 			axios.post('/api/settings', value).then(() => {
+				value.jellyfin.apiKey = null;
 				settings.set(value);
 			});
 		}
@@ -115,9 +126,6 @@
 			error = 'Radarr disabled: Quality profile is required';
 		}
 
-		if (jellyfinConnected && !v.jellyfin.userId) {
-			error = 'Jellyfin disabled: User is required';
-		}
 		if (error) createErrorNotification('Incomplete Configuration', error, 'warning');
 	}
 
@@ -155,21 +163,18 @@
 		}
 	}
 
-	async function updateJellyfinHealth(reset = false): Promise<boolean | undefined> {
-		if (values) {
-			let value = values;
-			if (!value.jellyfin.baseUrl || !value.jellyfin.apiKey || reset) {
-				jellyfinConnected = false;
-				return false;
-			}
-
-			return getJellyfinHealth(
-				value.jellyfin.baseUrl || undefined,
-				value.jellyfin.apiKey || undefined
+	async function updateJellyfinHealth(): Promise<boolean | undefined> {
+		if (values && values.jellyfin.baseUrl) {
+			return jellyfinTestConnection(
+				values.jellyfin.baseUrl,
+				values.jellyfin.apiKey || undefined
 			).then((ok) => {
 				jellyfinConnected = ok;
 				return ok;
 			});
+		} else {
+			jellyfinConnected = false;
+			return false;
 		}
 	}
 

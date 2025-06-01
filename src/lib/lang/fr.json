@@ -142,6 +142,8 @@
 			}
 		},
 		"misc": {
+			"invalidConfiguration": "Configuration Invalide",
+			"checkJellyfinCredentials": "Connexion à Jellyfin impossible. Vérifiez les informations de connexions.",
 			"saveChanges": "Sauvegarder les modifications",
 			"resetToDefaults": "Réinitialiser aux paramètres par défaut",
 			"changelog": "Journal des modifications"

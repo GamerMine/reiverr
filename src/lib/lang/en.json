@@ -152,6 +152,8 @@
 			}
 		},
 		"misc": {
+			"invalidConfiguration": "Invalid Configuration",
+			"checkJellyfinCredentials": "Could not connect to Jellyfin. Check Jellyfin credentials.",
 			"saveChanges": "Save Changes",
 			"resetToDefaults": "Reset to Defaults ",
 			"changelog": "Changelog"

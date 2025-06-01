@@ -1,8 +1,8 @@
-import { Settings } from '$lib/entities/Settings';
+import { Settings } from '$lib/entities/Settings.server';
 import { json, type RequestHandler } from '@sveltejs/kit';
 
-export const GET: RequestHandler = async ({ url }) => {
-	return json(await Settings.get());
+export const GET: RequestHandler = async () => {
+	return json(await Settings.getClient());
 };
 
 export const POST: RequestHandler = async ({ request }) => {

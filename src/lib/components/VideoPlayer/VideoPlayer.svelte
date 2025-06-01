@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {
-		delteActiveEncoding as deleteActiveEncoding,
+		deleteActiveEncoding as deleteActiveEncoding,
 		getJellyfinItem,
 		getJellyfinPlaybackInfo,
 		reportJellyfinPlaybackProgress,
@@ -179,8 +179,9 @@
 
 				// A start report should only be sent when the video starts playing,
 				// not every time a playback info request is made
-				if (mediaSourceId && starting)
+				if (mediaSourceId && starting) {
 					await reportJellyfinPlaybackStarted(itemId, sessionId, mediaSourceId);
+				}
 
 				reportProgress = async () => {
 					await reportJellyfinPlaybackProgress(
@@ -258,11 +259,6 @@
 		} else {
 			if (mouseMovementTimeout) clearTimeout(mouseMovementTimeout);
 		}
-	}
-
-	function handleQualityToggleVisibility() {
-		if ($contextMenu === qualityContextMenuId) contextMenu.hide();
-		else contextMenu.show(qualityContextMenuId);
 	}
 
 	async function handleSelectQuality(bitrate: number) {

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { getJellyfinUsers } from '$lib/apis/jellyfin/jellyfinApi';
 	import {
 		getSonarrLanguageProfiles,
 		getSonarrQualityProfiles,
@@ -51,8 +50,6 @@
 	let radarrQualityProfiles: undefined | { id: number; name: string }[] = $state();
 	let radarrMonitors: undefined | { id: number; type: string }[] = $state();
 
-	let jellyfinUsers: undefined | { id: string; name: string }[] = $state();
-
 	function handleRemoveIntegration(service: 'sonarr' | 'radarr' | 'jellyfin') {
 		if (service === 'sonarr') {
 			values.sonarr.baseUrl = '';
@@ -66,7 +63,6 @@
 		} else if (service === 'jellyfin') {
 			values.jellyfin.baseUrl = '';
 			values.jellyfin.apiKey = '';
-			values.jellyfin.userId = '';
 			updateJellyfinHealth();
 		}
 	}
@@ -114,15 +110,6 @@
 				values.radarr.apiKey || undefined
 			).then((profiles) => {
 				radarrQualityProfiles = profiles.map((p) => ({ id: p.id || 0, name: p.name || '' }));
-			});
-		}
-
-		if (jellyfinConnected) {
-			getJellyfinUsers(
-				values.jellyfin.baseUrl || undefined,
-				values.jellyfin.apiKey || undefined
-			).then((users) => {
-				jellyfinUsers = users.map((u) => ({ id: u.Id || '', name: u.Name || '' }));
 			});
 		}
 	});
@@ -257,7 +244,7 @@
 					placeholder={'http://127.0.0.1:7878'}
 					klass="w-full"
 					bind:value={values.radarr.baseUrl}
-					onchange={() => updateSonarrHealth(true)}
+					onchange={() => updateRadarrHealth(true)}
 				/>
 			</div>
 			<div class="flex flex-col gap-1">
@@ -267,7 +254,7 @@
 				<Input
 					klass="w-full"
 					bind:value={values.radarr.apiKey}
-					onchange={() => updateSonarrHealth(true)}
+					onchange={() => updateRadarrHealth(true)}
 				/>
 			</div>
 			<div class="grid grid-cols-[1fr_min-content] gap-2">
@@ -351,46 +338,19 @@
 					placeholder={'http://127.0.0.1:8096'}
 					klass="w-full"
 					bind:value={values.jellyfin.baseUrl}
-					onchange={() => updateSonarrHealth(true)}
 				/>
 			</div>
 			<div class="flex flex-col gap-1">
 				<h2 class="text-sm text-zinc-500">
 					{$_('settings.integrations.apiKey')}
 				</h2>
-				<Input
-					klass="w-full"
-					bind:value={values.jellyfin.apiKey}
-					onchange={() => updateSonarrHealth(true)}
-				/>
+				<Input klass="w-full" bind:value={values.jellyfin.apiKey} />
 			</div>
 			<div class="grid grid-cols-[1fr_min-content] gap-2">
 				<TestConnectionButton handleHealthCheck={updateJellyfinHealth} />
 				<FormButton onclick={() => handleRemoveIntegration('jellyfin')} type="error">
 					<Trash size="20" />
 				</FormButton>
-			</div>
-			<h1 class="border-b border-zinc-800 py-2">{$_('settings.integrations.options.options')}</h1>
-			<div
-				class={classNames(
-					'grid grid-cols-[1fr_min-content] justify-items-start gap-4 text-zinc-400',
-					{
-						'opacity-50 pointer-events-none': !jellyfinConnected
-					}
-				)}
-			>
-				<h2>
-					{$_('settings.integrations.options.jellyfinUser')}
-				</h2>
-				{#if !jellyfinUsers}
-					<Select loading />
-				{:else}
-					<Select bind:value={values.jellyfin.userId}>
-						{#each jellyfinUsers as user}
-							<option value={user.id}>{user.name}</option>
-						{/each}
-					</Select>
-				{/if}
 			</div>
 		</IntegrationCard>
 	</div>

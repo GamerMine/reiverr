@@ -2,7 +2,7 @@ import { get, writable } from 'svelte/store';
 import { getSonarrHealth } from '$lib/apis/sonarr/sonarrApi';
 import { createErrorNotification } from '$lib/stores/notification.store';
 import { getRadarrHealth } from '$lib/apis/radarr/radarrApi';
-import { getJellyfinHealth, getJellyfinUsers } from '$lib/apis/jellyfin/jellyfinApi';
+import { jellyfinTestConnection } from '$lib/apis/jellyfin/jellyfinApi';
 import axios from 'axios';
 
 export interface SettingsValues {
@@ -35,7 +35,6 @@ export interface SettingsValues {
 	jellyfin: {
 		baseUrl: string | null;
 		apiKey: string | null;
-		userId: string | null;
 	};
 }
 
@@ -69,8 +68,7 @@ export const defaultSettings: SettingsValues = {
 	},
 	jellyfin: {
 		apiKey: null,
-		baseUrl: null,
-		userId: null
+		baseUrl: null
 	}
 };
 
@@ -104,15 +102,13 @@ function useSettings() {
 		}
 
 		if (values.jellyfin.apiKey && values.jellyfin.baseUrl) {
-			if (!(await getJellyfinHealth(values.jellyfin.baseUrl, values.jellyfin.apiKey))) {
+			if (!(await jellyfinTestConnection(values.jellyfin.baseUrl, values.jellyfin.apiKey))) {
 				createErrorNotification(
 					'Invalid Configuration',
 					'Could not connect to Jellyfin. Check Jellyfin credentials.'
 				);
 				return;
 			}
-			const users = await getJellyfinUsers(values.jellyfin.baseUrl, values.jellyfin.apiKey);
-			if (!users.find((u) => u.Id === values.jellyfin.userId)) values.jellyfin.userId = null;
 		}
 
 		return axios.post('/api/settings', values).then(() => {

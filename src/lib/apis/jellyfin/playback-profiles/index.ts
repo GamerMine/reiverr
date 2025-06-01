@@ -30,7 +30,6 @@ import { getCodecProfiles } from './helpers/codec-profiles';
 import { getDirectPlayProfiles } from './directplay-profile';
 import { getTranscodingProfiles } from './transcoding-profile';
 import { getSubtitleProfiles } from './subtitle-profile';
-import { getResponseProfiles } from './response-profile';
 
 export type DeviceProfile = DP;
 
@@ -50,8 +49,7 @@ function getDeviceProfile(videoTestElement?: HTMLVideoElement): DP {
 		TranscodingProfiles: getTranscodingProfiles(element),
 		ContainerProfiles: [],
 		CodecProfiles: getCodecProfiles(element),
-		SubtitleProfiles: getSubtitleProfiles(),
-		ResponseProfiles: getResponseProfiles()
+		SubtitleProfiles: getSubtitleProfiles()
 	};
 }
 

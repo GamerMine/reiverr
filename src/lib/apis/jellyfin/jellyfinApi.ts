@@ -1,143 +1,41 @@
-import type { components, paths } from '$lib/apis/jellyfin/jellyfin.generated';
+import type { components } from '$lib/apis/jellyfin/jellyfin.generated';
 import type { DeviceProfile } from '$lib/apis/jellyfin/playback-profiles';
 import { settings } from '$lib/stores/settings.store';
-import axios from 'axios';
-import createClient from 'openapi-fetch';
 import { get } from 'svelte/store';
+import { arrayToQuery } from '$lib/utils';
 
 export type JellyfinItem = components['schemas']['BaseItemDto'];
 
-export const JELLYFIN_DEVICE_ID = 'Reiverr Client';
-
-function getJellyfinApi() {
-	const baseUrl = get(settings)?.jellyfin.baseUrl;
-	const apiKey = get(settings)?.jellyfin.apiKey;
-	const userId = get(settings)?.jellyfin.userId;
-
-	if (!baseUrl || !apiKey || !userId) return undefined;
-
-	return createClient<paths>({
-		baseUrl,
-		headers: {
-			Authorization: `MediaBrowser DeviceId="${JELLYFIN_DEVICE_ID}", Token="${apiKey}"`
-		}
-	});
-}
-
 export const getJellyfinContinueWatching = async (): Promise<JellyfinItem[] | undefined> =>
-	getJellyfinApi()
-		?.GET('/Users/{userId}/Items/Resume', {
-			params: {
-				path: {
-					userId: get(settings)?.jellyfin.userId || ''
-				},
-				query: {
-					mediaTypes: ['Video'],
-					fields: ['ProviderIds', 'Genres']
-				}
-			}
-		})
-		.then((r) => r.data?.Items || []);
+	await fetch('/api/jellyfin/userItems/resume', {
+		method: 'GET'
+	}).then(async (res) => (await res.json())?.Items || []);
 
 export const getJellyfinNextUp = async () =>
-	getJellyfinApi()
-		?.GET('/Shows/NextUp', {
-			params: {
-				query: {
-					userId: get(settings)?.jellyfin.userId || '',
-					fields: ['ProviderIds', 'Genres']
-				}
-			}
-		})
-		.then((r) => r.data?.Items || []);
+	await fetch('/api/jellyfin/shows/nextUp', {
+		method: 'GET'
+	}).then(async (res) => (await res.json())?.Items || []);
 
 export const getJellyfinItems = async () =>
-	getJellyfinApi()
-		?.GET('/Users/{userId}/Items', {
-			params: {
-				path: {
-					userId: get(settings)?.jellyfin.userId || ''
-				},
-				query: {
-					hasTmdbId: true,
-					recursive: true,
-					includeItemTypes: ['Movie', 'Series'],
-					fields: ['ProviderIds', 'Genres', 'DateLastMediaAdded', 'DateCreated']
-				}
-			}
-		})
-		.then((r) => r.data?.Items || []) || Promise.resolve([]);
-
-// export const getJellyfinSeries = () =>
-// 	JellyfinApi.GET('/Users/{userId}/Items', {
-// 		params: {
-// 			path: {
-// 				userId: PUBLIC_JELLYFIN_USER_ID || ""
-// 			},
-// 			query: {
-// 				hasTmdbId: true,
-// 				recursive: true,
-// 				includeItemTypes: ['Series'],
-// 			}
-// 		}
-// 	}).then((r) => r.data?.Items || []);
+	(await fetch(
+		`/api/jellyfin/items?${arrayToQuery('includeItemTypes', ['Movie', 'Series'])}&hasTmdbId=true&${arrayToQuery('fields', ['ProviderIds', 'Genres', 'DateLastMediaAdded', 'DateCreated'])}`,
+		{
+			method: 'GET'
+		}
+	).then(async (res) => (await res.json()).Items || [])) || Promise.resolve([]);
 
 export const getJellyfinEpisodes = async (parentId = '') =>
-	getJellyfinApi()
-		?.GET('/Users/{userId}/Items', {
-			params: {
-				path: {
-					userId: get(settings)?.jellyfin.userId || ''
-				},
-				query: {
-					recursive: true,
-					includeItemTypes: ['Episode'],
-					parentId
-				}
-			},
-			headers: {
-				'cache-control': 'max-age=10'
-			}
-		})
-		.then((r) => r.data?.Items || []);
-
-export const getJellyfinEpisodesInSeasons = async (seriesId: string) =>
-	getJellyfinEpisodes(seriesId).then((items) => {
-		const seasons: Record<string, JellyfinItem[]> = {};
-
-		items?.forEach((item) => {
-			const seasonNumber = item.ParentIndexNumber || 0;
-
-			if (!seasons[seasonNumber]) {
-				seasons[seasonNumber] = [];
-			}
-
-			seasons[seasonNumber].push(item);
-		});
-
-		return seasons;
-	});
-
-// export const getJellyfinEpisodesBySeries = (seriesId: string) =>
-// 	getJellyfinEpisodes().then((items) => items?.filter((i) => i.SeriesId === seriesId) || []);
-
-// export const getJellyfinItemByTmdbId = (tmdbId: string) =>
-// 	getJellyfinItems().then((items) => items?.find((i) => i.ProviderIds?.Tmdb == tmdbId));
+	await fetch(
+		`/api/jellyfin/items?${arrayToQuery('includeItemTypes', ['Episode'])}&parentId=${parentId}`,
+		{
+			method: 'GET'
+		}
+	).then(async (res) => (await res.json())?.Items || []);
 
 export const getJellyfinItem = async (itemId: string) =>
-	getJellyfinApi()
-		?.GET('/Users/{userId}/Items/{itemId}', {
-			params: {
-				path: {
-					itemId,
-					userId: get(settings)?.jellyfin.userId || ''
-				}
-			}
-		})
-		.then((r) => r.data);
-
-// export const requestJellyfinItemByTmdbId = () =>
-// 	request((tmdbId: string) => getJellyfinItemByTmdbId(tmdbId));
+	await fetch(`/api/jellyfin/items/item?itemId=${itemId}`, {
+		method: 'GET'
+	}).then(async (res) => await res.json());
 
 export const getJellyfinPlaybackInfo = async (
 	itemId: string,
@@ -145,145 +43,118 @@ export const getJellyfinPlaybackInfo = async (
 	startTimeTicks = 0,
 	maxStreamingBitrate = 140000000
 ) =>
-	getJellyfinApi()
-		?.POST('/Items/{itemId}/PlaybackInfo', {
-			params: {
-				path: {
-					itemId: itemId
-				},
-				query: {
-					userId: get(settings)?.jellyfin.userId || '',
-					startTimeTicks,
-					autoOpenLiveStream: true,
-					maxStreamingBitrate
-				}
-			},
-			body: {
-				DeviceProfile: playbackProfile
+	await fetch(
+		`/api/jellyfin/items/playbackInfo?itemId=${itemId}&startTimeTicks=${startTimeTicks}&maxStreamingBitrate=${maxStreamingBitrate}`,
+		{
+			method: 'POST',
+			body: JSON.stringify({ playbackProfile }),
+			headers: {
+				'Content-Type': 'application/json'
 			}
-		})
-		.then((r) => ({
-			playbackUri:
-				r.data?.MediaSources?.[0]?.TranscodingUrl ||
-				`/Videos/${r.data?.MediaSources?.[0].Id}/stream.mp4?Static=true&mediaSourceId=${
-					r.data?.MediaSources?.[0].Id
-				}&deviceId=${JELLYFIN_DEVICE_ID}&api_key=${get(settings)?.jellyfin.apiKey}&Tag=${
-					r.data?.MediaSources?.[0].ETag
-				}`,
-			mediaSourceId: r.data?.MediaSources?.[0]?.Id,
-			playSessionId: r.data?.PlaySessionId,
-			directPlay:
-				!!r.data?.MediaSources?.[0]?.SupportsDirectPlay ||
-				!!r.data?.MediaSources?.[0]?.SupportsDirectStream
-		}));
+		}
+	).then(async (res) => {
+		const data = await res.json();
 
-export const reportJellyfinPlaybackStarted = (
+		return {
+			playbackUri:
+				data?.MediaSources?.[0]?.TranscodingUrl ||
+				`/Videos/${data?.MediaSources?.[0].Id}/stream.mp4?Static=true&mediaSourceId=${
+					data?.MediaSources?.[0].Id
+				}&Tag=${data?.MediaSources?.[0].ETag}`,
+			mediaSourceId: data?.MediaSources?.[0]?.Id,
+			playSessionId: data?.PlaySessionId,
+			directPlay:
+				!!data?.MediaSources?.[0]?.SupportsDirectPlay ||
+				!!data?.MediaSources?.[0]?.SupportsDirectStream
+		};
+	});
+
+export const reportJellyfinPlaybackStarted = async (
 	itemId: string,
 	sessionId: string,
 	mediaSourceId: string,
 	audioStreamIndex?: number,
 	subtitleStreamIndex?: number
 ) =>
-	getJellyfinApi()?.POST('/Sessions/Playing', {
-		body: {
-			CanSeek: true,
+	await fetch('/api/jellyfin/sessions/playing', {
+		method: 'POST',
+		body: JSON.stringify({
 			ItemId: itemId,
 			PlaySessionId: sessionId,
 			MediaSourceId: mediaSourceId,
 			AudioStreamIndex: 1,
 			SubtitleStreamIndex: -1
+		}),
+		headers: {
+			'Content-Type': 'application/json'
 		}
 	});
 
-export const reportJellyfinPlaybackProgress = (
+export const reportJellyfinPlaybackProgress = async (
 	itemId: string,
 	sessionId: string,
 	isPaused: boolean,
 	positionTicks: number
 ) =>
-	getJellyfinApi()?.POST('/Sessions/Playing/Progress', {
-		body: {
+	await fetch('/api/jellyfin/sessions/playing/progress', {
+		method: 'POST',
+		body: JSON.stringify({
 			ItemId: itemId,
 			PlaySessionId: sessionId,
 			IsPaused: isPaused,
 			PositionTicks: Math.round(positionTicks),
-			CanSeek: true,
 			MediaSourceId: itemId
-		}
+		})
 	});
 
-export const reportJellyfinPlaybackStopped = (
+export const reportJellyfinPlaybackStopped = async (
 	itemId: string,
 	sessionId: string,
 	positionTicks: number
 ) =>
-	getJellyfinApi()?.POST('/Sessions/Playing/Stopped', {
-		body: {
+	await fetch('/api/jellyfin/sessions/playing/stopped', {
+		method: 'POST',
+		body: JSON.stringify({
 			ItemId: itemId,
 			PlaySessionId: sessionId,
 			PositionTicks: Math.round(positionTicks),
 			MediaSourceId: itemId
+		}),
+		headers: {
+			'Content-Type': 'application/json'
 		}
 	});
 
-export const delteActiveEncoding = (playSessionId: string) =>
-	getJellyfinApi()?.DELETE('/Videos/ActiveEncodings', {
-		params: {
-			query: {
-				deviceId: JELLYFIN_DEVICE_ID,
-				playSessionId: playSessionId
-			}
-		}
+export const deleteActiveEncoding = async (playSessionId: string) =>
+	await fetch(`/api/jellyfin/videos/activeEncodings?playSessionId=${playSessionId}`, {
+		method: 'DELETE'
 	});
 
 export const setJellyfinItemWatched = async (jellyfinId: string) =>
-	getJellyfinApi()?.POST('/Users/{userId}/PlayedItems/{itemId}', {
-		params: {
-			path: {
-				userId: get(settings)?.jellyfin.userId || '',
-				itemId: jellyfinId
-			},
-			query: {
-				datePlayed: new Date().toISOString()
-			}
-		}
+	await fetch(`/api/jellyfin/userPlayedItems?itemId=${jellyfinId}`, {
+		method: 'POST'
 	});
 
 export const setJellyfinItemUnwatched = async (jellyfinId: string) =>
-	getJellyfinApi()?.DELETE('/Users/{userId}/PlayedItems/{itemId}', {
-		params: {
-			path: {
-				userId: get(settings)?.jellyfin.userId || '',
-				itemId: jellyfinId
-			}
-		}
+	await fetch(`/api/jellyfin/userPlayedItems?itemId=${jellyfinId}`, {
+		method: 'DELETE'
 	});
 
-export const getJellyfinHealth = async (
+export const jellyfinTestConnection = async (
 	baseUrl: string | undefined = undefined,
 	apiKey: string | undefined = undefined
-) =>
-	axios
-		.get((baseUrl || get(settings)?.jellyfin.baseUrl) + '/System/Info', {
-			headers: {
-				'X-Emby-Token': apiKey || get(settings)?.jellyfin.apiKey
-			}
-		})
+) => {
+	let request = `/api/jellyfin/testConnection?baseUrl=${baseUrl}`;
+	if (apiKey) {
+		request += `&apiKey=${apiKey}`;
+	}
+
+	return await fetch(request, {
+		method: 'GET'
+	})
 		.then((res) => res.status === 200)
 		.catch(() => false);
-
-export const getJellyfinUsers = async (
-	baseUrl: string | undefined = undefined,
-	apiKey: string | undefined = undefined
-): Promise<components['schemas']['UserDto'][]> =>
-	axios
-		.get((baseUrl || get(settings)?.jellyfin.baseUrl) + '/Users', {
-			headers: {
-				'X-Emby-Token': apiKey || get(settings)?.jellyfin.apiKey
-			}
-		})
-		.then((res) => res.data || [])
-		.catch(() => []);
+};
 
 export const getJellyfinPosterUrl = (item: JellyfinItem, quality = 100, original = false) =>
 	item.ImageTags?.Primary

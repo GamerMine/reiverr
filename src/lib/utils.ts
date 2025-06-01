@@ -91,3 +91,12 @@ export function capitalize(str: string) {
 export function tmdbDataFormat(str: string): string {
 	return str.replace('& ', '').replace(' ', '_').replace('-', '_').toLowerCase();
 }
+
+export function arrayToQuery(key: string, array: Array<string>): string {
+	let ret = '';
+
+	array.forEach((elt) => (ret += key + '=' + elt + '&'));
+	ret.slice(0, ret.length - 1);
+
+	return ret;
+}
