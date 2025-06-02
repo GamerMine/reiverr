@@ -9,12 +9,12 @@ export type JellyfinItem = components['schemas']['BaseItemDto'];
 export const getJellyfinContinueWatching = async (): Promise<JellyfinItem[] | undefined> =>
 	await fetch('/api/jellyfin/userItems/resume', {
 		method: 'GET'
-	}).then(async (res) => (await res.json())?.Items || []);
+	}).then(async (res): Promise<JellyfinItem[]> => (await res.json())?.Items || []);
 
 export const getJellyfinNextUp = async () =>
 	await fetch('/api/jellyfin/shows/nextUp', {
 		method: 'GET'
-	}).then(async (res) => (await res.json())?.Items || []);
+	}).then(async (res): Promise<JellyfinItem[]> => (await res.json())?.Items || []);
 
 export const getJellyfinItems = async () =>
 	(await fetch(
@@ -22,7 +22,8 @@ export const getJellyfinItems = async () =>
 		{
 			method: 'GET'
 		}
-	).then(async (res) => (await res.json()).Items || [])) || Promise.resolve([]);
+	).then(async (res): Promise<JellyfinItem[]> => (await res.json()).Items || [])) ||
+	Promise.resolve([]);
 
 export const getJellyfinEpisodes = async (parentId = '') =>
 	await fetch(
@@ -30,12 +31,12 @@ export const getJellyfinEpisodes = async (parentId = '') =>
 		{
 			method: 'GET'
 		}
-	).then(async (res) => (await res.json())?.Items || []);
+	).then(async (res): Promise<JellyfinItem[]> => (await res.json())?.Items || []);
 
 export const getJellyfinItem = async (itemId: string) =>
 	await fetch(`/api/jellyfin/items/item?itemId=${itemId}`, {
 		method: 'GET'
-	}).then(async (res) => await res.json());
+	}).then(async (res): Promise<JellyfinItem> => await res.json());
 
 export const getJellyfinPlaybackInfo = async (
 	itemId: string,
