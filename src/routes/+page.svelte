@@ -4,7 +4,7 @@
 	import Carousel from '$lib/components/Carousel/Carousel.svelte';
 	import GenreCard from '$lib/components/GenreCard.svelte';
 	import NetworkCard from '$lib/components/NetworkCard.svelte';
-	import PersonCard from '$lib/components/PersonCard/PersonCard.svelte';
+	import PersonCard from '$lib/components/Card/PersonCard.svelte';
 	import Poster from '$lib/components/Poster/Poster.svelte';
 	import TitleShowcases from '$lib/components/TitleShowcase/TitleShowcasesContainer.svelte';
 	import { genres, networks } from '$lib/discover';

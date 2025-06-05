@@ -10,7 +10,7 @@
 	import { fetchCardTmdbProps } from '$lib/components/Card/card';
 	import Carousel from '$lib/components/Carousel/Carousel.svelte';
 	import CarouselPlaceholderItems from '$lib/components/Carousel/CarouselPlaceholderItems.svelte';
-	import PersonCard from '$lib/components/PersonCard/PersonCard.svelte';
+	import PersonCard from '$lib/components/Card/PersonCard.svelte';
 	import ProgressBar from '$lib/components/ProgressBar.svelte';
 	import RequestModal from '$lib/components/RequestModal/RequestModal.svelte';
 	import OpenInButton from '$lib/components/TitlePageLayout/OpenInButton.svelte';

@@ -5,6 +5,7 @@ import { get } from 'svelte/store';
 import { arrayToQuery } from '$lib/utils';
 
 export type JellyfinItem = components['schemas']['BaseItemDto'];
+export type JellyfinUser = components['schemas']['UserDto'];
 
 export const getJellyfinContinueWatching = async (): Promise<JellyfinItem[] | undefined> =>
 	await fetch('/api/jellyfin/userItems/resume', {
@@ -155,6 +156,12 @@ export const jellyfinTestConnection = async (
 	})
 		.then((res) => res.status === 200)
 		.catch(() => false);
+};
+
+export const jellyfinGetUsers = async () => {
+	return await fetch('/api/jellyfin/users', {
+		method: 'GET'
+	}).then(async (res): Promise<JellyfinUser[]> => await res.json());
 };
 
 export const getJellyfinPosterUrl = (item: JellyfinItem, quality = 100, original = false) =>

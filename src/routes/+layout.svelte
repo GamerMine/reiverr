@@ -8,16 +8,19 @@
 	import '../app.css';
 	import type { LayoutServerData } from './$types';
 	import Notifications from '$lib/components/Notification/Notifications.svelte';
+	import type { Snippet } from 'svelte';
 
-	export let data: LayoutServerData;
+	let { data, children }: { data: LayoutServerData; children: Snippet } = $props();
 	settings.set(data.settings);
 </script>
 
 <I18n />
 <div class="app">
-	<Navbar />
+	{#if page.url.pathname !== '/login'}
+		<Navbar />
+	{/if}
 	<main>
-		<slot />
+		{@render children?.()}
 	</main>
 	{#key page.url.pathname}
 		<DynamicModal />

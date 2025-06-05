@@ -2,6 +2,9 @@
 	"appName": "Reiverr",
 	"setupRequiredTitle": "Bienvenue à",
 	"setupRequiredDescription": "Il semble que l'application manque de certaines variables d'environnement nécessaires au fonctionnement de l'application. ",
+	"login": {
+		"whoWatching": "Qui regarde ?"
+	},
 	"navbar": {
 		"home": "Accueil",
 		"discover": "Découvrir",

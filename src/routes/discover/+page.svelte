@@ -5,7 +5,7 @@
 	import CarouselPlaceholderItems from '$lib/components/Carousel/CarouselPlaceholderItems.svelte';
 	import GenreCard from '$lib/components/GenreCard.svelte';
 	import NetworkCard from '$lib/components/NetworkCard.svelte';
-	import PersonCard from '$lib/components/PersonCard/PersonCard.svelte';
+	import PersonCard from '$lib/components/Card/PersonCard.svelte';
 	import Poster from '$lib/components/Poster/Poster.svelte';
 	import { genres, networks } from '$lib/discover';
 	import { jellyfinItemsStore } from '$lib/stores/data.store';
