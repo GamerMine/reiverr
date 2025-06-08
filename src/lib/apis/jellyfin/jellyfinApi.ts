@@ -164,6 +164,12 @@ export const jellyfinGetUsers = async () => {
 	}).then(async (res): Promise<JellyfinUser[]> => await res.json());
 };
 
+export const jellyfinGetUserImage = async (userId: string) => {
+	return await fetch(`/api/jellyfin/userImage?userId=${userId}`, {
+		method: 'GET'
+	}).then(async (res) => await res.blob());
+};
+
 export const getJellyfinPosterUrl = (item: JellyfinItem, quality = 100, original = false) =>
 	item.ImageTags?.Primary
 		? `${get(settings).jellyfin.baseUrl}/Items/${item?.Id}/Images/Primary?quality=${quality}${

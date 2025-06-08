@@ -3,6 +3,12 @@
 	import UserCarousel from '$lib/components/Carousel/UserCarousel.svelte';
 	import UserCard from '$lib/components/Card/UserCard.svelte';
 	import { _ } from 'svelte-i18n';
+	import Button from '$lib/components/Button.svelte';
+	import { Keyboard } from 'svelte-radix';
+
+	function askForPassword(username: string) {
+		console.log(username);
+	}
 </script>
 
 <div>
@@ -22,9 +28,14 @@
 			</h1>
 			<UserCarousel klass="absolute w-full items-center top-1/2 -translate-y-1/2">
 				{#each users as user}
-					<UserCard username={user.Name ?? undefined}></UserCard>
+					<UserCard {user} onclick={() => askForPassword(user.Name ?? '')}></UserCard>
 				{/each}
 			</UserCarousel>
+			<div class="flex justify-center pt-100">
+				<Button type="tertiary">
+					<span class="mr-1">{$_('login.manualLogin')}</span><Keyboard size="20" />
+				</Button>
+			</div>
 		</div>
 	{/await}
 </div>

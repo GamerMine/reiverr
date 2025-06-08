@@ -3,7 +3,8 @@
 	"setupRequiredTitle": "Welcome to",
 	"setupRequiredDescription": "It seems like the application is missing some environment variables that are necessary for the application to function. Please provide the following environment variables:",
 	"login": {
-		"whoWatching": "Who is watching?"
+		"whoWatching": "Who is watching?",
+		"manualLogin": "Manual Login"
 	},
 	"navbar": {
 		"home": "Home",
