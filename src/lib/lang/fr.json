@@ -4,7 +4,12 @@
 	"setupRequiredDescription": "Il semble que l'application manque de certaines variables d'environnement nécessaires au fonctionnement de l'application. ",
 	"login": {
 		"whoWatching": "Qui regarde ?",
-		"manualLogin": "Connexion Manuelle"
+		"manualLogin": "Connexion Manuelle",
+		"goBack": "Retour",
+		"password": "Mot de passe",
+		"logIn": "Se connecter",
+		"invalidCredential": "Identifiants invalide",
+		"unknownError": "Erreur inconnue"
 	},
 	"navbar": {
 		"home": "Accueil",

@@ -1,5 +1,5 @@
 import createClient from 'openapi-fetch';
-import type { paths } from '$lib/apis/jellyfin/jellyfin.generated';
+import type { components, paths } from '$lib/apis/jellyfin/jellyfin.generated';
 import { Settings } from '$lib/entities/Settings.server';
 import { getBrowserName } from '$lib/utils/browser-detection';
 import { version } from '$app/environment';
@@ -8,6 +8,8 @@ import * as crypto from 'node:crypto';
 export const JELLYFIN_DEVICE = getBrowserName();
 export const JELLYFIN_CLIENT = 'Reiverr Web Client';
 export const JELLYFIN_CLIENT_VERSION = version;
+
+export type JellyfinAuthenticationResult = components['schemas']['AuthenticationResult'];
 
 async function getSHA256Hash(input: string) {
 	const textAsBuffer = new TextEncoder().encode(input);
@@ -41,5 +43,9 @@ export async function getUserName(accessToken: string | undefined) {
 export async function getDeviceId(accessToken: string | undefined) {
 	const username = (await getUserName(accessToken)) || undefined;
 
+	return getSHA256Hash(username + JELLYFIN_CLIENT);
+}
+
+export async function getDeviceIdFromUsername(username: string) {
 	return getSHA256Hash(username + JELLYFIN_CLIENT);
 }

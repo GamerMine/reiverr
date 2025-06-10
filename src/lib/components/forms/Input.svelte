@@ -3,16 +3,20 @@
 
 	let {
 		type = 'text',
-		value = $bindable(type === 'text' ? '' : 0),
+		value = $bindable(type === 'text' || 'password' ? '' : 0),
 		placeholder = '',
+		name = '',
+		disabled = false,
 
 		klass = '',
 
 		onchange = (_) => {}
 	}: {
-		type?: 'text' | 'number';
+		type?: 'text' | 'number' | 'password';
 		value?: any;
 		placeholder?: string;
+		name?: string;
+		disabled?: boolean;
 
 		klass?: string;
 
@@ -32,18 +36,32 @@
 	{#if type === 'text'}
 		<input
 			type="text"
+			{name}
 			{placeholder}
+			{disabled}
 			bind:value
 			oninput={handleChange}
-			class={classNames(baseStyles, klass)}
+			class={classNames(klass, baseStyles)}
+		/>
+	{:else if type === 'password'}
+		<input
+			type="password"
+			{name}
+			{placeholder}
+			{disabled}
+			bind:value
+			oninput={handleChange}
+			class={classNames(klass, baseStyles)}
 		/>
 	{:else if type === 'number'}
 		<input
 			type="number"
+			{name}
 			{placeholder}
+			{disabled}
 			bind:value
 			oninput={handleChange}
-			class={classNames(baseStyles, 'w-28', klass)}
+			class={classNames(klass, baseStyles, 'w-28')}
 		/>
 	{/if}
 </div>

@@ -46,7 +46,9 @@
 					type === 'primary' && !disabled,
 				'text-zinc-200 bg-zinc-600/20 backdrop-blur-lg rounded-xl': type === 'secondary',
 				'focus-visible:bg-zinc-200 focus-visible:text-zinc-800 hover:bg-zinc-200 hover:text-zinc-800':
-					(type === 'secondary' || type === 'tertiary') && !disabled,
+					type === 'tertiary' && !disabled,
+				'focus-visible:bg-amber-300 focus-visible:text-zinc-800 hover:bg-amber-300 hover:text-zinc-800':
+					type === 'secondary' && !disabled,
 				'rounded-full': type === 'tertiary',
 
 				'py-2 px-6 sm:py-3 sm:px-6': size === 'lg' && !slim,
@@ -59,8 +61,7 @@
 				'p-1': size === 'sm' && slim,
 				'p-1 text-sm': size === 'xs' && slim,
 
-				'opacity-50': disabled,
-				'cursor-pointer': !disabled
+				'opacity-60': disabled
 			}
 		);
 	});

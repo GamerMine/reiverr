@@ -5,6 +5,7 @@ import type { paths } from '$lib/apis/jellyfin/jellyfin.generated';
 import { type Cookies, redirect } from '@sveltejs/kit';
 
 export const load: LayoutServerLoad = async ({ cookies, url }) => {
+	//cookies.delete('access_token', { path: '/' });
 	const settings = await Settings.getClient();
 	const isConnected = await isJellyfinUserConnected(cookies);
 

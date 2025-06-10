@@ -4,7 +4,12 @@
 	"setupRequiredDescription": "It seems like the application is missing some environment variables that are necessary for the application to function. Please provide the following environment variables:",
 	"login": {
 		"whoWatching": "Who is watching?",
-		"manualLogin": "Manual Login"
+		"manualLogin": "Manual Login",
+		"goBack": "Go back",
+		"password": "Paswword",
+		"logIn": "Log in",
+		"invalidCredential": "Invalid credentials",
+		"unknownError": "Unknown error"
 	},
 	"navbar": {
 		"home": "Home",

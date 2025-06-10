@@ -1,13 +1,23 @@
 <script lang="ts">
 	import { jellyfinGetUserImage, type JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
-	import { onMount } from 'svelte';
 
-	let { user, onclick }: { user: JellyfinUser; onclick: (e: MouseEvent) => void } = $props();
+	let {
+		user,
+		clickable = true,
+		klass = '',
+		onclick = (_) => {}
+	}: {
+		user?: JellyfinUser;
+		clickable?: boolean;
+		klass?: string;
+		onclick?: (e: MouseEvent) => void;
+	} = $props();
 	let contentDiv: HTMLDivElement | undefined = $state();
 
 	async function getProfilePicture() {
-		if (user.Id && user.Name) {
+		if (user && user.Id && user.Name && contentDiv) {
 			let ppBlob = await jellyfinGetUserImage(user.Id);
+			contentDiv.innerHTML = '';
 			if (ppBlob.size !== 0) {
 				let img = document.createElement('img');
 
@@ -15,29 +25,31 @@
 				img.alt = 'pp';
 				img.className = 'rounded-md w-26 h-26 object-cover';
 
-				contentDiv?.appendChild(img);
+				contentDiv.appendChild(img);
 			} else {
 				let h1 = document.createElement('h1');
 
 				h1.innerText = user.Name.charAt(0);
 				h1.className = 'uppercase text-7xl text-stone-700';
 
-				contentDiv?.appendChild(h1);
+				contentDiv.appendChild(h1);
 			}
 		}
 	}
 
-	onMount(() => {
+	$effect(() => {
 		getProfilePicture();
 	});
 </script>
 
 <button
-	class="space-y-3 w-30 p-2 rounded-md transition duration-300 ease-in-out hover:bg-stone-900 cursor-pointer"
+	class="space-y-3 w-30 p-2 rounded-md transition duration-300 ease-in-out {clickable
+		? 'hover:bg-stone-900 cursor-pointer'
+		: 'cursor-default'} {klass}"
 	{onclick}
 >
 	<div class="rounded-md w-26 h-26 bg-stone-900 flex items-center justify-center">
 		<div bind:this={contentDiv}></div>
 	</div>
-	<div class="flex justify-center-safe truncate text-stone-300">{user.Name}</div>
+	<div class="flex justify-center-safe truncate text-stone-300">{user?.Name || ''}</div>
 </button>
