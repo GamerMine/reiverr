@@ -15,21 +15,30 @@
 	let contentDiv: HTMLDivElement | undefined = $state();
 
 	async function getProfilePicture() {
-		if (user && user.Id && user.Name && contentDiv) {
-			let ppBlob = await jellyfinGetUserImage(user.Id);
+		if (contentDiv) {
 			contentDiv.innerHTML = '';
-			if (ppBlob.size !== 0) {
-				let img = document.createElement('img');
+			if (user && user.Id && user.Name) {
+				let ppBlob = await jellyfinGetUserImage(user.Id);
+				if (ppBlob.size !== 0) {
+					let img = document.createElement('img');
 
-				img.src = URL.createObjectURL(ppBlob);
-				img.alt = 'pp';
-				img.className = 'rounded-md w-26 h-26 object-cover';
+					img.src = URL.createObjectURL(ppBlob);
+					img.alt = 'pp';
+					img.className = 'rounded-md w-26 h-26 object-cover';
 
-				contentDiv.appendChild(img);
+					contentDiv.appendChild(img);
+				} else {
+					let h1 = document.createElement('h1');
+
+					h1.innerText = user.Name.charAt(0);
+					h1.className = 'uppercase text-7xl text-stone-700';
+
+					contentDiv.appendChild(h1);
+				}
 			} else {
 				let h1 = document.createElement('h1');
 
-				h1.innerText = user.Name.charAt(0);
+				h1.innerText = '?';
 				h1.className = 'uppercase text-7xl text-stone-700';
 
 				contentDiv.appendChild(h1);

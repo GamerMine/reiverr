@@ -6,6 +6,7 @@
 		"whoWatching": "Who is watching?",
 		"manualLogin": "Manual Login",
 		"goBack": "Go back",
+		"username": "Username",
 		"password": "Paswword",
 		"logIn": "Log in",
 		"invalidCredential": "Invalid credentials",

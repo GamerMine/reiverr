@@ -4,6 +4,7 @@ import { Settings } from '$lib/entities/Settings.server';
 import { getBrowserName } from '$lib/utils/browser-detection';
 import { version } from '$app/environment';
 import * as crypto from 'node:crypto';
+import type { Cookies } from '@sveltejs/kit';
 
 export const JELLYFIN_DEVICE = getBrowserName();
 export const JELLYFIN_CLIENT = 'Reiverr Web Client';
@@ -48,4 +49,22 @@ export async function getDeviceId(accessToken: string | undefined) {
 
 export async function getDeviceIdFromUsername(username: string) {
 	return getSHA256Hash(username + JELLYFIN_CLIENT);
+}
+
+export async function isJellyfinUserConnected(cookies: Cookies) {
+	return createClient<paths>({
+		baseUrl: (await Settings.getJellyfinBaseUrl()) || undefined,
+		headers: {
+			Authorization: `MediaBrowser Token="${cookies.get('access_token')}"`
+		}
+	})
+		.GET('/Users/Me')
+		.then((res) => {
+			return new Response(JSON.stringify(res.data), {
+				status: res.response.status,
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+		});
 }

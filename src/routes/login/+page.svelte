@@ -10,6 +10,7 @@
 	import { enhance } from '$app/forms';
 	import { createErrorNotification } from '$lib/stores/notification.store';
 
+	let manualLogin: boolean = $state(false);
 	let userSelected: boolean = $state(false);
 	let selectedUser: JellyfinUser | undefined = $state();
 	let isInputDisabled: boolean = $state(false);
@@ -44,7 +45,7 @@
 			</h1>
 			<div class="absolute items-center top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2">
 				<UserCarousel
-					klass="transition duration-300 ease-in-out {userSelected
+					klass="transition duration-300 ease-in-out {userSelected || manualLogin
 						? 'invisible opacity-0 -translate-y-30'
 						: 'visible'}"
 				>
@@ -54,11 +55,17 @@
 				</UserCarousel>
 			</div>
 			<div
-				class="flex justify-center pt-100 transition duration-300 ease-in-out {userSelected
+				class="flex justify-center pt-100 transition duration-300 ease-in-out {userSelected ||
+				manualLogin
 					? 'opacity-0 invisible'
 					: ''}"
 			>
-				<Button type="tertiary">
+				<Button
+					type="tertiary"
+					onclick={() => {
+						manualLogin = true;
+					}}
+				>
 					<span class="mr-1">{$_('login.manualLogin')}</span><Keyboard size="20" />
 				</Button>
 			</div>
@@ -66,19 +73,23 @@
 
 		<div>
 			<button
-				class="absolute items-center left-1/2 -translate-x-35 -translate-y-95 transition duration-300 ease-in-out {userSelected
+				class="absolute items-center left-1/2 -translate-x-35 -translate-y-95 transition duration-300 ease-in-out {userSelected ||
+				manualLogin
 					? 'visible opacity-100'
 					: 'opacity-0 invisible'}"
 				disabled={isInputDisabled}
 				onclick={() => {
+					errorMessage = undefined;
 					userSelected = false;
+					manualLogin = false;
 					selectedUser = undefined;
 				}}><span class="flex"><ChevronLeft />{$_('login.goBack')}</span></button
 			>
 			<UserCard
 				user={selectedUser}
 				clickable={false}
-				klass="absolute items-center left-1/2 -translate-x-1/2 transition delay-50 duration-300 ease-in-out {userSelected
+				klass="absolute items-center left-1/2 -translate-x-1/2 transition delay-50 duration-300 ease-in-out {userSelected ||
+				manualLogin
 					? 'visible opacity-100 -translate-y-80'
 					: 'opacity-0 translate-y-30 invisible'}"
 			></UserCard>
@@ -86,7 +97,9 @@
 				method="POST"
 				use:enhance={({ formData }) => {
 					isInputDisabled = true;
-					formData.append('username', selectedUser?.Name || '');
+					if (formData.get('username') === '') {
+						formData.set('username', selectedUser?.Name || '');
+					}
 					return async ({ result, update }) => {
 						await update();
 						if (result.type !== 'success') {
@@ -103,11 +116,26 @@
 				}}
 			>
 				<Input
+					placeholder={$_('login.username')}
+					type="text"
+					name="username"
+					disabled={isInputDisabled}
+					klass="absolute items-center left-1/2 -translate-x-1/2 transition duration-300 ease-in-out {manualLogin
+						? 'visible opacity-90 -translate-y-46'
+						: 'opacity-0 translate-y-30 invisible'} {errorMessage ? 'bg-red-500/20!' : ''}"
+					onchange={() => {
+						if (errorMessage) {
+							errorMessage = undefined;
+						}
+					}}
+				></Input>
+				<Input
 					placeholder={$_('login.password')}
 					type="password"
 					name="password"
 					disabled={isInputDisabled}
-					klass="absolute items-center left-1/2 -translate-x-1/2 transition duration-300 ease-in-out {userSelected
+					klass="absolute items-center left-1/2 -translate-x-1/2 transition duration-300 ease-in-out {userSelected ||
+					manualLogin
 						? 'visible opacity-90 -translate-y-35'
 						: 'opacity-0 translate-y-30 invisible'} {errorMessage ? 'bg-red-500/20!' : ''}"
 					onchange={() => {
@@ -117,7 +145,8 @@
 					}}
 				></Input>
 				<div
-					class="absolute items-center left-1/2 -translate-x-1/2 transition duration-300 ease-in-out {userSelected
+					class="absolute items-center left-1/2 -translate-x-1/2 transition duration-300 ease-in-out {userSelected ||
+					manualLogin
 						? 'visible opacity-90 -translate-y-25'
 						: 'opacity-0 translate-y-30 invisible'}"
 				>

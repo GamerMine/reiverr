@@ -6,9 +6,10 @@
 		"whoWatching": "Qui regarde ?",
 		"manualLogin": "Connexion Manuelle",
 		"goBack": "Retour",
+		"username": "Nom d'utilisateur",
 		"password": "Mot de passe",
 		"logIn": "Se connecter",
-		"invalidCredential": "Identifiants invalide",
+		"invalidCredential": "Identifiants invalides",
 		"unknownError": "Erreur inconnue"
 	},
 	"navbar": {

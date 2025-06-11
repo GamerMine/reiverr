@@ -1,8 +1,7 @@
 import { Settings } from '$lib/entities/Settings.server';
 import type { LayoutServerLoad } from './$types';
-import createClient from 'openapi-fetch';
-import type { paths } from '$lib/apis/jellyfin/jellyfin.generated';
-import { type Cookies, redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
+import { isJellyfinUserConnected } from '$lib/apis/jellyfin/server/jellyfin.server';
 
 export const load: LayoutServerLoad = async ({ cookies, url }) => {
 	//cookies.delete('access_token', { path: '/' });
@@ -17,21 +16,3 @@ export const load: LayoutServerLoad = async ({ cookies, url }) => {
 		settings
 	};
 };
-
-async function isJellyfinUserConnected(cookies: Cookies) {
-	return createClient<paths>({
-		baseUrl: (await Settings.getJellyfinBaseUrl()) || undefined,
-		headers: {
-			Authorization: `MediaBrowser Token="${cookies.get('access_token')}"`
-		}
-	})
-		.GET('/Users/Me')
-		.then((res) => {
-			return new Response(JSON.stringify(res.data), {
-				status: res.response.status,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			});
-		});
-}
