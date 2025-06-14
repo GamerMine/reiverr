@@ -53,11 +53,11 @@
 
 <button
 	class="space-y-3 w-30 p-2 rounded-md transition duration-300 ease-in-out {clickable
-		? 'hover:bg-stone-900 cursor-pointer'
+		? 'hover:bg-stone-900/60 cursor-pointer'
 		: 'cursor-default'} {klass}"
 	{onclick}
 >
-	<div class="rounded-md w-26 h-26 bg-stone-900 flex items-center justify-center">
+	<div class="rounded-md w-26 h-26 bg-stone-900/60 flex items-center justify-center">
 		<div bind:this={contentDiv}></div>
 	</div>
 	<div class="flex justify-center-safe truncate text-stone-300">{user?.Name || ''}</div>

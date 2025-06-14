@@ -9,7 +9,10 @@
 	import { ChevronLeft } from 'svelte-radix';
 	import { enhance } from '$app/forms';
 	import { createErrorNotification } from '$lib/stores/notification.store';
+	import { onMount } from 'svelte';
+	import { animateBackground } from '$lib/utils/animation';
 
+	let mainDiv: HTMLDivElement | undefined = $state();
 	let manualLogin: boolean = $state(false);
 	let userSelected: boolean = $state(false);
 	let selectedUser: JellyfinUser | undefined = $state();
@@ -26,14 +29,30 @@
 			createErrorNotification(errorMessage, errorMessage);
 		}
 	});
+
+	onMount(() => {
+		if (mainDiv) {
+			animateBackground(mainDiv);
+			setTimeout(() => {
+				if (mainDiv) {
+					animateBackground(mainDiv);
+				}
+			}, 2000);
+			setTimeout(() => {
+				if (mainDiv) {
+					animateBackground(mainDiv);
+				}
+			}, 5000);
+		}
+	});
 </script>
 
-<div class="overflow-hidden">
+<div bind:this={mainDiv} class="relative overflow-hidden h-screen">
 	{#await jellyfinGetUsers()}
 		<div>NON</div>
 		<!-- TODO: If the Jellyfin instance is unreachable, show it to the user, add a timeout ? -->
 	{:then users}
-		<div>
+		<div class="z-10">
 			<div class="flex gap-2 rounded-xs items-center justify-center pt-20">
 				<div class="rounded-full bg-amber-300 h-11 w-11"></div>
 				<h1 class="font-display uppercase font-semibold tracking-wider text-5xl">Reiverr</h1>
@@ -71,7 +90,7 @@
 			</div>
 		</div>
 
-		<div>
+		<div class="z-10">
 			<button
 				class="absolute items-center left-1/2 -translate-x-35 -translate-y-95 transition duration-300 ease-in-out {userSelected ||
 				manualLogin

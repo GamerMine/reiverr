@@ -49,7 +49,7 @@
 					type === 'tertiary' && !disabled,
 				'focus-visible:bg-amber-300 focus-visible:text-zinc-800 hover:bg-amber-300 hover:text-zinc-800':
 					type === 'secondary' && !disabled,
-				'rounded-full': type === 'tertiary',
+				'rounded-xl': type === 'tertiary',
 
 				'py-2 px-6 sm:py-3 sm:px-6': size === 'lg' && !slim,
 				'py-2 px-6': size === 'md' && !slim,

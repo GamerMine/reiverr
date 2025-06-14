@@ -16,7 +16,7 @@
 
 <I18n />
 <div class="app">
-	{#if page.url.pathname !== '/login'}
+	{#if !['/login', '/setup'].includes(page.url.pathname)}
 		<Navbar />
 	{/if}
 	<main>
