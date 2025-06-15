@@ -1,7 +1,5 @@
 {
 	"appName": "Reiverr",
-	"setupRequiredTitle": "Welkom bij",
-	"setupRequiredDescription": "Het lijkt erop dat de software enkele omgevingsvariabelen mist die nodig zijn om de software te doen werken. Geef de volgende omgevingsvariabelen op:",
 	"navbar": {
 		"home": "Start",
 		"discover": "Ontdek",

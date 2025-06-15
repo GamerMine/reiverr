@@ -1,7 +1,5 @@
 {
 	"appName": "Reiverr",
-	"setupRequiredTitle": "Bem-vindo ao",
-	"setupRequiredDescription": "Parece que faltam algumas variáveis de ambiente, que são necessárias para o funcionamento do aplicativo. Forneça as seguintes variáveis de ambiente:",
 	"navbar": {
 		"home": "Início",
 		"discover": "Explorar",

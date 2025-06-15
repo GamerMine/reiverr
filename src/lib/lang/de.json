@@ -1,7 +1,5 @@
 {
 	"appName": "Reiverr",
-	"setupRequiredTitle": "Willkommen zu",
-	"setupRequiredDescription": "Es scheint das einige Umgebungsvariables zur fehlerfreien Ausführung fehlen. Bitte gib die folgenden Umgebungsvariablen an:",
 	"navbar": {
 		"home": "Start",
 		"discover": "Entdecken",

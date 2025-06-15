@@ -8,11 +8,9 @@ export const load: LayoutServerLoad = async ({ cookies, url }) => {
 	const settings = await Settings.getClient();
 	const isConnected = await isJellyfinUserConnected(cookies);
 
-	if (url.pathname !== '/setup' && !(await Settings.getJellyfinApiKey())) {
+	if (!['login', '/setup'].includes(url.pathname) && !(await Settings.getJellyfinApiKey())) {
 		throw redirect(301, '/setup');
-	}
-
-	if (url.pathname !== '/login' && isConnected.status !== 200) {
+	} else if (!['login', '/setup'].includes(url.pathname) && isConnected.status !== 200) {
 		throw redirect(301, '/login');
 	}
 

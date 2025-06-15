@@ -1,7 +1,16 @@
 {
 	"appName": "Reiverr",
-	"setupRequiredTitle": "Bienvenue à",
-	"setupRequiredDescription": "Il semble que l'application manque de certaines variables d'environnement nécessaires au fonctionnement de l'application. ",
+	"setup": {
+		"welcome": "Bienvenue !",
+		"welcomeOnReiverr": "Bienvenue sur Reiverr !",
+		"configureJellyfin": "Configuration de Jellyfin",
+		"page1_1": "Cet assistant va vous guider pas à pas, afin de configurer vos service et personnaliser votre expérience.",
+		"page1_2": "Cliquez sur Suivant pour continuer la configuration. Tous les paramètres pourrons êtres modifiés ultérieurement.",
+		"page2_1": "Afin d'utiliser Reiverr, il est nécessaire de fournir l'URL que vous utilisez pour accéder à Jellyfin, ainsi que la clé API Jellyfin. Cet clé ne sera utilisé que pour l'authentification des utilisateurs. Vous pouvez récupérer votre clé API sur Jellyfin dans Tableau de bord > Clés API.",
+		"page2_2": "Merci de compléter le(s) champ(s) ci-desous :",
+		"jellyfinURLInput": "URL de Jellyfin",
+		"apiKeyInput": "Clé API de Jellyfin"
+	},
 	"login": {
 		"whoWatching": "Qui regarde ?",
 		"manualLogin": "Connexion Manuelle",
@@ -156,7 +165,9 @@
 			"checkJellyfinCredentials": "Connexion à Jellyfin impossible. Vérifiez les informations de connexions.",
 			"saveChanges": "Sauvegarder les modifications",
 			"resetToDefaults": "Réinitialiser aux paramètres par défaut",
-			"changelog": "Journal des modifications"
+			"changelog": "Journal des modifications",
+			"next": "Suivant",
+			"back": "Retour"
 		}
 	},
 	"update": {

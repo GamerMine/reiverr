@@ -4,8 +4,8 @@
 	import { jellyfinTestConnection } from '$lib/apis/jellyfin/jellyfinApi';
 	import { getRadarrHealth } from '$lib/apis/radarr/radarrApi';
 	import { getSonarrHealth } from '$lib/apis/sonarr/sonarrApi';
-	import FormButton from '$lib/components/forms/FormButton.svelte';
-	import Select from '$lib/components/forms/Select.svelte';
+	import FormButton from '$lib/components/Forms/FormButton.svelte';
+	import Select from '$lib/components/Forms/Select.svelte';
 	import { settings, type SettingsValues } from '$lib/stores/settings.store';
 	import axios from 'axios';
 	import classNames from 'classnames';

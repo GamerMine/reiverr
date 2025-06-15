@@ -6,9 +6,9 @@
 		getSonarrMonitors
 	} from '$lib/apis/sonarr/sonarrApi';
 	import { getRadarrMonitors } from '$lib/apis/radarr/radarrApi';
-	import FormButton from '$lib/components/forms/FormButton.svelte';
-	import Input from '$lib/components/forms/Input.svelte';
-	import Select from '$lib/components/forms/Select.svelte';
+	import FormButton from '$lib/components/Forms/FormButton.svelte';
+	import Input from '$lib/components/Forms/Input.svelte';
+	import Select from '$lib/components/Forms/Select.svelte';
 	import { settings, type SettingsValues } from '$lib/stores/settings.store';
 	import classNames from 'classnames';
 	import { Trash } from 'svelte-radix';
@@ -17,7 +17,7 @@
 	import { getRadarrQualityProfiles, getRadarrRootFolders } from '$lib/apis/radarr/radarrApi';
 	import { _ } from 'svelte-i18n';
 	import { defaultSettings } from '$lib/stores/settings.store';
-	import Toggle from '$lib/components/forms/Toggle.svelte';
+	import Toggle from '$lib/components/Forms/Toggle.svelte';
 
 	let {
 		values = $bindable(),

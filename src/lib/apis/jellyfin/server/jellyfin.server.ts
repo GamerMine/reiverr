@@ -20,25 +20,39 @@ async function getSHA256Hash(input: string) {
 }
 
 export async function getUserId(accessToken: string | undefined) {
-	return await createClient<paths>({
-		baseUrl: (await Settings.getJellyfinBaseUrl()) || undefined,
-		headers: {
-			Authorization: `MediaBrowser Token="${accessToken}", Client="${JELLYFIN_CLIENT}", Device="${JELLYFIN_DEVICE}", Version="${JELLYFIN_CLIENT_VERSION}"`
-		}
-	})
-		.GET('/Users/Me', {})
-		.then((res) => res.data?.Id);
+	const baseUrl = await Settings.getJellyfinBaseUrl();
+
+	if (baseUrl) {
+		return await createClient<paths>({
+			baseUrl: baseUrl,
+			headers: {
+				Authorization: `MediaBrowser Token="${accessToken}", Client="${JELLYFIN_CLIENT}", Device="${JELLYFIN_DEVICE}", Version="${JELLYFIN_CLIENT_VERSION}"`
+			}
+		})
+			.GET('/Users/Me', {})
+			.then((res) => res.data?.Id);
+	} else {
+		return '';
+	}
 }
 
 export async function getUserName(accessToken: string | undefined) {
-	return await createClient<paths>({
-		baseUrl: (await Settings.getJellyfinBaseUrl()) || undefined,
-		headers: {
-			Authorization: `MediaBrowser Token="${accessToken}", Client="${JELLYFIN_CLIENT}", Device="${JELLYFIN_DEVICE}", Version="${JELLYFIN_CLIENT_VERSION}"`
-		}
-	})
-		.GET('/Users/Me', {})
-		.then((res) => res.data?.Name);
+	const baseUrl = await Settings.getJellyfinBaseUrl();
+
+	if (baseUrl) {
+		return await createClient<paths>({
+			baseUrl: baseUrl,
+			headers: {
+				Authorization: `MediaBrowser Token="${accessToken}", Client="${JELLYFIN_CLIENT}", Device="${JELLYFIN_DEVICE}", Version="${JELLYFIN_CLIENT_VERSION}"`
+			}
+		})
+			.GET('/Users/Me', {})
+			.then((res) => res.data?.Name);
+	} else {
+		return new Response(null, {
+			status: 404
+		});
+	}
 }
 
 export async function getDeviceId(accessToken: string | undefined) {
@@ -52,19 +66,27 @@ export async function getDeviceIdFromUsername(username: string) {
 }
 
 export async function isJellyfinUserConnected(cookies: Cookies) {
-	return createClient<paths>({
-		baseUrl: (await Settings.getJellyfinBaseUrl()) || undefined,
-		headers: {
-			Authorization: `MediaBrowser Token="${cookies.get('access_token')}"`
-		}
-	})
-		.GET('/Users/Me')
-		.then((res) => {
-			return new Response(JSON.stringify(res.data), {
-				status: res.response.status,
-				headers: {
-					'Content-Type': 'application/json'
-				}
+	const baseUrl = await Settings.getJellyfinBaseUrl();
+
+	if (baseUrl) {
+		return createClient<paths>({
+			baseUrl: baseUrl,
+			headers: {
+				Authorization: `MediaBrowser Token="${cookies.get('access_token')}"`
+			}
+		})
+			.GET('/Users/Me')
+			.then((res) => {
+				return new Response(JSON.stringify(res.data), {
+					status: res.response.status,
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
 			});
+	} else {
+		return new Response(null, {
+			status: 404
 		});
+	}
 }

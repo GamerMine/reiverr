@@ -1,5 +1,5 @@
 <script lang="ts">
-	import FormButton from '$lib/components/forms/FormButton.svelte';
+	import FormButton from '$lib/components/Forms/FormButton.svelte';
 	import { onDestroy, type ComponentProps } from 'svelte';
 	import { _ } from 'svelte-i18n';
 

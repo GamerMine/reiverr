@@ -1,7 +1,16 @@
 {
 	"appName": "Reiverr",
-	"setupRequiredTitle": "Welcome to",
-	"setupRequiredDescription": "It seems like the application is missing some environment variables that are necessary for the application to function. Please provide the following environment variables:",
+	"setup": {
+		"welcome": "Welcome!",
+		"welcomeOnReiverr": "Welcome on Reiverr!",
+		"configureJellyfin": "Configure Jellyfin",
+		"page1_1": "This wizard will guide you step by step to configure your services and customize your experience.",
+		"page1_2": "Click Next to continue setup. All settings can be changed later.",
+		"page2_1": "To use Reiverr, you must provide the URL you use to access Jellyfin and the Jellyfin API key. This key will be used for user authentication only. You will find the API key under Dashboard > API Keys on Jellyfin.",
+		"page2_2": "Please fill in all the fields below :",
+		"jellyfinURLInput": "Jellyfin URL",
+		"apiKeyInput": "Jellyfin API Key"
+	},
 	"login": {
 		"whoWatching": "Who is watching?",
 		"manualLogin": "Manual Login",
@@ -166,7 +175,9 @@
 			"checkJellyfinCredentials": "Could not connect to Jellyfin. Check Jellyfin credentials.",
 			"saveChanges": "Save Changes",
 			"resetToDefaults": "Reset to Defaults ",
-			"changelog": "Changelog"
+			"changelog": "Changelog",
+			"next": "Next",
+			"back": "Back"
 		}
 	},
 	"update": {

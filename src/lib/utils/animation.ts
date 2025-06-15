@@ -24,7 +24,7 @@ export function animateBackground(mainDiv: HTMLDivElement) {
 		end = getRandomEdgePoint(bubbleSize);
 	}
 
-	bubbleDiv.className = `absolute -z-10 overflow-hidden top-0 left-0 w-${bubbleSize} h-${bubbleSize} bg-gradient-to-r from-blue-800 via-purple-900 to-red-900 rounded-full blur-3xl`;
+	bubbleDiv.className = `absolute -z-10 overflow-hidden top-0 left-0 w-180 h-180 bg-gradient-to-r from-blue-800 via-purple-900 to-red-900 rounded-full blur-3xl`;
 	const distance = getDistance(start, end);
 	const speed = 40;
 	const duration = (distance / speed) * 1000;

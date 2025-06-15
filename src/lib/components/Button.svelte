@@ -39,7 +39,7 @@
 	let buttonStyle: string = $state('');
 	$effect(() => {
 		buttonStyle = classNames(
-			'flex items-center gap-1 font-medium select-none cursor-pointer selectable transition-all shrink-0',
+			'flex items-center gap-1 font-medium select-none selectable transition-all shrink-0',
 			{
 				'bg-white text-zinc-900 font-extrabold backdrop-blur-lg rounded-xl': type === 'primary',
 				'hover:bg-amber-400 focus-within:bg-amber-400 hover:border-amber-400 focus-within:border-amber-400':
@@ -61,7 +61,8 @@
 				'p-1': size === 'sm' && slim,
 				'p-1 text-sm': size === 'xs' && slim,
 
-				'opacity-60': disabled
+				'cursor-pointer': !disabled,
+				'opacity-60 cursor-default': disabled
 			}
 		);
 	});

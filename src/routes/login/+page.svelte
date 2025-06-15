@@ -5,7 +5,7 @@
 	import { _ } from 'svelte-i18n';
 	import Button from '$lib/components/Button.svelte';
 	import { Keyboard, Enter, Update } from 'svelte-radix';
-	import Input from '$lib/components/forms/Input.svelte';
+	import Input from '$lib/components/Forms/Input.svelte';
 	import { ChevronLeft } from 'svelte-radix';
 	import { enhance } from '$app/forms';
 	import { createErrorNotification } from '$lib/stores/notification.store';
