@@ -128,7 +128,7 @@
 							</h1>
 							<div class="flex gap-2 mt-4">
 								<Button
-									type="primary"
+									variant="primary"
 									onclick={() => showcase?.Id && playerState.streamJellyfinId(showcase?.Id)}
 								>
 									{$_('library.content.play')}<ChevronRight size="20" />

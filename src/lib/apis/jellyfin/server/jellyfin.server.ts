@@ -90,3 +90,34 @@ export async function isJellyfinUserConnected(cookies: Cookies) {
 		});
 	}
 }
+
+export async function checkConnection(baseURL: string, apiKey: string) {
+	return createClient<paths>({
+		baseUrl: baseURL,
+		headers: {
+			Authorization: `MediaBrowser Token="${apiKey}"`
+		}
+	})
+		.GET('/Users', {
+			params: {
+				query: {
+					isHidden: false,
+					isDisabled: false
+				}
+			}
+		})
+		.then((res) => {
+			return new Response(JSON.stringify(res.data), {
+				status: res.response.status,
+				statusText: res.response.statusText,
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+		})
+		.catch(() => {
+			return new Response(null, {
+				status: 404
+			});
+		});
+}

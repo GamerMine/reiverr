@@ -146,15 +146,15 @@
 					{@const radarrMovie = $radarrMovieStore.item}
 					<OpenInButton title={movie?.title} {jellyfinItem} {radarrMovie} type="movie" {tmdbId} />
 					{#if jellyfinItem}
-						<Button type="primary" onclick={play}>
+						<Button variant="primary" onclick={play}>
 							<span>{$_('library.content.play')}</span><ChevronRight size="20" />
 						</Button>
 					{:else if !radarrMovie && $settings.radarr.baseUrl && $settings.radarr.apiKey}
-						<Button type="primary" disabled={addToRadarrLoading} onclick={addToRadarr}>
+						<Button variant="primary" disabled={addToRadarrLoading} onclick={addToRadarr}>
 							<span>{$_('library.content.addRadarr')}</span><Plus size="20" />
 						</Button>
 					{:else if radarrMovie}
-						<Button type="primary" onclick={openRequestModal}>
+						<Button variant="primary" onclick={openRequestModal}>
 							<span class="mr-2">{$_('library.content.requestMovie')}</span><Plus size="20" />
 						</Button>
 					{/if}

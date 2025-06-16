@@ -55,10 +55,10 @@
 						Season {seasonNumber}
 					</div>
 					<div class="flex gap-2">
-						<Button size="sm" type="tertiary" onclick={() => selectSeasonPack(seasonNumber)}>
+						<Button size="sm" variant="tertiary" onclick={() => selectSeasonPack(seasonNumber)}>
 							<span>Season Packs</span><ChevronRight size="20" />
 						</Button>
-						<Button size="sm" type="tertiary" onclick={() => selectSeason(seasonNumber)}>
+						<Button size="sm" variant="tertiary" onclick={() => selectSeason(seasonNumber)}>
 							<span>Episodes</span><ChevronRight size="20" />
 						</Button>
 					</div>

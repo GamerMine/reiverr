@@ -4,7 +4,9 @@
 
 	let {
 		size = 'md',
-		type = 'secondary',
+		type = 'button',
+		form = undefined,
+		variant = 'secondary',
 		slim = false,
 		disabled = false,
 
@@ -20,7 +22,9 @@
 		onblur = () => {}
 	}: {
 		size?: 'md' | 'sm' | 'lg' | 'xs';
-		type?: 'primary' | 'secondary' | 'tertiary';
+		type?: 'button' | 'submit';
+		form?: string;
+		variant?: 'primary' | 'secondary' | 'tertiary';
 		slim?: boolean;
 		disabled?: boolean;
 
@@ -41,15 +45,15 @@
 		buttonStyle = classNames(
 			'flex items-center gap-1 font-medium select-none selectable transition-all shrink-0',
 			{
-				'bg-white text-zinc-900 font-extrabold backdrop-blur-lg rounded-xl': type === 'primary',
+				'bg-white text-zinc-900 font-extrabold backdrop-blur-lg rounded-xl': variant === 'primary',
 				'hover:bg-amber-400 focus-within:bg-amber-400 hover:border-amber-400 focus-within:border-amber-400':
-					type === 'primary' && !disabled,
-				'text-zinc-200 bg-zinc-600/20 backdrop-blur-lg rounded-xl': type === 'secondary',
+					variant === 'primary' && !disabled,
+				'text-zinc-200 bg-zinc-600/20 backdrop-blur-lg rounded-xl': variant === 'secondary',
 				'focus-visible:bg-zinc-200 focus-visible:text-zinc-800 hover:bg-zinc-200 hover:text-zinc-800':
-					type === 'tertiary' && !disabled,
+					variant === 'tertiary' && !disabled,
 				'focus-visible:bg-amber-300 focus-visible:text-zinc-800 hover:bg-amber-300 hover:text-zinc-800':
-					type === 'secondary' && !disabled,
-				'rounded-xl': type === 'tertiary',
+					variant === 'secondary' && !disabled,
+				'rounded-xl': variant === 'tertiary',
 
 				'py-2 px-6 sm:py-3 sm:px-6': size === 'lg' && !slim,
 				'py-2 px-6': size === 'md' && !slim,
@@ -84,6 +88,8 @@
 	{onmouseleave}
 	{onblur}
 	{disabled}
+	{type}
+	{form}
 >
 	{@render children?.()}
 </button>

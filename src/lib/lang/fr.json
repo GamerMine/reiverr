@@ -4,12 +4,21 @@
 		"welcome": "Bienvenue !",
 		"welcomeOnReiverr": "Bienvenue sur Reiverr !",
 		"configureJellyfin": "Configuration de Jellyfin",
+		"configurationFinished": "Félicitation !",
 		"page1_1": "Cet assistant va vous guider pas à pas, afin de configurer vos service et personnaliser votre expérience.",
 		"page1_2": "Cliquez sur Suivant pour continuer la configuration. Tous les paramètres pourrons êtres modifiés ultérieurement.",
 		"page2_1": "Afin d'utiliser Reiverr, il est nécessaire de fournir l'URL que vous utilisez pour accéder à Jellyfin, ainsi que la clé API Jellyfin. Cet clé ne sera utilisé que pour l'authentification des utilisateurs. Vous pouvez récupérer votre clé API sur Jellyfin dans Tableau de bord > Clés API.",
 		"page2_2": "Merci de compléter le(s) champ(s) ci-desous :",
+		"page3_1": "Ça y est, Jellyfin est configuré !",
+		"page3_2": "Cliquez sur Terminer pour terminer la configuration.",
 		"jellyfinURLInput": "URL de Jellyfin",
-		"apiKeyInput": "Clé API de Jellyfin"
+		"apiKeyInput": "Clé API de Jellyfin",
+		"errors": {
+			"unableConnect": "Connection à Jellyfin impossible",
+			"invalidURL": "Instance de Jellyfin inaccessible. Vérifiez l'URL.",
+			"invalidAPIKey": "Authentification impossible à Jellyfin. Vérifiez que la clé fournie est valide et rééessayez.",
+			"unknownError": "Une erreur inconnue s'est produite."
+		}
 	},
 	"login": {
 		"whoWatching": "Qui regarde ?",
@@ -167,7 +176,8 @@
 			"resetToDefaults": "Réinitialiser aux paramètres par défaut",
 			"changelog": "Journal des modifications",
 			"next": "Suivant",
-			"back": "Retour"
+			"back": "Retour",
+			"finish": "Terminer"
 		}
 	},
 	"update": {

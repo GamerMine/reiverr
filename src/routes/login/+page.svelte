@@ -80,7 +80,7 @@
 					: ''}"
 			>
 				<Button
-					type="tertiary"
+					variant="tertiary"
 					onclick={() => {
 						manualLogin = true;
 					}}
@@ -169,7 +169,7 @@
 						? 'visible opacity-90 -translate-y-25'
 						: 'opacity-0 translate-y-30 invisible'}"
 				>
-					<Button type="secondary" disabled={isInputDisabled}>
+					<Button type="submit" variant="secondary" disabled={isInputDisabled}>
 						<span class="mr-1">{$_('login.logIn')}</span>
 						{#if isInputDisabled}
 							<Update class="animate-spin" size="20" />

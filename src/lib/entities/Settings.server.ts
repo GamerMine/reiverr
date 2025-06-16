@@ -200,4 +200,15 @@ export class Settings extends BaseEntity {
 
 		return settings;
 	}
+
+	public static async setJellyfinApiEndpoint(baseURL: string, apiKey: string, name = 'default') {
+		const settings = await this.findOne({ where: { name } });
+
+		if (!settings) return;
+
+		settings.jellyfinBaseUrl = baseURL;
+		settings.jellyfinApiKey = apiKey;
+
+		await settings.save();
+	}
 }

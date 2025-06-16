@@ -260,7 +260,7 @@
 						{tmdbId}
 					/>
 					{#if !!nextJellyfinEpisode}
-						<Button type="primary" onclick={playNextEpisode}>
+						<Button variant="primary" onclick={playNextEpisode}>
 							<span>
 								{$_('library.content.play')}
 								{`S${nextJellyfinEpisode?.ParentIndexNumber}E${nextJellyfinEpisode?.IndexNumber}`}
@@ -268,11 +268,11 @@
 							<ChevronRight size="20" />
 						</Button>
 					{:else if !$sonarrSeriesStore.item && $settings.sonarr.apiKey && $settings.sonarr.baseUrl}
-						<Button type="primary" disabled={addToSonarrLoading} onclick={addToSonarr}>
+						<Button variant="primary" disabled={addToSonarrLoading} onclick={addToSonarr}>
 							<span>{$_('library.content.addSonarr')}</span><Plus size="20" />
 						</Button>
 					{:else if $sonarrSeriesStore.item}
-						<Button type="primary" onclick={openRequestModal}>
+						<Button variant="primary" onclick={openRequestModal}>
 							<span class="mr-2">{$_('library.content.requestSeries')}</span><Plus size="20" />
 						</Button>
 					{/if}

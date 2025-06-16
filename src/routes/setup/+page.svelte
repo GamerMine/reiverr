@@ -5,19 +5,30 @@
 	import { animateBackground } from '$lib/utils/animation';
 	import { _ } from 'svelte-i18n';
 	import Input from '$lib/components/Forms/Input.svelte';
+	import { enhance } from '$app/forms';
+	import { createErrorNotification } from '$lib/stores/notification.store';
 
 	let mainDiv: HTMLDivElement | undefined = $state();
+
+	let enableJellyfinConfigForm: boolean = $state(false);
 	let jellyfinForm: HTMLFormElement | undefined = $state();
+	let jellyfinFormBaseURL: string = $state('');
+	let jellyfinFormAPIKey: string = $state('');
 
 	let isTransitioning: boolean = $state(false);
 	let disableNext: boolean = $state(false);
+	let isInputDisabled: boolean = $state(false);
 
 	let page: number = $state(0);
+	let needValidation: boolean = $state(false);
+	let nextBtnType: 'button' | 'submit' = $state('button');
+	let nextBtnForm: string | undefined = $state();
 	let pageTitle: string = $state('');
 	let pageDesc: string = $state('');
 	let pageInstr: string = $state('');
-
-	let enableJellyfinConfigForm: boolean = $state(false);
+	let errorMessage: string | undefined = $state();
+	let nextButtonText: string = $state($_('settings.misc.next'));
+	let nextButtonAction: () => void = $state(defaultNextAction);
 
 	function gotoNextPage() {
 		isTransitioning = true;
@@ -42,6 +53,21 @@
 			case 1: {
 				enableJellyfinConfigForm = true;
 				disableNext = true;
+				nextBtnType = 'submit';
+				nextBtnForm = 'jellyfinForm';
+				needValidation = true;
+				nextButtonAction = defaultNextAction;
+				break;
+			}
+			case 2: {
+				enableJellyfinConfigForm = false;
+				disableNext = false;
+				nextBtnType = 'button';
+				nextBtnForm = undefined;
+				needValidation = false;
+				errorMessage = undefined;
+				nextButtonText = $_('settings.misc.finish');
+				nextButtonAction = () => (window.location.href = '/login');
 				break;
 			}
 			default: {
@@ -50,8 +76,27 @@
 				}
 				enableJellyfinConfigForm = false;
 				disableNext = false;
+				nextBtnType = 'button';
+				nextBtnForm = undefined;
+				needValidation = false;
+				errorMessage = undefined;
+				nextButtonAction = defaultNextAction;
 			}
 		}
+	}
+
+	function defaultNextAction(): void {
+		if (needValidation) {
+			return;
+		}
+		gotoNextPage();
+	}
+
+	function onJellyfinInputChange() {
+		disableNext =
+			!(jellyfinFormBaseURL.startsWith('http://') || jellyfinFormBaseURL.startsWith('https://')) ||
+			jellyfinFormAPIKey.length === 0;
+		errorMessage = undefined;
 	}
 
 	$effect(() => {
@@ -68,6 +113,15 @@
 				pageInstr = $_('setup.page2_2');
 				break;
 			}
+			case 2: {
+				pageTitle = $_('setup.configurationFinished');
+				pageDesc = $_('setup.page3_1');
+				pageInstr = $_('setup.page3_2');
+			}
+		}
+
+		if (errorMessage) {
+			createErrorNotification($_('setup.errors.unableConnect'), errorMessage);
 		}
 	});
 
@@ -119,20 +173,56 @@
 		</div>
 		<form
 			bind:this={jellyfinForm}
+			id="jellyfinForm"
 			class="flex justify-center pt-8 transition duration-300 ease-in-out {isTransitioning ||
 			!enableJellyfinConfigForm
 				? 'opacity-0 invisible'
 				: 'delay-100 opacity-100 visible'}"
 			method="POST"
+			use:enhance={() => {
+				isInputDisabled = true;
+				return async ({ result }) => {
+					if (result.type !== 'success') {
+						isInputDisabled = false;
+						if (result.data?.code === 1) {
+							errorMessage = $_('setup.errors.invalidURL');
+						} else if (result.data?.code === 2) {
+							errorMessage = $_('setup.errors.invalidAPIKey');
+						} else {
+							errorMessage = $_('login.errors.unknownError');
+						}
+					} else {
+						isInputDisabled = false;
+						gotoNextPage();
+					}
+				};
+			}}
 		>
 			<div class="flex-wrap space-y-5">
 				<div class="flex-wrap">
 					<label for="baseURL">{$_('setup.jellyfinURLInput')}</label>
-					<Input placeholder="http://localhost:8096" type="text" name="baseURL"></Input>
+					<Input
+						placeholder="http://localhost:8096"
+						type="text"
+						name="baseURL"
+						disabled={isInputDisabled}
+						onchange={(e) => {
+							jellyfinFormBaseURL = e;
+							onJellyfinInputChange();
+						}}
+					></Input>
 				</div>
 				<div class="flex-wrap">
 					<label for="apiKey">{$_('setup.apiKeyInput')}</label>
-					<Input placeholder="6d75582d1c874c97bd73fbef278df8c7" type="password" name="apiKey"
+					<Input
+						placeholder="6d75582d1c874c97bd73fbef278df8c7"
+						type="password"
+						name="apiKey"
+						disabled={isInputDisabled}
+						onchange={(e) => {
+							jellyfinFormAPIKey = e;
+							onJellyfinInputChange();
+						}}
 					></Input>
 				</div>
 			</div>
@@ -140,8 +230,8 @@
 		<div class="flex justify-between pt-10">
 			<div>
 				<Button
-					type="tertiary"
-					disabled={page === 0 || isTransitioning}
+					variant="tertiary"
+					disabled={page === 0 || isTransitioning || isInputDisabled}
 					onclick={() => gotoPrevPage()}
 				>
 					<ArrowLeft size="20" /><span class="mr-1">{$_('settings.misc.back')}</span>
@@ -149,11 +239,13 @@
 			</div>
 			<div>
 				<Button
-					type="secondary"
-					disabled={isTransitioning || disableNext}
-					onclick={() => gotoNextPage()}
+					type={nextBtnType}
+					form={nextBtnForm}
+					variant="secondary"
+					disabled={isTransitioning || disableNext || isInputDisabled}
+					onclick={nextButtonAction}
 				>
-					<span class="mr-1">{$_('settings.misc.next')}</span><ArrowRight size="20" />
+					<span class="mr-1">{nextButtonText}</span><ArrowRight size="20" />
 				</Button>
 			</div>
 		</div>
