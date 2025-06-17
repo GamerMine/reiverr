@@ -1,10 +1,9 @@
 import type { components, paths } from '$lib/apis/sonarr/sonarr.generated';
-import { settings } from '$lib/stores/settings.store';
 import { log } from '$lib/utils';
 import axios from 'axios';
 import createClient from 'openapi-fetch';
-import { get } from 'svelte/store';
 import { getTmdbSeries } from '../tmdb/tmdbApi';
+import { settings } from '$lib/stores/settings.svelte';
 
 export type SonarrSeries = components['schemas']['SeriesResource'];
 export type SonarrReleaseResource = components['schemas']['ReleaseResource'];
@@ -39,11 +38,11 @@ export interface SonarrSeriesOptions {
 }
 
 function getSonarrApi() {
-	const baseUrl = get(settings)?.sonarr.baseUrl;
-	const apiKey = get(settings)?.sonarr.apiKey;
-	const rootFolder = get(settings)?.sonarr.rootFolderPath;
-	const qualityProfileId = get(settings)?.sonarr.qualityProfileId;
-	const languageProfileId = get(settings)?.sonarr.languageProfileId;
+	const baseUrl = settings.globalSettings.sonarr.baseUrl;
+	const apiKey = settings.globalSettings.sonarr.apiKey;
+	const rootFolder = settings.globalSettings.sonarr.rootFolderPath;
+	const qualityProfileId = settings.globalSettings.sonarr.qualityProfileId;
+	const languageProfileId = settings.globalSettings.sonarr.languageProfileId;
 
 	if (!baseUrl || !apiKey || !rootFolder || !qualityProfileId || !languageProfileId)
 		return undefined;
@@ -85,20 +84,20 @@ export const addSeriesToSonarr = async (tmdbId: number) => {
 	if (!tmdbSeries || !tmdbSeries.external_ids.tvdb_id || !tmdbSeries.name)
 		throw new Error('Movie not found');
 
-	let monitorType = await getSonarrMonitor(get(settings)?.sonarr.monitor);
-	let search = get(settings)?.sonarr.StartSearch;
+	let monitorType = await getSonarrMonitor(settings.globalSettings.sonarr.monitor);
+	let search = settings.globalSettings.sonarr.StartSearch;
 	const options: SonarrSeriesOptions = {
 		title: tmdbSeries.name,
 		tvdbId: tmdbSeries.external_ids.tvdb_id,
-		qualityProfileId: get(settings)?.sonarr.qualityProfileId || 0,
+		qualityProfileId: settings.globalSettings.sonarr.qualityProfileId || 0,
 		monitored: monitorType != 'none',
 		addOptions: {
 			monitor: monitorType ? (monitorType as any) : 'none',
 			searchForMissingEpisodes: search ? search : false,
 			searchForCutoffUnmetEpisodes: search ? search : false
 		},
-		rootFolderPath: get(settings)?.sonarr.rootFolderPath || '',
-		languageProfileId: get(settings)?.sonarr.languageProfileId || 0,
+		rootFolderPath: settings.globalSettings.sonarr.rootFolderPath || '',
+		languageProfileId: settings.globalSettings.sonarr.languageProfileId || 0,
 		seasonFolder: true
 	};
 
@@ -256,9 +255,9 @@ export const getSonarrHealth = async (
 	apiKey: string | undefined = undefined
 ) =>
 	axios
-		.get((baseUrl || get(settings)?.sonarr.baseUrl) + '/api/v3/health', {
+		.get((baseUrl || settings.globalSettings.sonarr.baseUrl) + '/api/v3/health', {
 			headers: {
-				'X-Api-Key': apiKey || get(settings)?.sonarr.apiKey
+				'X-Api-Key': apiKey || settings.globalSettings.sonarr.apiKey
 			}
 		})
 		.then((res) => res.status === 200)
@@ -270,10 +269,10 @@ export const getSonarrRootFolders = async (
 ) =>
 	axios
 		.get<components['schemas']['RootFolderResource'][]>(
-			(baseUrl || get(settings)?.sonarr.baseUrl) + '/api/v3/rootFolder',
+			(baseUrl || settings.globalSettings.sonarr.baseUrl) + '/api/v3/rootFolder',
 			{
 				headers: {
-					'X-Api-Key': apiKey || get(settings)?.sonarr.apiKey
+					'X-Api-Key': apiKey || settings.globalSettings.sonarr.apiKey
 				}
 			}
 		)
@@ -285,10 +284,10 @@ export const getSonarrQualityProfiles = async (
 ) =>
 	axios
 		.get<components['schemas']['QualityProfileResource'][]>(
-			(baseUrl || get(settings)?.sonarr.baseUrl) + '/api/v3/qualityprofile',
+			(baseUrl || settings.globalSettings.sonarr.baseUrl) + '/api/v3/qualityprofile',
 			{
 				headers: {
-					'X-Api-Key': apiKey || get(settings)?.sonarr.apiKey
+					'X-Api-Key': apiKey || settings.globalSettings.sonarr.apiKey
 				}
 			}
 		)
@@ -300,10 +299,10 @@ export const getSonarrLanguageProfiles = async (
 ) =>
 	axios
 		.get<components['schemas']['LanguageProfileResource'][]>(
-			(baseUrl || get(settings)?.sonarr.baseUrl) + '/api/v3/languageprofile',
+			(baseUrl || settings.globalSettings.sonarr.baseUrl) + '/api/v3/languageprofile',
 			{
 				headers: {
-					'X-Api-Key': apiKey || get(settings)?.sonarr.apiKey
+					'X-Api-Key': apiKey || settings.globalSettings.sonarr.apiKey
 				}
 			}
 		)
@@ -333,7 +332,8 @@ export const getSonarrMonitor = async (id: number) => {
 
 export function getSonarrPosterUrl(item: SonarrSeries, original = false) {
 	const url =
-		get(settings).sonarr.baseUrl + (item.images?.find((i) => i.coverType === 'poster')?.url || '');
+		settings.globalSettings.sonarr.baseUrl +
+		(item.images?.find((i) => i.coverType === 'poster')?.url || '');
 
 	if (!original) return url.replace('poster.jpg', `poster-${500}.jpg`);
 

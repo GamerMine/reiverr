@@ -1,13 +1,10 @@
 <script lang="ts">
 	import { version } from '$app/environment';
-	import { beforeNavigate } from '$app/navigation';
 	import { jellyfinTestConnection } from '$lib/apis/jellyfin/jellyfinApi';
 	import { getRadarrHealth } from '$lib/apis/radarr/radarrApi';
 	import { getSonarrHealth } from '$lib/apis/sonarr/sonarrApi';
 	import FormButton from '$lib/components/Forms/FormButton.svelte';
 	import Select from '$lib/components/Forms/Select.svelte';
-	import { settings, type SettingsValues } from '$lib/stores/settings.store';
-	import axios from 'axios';
 	import classNames from 'classnames';
 	import { ChevronLeft } from 'svelte-radix';
 	import GeneralSettingsPage from './GeneralSettingsPage.svelte';
@@ -15,6 +12,9 @@
 	import { fade } from 'svelte/transition';
 	import { _ } from 'svelte-i18n';
 	import { createErrorNotification } from '$lib/stores/notification.store';
+	import type { Settings } from '$lib/entities/Types';
+	import { settings } from '$lib/stores/settings.svelte';
+	import Button from '$lib/components/Button.svelte';
 
 	type Section = 'general' | 'integrations';
 
@@ -24,150 +24,24 @@
 	let radarrConnected = $state(false);
 	let jellyfinConnected = $state(false);
 
-	let values: SettingsValues | undefined = $state();
-	let initialValues: SettingsValues;
-
-	settings.subscribe(async (v) => {
-		values = structuredClone($state.snapshot(v));
-		initialValues = structuredClone($state.snapshot(v));
-		const s = updateSonarrHealth();
-		const r = updateRadarrHealth();
-		const j = updateJellyfinHealth();
-
-		await Promise.all([s, r, j]);
-
-		checkForPartialConfiguration($state.snapshot(v));
-	});
+	let initialSettings: Settings = settings;
+	let currSettings: Settings = $state($state.snapshot(initialSettings));
 
 	let valuesChanged = $state(false);
-	$effect(() => {
-		valuesChanged = JSON.stringify(initialValues) !== JSON.stringify(values);
-	});
 
-	let submitLoading = $state(false);
-	function handleSubmit() {
-		if (submitLoading || !valuesChanged) return;
-		submitLoading = true;
-		submit().finally(() => (submitLoading = false));
+	async function updateSonarrHealth(): Promise<boolean | undefined> {
+		return new Promise(() => false);
 	}
 
-	async function submit() {
-		if (values) {
-			let value = values;
-			if (
-				value.sonarr.apiKey &&
-				value.sonarr.baseUrl &&
-				!(await getSonarrHealth(value.sonarr.baseUrl, value.sonarr.apiKey))
-			) {
-				createErrorNotification(
-					$_('settings.misc.invalidConfiguration'),
-					'Could not connect to Sonarr. Check Sonarr credentials.'
-				);
-				return;
-			}
-
-			if (
-				value.radarr.apiKey &&
-				value.radarr.baseUrl &&
-				!(await getRadarrHealth(value.radarr.baseUrl, value.radarr.apiKey))
-			) {
-				createErrorNotification(
-					$_('settings.misc.invalidConfiguration'),
-					'Could not connect to Radarr. Check Radarr credentials.'
-				);
-				return;
-			}
-
-			if (value.jellyfin.baseUrl) {
-				if (value.jellyfin.baseUrl.endsWith('/')) {
-					value.jellyfin.baseUrl = value.jellyfin.baseUrl.slice(
-						0,
-						value.jellyfin.baseUrl.length - 1
-					);
-				}
-				if (
-					!(await jellyfinTestConnection(
-						value.jellyfin.baseUrl,
-						value.jellyfin.apiKey || undefined
-					))
-				) {
-					createErrorNotification(
-						$_('settings.misc.invalidConfiguration'),
-						$_('settings.misc.checkJellyfinCredentials')
-					);
-					return;
-				}
-			}
-
-			await updateSonarrHealth();
-			await updateRadarrHealth();
-			await updateJellyfinHealth();
-
-			axios.post('/api/settings', value).then(() => {
-				value.jellyfin.apiKey = null;
-				settings.set(value);
-			});
-		}
-	}
-
-	function checkForPartialConfiguration(v: SettingsValues) {
-		let error = '';
-		if (sonarrConnected && !v.sonarr.rootFolderPath) {
-			error = 'Sonarr disabled: Root folder path is required';
-		} else if (sonarrConnected && !v.sonarr.qualityProfileId) {
-			error = 'Sonarr disabled: Quality profile is required';
-		} else if (sonarrConnected && !v.sonarr.languageProfileId) {
-			error = 'Sonarr disabled: Language profile is required';
-		}
-
-		if (radarrConnected && !v.radarr.rootFolderPath) {
-			error = 'Radarr disabled: Root folder path is required';
-		} else if (radarrConnected && !v.radarr.qualityProfileId) {
-			error = 'Radarr disabled: Quality profile is required';
-		}
-
-		if (error) createErrorNotification('Incomplete Configuration', error, 'warning');
-	}
-
-	async function updateSonarrHealth(reset = false): Promise<boolean | undefined> {
-		if (values) {
-			let value = values;
-			if (!value.sonarr.baseUrl || !value.sonarr.apiKey || reset) {
-				sonarrConnected = false;
-				return false;
-			}
-			return getSonarrHealth(
-				value.sonarr.baseUrl || undefined,
-				value.sonarr.apiKey || undefined
-			).then((ok) => {
-				sonarrConnected = ok;
-				return ok;
-			});
-		}
-	}
-
-	async function updateRadarrHealth(reset = false): Promise<boolean | undefined> {
-		if (values) {
-			let value = values;
-			if (!value.radarr.baseUrl || !value.radarr.apiKey || reset) {
-				radarrConnected = false;
-				return false;
-			}
-			return getRadarrHealth(
-				value.radarr.baseUrl || undefined,
-				value.radarr.apiKey || undefined
-			).then((ok) => {
-				radarrConnected = ok;
-				return ok;
-			});
-		}
+	async function updateRadarrHealth(): Promise<boolean | undefined> {
+		return new Promise(() => false);
 	}
 
 	async function updateJellyfinHealth(): Promise<boolean | undefined> {
-		if (values && values.jellyfin.baseUrl) {
+		if (currSettings.globalSettings.jellyfin.baseUrl) {
 			return jellyfinTestConnection(
-				values.jellyfin.baseUrl,
-				values.jellyfin.apiKey || undefined
+				currSettings.globalSettings.jellyfin.baseUrl,
+				currSettings.globalSettings.jellyfin.apiKey || undefined
 			).then((ok) => {
 				jellyfinConnected = ok;
 				return ok;
@@ -184,29 +58,18 @@
 			'text-zinc-300 hover:text-zinc-200': openTab !== section
 		});
 
-	beforeNavigate(({ cancel }) => {
-		if (valuesChanged) {
-			if (!confirm('You have unsaved changes. Are you sure you want to leave?')) cancel();
-		}
+	$effect(() => {
+		valuesChanged = JSON.stringify(initialSettings) !== JSON.stringify(currSettings);
 	});
-
-	function handleKeybinds(event: KeyboardEvent) {
-		if (event.key === 's' && (event.ctrlKey || event.metaKey)) {
-			event.preventDefault();
-			handleSubmit();
-		}
-	}
 </script>
-
-<svelte:window on:keydown={handleKeybinds} />
 
 <div
 	class="min-h-screen sm:h-screen flex-1 flex flex-col sm:flex-row w-full sm:pt-24"
 	in:fade|global={{
-		duration: $settings.animationDuration,
-		delay: $settings.animationDuration
+		duration: initialSettings.userSettings.interface.animationDuration,
+		delay: initialSettings.userSettings.interface.animationDuration
 	}}
-	out:fade|global={{ duration: $settings.animationDuration }}
+	out:fade|global={{ duration: initialSettings.userSettings.interface.animationDuration }}
 >
 	<div
 		class="hidden sm:flex flex-col gap-2 border-r border-zinc-800 justify-between w-64 p-8 border-t"
@@ -230,15 +93,11 @@
 			</button>
 		</div>
 		<div class="flex flex-col gap-2">
-			<FormButton
-				disabled={!valuesChanged}
-				loading={submitLoading}
-				onclick={handleSubmit}
-				type={valuesChanged ? 'success' : 'base'}
-			>
+			<Button type="submit" form="settingsForm" disabled={!valuesChanged} variant="success">
 				{$_('settings.misc.saveChanges')}
-			</FormButton>
-			<FormButton
+			</Button>
+			<!-- FIXME: Reset button disabled for now  -->
+			<!--<FormButton
 				disabled={!valuesChanged}
 				type="error"
 				onclick={() => {
@@ -246,7 +105,7 @@
 				}}
 			>
 				{$_('settings.misc.resetToDefaults')}
-			</FormButton>
+			</FormButton>-->
 		</div>
 	</div>
 
@@ -268,23 +127,22 @@
 
 	<div class="flex-1 flex flex-col border-t border-zinc-800 justify-between">
 		<div class="overflow-y-scroll overflow-x-hidden px-8">
-			<div class="max-w-screen-md mx-auto mb-auto w-full">
-				{#if openTab === 'general' && values}
-					<GeneralSettingsPage bind:values />
-				{/if}
+			<form id="settingsForm" class="max-w-screen-md mx-auto mb-auto w-full" method="POST">
+				<GeneralSettingsPage
+					visible={openTab === 'general'}
+					bind:userSettings={currSettings.userSettings}
+				/>
 
-				{#if openTab === 'integrations' && values}
-					<IntegrationSettingsPage
-						bind:values
-						{sonarrConnected}
-						{radarrConnected}
-						{jellyfinConnected}
-						{updateSonarrHealth}
-						{updateRadarrHealth}
-						{updateJellyfinHealth}
-					/>
-				{/if}
-			</div>
+				<IntegrationSettingsPage
+					visible={openTab === 'integrations'}
+					{sonarrConnected}
+					{radarrConnected}
+					{jellyfinConnected}
+					{updateSonarrHealth}
+					{updateRadarrHealth}
+					{updateJellyfinHealth}
+				/>
+			</form>
 		</div>
 		<div class="flex items-center p-4 gap-8 justify-center text-zinc-500 bg-stone-950">
 			<div>v{version}</div>

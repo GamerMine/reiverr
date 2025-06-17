@@ -12,8 +12,8 @@
 	import { TMDB_POSTER_SMALL } from '$lib/constants';
 	import { DotFilled, InstagramLogo } from 'svelte-radix';
 	import { _ } from 'svelte-i18n';
-	import { settings } from '$lib/stores/settings.store';
 	import { tmdbDataFormat } from '$lib/utils.js';
+	import { settings } from '$lib/stores/settings.svelte';
 
 	const GENDER_OPTIONS = [
 		$_('library.personPage.notSet'),
@@ -198,11 +198,14 @@
 			<div class="col-span-2 lg:col-span-1">
 				<p class="text-zinc-400 text-sm">{$_('library.personPage.birthday')}</p>
 				<h2 class="font-medium">
-					{new Date(person?.birthday || Date.now()).toLocaleDateString($settings.language, {
-						year: 'numeric',
-						month: 'short',
-						day: 'numeric'
-					})}
+					{new Date(person?.birthday || Date.now()).toLocaleDateString(
+						settings.userSettings.interface.language,
+						{
+							year: 'numeric',
+							month: 'short',
+							day: 'numeric'
+						}
+					)}
 				</h2>
 			</div>
 			<div class="col-span-2 lg:col-span-1">

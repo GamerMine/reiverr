@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { TMDB_IMAGES_ORIGINAL } from '$lib/constants';
-	import { settings } from '$lib/stores/settings.store';
 	import classNames from 'classnames';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import YoutubePlayer from '../YoutubePlayer.svelte';
+	import { settings } from '$lib/stores/settings.svelte';
 
 	const TRAILER_TIMEOUT = 3000;
 	const TRAILER_LOAD_TIME = 1000;
-	const ANIMATION_DURATION = $settings.animationDuration;
+	const ANIMATION_DURATION = settings.userSettings.interface.animationDuration;
 
 	let {
 		tmdbId,
@@ -55,7 +55,7 @@
 	}
 
 	function showTrailerDelayed() {
-		if ($settings.autoplayTrailers === false) return;
+		if (settings.userSettings.interface.autoplayTrailers === false) return;
 		trailerShowTimeout = setTimeout(() => {
 			trailerMounted = true; // Mount the trailer
 
@@ -83,7 +83,7 @@
 		></div>
 	{/key}
 {/if}
-{#if trailerId && $settings.autoplayTrailers && trailerMounted}
+{#if trailerId && settings.userSettings.interface.autoplayTrailers && trailerMounted}
 	<div
 		class={classNames('absolute inset-0 transition-opacity z-[-1]', {
 			'opacity-100': trailerVisible,

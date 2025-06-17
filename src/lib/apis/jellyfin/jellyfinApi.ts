@@ -1,8 +1,7 @@
 import type { components } from '$lib/apis/jellyfin/jellyfin.generated';
 import type { DeviceProfile } from '$lib/apis/jellyfin/playback-profiles';
-import { settings } from '$lib/stores/settings.store';
-import { get } from 'svelte/store';
 import { arrayToQuery } from '$lib/utils';
+import { settings } from '$lib/stores/settings.svelte';
 
 export type JellyfinItem = components['schemas']['BaseItemDto'];
 export type JellyfinUser = components['schemas']['UserDto'];
@@ -172,18 +171,18 @@ export const jellyfinGetUserImage = async (userId: string) => {
 
 export const getJellyfinPosterUrl = (item: JellyfinItem, quality = 100, original = false) =>
 	item.ImageTags?.Primary
-		? `${get(settings).jellyfin.baseUrl}/Items/${item?.Id}/Images/Primary?quality=${quality}${
+		? `${settings.globalSettings.jellyfin.baseUrl}/Items/${item?.Id}/Images/Primary?quality=${quality}${
 				original ? '' : '&fillWidth=432'
 			}&tag=${item?.ImageTags?.Primary}`
 		: '';
 
 export const getJellyfinBackdrop = (item: JellyfinItem, quality = 100) => {
 	if (item.BackdropImageTags?.length) {
-		return `${get(settings).jellyfin.baseUrl}/Items/${
+		return `${settings.globalSettings.jellyfin.baseUrl}/Items/${
 			item?.Id
 		}/Images/Backdrop?quality=${quality}&tag=${item?.BackdropImageTags?.[0]}`;
 	} else {
-		return `${get(settings).jellyfin.baseUrl}/Items/${
+		return `${settings.globalSettings.jellyfin.baseUrl}/Items/${
 			item?.Id
 		}/Images/Primary?quality=${quality}&tag=${item?.ImageTags?.Primary}`;
 	}

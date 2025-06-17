@@ -22,12 +22,12 @@
 		createRadarrMovieStore
 	} from '$lib/stores/data.store';
 	import { modalStack } from '$lib/stores/modal.store';
-	import { settings } from '$lib/stores/settings.store';
 	import { formatMinutesToTime, formatSize } from '$lib/utils';
 	import classNames from 'classnames';
 	import { Archive, ChevronRight, DotFilled, Plus } from 'svelte-radix';
 	import type { ComponentProps } from 'svelte';
 	import { _ } from 'svelte-i18n';
+	import { settings } from '$lib/stores/settings.svelte';
 
 	let {
 		tmdbId,
@@ -149,7 +149,7 @@
 						<Button variant="primary" onclick={play}>
 							<span>{$_('library.content.play')}</span><ChevronRight size="20" />
 						</Button>
-					{:else if !radarrMovie && $settings.radarr.baseUrl && $settings.radarr.apiKey}
+					{:else if !radarrMovie && settings.globalSettings.radarr.baseUrl && settings.globalSettings.radarr.apiKey}
 						<Button variant="primary" disabled={addToRadarrLoading} onclick={addToRadarr}>
 							<span>{$_('library.content.addRadarr')}</span><Plus size="20" />
 						</Button>
@@ -175,11 +175,14 @@
 			<div class="col-span-2 lg:col-span-1">
 				<p class="text-zinc-400 text-sm">{$_('library.content.releaseDate')}</p>
 				<h2 class="font-medium">
-					{new Date(movie?.release_date || Date.now()).toLocaleDateString($settings.language, {
-						year: 'numeric',
-						month: 'short',
-						day: 'numeric'
-					})}
+					{new Date(movie?.release_date || Date.now()).toLocaleDateString(
+						settings.userSettings.interface.language,
+						{
+							year: 'numeric',
+							month: 'short',
+							day: 'numeric'
+						}
+					)}
 				</h2>
 			</div>
 			{#if movie?.budget}

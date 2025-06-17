@@ -1,14 +1,14 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import createClient from 'openapi-fetch';
 import type { paths } from '$lib/apis/jellyfin/jellyfin.generated';
-import { Settings } from '$lib/entities/Settings.server';
+import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import { getUserId } from '$lib/apis/jellyfin/server/jellyfin.server';
 
 export const POST: RequestHandler = async ({ url, cookies, request }) => {
 	const requestBody = await request.json();
 
 	return createClient<paths>({
-		baseUrl: (await Settings.getJellyfinBaseUrl()) || undefined,
+		baseUrl: (await GlobalSettingsEntity.getJellyfinBaseUrl()) || undefined,
 		headers: {
 			Authorization: `MediaBrowser Token="${cookies.get('access_token')}"`
 		}

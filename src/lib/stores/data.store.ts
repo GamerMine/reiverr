@@ -11,17 +11,11 @@ import {
 	type SonarrSeries
 } from '$lib/apis/sonarr/sonarrApi';
 import { derived, writable } from 'svelte/store';
-import { settings } from './settings.store';
+import { settings } from '$lib/stores/settings.svelte';
 
 async function waitForSettings() {
 	return new Promise((resolve) => {
-		let resolved = false;
-		settings.subscribe((settings) => {
-			if (settings?.initialised && !resolved) {
-				resolved = true;
-				resolve(settings);
-			}
-		});
+		resolve(settings);
 	});
 }
 

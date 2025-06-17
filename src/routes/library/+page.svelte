@@ -10,7 +10,6 @@
 	import { playerState } from '$lib/components/VideoPlayer/VideoPlayer';
 	import { PLACEHOLDER_BACKDROP } from '$lib/constants';
 	import { jellyfinItemsStore, servarrDownloadsStore } from '$lib/stores/data.store';
-	import { settings } from '$lib/stores/settings.store';
 	import { ChevronRight } from 'svelte-radix';
 	import type { ComponentProps } from 'svelte';
 	import { _ } from 'svelte-i18n';
@@ -18,6 +17,7 @@
 	import LibraryItems from './LibraryItems.svelte';
 	import { capitalize } from '$lib/utils';
 	import LazyImg from '$lib/components/LazyImg.svelte';
+	import { settings } from '$lib/stores/settings.svelte';
 
 	let openNextUpTab: 'downloading' | 'nextUp' = 'downloading';
 	let noItems = false;
@@ -68,10 +68,10 @@
 	<div
 		class="h-screen flex items-center justify-center text-zinc-500 p-8"
 		in:fade|global={{
-			duration: $settings.animationDuration,
-			delay: $settings.animationDuration
+			duration: settings.userSettings.interface.animationDuration,
+			delay: settings.userSettings.interface.animationDuration
 		}}
-		out:fade|global={{ duration: $settings.animationDuration }}
+		out:fade|global={{ duration: settings.userSettings.interface.animationDuration }}
 	>
 		<h1>
 			{$_('library.missingConfiguration')}
@@ -80,10 +80,10 @@
 {:else}
 	<div
 		in:fade|global={{
-			duration: $settings.animationDuration,
-			delay: $settings.animationDuration
+			duration: settings.userSettings.interface.animationDuration,
+			delay: settings.userSettings.interface.animationDuration
 		}}
-		out:fade|global={{ duration: $settings.animationDuration }}
+		out:fade|global={{ duration: settings.userSettings.interface.animationDuration }}
 	>
 		<div class="relative pt-24">
 			{#await showcasePromise then showcase}
@@ -151,10 +151,10 @@
 	<div
 		class="py-4 px-2 md:px-8"
 		in:fade|global={{
-			duration: $settings.animationDuration,
-			delay: $settings.animationDuration
+			duration: settings.userSettings.interface.animationDuration,
+			delay: settings.userSettings.interface.animationDuration
 		}}
-		out:fade|global={{ duration: $settings.animationDuration }}
+		out:fade|global={{ duration: settings.userSettings.interface.animationDuration }}
 	>
 		<div class="max-w-screen-2xl m-auto flex flex-col gap-12">
 			{#if downloadProps?.length}

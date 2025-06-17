@@ -28,7 +28,6 @@
 		createSonarrSeriesStore
 	} from '$lib/stores/data.store';
 	import { modalStack } from '$lib/stores/modal.store';
-	import { settings } from '$lib/stores/settings.store';
 	import type { TitleId } from '$lib/types';
 	import { capitalize, formatMinutesToTime, formatSize } from '$lib/utils';
 	import classNames from 'classnames';
@@ -36,6 +35,7 @@
 	import { get } from 'svelte/store';
 	import { _ } from 'svelte-i18n';
 	import { tmdbDataFormat } from '$lib/utils.js';
+	import { settings } from '$lib/stores/settings.svelte';
 
 	let {
 		titleId,
@@ -267,7 +267,7 @@
 							</span>
 							<ChevronRight size="20" />
 						</Button>
-					{:else if !$sonarrSeriesStore.item && $settings.sonarr.apiKey && $settings.sonarr.baseUrl}
+					{:else if !$sonarrSeriesStore.item && settings.globalSettings.sonarr.apiKey && settings.globalSettings.sonarr.baseUrl}
 						<Button variant="primary" disabled={addToSonarrLoading} onclick={addToSonarr}>
 							<span>{$_('library.content.addSonarr')}</span><Plus size="20" />
 						</Button>
@@ -362,11 +362,14 @@
 				<div class="col-span-2 lg:col-span-1">
 					<p class="text-zinc-400 text-sm">{$_('library.content.firstAirDate')}</p>
 					<h2 class="font-medium">
-						{new Date(tmdbSeries?.first_air_date).toLocaleDateString($settings.language, {
-							year: 'numeric',
-							month: 'short',
-							day: 'numeric'
-						})}
+						{new Date(tmdbSeries?.first_air_date).toLocaleDateString(
+							settings.userSettings.interface.language,
+							{
+								year: 'numeric',
+								month: 'short',
+								day: 'numeric'
+							}
+						)}
 					</h2>
 				</div>
 			{/if}
@@ -375,7 +378,7 @@
 					<p class="text-zinc-400 text-sm">{$_('library.content.nextAirDate')}</p>
 					<h2 class="font-medium">
 						{new Date(tmdbSeries.next_episode_to_air?.air_date).toLocaleDateString(
-							$settings.language,
+							settings.userSettings.interface.language,
 							{
 								year: 'numeric',
 								month: 'short',
@@ -388,11 +391,14 @@
 				<div class="col-span-2 lg:col-span-1">
 					<p class="text-zinc-400 text-sm">{$_('library.content.lastAirDate')}</p>
 					<h2 class="font-medium">
-						{new Date(tmdbSeries.last_air_date).toLocaleDateString($settings.language, {
-							year: 'numeric',
-							month: 'short',
-							day: 'numeric'
-						})}
+						{new Date(tmdbSeries.last_air_date).toLocaleDateString(
+							settings.userSettings.interface.language,
+							{
+								year: 'numeric',
+								month: 'short',
+								day: 'numeric'
+							}
+						)}
 					</h2>
 				</div>
 			{/if}

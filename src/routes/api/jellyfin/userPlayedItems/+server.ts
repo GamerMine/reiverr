@@ -1,12 +1,12 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import type { paths } from '$lib/apis/jellyfin/jellyfin.generated';
 import createClient from 'openapi-fetch';
-import { Settings } from '$lib/entities/Settings.server';
+import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import { getUserId } from '$lib/apis/jellyfin/server/jellyfin.server';
 
 export const POST: RequestHandler = async ({ cookies, url }) => {
 	return createClient<paths>({
-		baseUrl: (await Settings.getJellyfinBaseUrl()) || undefined,
+		baseUrl: (await GlobalSettingsEntity.getJellyfinBaseUrl()) || undefined,
 		headers: {
 			Authorization: `MediaBrowser Token="${cookies.get('access_token')}"`
 		}
@@ -34,7 +34,7 @@ export const POST: RequestHandler = async ({ cookies, url }) => {
 
 export const DELETE: RequestHandler = async ({ cookies, url }) => {
 	return createClient<paths>({
-		baseUrl: (await Settings.getJellyfinBaseUrl()) || undefined,
+		baseUrl: (await GlobalSettingsEntity.getJellyfinBaseUrl()) || undefined,
 		headers: {
 			Authorization: `MediaBrowser Token="${cookies.get('access_token')}"`
 		}

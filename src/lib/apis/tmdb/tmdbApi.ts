@@ -1,10 +1,9 @@
 import { browser } from '$app/environment';
 import { TMDB_API_KEY, TMDB_BACKDROP_SMALL } from '$lib/constants';
-import { settings } from '$lib/stores/settings.store';
 import createClient from 'openapi-fetch';
-import { get } from 'svelte/store';
 import type { operations, paths } from './tmdb.generated';
 import type { TitleType } from '$lib/types';
+import { settings } from '$lib/stores/settings.svelte';
 
 const CACHE_ONE_DAY = 'max-age=86400';
 const CACHE_FOUR_DAYS = 'max-age=345600';
@@ -80,9 +79,11 @@ export const getTmdbMovie = async (tmdbId: number) =>
 				movie_id: tmdbId
 			},
 			query: {
-				language: get(settings)?.language,
+				language: settings.userSettings.interface.language,
 				append_to_response: 'videos,credits,external_ids,images',
-				...({ include_image_language: get(settings)?.language + ',en,null' } as any)
+				...({
+					include_image_language: settings.userSettings.interface.language + ',en,null'
+				} as any)
 			}
 		}
 	}).then((res) => res.data as TmdbMovieFull2 | undefined);
@@ -116,9 +117,11 @@ export const getTmdbSeries = async (tmdbId: number): Promise<TmdbSeriesFull2 | u
 				series_id: tmdbId
 			},
 			query: {
-				language: get(settings)?.language,
+				language: settings.userSettings.interface.language,
 				append_to_response: 'videos,aggregate_credits,external_ids,images',
-				...({ include_image_language: get(settings)?.language + ',en,null' } as any)
+				...({
+					include_image_language: settings.userSettings.interface.language + ',en,null'
+				} as any)
 			}
 		},
 		headers: {
@@ -173,7 +176,7 @@ export const getTmdbSeriesBackdrop = async (tmdbId: number) =>
 			.then(
 				(r) =>
 					(
-						r?.backdrops?.find((b) => b.iso_639_1 === get(settings)?.language) ||
+						r?.backdrops?.find((b) => b.iso_639_1 === settings.userSettings.interface.language) ||
 						r?.backdrops?.find((b) => b.iso_639_1 === 'en') ||
 						r?.backdrops?.find((b) => b.iso_639_1) ||
 						r?.backdrops?.[0]
@@ -188,7 +191,7 @@ export const getTmdbMovieBackdrop = async (tmdbId: number) =>
 			.then(
 				(r) =>
 					(
-						r?.backdrops?.find((b) => b.iso_639_1 === get(settings)?.language) ||
+						r?.backdrops?.find((b) => b.iso_639_1 === settings.userSettings.interface.language) ||
 						r?.backdrops?.find((b) => b.iso_639_1 === 'en') ||
 						r?.backdrops?.find((b) => b.iso_639_1) ||
 						r?.backdrops?.[0]
@@ -208,8 +211,8 @@ export const getTmdbPopularMovies = () =>
 	TmdbApiOpen.GET('/3/movie/popular', {
 		params: {
 			query: {
-				language: get(settings)?.language,
-				region: get(settings)?.discover.region
+				language: settings.userSettings.interface.language,
+				region: settings.userSettings.discover.region
 			}
 		}
 	}).then((res) => res.data?.results || []);
@@ -218,7 +221,7 @@ export const getTmdbPopularSeries = () =>
 	TmdbApiOpen.GET('/3/tv/popular', {
 		params: {
 			query: {
-				language: get(settings)?.language
+				language: settings.userSettings.interface.language
 			}
 		}
 	}).then((res) => res.data?.results || []);
@@ -306,7 +309,9 @@ export const getTmdbItemBackdrop = (item: {
 	images: { backdrops: { file_path: string; iso_639_1: string }[] };
 }) =>
 	(
-		item?.images?.backdrops?.find((b) => b.iso_639_1 === get(settings)?.language) ||
+		item?.images?.backdrops?.find(
+			(b) => b.iso_639_1 === settings.userSettings.interface.language
+		) ||
 		item?.images?.backdrops?.find((b) => b.iso_639_1 === 'en') ||
 		item?.images?.backdrops?.find((b) => b.iso_639_1) ||
 		item?.images?.backdrops?.[0]
@@ -349,7 +354,7 @@ export const getTmdbPerson = async (person_id: number) =>
 				person_id: person_id
 			},
 			query: {
-				language: get(settings)?.language,
+				language: settings.userSettings.interface.language,
 				append_to_response: 'images,movie_credits,tv_credits,external_ids'
 			}
 		}

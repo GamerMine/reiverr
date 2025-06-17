@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getDiskSpace } from '$lib/apis/sonarr/sonarrApi';
 	import { sonarrSeriesStore } from '$lib/stores/data.store';
-	import { settings } from '$lib/stores/settings.store';
+	import { settings } from '$lib/stores/globalSettings.store';
 	import { formatSize } from '$lib/utils.js';
 	import SonarrIcon from '../svgs/SonarrIcon.svelte';
 	import StatsContainer from './StatsContainer.svelte';

@@ -1,104 +1,80 @@
-import { defaultSettings, type SettingsValues } from '$lib/stores/settings.store';
 import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
+import { defaultGlobalSettings, type GlobalSettings } from '$lib/entities/Types';
 
-@Entity({ name: 'settings' })
-export class Settings extends BaseEntity {
+@Entity({ name: 'globalSettings' })
+export class GlobalSettingsEntity extends BaseEntity {
 	@PrimaryColumn('text')
 	name: string;
 
-	@Column('boolean', { default: false })
-	isSetupDone: boolean;
-
-	// General
-
-	@Column('boolean', { default: defaultSettings.autoplayTrailers })
-	autoplayTrailers: boolean;
-
-	@Column('text', { default: defaultSettings.language })
-	language: string;
-
-	@Column('integer', { default: defaultSettings.animationDuration })
-	animationDuration: number;
-
-	// Discover
-	@Column('text', { default: defaultSettings.discover.region })
-	discoverRegion: string;
-
-	@Column('boolean', { default: defaultSettings.discover.excludeLibraryItems })
-	discoverExcludeLibraryItems: boolean;
-
-	@Column('text', { default: defaultSettings.discover.includedLanguages })
-	discoverIncludedLanguages: string;
-
 	// Sonarr
 
-	@Column('text', { nullable: true, default: defaultSettings.sonarr.baseUrl })
+	@Column('text', { nullable: true, default: defaultGlobalSettings.sonarr.baseUrl })
 	sonarrBaseUrl: string | null;
 
-	@Column('text', { nullable: true, default: defaultSettings.sonarr.apiKey })
+	@Column('text', { nullable: true, default: defaultGlobalSettings.sonarr.apiKey })
 	sonarrApiKey: string | null;
 
-	@Column('text', { default: defaultSettings.sonarr.rootFolderPath })
+	@Column('text', { default: defaultGlobalSettings.sonarr.rootFolderPath })
 	sonarrRootFolderPath: string;
 
-	@Column('integer', { default: defaultSettings.sonarr.qualityProfileId })
+	@Column('integer', { default: defaultGlobalSettings.sonarr.qualityProfileId })
 	sonarrQualityProfileId: number;
 
-	@Column('integer', { default: defaultSettings.sonarr.languageProfileId })
+	@Column('integer', { default: defaultGlobalSettings.sonarr.languageProfileId })
 	sonarrLanguageProfileId: number;
 
-	@Column('integer', { default: defaultSettings.sonarr.monitor })
+	@Column('integer', { default: defaultGlobalSettings.sonarr.monitor })
 	sonarrMonitor: number;
 
-	@Column('boolean', { default: defaultSettings.sonarr.StartSearch })
+	@Column('boolean', { default: defaultGlobalSettings.sonarr.StartSearch })
 	sonarrStartSearch: boolean;
 
 	// Radarr
 
-	@Column('text', { nullable: true, default: defaultSettings.radarr.baseUrl })
+	@Column('text', { nullable: true, default: defaultGlobalSettings.radarr.baseUrl })
 	radarrBaseUrl: string | null;
 
-	@Column('text', { nullable: true, default: defaultSettings.radarr.apiKey })
+	@Column('text', { nullable: true, default: defaultGlobalSettings.radarr.apiKey })
 	radarrApiKey: string | null;
 
-	@Column('text', { default: defaultSettings.radarr.rootFolderPath })
+	@Column('text', { default: defaultGlobalSettings.radarr.rootFolderPath })
 	radarrRootFolderPath: string;
 
-	@Column('integer', { default: defaultSettings.radarr.qualityProfileId })
+	@Column('integer', { default: defaultGlobalSettings.radarr.qualityProfileId })
 	radarrQualityProfileId: number;
 
-	@Column('integer', { default: defaultSettings.radarr.monitor })
+	@Column('integer', { default: defaultGlobalSettings.radarr.monitor })
 	radarrMonitor: number;
 
-	@Column('boolean', { default: defaultSettings.radarr.startSearch })
+	@Column('boolean', { default: defaultGlobalSettings.radarr.startSearch })
 	radarrStartSearch: boolean;
 
 	// Jellyfin
 
-	@Column('text', { nullable: true, default: defaultSettings.jellyfin.baseUrl })
+	@Column('text', { nullable: true, default: defaultGlobalSettings.jellyfin.baseUrl })
 	jellyfinBaseUrl: string | null;
 
-	@Column('text', { nullable: true, default: defaultSettings.jellyfin.apiKey })
+	@Column('text', { nullable: true, default: defaultGlobalSettings.jellyfin.apiKey })
 	jellyfinApiKey: string | null;
 
-	public static async getClient(name = 'default'): Promise<SettingsValues> {
+	public static async getClient(name = 'default'): Promise<GlobalSettings> {
 		const settings = await this.findOne({ where: { name } });
 
 		if (!settings) {
-			const defaultSettings = new Settings();
+			const defaultSettings = new GlobalSettingsEntity();
 			defaultSettings.name = 'default';
 			await defaultSettings.save();
-			return this.getSettingsValues(defaultSettings);
+			return this.getSettings(defaultSettings);
 		}
 
-		return this.getSettingsValues(settings);
+		return this.getSettings(settings);
 	}
 
 	public static async getJellyfinApiKey(name = 'default') {
 		const settings = await this.findOne({ where: { name } });
 
 		if (!settings) {
-			const defaultSettings = new Settings();
+			const defaultSettings = new GlobalSettingsEntity();
 			defaultSettings.name = 'default';
 			await defaultSettings.save();
 			return null;
@@ -111,7 +87,7 @@ export class Settings extends BaseEntity {
 		const settings = await this.findOne({ where: { name } });
 
 		if (!settings) {
-			const defaultSettings = new Settings();
+			const defaultSettings = new GlobalSettingsEntity();
 			defaultSettings.name = 'default';
 			await defaultSettings.save();
 			return null;
@@ -120,22 +96,12 @@ export class Settings extends BaseEntity {
 		return settings.jellyfinBaseUrl;
 	}
 
-	static getSettingsValues(settings: Settings): SettingsValues {
+	static getSettings(settings: GlobalSettingsEntity): GlobalSettings {
 		return {
-			...defaultSettings,
-			language: settings.language,
-			autoplayTrailers: settings.autoplayTrailers,
-			animationDuration: settings.animationDuration,
-
-			discover: {
-				...defaultSettings.discover,
-				region: settings.discoverRegion,
-				excludeLibraryItems: settings.discoverExcludeLibraryItems,
-				includedLanguages: settings.discoverIncludedLanguages
-			},
+			...defaultGlobalSettings,
 
 			sonarr: {
-				...defaultSettings.sonarr,
+				...defaultGlobalSettings.sonarr,
 				apiKey: settings.sonarrApiKey,
 				baseUrl: settings.sonarrBaseUrl,
 				monitor: settings.sonarrMonitor,
@@ -145,7 +111,7 @@ export class Settings extends BaseEntity {
 				rootFolderPath: settings.sonarrRootFolderPath
 			},
 			radarr: {
-				...defaultSettings.radarr,
+				...defaultGlobalSettings.radarr,
 				apiKey: settings.radarrApiKey,
 				baseUrl: settings.radarrBaseUrl,
 				monitor: settings.radarrMonitor,
@@ -154,25 +120,20 @@ export class Settings extends BaseEntity {
 				rootFolderPath: settings.radarrRootFolderPath
 			},
 			jellyfin: {
-				...defaultSettings.jellyfin,
+				...defaultGlobalSettings.jellyfin,
 				baseUrl: settings.jellyfinBaseUrl
 			},
 			initialised: true
 		};
 	}
 
-	public static async set(name: string, values: SettingsValues): Promise<Settings | null> {
+	public static async set(
+		name: string,
+		values: GlobalSettings
+	): Promise<GlobalSettingsEntity | null> {
 		const settings = await this.findOne({ where: { name } });
 
 		if (!settings) return null;
-
-		settings.language = values.language;
-		settings.autoplayTrailers = values.autoplayTrailers;
-		settings.animationDuration = values.animationDuration;
-
-		settings.discoverRegion = values.discover.region;
-		settings.discoverExcludeLibraryItems = values.discover.excludeLibraryItems;
-		settings.discoverIncludedLanguages = values.discover.includedLanguages;
 
 		settings.sonarrApiKey = values.sonarr.apiKey;
 		settings.sonarrBaseUrl = values.sonarr.baseUrl;

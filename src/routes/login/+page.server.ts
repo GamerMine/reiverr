@@ -1,6 +1,6 @@
 import { type Actions, fail, redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from '../../../.svelte-kit/types/src/routes/$types';
-import { Settings } from '$lib/entities/Settings.server';
+import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import createClient from 'openapi-fetch';
 import type { paths } from '$lib/apis/jellyfin/jellyfin.generated';
 import {
@@ -47,7 +47,7 @@ async function authenticateJellyfinUser(
 	password: string
 ): Promise<JellyfinAuthenticationResult | undefined> {
 	return createClient<paths>({
-		baseUrl: (await Settings.getJellyfinBaseUrl()) || undefined,
+		baseUrl: (await GlobalSettingsEntity.getJellyfinBaseUrl()) || undefined,
 		headers: {
 			Authorization: `MediaBrowser Client=${JELLYFIN_CLIENT}, Device=${JELLYFIN_DEVICE}, DeviceId=${await getDeviceIdFromUsername(username)}, Version=${JELLYFIN_CLIENT_VERSION}`
 		}

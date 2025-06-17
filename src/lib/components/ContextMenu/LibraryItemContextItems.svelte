@@ -7,11 +7,11 @@
 	import type { RadarrMovie } from '$lib/apis/radarr/radarrApi';
 	import type { SonarrSeries } from '$lib/apis/sonarr/sonarrApi';
 	import { jellyfinItemsStore } from '$lib/stores/data.store';
-	import { settings } from '$lib/stores/settings.store';
 	import type { TitleType } from '$lib/types';
 	import ContextMenuDivider from './ContextMenuDivider.svelte';
 	import ContextMenuItem from './ContextMenuItem.svelte';
 	import { _ } from 'svelte-i18n';
+	import { settings } from '$lib/stores/settings.svelte';
 
 	let {
 		jellyfinItem = undefined,
@@ -47,7 +47,9 @@
 	}
 
 	function handleOpenInJellyfin() {
-		window.open($settings.jellyfin.baseUrl + '/web/index.html#!/details?id=' + jellyfinItem?.Id);
+		window.open(
+			settings.globalSettings.jellyfin.baseUrl + '/web/index.html#!/details?id=' + jellyfinItem?.Id
+		);
 	}
 </script>
 
@@ -64,14 +66,16 @@
 {#if type === 'movie'}
 	<ContextMenuItem
 		disabled={!radarrMovie}
-		onclick={() => window.open($settings.radarr.baseUrl + '/movie/' + radarrMovie?.tmdbId)}
+		onclick={() =>
+			window.open(settings.globalSettings.radarr.baseUrl + '/movie/' + radarrMovie?.tmdbId)}
 	>
 		{$_('library.LibraryItemContext.openRadarr')}
 	</ContextMenuItem>
 {:else}
 	<ContextMenuItem
 		disabled={!sonarrSeries}
-		onclick={() => window.open($settings.sonarr.baseUrl + '/series/' + sonarrSeries?.titleSlug)}
+		onclick={() =>
+			window.open(settings.globalSettings.sonarr.baseUrl + '/series/' + sonarrSeries?.titleSlug)}
 	>
 		{$_('library.LibraryItemContext.openSonarr')}
 	</ContextMenuItem>

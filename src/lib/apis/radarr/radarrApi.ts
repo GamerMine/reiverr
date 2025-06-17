@@ -1,10 +1,9 @@
 import type { components, paths } from '$lib/apis/radarr/radarr.generated';
 import { getTmdbMovie } from '$lib/apis/tmdb/tmdbApi';
-import { settings } from '$lib/stores/settings.store';
 import { log } from '$lib/utils';
 import axios from 'axios';
 import createClient from 'openapi-fetch';
-import { get } from 'svelte/store';
+import { settings } from '$lib/stores/settings.svelte';
 
 export type RadarrMovie = components['schemas']['MovieResource'];
 export type MovieFileResource = components['schemas']['MovieFileResource'];
@@ -28,10 +27,10 @@ export interface RadarrMovieOptions {
 }
 
 function getRadarrApi() {
-	const baseUrl = get(settings)?.radarr.baseUrl;
-	const apiKey = get(settings)?.radarr.apiKey;
-	const rootFolder = get(settings)?.radarr.rootFolderPath;
-	const qualityProfileId = get(settings)?.radarr.qualityProfileId;
+	const baseUrl = settings.globalSettings.radarr.baseUrl;
+	const apiKey = settings.globalSettings.radarr.apiKey;
+	const rootFolder = settings.globalSettings.radarr.rootFolderPath;
+	const qualityProfileId = settings.globalSettings.radarr.qualityProfileId;
 
 	if (!baseUrl || !apiKey || !rootFolder || !qualityProfileId) return undefined;
 
@@ -68,13 +67,13 @@ export const addMovieToRadarr = async (tmdbId: number) => {
 	if (radarrMovie?.id) throw new Error('Movie already exists');
 
 	if (!tmdbMovie) throw new Error('Movie not found');
-	const monitorMovie = get(settings)?.radarr.monitor;
-	const search = get(settings)?.radarr.startSearch;
+	const monitorMovie = settings.globalSettings.radarr.monitor;
+	const search = settings.globalSettings.radarr.startSearch;
 
 	const options: RadarrMovieOptions = {
-		qualityProfileId: get(settings)?.radarr.qualityProfileId || 0,
-		profileId: get(settings)?.radarr.profileId || 0,
-		rootFolderPath: get(settings)?.radarr.rootFolderPath || '',
+		qualityProfileId: settings.globalSettings.radarr.qualityProfileId || 0,
+		profileId: settings.globalSettings.radarr.profileId || 0,
+		rootFolderPath: settings.globalSettings.radarr.rootFolderPath || '',
 		minimumAvailability: 'announced',
 		title: tmdbMovie.title || tmdbMovie.original_title || '',
 		tmdbId: tmdbMovie.id || 0,
@@ -191,9 +190,9 @@ export const getRadarrHealth = async (
 	apiKey: string | undefined = undefined
 ) =>
 	axios
-		.get((baseUrl || get(settings)?.radarr.baseUrl) + '/api/v3/health', {
+		.get((baseUrl || settings.globalSettings.radarr.baseUrl) + '/api/v3/health', {
 			headers: {
-				'X-Api-Key': apiKey || get(settings)?.radarr.apiKey
+				'X-Api-Key': apiKey || settings.globalSettings.radarr.apiKey
 			}
 		})
 		.then((res) => res.status === 200)
@@ -205,10 +204,10 @@ export const getRadarrRootFolders = async (
 ) =>
 	axios
 		.get<components['schemas']['RootFolderResource'][]>(
-			(baseUrl || get(settings)?.sonarr.baseUrl) + '/api/v3/rootFolder',
+			(baseUrl || settings.globalSettings.sonarr.baseUrl) + '/api/v3/rootFolder',
 			{
 				headers: {
-					'X-Api-Key': apiKey || get(settings)?.sonarr.apiKey
+					'X-Api-Key': apiKey || settings.globalSettings.sonarr.apiKey
 				}
 			}
 		)
@@ -220,10 +219,10 @@ export const getRadarrQualityProfiles = async (
 ) =>
 	axios
 		.get<components['schemas']['QualityProfileResource'][]>(
-			(baseUrl || get(settings)?.sonarr.baseUrl) + '/api/v3/qualityprofile',
+			(baseUrl || settings.globalSettings.sonarr.baseUrl) + '/api/v3/qualityprofile',
 			{
 				headers: {
-					'X-Api-Key': apiKey || get(settings)?.sonarr.apiKey
+					'X-Api-Key': apiKey || settings.globalSettings.sonarr.apiKey
 				}
 			}
 		)
@@ -231,7 +230,8 @@ export const getRadarrQualityProfiles = async (
 
 export function getRadarrPosterUrl(item: RadarrMovie, original = false) {
 	const url =
-		get(settings).radarr.baseUrl + (item.images?.find((i) => i.coverType === 'poster')?.url || '');
+		settings.globalSettings.radarr.baseUrl +
+		(item.images?.find((i) => i.coverType === 'poster')?.url || '');
 
 	if (!original) return url.replace('poster.jpg', `poster-${500}.jpg`);
 

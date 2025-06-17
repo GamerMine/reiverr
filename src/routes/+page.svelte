@@ -9,13 +9,13 @@
 	import TitleShowcases from '$lib/components/TitleShowcase/TitleShowcasesContainer.svelte';
 	import { genres, networks } from '$lib/discover';
 	import { jellyfinItemsStore } from '$lib/stores/data.store';
-	import { settings } from '$lib/stores/settings.store';
 	import type { TitleType } from '$lib/types';
 	import { formatDateToYearMonthDay } from '$lib/utils';
 	import type { ComponentProps } from 'svelte';
 	import { _ } from 'svelte-i18n';
 	import { fade } from 'svelte/transition';
 	import { tmdbDataFormat } from '$lib/utils.js';
+	import { settings } from '$lib/stores/settings.svelte';
 
 	const jellyfinItemsPromise = new Promise<JellyfinItem[]>((resolve) => {
 		jellyfinItemsStore.subscribe((data) => {
@@ -36,7 +36,7 @@
 		}[],
 		type: TitleType | undefined = undefined
 	): Promise<ComponentProps<typeof Poster>[]> => {
-		const filtered = $settings.discover.excludeLibraryItems
+		const filtered = settings.userSettings.discover.excludeLibraryItems
 			? items.filter(
 					async (item) =>
 						!(await jellyfinItemsPromise).find((i) => i.ProviderIds?.Tmdb === String(item.id))
@@ -55,7 +55,7 @@
 					time_window: 'week'
 				},
 				query: {
-					language: $settings.language
+					language: settings.userSettings.interface.language
 				}
 			}
 		})
@@ -79,9 +79,11 @@
 				query: {
 					'primary_release_date.gte': formatDateToYearMonthDay(new Date()),
 					sort_by: 'popularity.desc',
-					language: $settings.language,
-					region: $settings.discover.region,
-					with_original_language: parseIncludedLanguages($settings.discover.includedLanguages)
+					language: settings.userSettings.interface.language,
+					region: settings.userSettings.discover.region,
+					with_original_language: parseIncludedLanguages(
+						settings.userSettings.discover.includedLanguages
+					)
 				}
 			}
 		})
@@ -94,8 +96,10 @@
 				query: {
 					'first_air_date.gte': formatDateToYearMonthDay(new Date()),
 					sort_by: 'popularity.desc',
-					language: $settings.language,
-					with_original_language: parseIncludedLanguages($settings.discover.includedLanguages)
+					language: settings.userSettings.interface.language,
+					with_original_language: parseIncludedLanguages(
+						settings.userSettings.discover.includedLanguages
+					)
 				}
 			}
 		})
@@ -109,8 +113,10 @@
 					with_release_type: 4,
 					sort_by: 'popularity.desc',
 					'release_date.lte': formatDateToYearMonthDay(new Date()),
-					language: $settings.language,
-					with_original_language: parseIncludedLanguages($settings.discover.includedLanguages)
+					language: settings.userSettings.interface.language,
+					with_original_language: parseIncludedLanguages(
+						settings.userSettings.discover.includedLanguages
+					)
 					// region: $settings.discover.region
 				}
 			}
@@ -125,8 +131,10 @@
 					'air_date.gte': formatDateToYearMonthDay(new Date()),
 					'first_air_date.lte': formatDateToYearMonthDay(new Date()),
 					sort_by: 'popularity.desc',
-					language: $settings.language,
-					with_original_language: parseIncludedLanguages($settings.discover.includedLanguages)
+					language: settings.userSettings.interface.language,
+					with_original_language: parseIncludedLanguages(
+						settings.userSettings.discover.includedLanguages
+					)
 				}
 			}
 		})
@@ -145,10 +153,10 @@
 <div
 	class="flex flex-col gap-12 py-6 bg-stone-950"
 	in:fade|global={{
-		duration: $settings.animationDuration,
-		delay: $settings.animationDuration
+		duration: settings.userSettings.interface.animationDuration,
+		delay: settings.userSettings.interface.animationDuration
 	}}
-	out:fade|global={{ duration: $settings.animationDuration }}
+	out:fade|global={{ duration: settings.userSettings.interface.animationDuration }}
 >
 	<Carousel scrollClass={PADDING}>
 		{#snippet title()}

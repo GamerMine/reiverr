@@ -7,10 +7,10 @@
 	import Poster from '../Poster/Poster.svelte';
 	import type { TitleType } from '$lib/types';
 	import { openTitleModal } from '$lib/stores/modal.store';
-	import { settings } from '$lib/stores/settings.store';
 	import { TMDB_MOVIE_GENRES } from '$lib/apis/tmdb/tmdbApi';
+	import { settings } from '$lib/stores/settings.svelte';
 
-	const ANIMATION_DURATION = $settings.animationDuration;
+	const ANIMATION_DURATION = settings.userSettings.interface.animationDuration;
 
 	let {
 		tmdbId,

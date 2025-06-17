@@ -7,14 +7,16 @@
 		value = $bindable(''),
 		disabled = false,
 		loading = false,
+		name = undefined,
 
 		children = undefined,
 
 		onchange = () => {}
 	}: {
-		value?: any;
+		value?: string;
 		disabled?: boolean;
 		loading?: boolean;
+		name?: string;
 
 		children?: Snippet;
 
@@ -37,6 +39,7 @@
 				'cursor-not-allowed pointer-events-none': disabled
 			}
 		)}
+		{name}
 	>
 		{@render children?.()}
 	</select>

@@ -9,18 +9,16 @@
 	import FormButton from '$lib/components/Forms/FormButton.svelte';
 	import Input from '$lib/components/Forms/Input.svelte';
 	import Select from '$lib/components/Forms/Select.svelte';
-	import { settings, type SettingsValues } from '$lib/stores/settings.store';
 	import classNames from 'classnames';
 	import { Trash } from 'svelte-radix';
 	import IntegrationCard from './IntegrationCard.svelte';
 	import TestConnectionButton from './TestConnectionButton.svelte';
 	import { getRadarrQualityProfiles, getRadarrRootFolders } from '$lib/apis/radarr/radarrApi';
 	import { _ } from 'svelte-i18n';
-	import { defaultSettings } from '$lib/stores/settings.store';
 	import Toggle from '$lib/components/Forms/Toggle.svelte';
 
 	let {
-		values = $bindable(),
+		visible,
 
 		sonarrConnected,
 		radarrConnected,
@@ -30,7 +28,7 @@
 		updateRadarrHealth,
 		updateJellyfinHealth
 	}: {
-		values: SettingsValues;
+		visible: boolean;
 
 		sonarrConnected: boolean;
 		radarrConnected: boolean;
@@ -41,33 +39,25 @@
 		updateJellyfinHealth: (reset?: boolean) => Promise<boolean | undefined>;
 	} = $props();
 
-	let sonarrRootFolders: undefined | { id: number; path: string }[] = $state();
+	/*let sonarrRootFolders: undefined | { id: number; path: string }[] = $state();
 	let sonarrQualityProfiles: undefined | { id: number; name: string }[] = $state();
 	let sonarrLanguageProfiles: undefined | { id: number; name: string }[] = $state();
 	let sonarrMonitors: undefined | { id: number; type: string }[] = $state();
 
 	let radarrRootFolders: undefined | { id: number; path: string }[] = $state();
 	let radarrQualityProfiles: undefined | { id: number; name: string }[] = $state();
-	let radarrMonitors: undefined | { id: number; type: string }[] = $state();
+	let radarrMonitors: undefined | { id: number; type: string }[] = $state();*/
 
-	function handleRemoveIntegration(service: 'sonarr' | 'radarr' | 'jellyfin') {
+	/*function handleRemoveIntegration(service: 'sonarr' | 'radarr') {
+		// TODO: Handle integration remove with internal API endpoint
 		if (service === 'sonarr') {
-			values.sonarr.baseUrl = '';
-			values.sonarr.apiKey = '';
-
 			updateSonarrHealth();
 		} else if (service === 'radarr') {
-			values.radarr.baseUrl = '';
-			values.radarr.apiKey = '';
 			updateRadarrHealth();
-		} else if (service === 'jellyfin') {
-			values.jellyfin.baseUrl = '';
-			values.jellyfin.apiKey = '';
-			updateJellyfinHealth();
 		}
-	}
+	}*/
 
-	$effect(() => {
+	/*$effect(() => {
 		if (sonarrConnected) {
 			getSonarrRootFolders(
 				values.sonarr.baseUrl || undefined,
@@ -112,10 +102,15 @@
 				radarrQualityProfiles = profiles.map((p) => ({ id: p.id || 0, name: p.name || '' }));
 			});
 		}
-	});
+	});*/
 </script>
 
-<div class="grid grid-cols-2 gap-4">
+<div
+	class={classNames({
+		hidden: !visible,
+		'grid grid-cols-2 gap-4': visible
+	})}
+>
 	<div
 		class="border-b border-zinc-800 pb-4 mt-8 col-span-2 justify-self-stretch flex flex-col gap-2"
 	>
@@ -128,20 +123,16 @@
 		</p>
 	</div>
 
-	<div class="justify-self-stretch col-span-2">
-		<IntegrationCard
-			title="Sonarr"
-			href={$settings.sonarr.baseUrl || '#'}
-			status={sonarrConnected ? 'connected' : 'disconnected'}
-		>
+	<!--<div class="justify-self-stretch col-span-2">
+		<IntegrationCard title="Sonarr" status={sonarrConnected ? 'connected' : 'disconnected'}>
 			<div class="flex flex-col gap-1">
 				<h2 class="text-sm text-zinc-500">
 					{$_('settings.integrations.baseUrl')}
 				</h2>
 				<Input
+					name="adminSonarrBaseUrl"
 					placeholder={'http://127.0.0.1:8989'}
 					klass="w-full"
-					bind:value={values.sonarr.baseUrl}
 					onchange={() => updateSonarrHealth(true)}
 				/>
 			</div>
@@ -149,11 +140,7 @@
 				<h2 class="text-sm text-zinc-500">
 					{$_('settings.integrations.apiKey')}
 				</h2>
-				<Input
-					klass="w-full"
-					bind:value={values.sonarr.apiKey}
-					onchange={() => updateSonarrHealth(true)}
-				/>
+				<Input name="adminSonarrApiKey" klass="w-full" onchange={() => updateSonarrHealth(true)} />
 			</div>
 			<div class="grid grid-cols-[1fr_min-content] gap-2">
 				<TestConnectionButton handleHealthCheck={updateSonarrHealth} />
@@ -178,7 +165,7 @@
 				{#if !sonarrRootFolders}
 					<Select loading />
 				{:else}
-					<Select bind:value={values.sonarr.rootFolderPath}>
+					<Select name="adminSonarrRootFolderPath">
 						{#each sonarrRootFolders as folder}
 							<option value={folder.path}>{folder.path}</option>
 						{/each}
@@ -191,7 +178,7 @@
 				{#if !sonarrQualityProfiles}
 					<Select loading />
 				{:else}
-					<Select bind:value={values.sonarr.qualityProfileId}>
+					<Select name="adminSonarrQualityProfileId">
 						{#each sonarrQualityProfiles as profile}
 							<option value={profile.id}>{profile.name}</option>
 						{/each}
@@ -204,7 +191,7 @@
 				{#if !sonarrLanguageProfiles}
 					<Select loading />
 				{:else}
-					<Select bind:value={values.sonarr.languageProfileId}>
+					<Select name="adminSonarrLanguageProfileId">
 						{#each sonarrLanguageProfiles as profile}
 							<option value={profile.id}>{profile.name}</option>
 						{/each}
@@ -214,7 +201,7 @@
 				{#if !sonarrMonitors}
 					<Select loading />
 				{:else}
-					<Select bind:value={values.sonarr.monitor}>
+					<Select name="adminSonarrMonitor">
 						{#each sonarrMonitors as profile}
 							<option value={profile.id}>{profile.type}</option>
 						{/each}
@@ -224,26 +211,22 @@
 				{#if defaultSettings.sonarr.StartSearch === undefined}
 					<Select loading />
 				{:else}
-					<Toggle bind:checked={values.sonarr.StartSearch} />
+					<Toggle name="adminSonarrStartSearch" />
 				{/if}
 			</div>
 		</IntegrationCard>
-	</div>
+	</div>-->
 
-	<div class="justify-self-stretch col-span-2">
-		<IntegrationCard
-			title="Radarr"
-			href={$settings.radarr.baseUrl || '#'}
-			status={radarrConnected ? 'connected' : 'disconnected'}
-		>
+	<!--<div class="justify-self-stretch col-span-2">
+		<IntegrationCard title="Radarr" status={radarrConnected ? 'connected' : 'disconnected'}>
 			<div class="flex flex-col gap-1">
 				<h2 class="text-sm text-zinc-500">
 					{$_('settings.integrations.baseUrl')}
 				</h2>
 				<Input
+					name="adminRadarrBaseUrl"
 					placeholder={'http://127.0.0.1:7878'}
 					klass="w-full"
-					bind:value={values.radarr.baseUrl}
 					onchange={() => updateRadarrHealth(true)}
 				/>
 			</div>
@@ -251,11 +234,7 @@
 				<h2 class="text-sm text-zinc-500">
 					{$_('settings.integrations.apiKey')}
 				</h2>
-				<Input
-					klass="w-full"
-					bind:value={values.radarr.apiKey}
-					onchange={() => updateRadarrHealth(true)}
-				/>
+				<Input name="adminRadarrApiKey" klass="w-full" onchange={() => updateRadarrHealth(true)} />
 			</div>
 			<div class="grid grid-cols-[1fr_min-content] gap-2">
 				<TestConnectionButton handleHealthCheck={updateRadarrHealth} />
@@ -280,7 +259,7 @@
 				{#if !radarrRootFolders}
 					<Select loading />
 				{:else}
-					<Select bind:value={values.radarr.rootFolderPath}>
+					<Select name="adminRadarrRootFolderPath">
 						{#each radarrRootFolders as folder}
 							<option value={folder.path}>{folder.path}</option>
 						{/each}
@@ -289,68 +268,57 @@
 
 				<h2>
 					{$_('settings.integrations.options.qualityProfile')}
-					<!-- FIXME: Instead of selecting a profile that will be used by every movies. This settings should be either
-					 						removed or a default selection when a user tries to ask for a movie -->
+					&lt;!&ndash; FIXME: Instead of selecting a profile that will be used by every movies. This settings should be either
+					 						removed or a default selection when a user tries to ask for a movie &ndash;&gt;
 				</h2>
 				{#if !radarrQualityProfiles}
 					<Select loading />
 				{:else}
-					<Select bind:value={values.radarr.qualityProfileId}>
+					<Select name="adminRadarrQualityProfileId">
 						{#each radarrQualityProfiles as profile}
 							<option value={profile.id}>{profile.name}</option>
 						{/each}
 					</Select>
 				{/if}
 				<h2>Monitor Movies</h2>
-				<!-- FIXME: This should not be set by the user. A movie should be automatically monitored on Radarr -->
+				&lt;!&ndash; FIXME: This should not be set by the user. A movie should be automatically monitored on Radarr &ndash;&gt;
 				{#if !radarrMonitors}
 					<Select loading />
 				{:else}
-					<Select bind:value={values.radarr.monitor}>
+					<Select name="adminRadarrMonitor">
 						{#each radarrMonitors as profile}
 							<option value={profile.id}>{profile.type}</option>
 						{/each}
 					</Select>
 				{/if}
 				<h2>{$_('settings.integrations.options.searchForMovie')}</h2>
-				<!-- FIXME: This should not be set by the user. A movie should be automatically searched on Radarr if it's
-											release date is older than the current date. Otherwise, it must be only marked as "monitored". -->
+				&lt;!&ndash; FIXME: This should not be set by the user. A movie should be automatically searched on Radarr if it's
+											release date is older than the current date. Otherwise, it must be only marked as "monitored". &ndash;&gt;
 				{#if defaultSettings.radarr.startSearch === undefined}
 					<Select loading />
 				{:else}
-					<Toggle bind:checked={values.radarr.startSearch} />
+					<Toggle name="adminRadarrStartSearch" />
 				{/if}
 			</div>
 		</IntegrationCard>
-	</div>
+	</div>-->
 
 	<div class="justify-self-stretch col-span-2">
-		<IntegrationCard
-			title="Jellyfin"
-			href={$settings.jellyfin.baseUrl || '#'}
-			status={jellyfinConnected ? 'connected' : 'disconnected'}
-		>
+		<IntegrationCard title="Jellyfin" status={jellyfinConnected ? 'connected' : 'disconnected'}>
 			<div class="flex flex-col gap-1">
 				<h2 class="text-sm text-zinc-500">
 					{$_('settings.integrations.baseUrl')}
 				</h2>
-				<Input
-					placeholder={'http://127.0.0.1:8096'}
-					klass="w-full"
-					bind:value={values.jellyfin.baseUrl}
-				/>
+				<Input name="adminJellyfinBaseUrl" placeholder={'http://127.0.0.1:8096'} klass="w-full" />
 			</div>
 			<div class="flex flex-col gap-1">
 				<h2 class="text-sm text-zinc-500">
 					{$_('settings.integrations.apiKey')}
 				</h2>
-				<Input klass="w-full" bind:value={values.jellyfin.apiKey} />
+				<Input name="adminJellyfinApiKey" klass="w-full" />
 			</div>
-			<div class="grid grid-cols-[1fr_min-content] gap-2">
+			<div class="grid grid-cols-[1fr_min-content]">
 				<TestConnectionButton handleHealthCheck={updateJellyfinHealth} />
-				<FormButton onclick={() => handleRemoveIntegration('jellyfin')} type="error">
-					<Trash size="20" />
-				</FormButton>
 			</div>
 		</IntegrationCard>
 	</div>

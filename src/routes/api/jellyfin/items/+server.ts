@@ -1,7 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import createClient from 'openapi-fetch';
 import type { components, paths } from '$lib/apis/jellyfin/jellyfin.generated';
-import { Settings } from '$lib/entities/Settings.server';
+import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import { getUserId } from '$lib/apis/jellyfin/server/jellyfin.server';
 
 export const GET: RequestHandler = async ({ cookies, url }) => {
@@ -9,7 +9,7 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
 		'includeItemTypes'
 	) as components['schemas']['BaseItemKind'][];
 	const fields = url.searchParams.getAll('fields') as components['schemas']['ItemFields'][];
-	const baseUrl = await Settings.getJellyfinBaseUrl();
+	const baseUrl = await GlobalSettingsEntity.getJellyfinBaseUrl();
 
 	if (baseUrl) {
 		return createClient<paths>({

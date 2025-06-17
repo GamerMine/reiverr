@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Button from '$lib/components/Button.svelte';
-	import { ArrowRight, ArrowLeft } from 'svelte-radix';
+	import { ArrowRight, ArrowLeft, Update } from 'svelte-radix';
 	import { onMount } from 'svelte';
 	import { animateBackground } from '$lib/utils/animation';
 	import { _ } from 'svelte-i18n';
@@ -245,7 +245,12 @@
 					disabled={isTransitioning || disableNext || isInputDisabled}
 					onclick={nextButtonAction}
 				>
-					<span class="mr-1">{nextButtonText}</span><ArrowRight size="20" />
+					<span class="mr-1">{nextButtonText}</span>
+					{#if isInputDisabled}
+						<Update class="animate-spin" size="20" />
+					{:else}
+						<ArrowRight size="20" />
+					{/if}
 				</Button>
 			</div>
 		</div>

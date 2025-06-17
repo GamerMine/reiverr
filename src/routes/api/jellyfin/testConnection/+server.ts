@@ -1,11 +1,11 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import createClient from 'openapi-fetch';
 import type { paths } from '$lib/apis/jellyfin/jellyfin.generated';
-import { Settings } from '$lib/entities/Settings.server';
+import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 
 export const GET: RequestHandler = async ({ url }) => {
 	const apiKeySearch: string | null = url.searchParams.get('apiKey');
-	const apiKeySetting: string | null = await Settings.getJellyfinApiKey();
+	const apiKeySetting: string | null = await GlobalSettingsEntity.getJellyfinApiKey();
 	const apiKey: string | null = apiKeySearch ?? apiKeySetting;
 
 	return createClient<paths>({
