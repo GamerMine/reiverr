@@ -91,7 +91,7 @@ export async function isJellyfinUserConnected(cookies: Cookies) {
 	}
 }
 
-export async function checkConnection(baseURL: string, apiKey: string) {
+export async function checkJellyfinConnection(baseURL: string, apiKey: string) {
 	return createClient<paths>({
 		baseUrl: baseURL,
 		headers: {

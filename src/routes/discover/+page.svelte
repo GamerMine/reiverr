@@ -9,7 +9,7 @@
 	import Poster from '$lib/components/Poster/Poster.svelte';
 	import { genres, networks } from '$lib/discover';
 	import { jellyfinItemsStore } from '$lib/stores/data.store';
-	import { settings } from '$lib/stores/globalSettings.store';
+	import { settings } from '$lib/stores/settings.svelte';
 	import type { TitleType } from '$lib/types';
 	import { formatDateToYearMonthDay } from '$lib/utils';
 	import type { ComponentProps } from 'svelte';
@@ -35,7 +35,7 @@
 		}[],
 		type: TitleType | undefined = undefined
 	): Promise<ComponentProps<typeof Poster>[]> => {
-		const filtered = $settings.discover.excludeLibraryItems
+		const filtered = settings.userSettings.discover.excludeLibraryItems
 			? items.filter(
 					async (item) =>
 						!(await jellyfinItemsPromise).find((i) => i.ProviderIds?.Tmdb === String(item.id))
@@ -53,7 +53,7 @@
 				time_window: 'day'
 			},
 			query: {
-				language: $settings.language
+				language: settings.userSettings.interface.language
 			}
 		}
 	}).then((res) => res.data?.results || []);
@@ -86,9 +86,11 @@
 				query: {
 					'primary_release_date.gte': formatDateToYearMonthDay(new Date()),
 					sort_by: 'popularity.desc',
-					language: $settings.language,
-					region: $settings.discover.region,
-					with_original_language: parseIncludedLanguages($settings.discover.includedLanguages)
+					language: settings.userSettings.interface.language,
+					region: settings.userSettings.discover.region,
+					with_original_language: parseIncludedLanguages(
+						settings.userSettings.discover.includedLanguages
+					)
 				}
 			}
 		})
@@ -101,8 +103,10 @@
 				query: {
 					'first_air_date.gte': formatDateToYearMonthDay(new Date()),
 					sort_by: 'popularity.desc',
-					language: $settings.language,
-					with_original_language: parseIncludedLanguages($settings.discover.includedLanguages)
+					language: settings.userSettings.interface.language,
+					with_original_language: parseIncludedLanguages(
+						settings.userSettings.discover.includedLanguages
+					)
 				}
 			}
 		})
@@ -116,8 +120,10 @@
 					with_release_type: 4,
 					sort_by: 'popularity.desc',
 					'release_date.lte': formatDateToYearMonthDay(new Date()),
-					language: $settings.language,
-					with_original_language: parseIncludedLanguages($settings.discover.includedLanguages)
+					language: settings.userSettings.interface.language,
+					with_original_language: parseIncludedLanguages(
+						settings.userSettings.discover.includedLanguages
+					)
 					// region: $settings.discover.region
 				}
 			}
@@ -132,8 +138,10 @@
 					'air_date.gte': formatDateToYearMonthDay(new Date()),
 					'first_air_date.lte': formatDateToYearMonthDay(new Date()),
 					sort_by: 'popularity.desc',
-					language: $settings.language,
-					with_original_language: parseIncludedLanguages($settings.discover.includedLanguages)
+					language: settings.userSettings.interface.language,
+					with_original_language: parseIncludedLanguages(
+						settings.userSettings.discover.includedLanguages
+					)
 				}
 			}
 		})
@@ -156,10 +164,10 @@
 <div
 	class="pt-24 pb-8"
 	in:fade|global={{
-		duration: $settings.animationDuration,
-		delay: $settings.animationDuration
+		duration: settings.userSettings.interface.animationDuration,
+		delay: settings.userSettings.interface.animationDuration
 	}}
-	out:fade|global={{ duration: $settings.animationDuration }}
+	out:fade|global={{ duration: settings.userSettings.interface.animationDuration }}
 >
 	<div class="max-w-screen-2xl mx-auto">
 		<Carousel
@@ -181,10 +189,10 @@
 <div
 	class="flex flex-col gap-12 max-w-screen-2xl mx-auto py-4"
 	in:fade|global={{
-		duration: $settings.animationDuration,
-		delay: $settings.animationDuration
+		duration: settings.userSettings.interface.animationDuration,
+		delay: settings.userSettings.interface.animationDuration
 	}}
-	out:fade|global={{ duration: $settings.animationDuration }}
+	out:fade|global={{ duration: settings.userSettings.interface.animationDuration }}
 >
 	<Carousel klass="mx-2 sm:mx-8 2xl:mx-0" heading={$_('discover.popularPeople')}>
 		{#await fetchTrendingActorProps()}

@@ -1,19 +1,20 @@
 <script lang="ts">
-	import FormButton from '$lib/components/Forms/FormButton.svelte';
 	import { onDestroy, type ComponentProps } from 'svelte';
 	import { _ } from 'svelte-i18n';
+	import Button from '$lib/components/Button.svelte';
+	import { Update } from 'svelte-radix';
 
 	let { handleHealthCheck }: { handleHealthCheck: () => Promise<boolean | undefined> } = $props();
 
-	let type: ComponentProps<typeof FormButton>['type'] = $state('base');
+	let variant: ComponentProps<typeof Button>['variant'] = $state('secondary');
 	let loading = $state(false);
 
 	let healthTimeout: NodeJS.Timeout;
 	$effect(() => {
-		if (type !== 'base') {
+		if (variant !== 'secondary') {
 			clearTimeout(healthTimeout);
 			healthTimeout = setTimeout(() => {
-				type = 'base';
+				variant = 'secondary';
 			}, 2000);
 		}
 	});
@@ -22,9 +23,9 @@
 		loading = true;
 		handleHealthCheck().then((ok) => {
 			if (ok) {
-				type = 'success';
+				variant = 'success';
 			} else {
-				type = 'error';
+				variant = 'error';
 			}
 			loading = false;
 		});
@@ -35,6 +36,9 @@
 	});
 </script>
 
-<FormButton {type} {loading} onclick={handleClick}
-	>{$_('settings.integrations.testConnection')}</FormButton
->
+<Button {variant} onclick={handleClick}>
+	{#if loading}
+		<Update class="animate-spin" size="20" />
+	{/if}
+	{$_('settings.integrations.testConnection')}
+</Button>

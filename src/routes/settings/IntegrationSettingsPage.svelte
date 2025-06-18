@@ -6,7 +6,6 @@
 		getSonarrMonitors
 	} from '$lib/apis/sonarr/sonarrApi';
 	import { getRadarrMonitors } from '$lib/apis/radarr/radarrApi';
-	import FormButton from '$lib/components/Forms/FormButton.svelte';
 	import Input from '$lib/components/Forms/Input.svelte';
 	import Select from '$lib/components/Forms/Select.svelte';
 	import classNames from 'classnames';
@@ -16,28 +15,18 @@
 	import { getRadarrQualityProfiles, getRadarrRootFolders } from '$lib/apis/radarr/radarrApi';
 	import { _ } from 'svelte-i18n';
 	import Toggle from '$lib/components/Forms/Toggle.svelte';
+	import type { GlobalSettings } from '$lib/entities/Types';
+	import { jellyfinTestConnection } from '$lib/apis/jellyfin/jellyfinApi';
 
 	let {
 		visible,
-
-		sonarrConnected,
-		radarrConnected,
-		jellyfinConnected,
-
-		updateSonarrHealth,
-		updateRadarrHealth,
-		updateJellyfinHealth
+		globalSettings = $bindable()
 	}: {
 		visible: boolean;
-
-		sonarrConnected: boolean;
-		radarrConnected: boolean;
-		jellyfinConnected: boolean;
-
-		updateSonarrHealth: (reset?: boolean) => Promise<boolean | undefined>;
-		updateRadarrHealth: (reset?: boolean) => Promise<boolean | undefined>;
-		updateJellyfinHealth: (reset?: boolean) => Promise<boolean | undefined>;
+		globalSettings: GlobalSettings;
 	} = $props();
+
+	let jellyfinConnected: boolean = $state(updateJellyfinHealth());
 
 	/*let sonarrRootFolders: undefined | { id: number; path: string }[] = $state();
 	let sonarrQualityProfiles: undefined | { id: number; name: string }[] = $state();
@@ -47,6 +36,21 @@
 	let radarrRootFolders: undefined | { id: number; path: string }[] = $state();
 	let radarrQualityProfiles: undefined | { id: number; name: string }[] = $state();
 	let radarrMonitors: undefined | { id: number; type: string }[] = $state();*/
+
+	async function updateJellyfinHealth(): Promise<boolean> {
+		if (globalSettings.jellyfin.baseUrl) {
+			return jellyfinTestConnection(
+				globalSettings.jellyfin.baseUrl,
+				globalSettings.jellyfin.apiKey || undefined
+			).then((ok) => {
+				jellyfinConnected = ok;
+				return ok;
+			});
+		} else {
+			jellyfinConnected = false;
+			return false;
+		}
+	}
 
 	/*function handleRemoveIntegration(service: 'sonarr' | 'radarr') {
 		// TODO: Handle integration remove with internal API endpoint
@@ -309,13 +313,23 @@
 				<h2 class="text-sm text-zinc-500">
 					{$_('settings.integrations.baseUrl')}
 				</h2>
-				<Input name="adminJellyfinBaseUrl" placeholder={'http://127.0.0.1:8096'} klass="w-full" />
+				<Input
+					name="adminJellyfinBaseUrl"
+					bind:value={globalSettings.jellyfin.baseUrl}
+					placeholder={'http://127.0.0.1:8096'}
+					klass="w-full"
+				/>
 			</div>
 			<div class="flex flex-col gap-1">
 				<h2 class="text-sm text-zinc-500">
 					{$_('settings.integrations.apiKey')}
 				</h2>
-				<Input name="adminJellyfinApiKey" klass="w-full" />
+				<Input
+					name="adminJellyfinApiKey"
+					bind:value={globalSettings.jellyfin.apiKey}
+					type="password"
+					klass="w-full"
+				/>
 			</div>
 			<div class="grid grid-cols-[1fr_min-content]">
 				<TestConnectionButton handleHealthCheck={updateJellyfinHealth} />

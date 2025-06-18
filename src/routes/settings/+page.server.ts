@@ -1,8 +1,27 @@
-import { isJellyfinUserConnected } from '$lib/apis/jellyfin/server/jellyfin.server';
+import {
+	checkJellyfinConnection,
+	isJellyfinUserConnected
+} from '$lib/apis/jellyfin/server/jellyfin.server';
 import { UserSettingsEntity } from '$lib/entities/UserSettings.server';
 import { fail } from '@sveltejs/kit';
 import type { JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
 import type { UserSettings } from '$lib/entities/Types';
+import type { PageServerLoad } from './$types';
+import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
+
+export const load: PageServerLoad = async ({ cookies }) => {
+	const userReq = await isJellyfinUserConnected(cookies);
+
+	if (userReq.status !== 200) {
+		return { isAdmin: false };
+	}
+
+	const user: JellyfinUser = await userReq.json();
+
+	return {
+		isAdmin: user.Policy?.IsAdministrator || false
+	};
+};
 
 export const actions = {
 	default: async ({ request, cookies }) => {
@@ -13,13 +32,13 @@ export const actions = {
 		}
 		const user: JellyfinUser = await userReq.json();
 
-		if (!user.Id || !user.Policy) {
+		if (!user.Id) {
 			return fail(401);
 		}
 
 		// User Settings
 		const userLanguage = formData.get('userLanguage') as string;
-		const userAutoplayTrailers = (formData.get('userAutoplayTrailers:') as string) === 'on';
+		const userAutoplayTrailers = (formData.get('userAutoplayTrailers') as string) === 'on';
 		const userAnimationDuration = +(formData.get('userAnimationDuration') as string);
 		const userDiscoverRegion = formData.get('userDiscoverRegion') as string;
 		const userDiscoverExcludeLibraryItems =
@@ -27,8 +46,8 @@ export const actions = {
 		const userDiscoverIncludedLanguages = formData.get('userDiscoverIncludedLanguages') as string;
 
 		// Global Settings (admin only)
-		const adminJellyfinBaseUrl = formData.get('adminJellyfinBaseUrl') as string;
-		const adminJellyfinApiKey = formData.get('adminJellyfinApiKey') as string;
+		const adminJellyfinBaseUrl = (formData.get('adminJellyfinBaseUrl') as string).trim();
+		const adminJellyfinApiKey = (formData.get('adminJellyfinApiKey') as string).trim();
 
 		const newUserSettings: UserSettings = {
 			interface: {
@@ -44,5 +63,33 @@ export const actions = {
 		};
 
 		await UserSettingsEntity.setUserSettings(user.Id, newUserSettings);
+
+		if (user.Policy && user.Policy.IsAdministrator) {
+			if (
+				adminJellyfinBaseUrl &&
+				adminJellyfinApiKey &&
+				adminJellyfinBaseUrl !== (await GlobalSettingsEntity.getJellyfinBaseUrl())
+			) {
+				const connection = await checkJellyfinConnection(adminJellyfinBaseUrl, adminJellyfinApiKey);
+				if (connection.ok) {
+					await GlobalSettingsEntity.setJellyfinApiEndpoint(
+						adminJellyfinBaseUrl,
+						adminJellyfinApiKey
+					);
+					cookies.delete('access_token', { path: '/' });
+					return {
+						sucess: true,
+						needLogin: true
+					};
+				} else {
+					return fail(404, { code: 1 });
+				}
+			}
+		}
+
+		return {
+			success: true,
+			needLogin: false
+		};
 	}
 };

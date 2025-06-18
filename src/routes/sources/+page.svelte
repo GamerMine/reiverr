@@ -1,17 +1,17 @@
 <script lang="ts">
 	import RadarrStats from '$lib/components/SourceStats/RadarrStats.svelte';
 	import SonarrStats from '$lib/components/SourceStats/SonarrStats.svelte';
-	import { settings } from '$lib/stores/globalSettings.store';
 	import { fade } from 'svelte/transition';
+	import { settings } from '$lib/stores/settings.svelte';
 </script>
 
 <div
 	class="pt-24 px-8 min-h-screen flex justify-center"
 	in:fade|global={{
-		duration: $settings.animationDuration,
-		delay: $settings.animationDuration
+		duration: settings.userSettings.interface.animationDuration,
+		delay: settings.userSettings.interface.animationDuration
 	}}
-	out:fade|global={{ duration: $settings.animationDuration }}
+	out:fade|global={{ duration: settings.userSettings.interface.animationDuration }}
 >
 	<div class="flex flex-col gap-4 max-w-3xl flex-1">
 		<!-- svelte-ignore a11y-click-events-have-key-events -->

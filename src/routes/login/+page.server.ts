@@ -1,5 +1,4 @@
 import { type Actions, fail, redirect } from '@sveltejs/kit';
-import type { LayoutServerLoad } from '../../../.svelte-kit/types/src/routes/$types';
 import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import createClient from 'openapi-fetch';
 import type { paths } from '$lib/apis/jellyfin/jellyfin.generated';
@@ -11,8 +10,9 @@ import {
 	JELLYFIN_DEVICE,
 	type JellyfinAuthenticationResult
 } from '$lib/apis/jellyfin/server/jellyfin.server';
+import type { PageServerLoad } from '../../../.svelte-kit/types/src/routes/login/$types';
 
-export const load: LayoutServerLoad = async ({ cookies, url }) => {
+export const load: PageServerLoad = async ({ cookies, url }) => {
 	const isConnected = await isJellyfinUserConnected(cookies);
 
 	if (url.pathname === '/login' && isConnected.status === 200) {

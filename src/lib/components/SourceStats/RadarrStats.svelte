@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getDiskSpace } from '$lib/apis/radarr/radarrApi';
 	import { radarrMoviesStore } from '$lib/stores/data.store';
-	import { settings } from '$lib/stores/globalSettings.store';
+	import { settings } from '$lib/stores/settings.svelte';
 	import { formatSize } from '$lib/utils.js';
 	import RadarrIcon from '../svgs/RadarrIcon.svelte';
 	import StatsContainer from './StatsContainer.svelte';
@@ -37,7 +37,7 @@
 		{large}
 		title="Radarr"
 		subtitle="Movies Provider"
-		href={$settings.radarr.baseUrl || '#'}
+		href={settings.globalSettings.radarr.baseUrl || '#'}
 		stats={[
 			{ title: 'Movies', value: String(moviesCount) },
 			{ title: 'Space Taken', value: formatSize(spaceOccupied) },

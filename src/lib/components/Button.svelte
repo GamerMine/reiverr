@@ -24,7 +24,7 @@
 		size?: 'md' | 'sm' | 'lg' | 'xs';
 		type?: 'button' | 'submit';
 		form?: string;
-		variant?: 'primary' | 'secondary' | 'tertiary' | 'success';
+		variant?: 'primary' | 'secondary' | 'tertiary' | 'success' | 'error';
 		slim?: boolean;
 		disabled?: boolean;
 
@@ -54,8 +54,9 @@
 				'rounded-xl': variant === 'tertiary',
 				'focus-visible:bg-zinc-200 focus-visible:text-zinc-800 hover:bg-zinc-200 hover:text-zinc-800':
 					variant === 'tertiary' && !disabled,
-				'bg-zinc-600/20 rounded-xl': variant === 'success',
+				'bg-zinc-600/20 rounded-xl': variant === 'success' || variant === 'error',
 				'bg-green-800! text-zinc-100': variant === 'success' && !disabled,
+				'bg-red-900! text-zinc-100': variant === 'error' && !disabled,
 
 				'py-2 px-6 sm:py-3 sm:px-6': size === 'lg' && !slim,
 				'py-2 px-6': size === 'md' && !slim,

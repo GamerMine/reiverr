@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { version } from '$app/environment';
-	import { jellyfinTestConnection } from '$lib/apis/jellyfin/jellyfinApi';
 	import { getRadarrHealth } from '$lib/apis/radarr/radarrApi';
 	import { getSonarrHealth } from '$lib/apis/sonarr/sonarrApi';
-	import FormButton from '$lib/components/Forms/FormButton.svelte';
 	import Select from '$lib/components/Forms/Select.svelte';
 	import classNames from 'classnames';
 	import { ChevronLeft } from 'svelte-radix';
@@ -15,42 +13,23 @@
 	import type { Settings } from '$lib/entities/Types';
 	import { settings } from '$lib/stores/settings.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import type { PageProps } from '../../../.svelte-kit/types/src/routes/settings/$types';
+	import { enhance } from '$app/forms';
+	import ConfirmDialog from '$lib/components/Forms/ConfirmDialog.svelte';
 
 	type Section = 'general' | 'integrations';
 
+	let { data }: PageProps = $props();
+
 	let openTab: Section = $state('general');
+	let errorMessage: string | undefined = $state();
 
-	let sonarrConnected = $state(false);
-	let radarrConnected = $state(false);
-	let jellyfinConnected = $state(false);
-
-	let initialSettings: Settings = settings;
-	let currSettings: Settings = $state($state.snapshot(initialSettings));
-
+	let currSettings: Settings = $state($state.snapshot(settings));
 	let valuesChanged = $state(false);
 
-	async function updateSonarrHealth(): Promise<boolean | undefined> {
-		return new Promise(() => false);
-	}
-
-	async function updateRadarrHealth(): Promise<boolean | undefined> {
-		return new Promise(() => false);
-	}
-
-	async function updateJellyfinHealth(): Promise<boolean | undefined> {
-		if (currSettings.globalSettings.jellyfin.baseUrl) {
-			return jellyfinTestConnection(
-				currSettings.globalSettings.jellyfin.baseUrl,
-				currSettings.globalSettings.jellyfin.apiKey || undefined
-			).then((ok) => {
-				jellyfinConnected = ok;
-				return ok;
-			});
-		} else {
-			jellyfinConnected = false;
-			return false;
-		}
-	}
+	let confirmDialogVisible = $state(false);
+	let confirmDialogMessage = $state('');
+	let confirmDialogResolve: () => void;
 
 	const getNavButtonStyle = (section: Section) =>
 		classNames('rounded-xl p-2 px-6 font-medium text-left', {
@@ -58,18 +37,40 @@
 			'text-zinc-300 hover:text-zinc-200': openTab !== section
 		});
 
+	function showConfirmDialog(message: string): Promise<void> {
+		confirmDialogMessage = message;
+		confirmDialogVisible = true;
+		return new Promise((resolve) => {
+			confirmDialogResolve = resolve;
+		});
+	}
+
+	function confirmDialog() {
+		confirmDialogVisible = false;
+		confirmDialogResolve();
+	}
+
 	$effect(() => {
-		valuesChanged = JSON.stringify(initialSettings) !== JSON.stringify(currSettings);
+		if (errorMessage) {
+			createErrorNotification($_('settings.misc.invalidConfiguration'), errorMessage);
+			errorMessage = undefined;
+		}
+
+		if (currSettings.globalSettings.jellyfin.baseUrl.length === 0) {
+			valuesChanged = false;
+			return;
+		}
+		valuesChanged = JSON.stringify(settings) !== JSON.stringify(currSettings);
 	});
 </script>
 
 <div
 	class="min-h-screen sm:h-screen flex-1 flex flex-col sm:flex-row w-full sm:pt-24"
 	in:fade|global={{
-		duration: initialSettings.userSettings.interface.animationDuration,
-		delay: initialSettings.userSettings.interface.animationDuration
+		duration: settings.userSettings.interface.animationDuration,
+		delay: settings.userSettings.interface.animationDuration
 	}}
-	out:fade|global={{ duration: initialSettings.userSettings.interface.animationDuration }}
+	out:fade|global={{ duration: settings.userSettings.interface.animationDuration }}
 >
 	<div
 		class="hidden sm:flex flex-col gap-2 border-r border-zinc-800 justify-between w-64 p-8 border-t"
@@ -85,27 +86,23 @@
 			<button onclick={() => (openTab = 'general')} class={openTab && getNavButtonStyle('general')}>
 				{$_('settings.navbar.general')}
 			</button>
-			<button
-				onclick={() => (openTab = 'integrations')}
-				class={openTab && getNavButtonStyle('integrations')}
-			>
-				{$_('settings.navbar.integrations')}
-			</button>
+			{#if data.isAdmin}
+				<button
+					onclick={() => (openTab = 'integrations')}
+					class={openTab && getNavButtonStyle('integrations')}
+				>
+					{$_('settings.navbar.integrations')}
+				</button>
+			{/if}
 		</div>
 		<div class="flex flex-col gap-2">
 			<Button type="submit" form="settingsForm" disabled={!valuesChanged} variant="success">
 				{$_('settings.misc.saveChanges')}
 			</Button>
 			<!-- FIXME: Reset button disabled for now  -->
-			<!--<FormButton
-				disabled={!valuesChanged}
-				type="error"
-				onclick={() => {
-					settings.set(initialValues);
-				}}
-			>
+			<Button variant="error" onclick={() => {}}>
 				{$_('settings.misc.resetToDefaults')}
-			</FormButton>-->
+			</Button>
 		</div>
 	</div>
 
@@ -119,29 +116,49 @@
 		</button>
 		<Select bind:value={openTab}>
 			<option value="general"> {$_('settings.navbar.general')} </option>
-			<option value="integrations">
-				{$_('settings.navbar.integrations')}
-			</option>
+			{#if data.isAdmin}
+				<option value="integrations">
+					{$_('settings.navbar.integrations')}
+				</option>
+			{/if}
 		</Select>
 	</div>
 
 	<div class="flex-1 flex flex-col border-t border-zinc-800 justify-between">
 		<div class="overflow-y-scroll overflow-x-hidden px-8">
-			<form id="settingsForm" class="max-w-screen-md mx-auto mb-auto w-full" method="POST">
+			<form
+				id="settingsForm"
+				class="max-w-screen-md mx-auto mb-auto w-full"
+				method="POST"
+				use:enhance={() => {
+					return async ({ result, update }) => {
+						if (result.data.needLogin) {
+							await showConfirmDialog($_('settings.misc.jellyfinConfirmChangesDialog'));
+						}
+						await update();
+						if (result.type !== 'success') {
+							if (result.data?.code === 1) {
+								errorMessage = $_('settings.misc.checkJellyfinCredentials');
+							}
+						} else if (result.data.needLogin) {
+							window.location.href = '/login';
+						} else {
+							location.reload();
+						}
+					};
+				}}
+			>
 				<GeneralSettingsPage
 					visible={openTab === 'general'}
 					bind:userSettings={currSettings.userSettings}
 				/>
 
-				<IntegrationSettingsPage
-					visible={openTab === 'integrations'}
-					{sonarrConnected}
-					{radarrConnected}
-					{jellyfinConnected}
-					{updateSonarrHealth}
-					{updateRadarrHealth}
-					{updateJellyfinHealth}
-				/>
+				{#if data.isAdmin}
+					<IntegrationSettingsPage
+						visible={openTab === 'integrations'}
+						bind:globalSettings={currSettings.globalSettings}
+					/>
+				{/if}
 			</form>
 		</div>
 		<div class="flex items-center p-4 gap-8 justify-center text-zinc-500 bg-stone-950">
@@ -153,5 +170,6 @@
 		</div>
 	</div>
 </div>
-
-<!-- Language settings -->
+{#if confirmDialogVisible}
+	<ConfirmDialog onConfirm={confirmDialog} confirmMessage={confirmDialogMessage} />
+{/if}

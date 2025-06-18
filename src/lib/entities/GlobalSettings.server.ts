@@ -64,10 +64,10 @@ export class GlobalSettingsEntity extends BaseEntity {
 			const defaultSettings = new GlobalSettingsEntity();
 			defaultSettings.name = 'default';
 			await defaultSettings.save();
-			return this.getSettings(defaultSettings);
+			return this.get(defaultSettings);
 		}
 
-		return this.getSettings(settings);
+		return this.get(settings);
 	}
 
 	public static async getJellyfinApiKey(name = 'default') {
@@ -96,7 +96,7 @@ export class GlobalSettingsEntity extends BaseEntity {
 		return settings.jellyfinBaseUrl;
 	}
 
-	static getSettings(settings: GlobalSettingsEntity): GlobalSettings {
+	static get(settings: GlobalSettingsEntity): GlobalSettings {
 		return {
 			...defaultGlobalSettings,
 

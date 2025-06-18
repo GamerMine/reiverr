@@ -156,7 +156,7 @@
 		{$_('setup.welcome')}
 	</h1>
 	<div
-		class="absolute z-10 items-center top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 bg-stone-900/60 p-6 rounded-xl"
+		class="absolute z-10 items-center top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 bg-zinc-900/60 p-6 rounded-xl"
 	>
 		<div
 			class="transition duration-300 ease-in-out {isTransitioning

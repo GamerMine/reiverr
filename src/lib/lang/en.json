@@ -25,7 +25,7 @@
 		"manualLogin": "Manual Login",
 		"goBack": "Go back",
 		"username": "Username",
-		"password": "Paswword",
+		"password": "Password",
 		"logIn": "Log in",
 		"invalidCredential": "Invalid credentials",
 		"unknownError": "Unknown error"
@@ -182,12 +182,15 @@
 		"misc": {
 			"invalidConfiguration": "Invalid Configuration",
 			"checkJellyfinCredentials": "Could not connect to Jellyfin. Check Jellyfin credentials.",
+			"jellyfinConfirmChangesDialog": "By changing the Jellyfin configuration, you will be redirected to the login page.",
 			"saveChanges": "Save Changes",
 			"resetToDefaults": "Reset to Defaults ",
 			"changelog": "Changelog",
 			"next": "Next",
 			"back": "Back",
-			"finish": "Finish"
+			"finish": "Finish",
+			"cancel": "Cancel",
+			"continue": "Proceed"
 		}
 	},
 	"update": {

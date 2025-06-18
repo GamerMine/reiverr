@@ -1,9 +1,9 @@
-import { checkConnection } from '$lib/apis/jellyfin/server/jellyfin.server';
+import { checkJellyfinConnection } from '$lib/apis/jellyfin/server/jellyfin.server';
 import { fail, redirect } from '@sveltejs/kit';
 import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
-import type { LayoutServerLoad } from '../../../.svelte-kit/types/src/routes/$types';
+import type { PageServerLoad } from '../../../.svelte-kit/types/src/routes/setup/$types';
 
-export const load: LayoutServerLoad = async ({ url }) => {
+export const load: PageServerLoad = async ({ url }) => {
 	const jellyfinAPIKey = await GlobalSettingsEntity.getJellyfinApiKey();
 
 	if (url.pathname === '/setup' && jellyfinAPIKey) {
@@ -16,7 +16,7 @@ export const actions = {
 		let formData = await request.formData();
 		let baseURL = formData.get('baseURL') as string;
 		let apiKey = formData.get('apiKey') as string;
-		let jellyfinConnection = await checkConnection(baseURL, apiKey);
+		let jellyfinConnection = await checkJellyfinConnection(baseURL, apiKey);
 
 		if (jellyfinConnection.status === 404) {
 			return fail(jellyfinConnection.status, { code: 1 });
