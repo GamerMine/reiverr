@@ -7,6 +7,14 @@
 	}
 }
 
+@utility scrollbar-custom {
+	scrollbar-color: rgb(24 24 27) transparent;
+}
+
+@utility scrollbar-* {
+	scrollbar-width: --value('auto', 'thin', 'none');
+}
+
 @utility scrollbar-hide {
 	@apply [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden
 }

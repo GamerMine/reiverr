@@ -11,8 +11,8 @@
 	import { settings } from '$lib/stores/settings.svelte';
 
 	let { data, children }: { data: LayoutServerData; children: Snippet } = $props();
-	settings.userSettings = data.settings?.userSettings;
-	settings.globalSettings = data.settings?.globalSettings;
+	settings.userSettings = data.settings.userSettings;
+	settings.globalSettings = data.settings.globalSettings;
 </script>
 
 <I18n />

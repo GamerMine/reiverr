@@ -129,6 +129,7 @@
 								errorMessage = $_('login.unknownError');
 							}
 						} else {
+							localStorage.setItem('user', JSON.stringify(result.data.user));
 							window.location.href = '/';
 						}
 					};

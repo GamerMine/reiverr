@@ -11,6 +11,7 @@ import {
 	type JellyfinAuthenticationResult
 } from '$lib/apis/jellyfin/server/jellyfin.server';
 import type { PageServerLoad } from '../../../.svelte-kit/types/src/routes/login/$types';
+import type { JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
 
 export const load: PageServerLoad = async ({ cookies, url }) => {
 	const isConnected = await isJellyfinUserConnected(cookies);
@@ -38,7 +39,9 @@ export const actions = {
 			maxAge: 60 * 60 * 24 * 30
 		});
 
-		return { success: true };
+		const user: JellyfinUser = await (await isJellyfinUserConnected(cookies)).json();
+
+		return { success: true, user };
 	}
 } satisfies Actions;
 

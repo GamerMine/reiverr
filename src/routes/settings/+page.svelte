@@ -56,7 +56,7 @@
 			errorMessage = undefined;
 		}
 
-		if (currSettings.globalSettings.jellyfin.baseUrl.length === 0) {
+		if (currSettings.globalSettings.jellyfin.baseUrl?.length === 0) {
 			valuesChanged = false;
 			return;
 		}
@@ -125,14 +125,14 @@
 	</div>
 
 	<div class="flex-1 flex flex-col border-t border-zinc-800 justify-between">
-		<div class="overflow-y-scroll overflow-x-hidden px-8">
+		<div class="overflow-y-auto overflow-x-hidden scrollbar-custom px-8 h-screen">
 			<form
 				id="settingsForm"
 				class="max-w-screen-md mx-auto mb-auto w-full"
 				method="POST"
 				use:enhance={() => {
 					return async ({ result, update }) => {
-						if (result.data.needLogin) {
+						if (result.data?.needLogin) {
 							await showConfirmDialog($_('settings.misc.jellyfinConfirmChangesDialog'));
 						}
 						await update();
@@ -140,7 +140,7 @@
 							if (result.data?.code === 1) {
 								errorMessage = $_('settings.misc.checkJellyfinCredentials');
 							}
-						} else if (result.data.needLogin) {
+						} else if (result.data?.needLogin) {
 							window.location.href = '/login';
 						} else {
 							location.reload();

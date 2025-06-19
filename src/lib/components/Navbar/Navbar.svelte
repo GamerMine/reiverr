@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Cross1, HamburgerMenu, MagnifyingGlass, Person } from 'svelte-radix';
+	import { Cross1, HamburgerMenu, MagnifyingGlass } from 'svelte-radix';
 	import classNames from 'classnames';
 	import { page } from '$app/state';
 	import TitleSearchModal from './TitleSearchModal.svelte';
@@ -7,10 +7,13 @@
 	import { fade } from 'svelte/transition';
 	import { modalStack } from '$lib/stores/modal.store';
 	import { _ } from 'svelte-i18n';
+	import { jellyfinGetUserImage, type JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
+	import { onMount } from 'svelte';
 
 	let y = $state(0);
 	let transparent = true;
 	let baseStyle = $state('');
+	let userPicture: HTMLDivElement | undefined = $state();
 
 	let isMobileMenuVisible = $state(false);
 
@@ -32,6 +35,38 @@
 		}
 	}
 
+	async function getProfilePicture(user: JellyfinUser | undefined, contentDiv: HTMLDivElement) {
+		if (contentDiv) {
+			contentDiv.innerHTML = '';
+			if (user && user.Id && user.Name) {
+				let ppBlob = await jellyfinGetUserImage(user.Id);
+				if (ppBlob.size !== 0) {
+					let img = document.createElement('img');
+
+					img.src = URL.createObjectURL(ppBlob);
+					img.alt = 'pp';
+					img.className = 'rounded-md w-8 h-8 object-cover';
+
+					contentDiv.appendChild(img);
+				} else {
+					let h1 = document.createElement('h1');
+
+					h1.innerText = user.Name.charAt(0);
+					h1.className = 'uppercase text-xl';
+
+					contentDiv.appendChild(h1);
+				}
+			} else {
+				let h1 = document.createElement('h1');
+
+				h1.innerText = '?';
+				h1.className = 'uppercase text-2xl';
+
+				contentDiv.appendChild(h1);
+			}
+		}
+	}
+
 	$effect(() => {
 		transparent = y <= 0;
 		baseStyle = classNames(
@@ -43,6 +78,15 @@
 				'h-16 sm:h-24': transparent
 			}
 		);
+	});
+
+	onMount(() => {
+		if (userPicture) {
+			const user: JellyfinUser | undefined =
+				JSON.parse(localStorage.getItem('user') || '{}') || undefined;
+
+			getProfilePicture(user, userPicture);
+		}
 	});
 </script>
 
@@ -62,9 +106,6 @@
 		<a href="/" class={page && getLinkStyle('/')}>
 			{$_('navbar.home')}
 		</a>
-		<!-- <a href="/discover" class={page && getLinkStyle('/discover')}>
-			{$_('navbar.discover')}
-		</a> -->
 		<a href="/library" class={page && getLinkStyle('/library')}>
 			{$_('navbar.library')}
 		</a>
@@ -79,9 +120,12 @@
 		<IconButton onclick={openSearchModal}>
 			<MagnifyingGlass size="20" />
 		</IconButton>
-		<IconButton>
-			<Person size="20" />
-		</IconButton>
+		<div
+			bind:this={userPicture}
+			class="flex items-center justify-center w-8 h-8 bg-stone-900/90 rounded-md"
+		>
+			<h1 class="uppercase text-2xl">?</h1>
+		</div>
 	</div>
 </div>
 
