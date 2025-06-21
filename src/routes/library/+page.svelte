@@ -4,8 +4,8 @@
 		getJellyfinPosterUrl,
 		type JellyfinItem
 	} from '$lib/apis/jellyfin/jellyfinApi';
-	import Button from '$lib/components/Button.svelte';
-	import Carousel from '$lib/components/Carousel/Carousel.svelte';
+	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
+	import Carousel from '$lib/components/common/misc/carousel/Carousel.svelte';
 	import Poster from '$lib/components/Poster/Poster.svelte';
 	import { playerState } from '$lib/components/VideoPlayer/VideoPlayer';
 	import { PLACEHOLDER_BACKDROP } from '$lib/constants';
@@ -16,7 +16,7 @@
 	import { fade } from 'svelte/transition';
 	import LibraryItems from './LibraryItems.svelte';
 	import { capitalize } from '$lib/utils';
-	import LazyImg from '$lib/components/LazyImg.svelte';
+	import LazyImg from '$lib/components/common/images/LazyImg.svelte';
 	import { settings } from '$lib/stores/settings.svelte';
 
 	let openNextUpTab: 'downloading' | 'nextUp' = 'downloading';

@@ -40,7 +40,7 @@ test.describe('UI Tests', () => {
 			);
 		});
 
-		await test.step('Check Carousel sections exist', async () => {
+		await test.step('Check carousel sections exist', async () => {
 			await expect(page.getByText('Popular People', { exact: true })).toBeVisible();
 			await expect(page.getByText('Upcoming Movies', { exact: true })).toBeVisible();
 			await expect(page.getByText('Upcoming Series', { exact: true })).toBeVisible();

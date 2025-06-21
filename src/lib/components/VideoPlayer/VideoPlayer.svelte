@@ -25,14 +25,14 @@
 	} from 'svelte-radix';
 	import { onDestroy, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
-	import { contextMenu } from '../ContextMenu/ContextMenu';
-	import SelectableContextMenuItem from '../ContextMenu/SelectableContextMenuItem.svelte';
-	import IconButton from '../IconButton.svelte';
+	import { contextMenu } from '$lib/components/common/inputs/contextMenu/ContextMenu';
+	import SelectableContextMenuItem from '$lib/components/common/inputs/contextMenu/SelectableContextMenuItem.svelte';
+	import IconButton from '$lib/components/common/inputs/buttons/IconButton.svelte';
 	import { modalStack } from '$lib/stores/modal.store';
-	import Slider from './Slider.svelte';
+	import Slider from '../common/inputs/Slider.svelte';
 	import { playerState } from './VideoPlayer';
 	import { linear } from 'svelte/easing';
-	import ContextMenuButton from '../ContextMenu/ContextMenuButton.svelte';
+	import ContextMenuButton from '$lib/components/common/inputs/contextMenu/ContextMenuButton.svelte';
 	import { settings } from '$lib/stores/settings.svelte';
 
 	let { modalId }: { modalId: symbol } = $props();

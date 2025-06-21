@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import Notification from '$lib/components/Notification/Notification.svelte';
+import Notification from '$lib/components/common/misc/notification/Notification.svelte';
 import type { Component } from 'svelte';
 
 export type NotificationItem = {

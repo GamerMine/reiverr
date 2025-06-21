@@ -6,15 +6,15 @@
 		getSonarrMonitors
 	} from '$lib/apis/sonarr/sonarrApi';
 	import { getRadarrMonitors } from '$lib/apis/radarr/radarrApi';
-	import Input from '$lib/components/Forms/Input.svelte';
-	import Select from '$lib/components/Forms/Select.svelte';
+	import Input from '$lib/components/common/inputs/forms/Input.svelte';
+	import Select from '$lib/components/common/inputs/forms/Select.svelte';
 	import classNames from 'classnames';
 	import { Trash } from 'svelte-radix';
 	import IntegrationCard from './IntegrationCard.svelte';
 	import TestConnectionButton from './TestConnectionButton.svelte';
 	import { getRadarrQualityProfiles, getRadarrRootFolders } from '$lib/apis/radarr/radarrApi';
 	import { _ } from 'svelte-i18n';
-	import Toggle from '$lib/components/Forms/Toggle.svelte';
+	import Toggle from '$lib/components/common/inputs/forms/Toggle.svelte';
 	import type { GlobalSettings } from '$lib/entities/Types';
 	import { jellyfinTestConnection } from '$lib/apis/jellyfin/jellyfinApi';
 

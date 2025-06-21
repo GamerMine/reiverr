@@ -3,9 +3,9 @@
 	import type { TitleType } from '$lib/types';
 	import classNames from 'classnames';
 	import { ChevronLeft, Cross2, ExternalLink } from 'svelte-radix';
-	import IconButton from '../IconButton.svelte';
-	import LazyImg from '../LazyImg.svelte';
-	import TruncatedText from '../TruncatedText.svelte';
+	import IconButton from '$lib/components/common/inputs/buttons/IconButton.svelte';
+	import LazyImg from '../common/images/LazyImg.svelte';
+	import TruncatedText from '../common/text/TruncatedText.svelte';
 	import type { Snippet } from 'svelte';
 
 	interface titleInformation {

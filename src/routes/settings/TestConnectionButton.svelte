@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onDestroy, type ComponentProps } from 'svelte';
 	import { _ } from 'svelte-i18n';
-	import Button from '$lib/components/Button.svelte';
+	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
 	import { Update } from 'svelte-radix';
 
 	let { handleHealthCheck }: { handleHealthCheck: () => Promise<boolean | undefined> } = $props();

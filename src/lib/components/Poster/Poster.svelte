@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { TitleType } from '$lib/types';
 	import classNames from 'classnames';
-	import PlayButton from '../PlayButton.svelte';
-	import ProgressBar from '../ProgressBar.svelte';
+	import PlayButton from '$lib/components/common/inputs/buttons/PlayButton.svelte';
+	import ProgressBar from '../common/ProgressBar.svelte';
 	import { playerState } from '../VideoPlayer/VideoPlayer';
-	import LazyImg from '../LazyImg.svelte';
+	import LazyImg from '../common/images/LazyImg.svelte';
 	import { Star } from 'svelte-radix';
 	import { openTitleModal } from '$lib/stores/modal.store';
 	import type { Snippet } from 'svelte';

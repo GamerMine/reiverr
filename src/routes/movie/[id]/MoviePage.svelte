@@ -5,13 +5,13 @@
 		getTmdbMovieRecommendations,
 		getTmdbMovieSimilar
 	} from '$lib/apis/tmdb/tmdbApi';
-	import Button from '$lib/components/Button.svelte';
-	import Card from '$lib/components/Card/Card.svelte';
-	import { fetchCardTmdbProps } from '$lib/components/Card/card';
-	import Carousel from '$lib/components/Carousel/Carousel.svelte';
-	import CarouselPlaceholderItems from '$lib/components/Carousel/CarouselPlaceholderItems.svelte';
-	import PersonCard from '$lib/components/Card/PersonCard.svelte';
-	import ProgressBar from '$lib/components/ProgressBar.svelte';
+	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
+	import Card from '$lib/components/common/misc/cards/Card.svelte';
+	import { fetchCardTmdbProps } from '$lib/components/common/misc/cards/card';
+	import Carousel from '$lib/components/common/misc/carousel/Carousel.svelte';
+	import CarouselPlaceholderItems from '$lib/components/common/misc/carousel/CarouselPlaceholderItems.svelte';
+	import PersonCard from '$lib/components/common/misc/cards/PersonCard.svelte';
+	import ProgressBar from '$lib/components/common/ProgressBar.svelte';
 	import RequestModal from '$lib/components/RequestModal/RequestModal.svelte';
 	import OpenInButton from '$lib/components/TitlePageLayout/OpenInButton.svelte';
 	import TitlePageLayout from '$lib/components/TitlePageLayout/TitlePageLayout.svelte';

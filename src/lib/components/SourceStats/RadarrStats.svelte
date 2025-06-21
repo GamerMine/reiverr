@@ -3,7 +3,7 @@
 	import { radarrMoviesStore } from '$lib/stores/data.store';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { formatSize } from '$lib/utils.js';
-	import RadarrIcon from '../svgs/RadarrIcon.svelte';
+	import RadarrIcon from '../common/icons/RadarrIcon.svelte';
 	import StatsContainer from './StatsContainer.svelte';
 	import StatsPlaceholder from './StatsPlaceholder.svelte';
 

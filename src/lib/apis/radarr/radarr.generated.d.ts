@@ -3909,7 +3909,7 @@ export interface components {
 		/** @enum {string} */
 		ApplyTags: 'add' | 'remove' | 'replace';
 		/** @enum {string} */
-		AuthenticationType: 'none' | 'basic' | 'Forms';
+		AuthenticationType: 'none' | 'basic' | 'forms';
 		BackupResource: {
 			/** Format: int32 */
 			id?: number;

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { ChevronLeft } from 'svelte-radix';
-	import CardGrid from '../Card/CardGrid.svelte';
-	import CardPlaceholder from '../Card/CardPlaceholder.svelte';
+	import CardGrid from '$lib/components/common/misc/cards/CardGrid.svelte';
+	import CardPlaceholder from '$lib/components/common/misc/cards/CardPlaceholder.svelte';
 	import { capitalize } from '$lib/utils';
 	import type { Snippet } from 'svelte';
 

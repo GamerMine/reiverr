@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { ChevronRight } from 'svelte-radix';
-	import Button from '../Button.svelte';
+	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
 	import { modalStack } from '$lib/stores/modal.store';
-	import ModalContainer from '../Modal/ModalContainer.svelte';
-	import ModalContent from '../Modal/ModalContent.svelte';
-	import ModalHeader from '../Modal/ModalHeader.svelte';
+	import ModalContainer from '$lib/components/common/modal/ModalContainer.svelte';
+	import ModalContent from '$lib/components/common/modal/ModalContent.svelte';
+	import ModalHeader from '$lib/components/common/modal/ModalHeader.svelte';
 	import EpisodeSelectModal from './EpisodeSelectModal.svelte';
 	import RequestModal from './RequestModal.svelte';
 

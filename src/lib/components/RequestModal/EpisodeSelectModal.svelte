@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { fetchSonarrEpisodes, type SonarrEpisode } from '$lib/apis/sonarr/sonarrApi';
 	import { modalStack } from '$lib/stores/modal.store';
-	import ModalContainer from '../Modal/ModalContainer.svelte';
-	import ModalContent from '../Modal/ModalContent.svelte';
-	import ModalHeader from '../Modal/ModalHeader.svelte';
+	import ModalContainer from '$lib/components/common/modal/ModalContainer.svelte';
+	import ModalContent from '$lib/components/common/modal/ModalContent.svelte';
+	import ModalHeader from '$lib/components/common/modal/ModalHeader.svelte';
 	import RequestModal from './RequestModal.svelte';
 
 	let {

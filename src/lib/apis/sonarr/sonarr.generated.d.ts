@@ -3674,7 +3674,7 @@ export interface components {
 		/** @enum {string} */
 		AuthenticationRequiredType: 'enabled' | 'disabledForLocalAddresses';
 		/** @enum {string} */
-		AuthenticationType: 'none' | 'basic' | 'Forms' | 'external';
+		AuthenticationType: 'none' | 'basic' | 'forms' | 'external';
 		AutoTaggingResource: {
 			/** Format: int32 */
 			id?: number;

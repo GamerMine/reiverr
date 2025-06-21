@@ -3,7 +3,7 @@
 	import { sonarrSeriesStore } from '$lib/stores/data.store';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { formatSize } from '$lib/utils.js';
-	import SonarrIcon from '../svgs/SonarrIcon.svelte';
+	import SonarrIcon from '../common/icons/SonarrIcon.svelte';
 	import StatsContainer from './StatsContainer.svelte';
 	import StatsPlaceholder from './StatsPlaceholder.svelte';
 

@@ -1,10 +1,10 @@
 <script lang="ts">
-	import Button from '$lib/components/Button.svelte';
+	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
 	import { ArrowRight, ArrowLeft, Update } from 'svelte-radix';
 	import { onMount } from 'svelte';
 	import { animateBackground } from '$lib/utils/animation';
 	import { _ } from 'svelte-i18n';
-	import Input from '$lib/components/Forms/Input.svelte';
+	import Input from '$lib/components/common/inputs/forms/Input.svelte';
 	import { enhance } from '$app/forms';
 	import { createErrorNotification } from '$lib/stores/notification.store';
 

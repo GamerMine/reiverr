@@ -27,3 +27,11 @@ export const GET: RequestHandler = async () => {
 			});
 		});
 };
+
+export const DELETE: RequestHandler = async ({ cookies }) => {
+	cookies.delete('access_token', {
+		path: '/'
+	});
+
+	return new Response(null);
+};

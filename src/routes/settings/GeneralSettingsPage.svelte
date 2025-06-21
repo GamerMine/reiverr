@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Input from '$lib/components/Forms/Input.svelte';
-	import Select from '$lib/components/Forms/Select.svelte';
-	import Toggle from '$lib/components/Forms/Toggle.svelte';
+	import Input from '$lib/components/common/inputs/forms/Input.svelte';
+	import Select from '$lib/components/common/inputs/forms/Select.svelte';
+	import Toggle from '$lib/components/common/inputs/forms/Toggle.svelte';
 	import { ISO_LANGUAGES } from '$lib/utils/iso-languages';
 	import { ISO_REGIONS } from '$lib/utils/iso-regions';
 	import { _, dictionary } from 'svelte-i18n';

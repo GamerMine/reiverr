@@ -1,21 +1,21 @@
 <script lang="ts">
-	import UiCarousel from '$lib/components/Carousel/UICarousel.svelte';
-	import IconButton from '$lib/components/IconButton.svelte';
+	import UiCarousel from '$lib/components/common/misc/carousel/UICarousel.svelte';
+	import IconButton from '$lib/components/common/inputs/buttons/IconButton.svelte';
 	import classNames from 'classnames';
 	import { fly } from 'svelte/transition';
 	import { _ } from 'svelte-i18n';
 	import { ChevronDown, Cross2, MagnifyingGlass } from 'svelte-radix';
-	import CardPlaceholder from '$lib/components/Card/CardPlaceholder.svelte';
+	import CardPlaceholder from '$lib/components/common/misc/cards/CardPlaceholder.svelte';
 	import { tick, type ComponentProps } from 'svelte';
 	import Poster from '$lib/components/Poster/Poster.svelte';
 	import { getJellyfinPosterUrl, type JellyfinItem } from '$lib/apis/jellyfin/jellyfinApi';
 	import { getRadarrPosterUrl, type RadarrMovie } from '$lib/apis/radarr/radarrApi';
 	import { getSonarrPosterUrl, type SonarrSeries } from '$lib/apis/sonarr/sonarrApi';
 	import { jellyfinItemsStore, radarrMoviesStore, sonarrSeriesStore } from '$lib/stores/data.store';
-	import Button from '$lib/components/Button.svelte';
-	import ContextMenu from '$lib/components/ContextMenu/ContextMenu.svelte';
-	import SelectableContextMenuItem from '$lib/components/ContextMenu/SelectableContextMenuItem.svelte';
-	import ContextMenuDivider from '$lib/components/ContextMenu/ContextMenuDivider.svelte';
+	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
+	import ContextMenu from '$lib/components/common/inputs/contextMenu/ContextMenu.svelte';
+	import SelectableContextMenuItem from '$lib/components/common/inputs/contextMenu/SelectableContextMenuItem.svelte';
+	import Divider from '$lib/components/common/misc/Divider.svelte';
 	import { createLocalStorageStore } from '$lib/stores/localstorage.store';
 
 	const SortBy = {
@@ -273,7 +273,7 @@
 							{sortOption}
 						</SelectableContextMenuItem>
 					{/each}
-					<ContextMenuDivider />
+					<Divider />
 					{#each Object.values(SortOrder) as order}
 						<SelectableContextMenuItem
 							selected={$sortOrder === order}

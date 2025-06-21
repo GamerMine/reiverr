@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { jellyfinGetUsers, type JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
-	import UserCarousel from '$lib/components/Carousel/UserCarousel.svelte';
-	import UserCard from '$lib/components/Card/UserCard.svelte';
+	import UserCarousel from '$lib/components/common/misc/carousel/UserCarousel.svelte';
+	import UserCard from '$lib/components/common/misc/cards/UserCard.svelte';
 	import { _ } from 'svelte-i18n';
-	import Button from '$lib/components/Button.svelte';
+	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
 	import { Keyboard, Enter, Update } from 'svelte-radix';
-	import Input from '$lib/components/Forms/Input.svelte';
+	import Input from '$lib/components/common/inputs/forms/Input.svelte';
 	import { ChevronLeft } from 'svelte-radix';
 	import { enhance } from '$app/forms';
 	import { createErrorNotification } from '$lib/stores/notification.store';

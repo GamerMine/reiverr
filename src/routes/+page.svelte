@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { type JellyfinItem } from '$lib/apis/jellyfin/jellyfinApi';
 	import { getPosterProps, TmdbApiOpen } from '$lib/apis/tmdb/tmdbApi';
-	import Carousel from '$lib/components/Carousel/Carousel.svelte';
-	import GenreCard from '$lib/components/GenreCard.svelte';
-	import NetworkCard from '$lib/components/NetworkCard.svelte';
-	import PersonCard from '$lib/components/Card/PersonCard.svelte';
+	import Carousel from '$lib/components/common/misc/carousel/Carousel.svelte';
+	import GenreCard from '$lib/components/common/misc/cards/GenreCard.svelte';
+	import NetworkCard from '$lib/components/common/misc/cards/NetworkCard.svelte';
+	import PersonCard from '$lib/components/common/misc/cards/PersonCard.svelte';
 	import Poster from '$lib/components/Poster/Poster.svelte';
-	import TitleShowcases from '$lib/components/TitleShowcase/TitleShowcasesContainer.svelte';
+	import TitleShowcases from '$lib/components/page/home/titleShowcase/TitleShowcasesContainer.svelte';
 	import { genres, networks } from '$lib/discover';
 	import { jellyfinItemsStore } from '$lib/stores/data.store';
 	import type { TitleType } from '$lib/types';

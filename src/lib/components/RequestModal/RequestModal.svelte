@@ -8,10 +8,10 @@
 	import { formatMinutesToTime, formatSize } from '$lib/utils';
 	import { DotFilled, Download, Plus } from 'svelte-radix';
 	import HeightHider from '../HeightHider.svelte';
-	import IconButton from '../IconButton.svelte';
+	import IconButton from '$lib/components/common/inputs/buttons/IconButton.svelte';
 	import { modalStack } from '$lib/stores/modal.store';
-	import ModalContent from '../Modal/ModalContainer.svelte';
-	import ModalHeader from '../Modal/ModalHeader.svelte';
+	import ModalContent from '$lib/components/common/modal/ModalContainer.svelte';
+	import ModalHeader from '$lib/components/common/modal/ModalHeader.svelte';
 
 	let {
 		modalId,

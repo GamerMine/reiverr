@@ -187,3 +187,9 @@ export const getJellyfinBackdrop = (item: JellyfinItem, quality = 100) => {
 		}/Images/Primary?quality=${quality}&tag=${item?.ImageTags?.Primary}`;
 	}
 };
+
+export const jellyfinDisconnectUser = async () => {
+	return await fetch('/api/jellyfin/users', {
+		method: 'DELETE'
+	});
+};

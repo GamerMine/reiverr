@@ -9,14 +9,14 @@
 		getTmdbSeriesSimilar,
 		type TmdbSeriesFull2
 	} from '$lib/apis/tmdb/tmdbApi';
-	import Button from '$lib/components/Button.svelte';
-	import Card from '$lib/components/Card/Card.svelte';
-	import { fetchCardTmdbProps } from '$lib/components/Card/card';
-	import Carousel from '$lib/components/Carousel/Carousel.svelte';
-	import CarouselPlaceholderItems from '$lib/components/Carousel/CarouselPlaceholderItems.svelte';
-	import UiCarousel from '$lib/components/Carousel/UICarousel.svelte';
-	import EpisodeCard from '$lib/components/EpisodeCard/EpisodeCard.svelte';
-	import PersonCard from '$lib/components/Card/PersonCard.svelte';
+	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
+	import Card from '$lib/components/common/misc/cards/Card.svelte';
+	import { fetchCardTmdbProps } from '$lib/components/common/misc/cards/card';
+	import Carousel from '$lib/components/common/misc/carousel/Carousel.svelte';
+	import CarouselPlaceholderItems from '$lib/components/common/misc/carousel/CarouselPlaceholderItems.svelte';
+	import UiCarousel from '$lib/components/common/misc/carousel/UICarousel.svelte';
+	import EpisodeCard from '$lib/components/common/misc/cards/EpisodeCard.svelte';
+	import PersonCard from '$lib/components/common/misc/cards/PersonCard.svelte';
 	import SeriesRequestModal from '$lib/components/RequestModal/SeriesRequestModal.svelte';
 	import OpenInButton from '$lib/components/TitlePageLayout/OpenInButton.svelte';
 	import TitlePageLayout from '$lib/components/TitlePageLayout/TitlePageLayout.svelte';

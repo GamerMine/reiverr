@@ -2,7 +2,7 @@
 	import { version } from '$app/environment';
 	import { getRadarrHealth } from '$lib/apis/radarr/radarrApi';
 	import { getSonarrHealth } from '$lib/apis/sonarr/sonarrApi';
-	import Select from '$lib/components/Forms/Select.svelte';
+	import Select from '$lib/components/common/inputs/forms/Select.svelte';
 	import classNames from 'classnames';
 	import { ChevronLeft } from 'svelte-radix';
 	import GeneralSettingsPage from './GeneralSettingsPage.svelte';
@@ -12,10 +12,10 @@
 	import { createErrorNotification } from '$lib/stores/notification.store';
 	import type { Settings } from '$lib/entities/Types';
 	import { settings } from '$lib/stores/settings.svelte';
-	import Button from '$lib/components/Button.svelte';
+	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
 	import type { PageProps } from '../../../.svelte-kit/types/src/routes/settings/$types';
 	import { enhance } from '$app/forms';
-	import ConfirmDialog from '$lib/components/Forms/ConfirmDialog.svelte';
+	import ConfirmDialog from '$lib/components/common/inputs/forms/ConfirmDialog.svelte';
 
 	type Section = 'general' | 'integrations';
 
