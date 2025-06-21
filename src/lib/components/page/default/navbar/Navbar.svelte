@@ -87,10 +87,7 @@
 </div>
 
 <div class={classNames(baseStyle, ' grid sm:hidden')}>
-	<a
-		href="/static"
-		class="flex gap-2 items-center hover:text-inherit selectable rounded-xs px-2 -mx-2"
-	>
+	<a href="/" class="flex gap-2 items-center hover:text-inherit selectable rounded-xs px-2 -mx-2">
 		<div class="rounded-full bg-amber-300 h-4 w-4"></div>
 		<h1 class="font-display uppercase font-semibold tracking-wider text-xl">Reiverr</h1>
 	</a>

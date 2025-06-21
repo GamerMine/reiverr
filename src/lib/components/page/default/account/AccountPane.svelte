@@ -10,9 +10,9 @@
 </script>
 
 <div class="fixed z-20 flex justify-end top-20 right-3" transition:fade={{ duration: 150 }}>
-	<div class="bg-stone-950 rounded-xl shadow-lg max-w-60 w-full">
+	<div class="bg-stone-900 rounded-xl shadow-lg max-w-60 w-full">
 		<div class="flex m-4">
-			<UserImage {user} size={11} />
+			<UserImage {user} size={11} textSize="text-2xl" />
 			<div class="ml-4 w-36">
 				<p class="truncate">{user.Name}</p>
 				<p class="text-zinc-700 text-sm truncate">
