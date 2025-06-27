@@ -35,7 +35,12 @@
 		"discover": "Découvrir",
 		"library": "Bibliothèque",
 		"sources": "Sources",
-		"settings": "Paramètres"
+		"userMenu": {
+			"administrator": "Administrateur",
+			"user": "Utilisateur",
+			"settings": "Paramètres",
+			"logout": "Se déconnecter"
+		}
 	},
 	"search": {
 		"placeHolder": "Rechercher des films et des émissions de télévision",
@@ -172,6 +177,8 @@
 		"misc": {
 			"invalidConfiguration": "Configuration Invalide",
 			"checkJellyfinCredentials": "Connexion à Jellyfin impossible. Vérifiez les informations de connexions.",
+			"checkRadarrCredentials": "Connexion à Radarr impossible. Vérifiez les informations de connexions.",
+			"radarrConfigurationInvalid": "La configuration de Radarr est invalide. Vérifiez le champ Dossier racine.",
 			"jellyfinConfirmChangesDialog": "En modifiant la configuration de Jellyfin, vous allez être redirigé vers la page de connexion.",
 			"saveChanges": "Sauvegarder les modifications",
 			"resetToDefaults": "Réinitialiser aux paramètres par défaut",

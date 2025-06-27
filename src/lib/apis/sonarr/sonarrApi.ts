@@ -1,5 +1,4 @@
 import type { components, paths } from '$lib/apis/sonarr/sonarr.generated';
-import { log } from '$lib/utils';
 import axios from 'axios';
 import createClient from 'openapi-fetch';
 import { getTmdbSeries } from '../tmdb/tmdbApi';
@@ -122,7 +121,7 @@ export const cancelDownloadSonarrEpisode = async (downloadId: number) => {
 				}
 			}
 		})
-		.then((r) => log(r));
+		.then((r) => {});
 
 	return !!deleteResponse?.response.ok;
 };

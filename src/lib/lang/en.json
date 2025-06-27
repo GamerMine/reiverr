@@ -35,7 +35,12 @@
 		"discover": "Discover",
 		"library": "Library",
 		"sources": "Sources",
-		"settings": "Settings"
+		"userMenu": {
+			"administrator": "Administrator",
+			"user": "User",
+			"settings": "Settings",
+			"logout": "Logout"
+		}
 	},
 	"search": {
 		"placeHolder": "Search for Movies and TV Shows",
@@ -182,6 +187,8 @@
 		"misc": {
 			"invalidConfiguration": "Invalid Configuration",
 			"checkJellyfinCredentials": "Could not connect to Jellyfin. Check Jellyfin credentials.",
+			"checkRadarrCredentials": "Could not connect to Radarr. Check Radarr credentials.",
+			"radarrConfigurationInvalid": "The Radarr configuration is invalid. Please check the Root Folder field.",
 			"jellyfinConfirmChangesDialog": "By changing the Jellyfin configuration, you will be redirected to the login page.",
 			"saveChanges": "Save Changes",
 			"resetToDefaults": "Reset to Defaults ",

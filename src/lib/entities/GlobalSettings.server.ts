@@ -37,14 +37,11 @@ export class GlobalSettingsEntity extends BaseEntity {
 	@Column('text', { nullable: true, default: defaultGlobalSettings.radarr.apiKey })
 	radarrApiKey: string | null;
 
-	@Column('text', { default: defaultGlobalSettings.radarr.rootFolderPath })
-	radarrRootFolderPath: string;
+	@Column('text', { nullable: true, default: defaultGlobalSettings.radarr.rootFolderPath })
+	radarrRootFolderPath: string | null;
 
-	@Column('integer', { default: defaultGlobalSettings.radarr.qualityProfileId })
-	radarrQualityProfileId: number;
-
-	@Column('integer', { default: defaultGlobalSettings.radarr.monitor })
-	radarrMonitor: number;
+	@Column('text', { nullable: true, default: defaultGlobalSettings.radarr.monitor })
+	radarrMonitor: string | null;
 
 	@Column('boolean', { default: defaultGlobalSettings.radarr.startSearch })
 	radarrStartSearch: boolean;
@@ -70,6 +67,19 @@ export class GlobalSettingsEntity extends BaseEntity {
 		return this.get(settings);
 	}
 
+	public static async getJellyfinBaseUrl(name = 'default') {
+		const settings = await this.findOne({ where: { name } });
+
+		if (!settings) {
+			const defaultSettings = new GlobalSettingsEntity();
+			defaultSettings.name = 'default';
+			await defaultSettings.save();
+			return null;
+		}
+
+		return settings.jellyfinBaseUrl;
+	}
+
 	public static async getJellyfinApiKey(name = 'default') {
 		const settings = await this.findOne({ where: { name } });
 
@@ -83,7 +93,7 @@ export class GlobalSettingsEntity extends BaseEntity {
 		return settings.jellyfinApiKey;
 	}
 
-	public static async getJellyfinBaseUrl(name = 'default') {
+	public static async getRadarrBaseUrl(name = 'default') {
 		const settings = await this.findOne({ where: { name } });
 
 		if (!settings) {
@@ -93,7 +103,20 @@ export class GlobalSettingsEntity extends BaseEntity {
 			return null;
 		}
 
-		return settings.jellyfinBaseUrl;
+		return settings.radarrBaseUrl;
+	}
+
+	public static async getRadarrApiKey(name = 'default') {
+		const settings = await this.findOne({ where: { name } });
+
+		if (!settings) {
+			const defaultSettings = new GlobalSettingsEntity();
+			defaultSettings.name = 'default';
+			await defaultSettings.save();
+			return null;
+		}
+
+		return settings.radarrApiKey;
 	}
 
 	static get(settings: GlobalSettingsEntity): GlobalSettings {
@@ -112,11 +135,9 @@ export class GlobalSettingsEntity extends BaseEntity {
 			},
 			radarr: {
 				...defaultGlobalSettings.radarr,
-				apiKey: settings.radarrApiKey,
 				baseUrl: settings.radarrBaseUrl,
 				monitor: settings.radarrMonitor,
 				startSearch: settings.radarrStartSearch,
-				qualityProfileId: settings.radarrQualityProfileId,
 				rootFolderPath: settings.radarrRootFolderPath
 			},
 			jellyfin: {
@@ -143,9 +164,12 @@ export class GlobalSettingsEntity extends BaseEntity {
 		settings.sonarrMonitor = values.sonarr.monitor;
 		settings.sonarrStartSearch = values.sonarr.StartSearch;
 
-		settings.radarrApiKey = values.radarr.apiKey;
+		if (values.radarr.apiKey) {
+			settings.radarrApiKey = values.radarr.apiKey;
+		} else if (!values.radarr.baseUrl) {
+			settings.radarrApiKey = values.radarr.apiKey;
+		}
 		settings.radarrBaseUrl = values.radarr.baseUrl;
-		settings.radarrQualityProfileId = values.radarr.qualityProfileId;
 		settings.radarrRootFolderPath = values.radarr.rootFolderPath;
 		settings.radarrMonitor = values.radarr.monitor;
 		settings.radarrStartSearch = values.radarr.startSearch;
@@ -169,6 +193,34 @@ export class GlobalSettingsEntity extends BaseEntity {
 
 		settings.jellyfinBaseUrl = baseURL;
 		settings.jellyfinApiKey = apiKey;
+
+		await settings.save();
+	}
+
+	public static async setRadarrApiEndpoint(baseURL: string, apiKey: string, name = 'default') {
+		const settings = await this.findOne({ where: { name } });
+
+		if (!settings) return;
+
+		settings.radarrBaseUrl = baseURL;
+		settings.radarrApiKey = apiKey;
+
+		await settings.save();
+	}
+
+	public static async setRadarrApiConfiguration(
+		rootFolderPath: string,
+		monitor: string,
+		startSearch: boolean,
+		name = 'default'
+	) {
+		const settings = await this.findOne({ where: { name } });
+
+		if (!settings) return;
+
+		settings.radarrRootFolderPath = rootFolderPath;
+		settings.radarrMonitor = monitor;
+		settings.radarrStartSearch = startSearch;
 
 		await settings.save();
 	}

@@ -5,18 +5,20 @@
 		getSonarrRootFolders,
 		getSonarrMonitors
 	} from '$lib/apis/sonarr/sonarrApi';
-	import { getRadarrMonitors } from '$lib/apis/radarr/radarrApi';
+	import { getRadarrHealth, getRadarrMonitors } from '$lib/apis/radarr/radarrApi';
 	import Input from '$lib/components/common/inputs/forms/Input.svelte';
 	import Select from '$lib/components/common/inputs/forms/Select.svelte';
 	import classNames from 'classnames';
 	import { Trash } from 'svelte-radix';
 	import IntegrationCard from './IntegrationCard.svelte';
 	import TestConnectionButton from './TestConnectionButton.svelte';
-	import { getRadarrQualityProfiles, getRadarrRootFolders } from '$lib/apis/radarr/radarrApi';
+	import { getRadarrRootFolders } from '$lib/apis/radarr/radarrApi';
 	import { _ } from 'svelte-i18n';
 	import Toggle from '$lib/components/common/inputs/forms/Toggle.svelte';
 	import type { GlobalSettings } from '$lib/entities/Types';
 	import { jellyfinTestConnection } from '$lib/apis/jellyfin/jellyfinApi';
+	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
+	import { onMount } from 'svelte';
 
 	let {
 		visible,
@@ -26,16 +28,16 @@
 		globalSettings: GlobalSettings;
 	} = $props();
 
-	let jellyfinConnected: boolean = $state(updateJellyfinHealth());
+	let jellyfinConnected: boolean = $state(false);
+
+	let radarrConnected: boolean = $state(false);
+	let radarrRootFolders: undefined | { id: string; path: string }[] = $state();
+	let radarrMonitors: undefined | { id: string; type: string }[] = $state();
 
 	/*let sonarrRootFolders: undefined | { id: number; path: string }[] = $state();
 	let sonarrQualityProfiles: undefined | { id: number; name: string }[] = $state();
 	let sonarrLanguageProfiles: undefined | { id: number; name: string }[] = $state();
-	let sonarrMonitors: undefined | { id: number; type: string }[] = $state();
-
-	let radarrRootFolders: undefined | { id: number; path: string }[] = $state();
-	let radarrQualityProfiles: undefined | { id: number; name: string }[] = $state();
-	let radarrMonitors: undefined | { id: number; type: string }[] = $state();*/
+	let sonarrMonitors: undefined | { id: number; type: string }[] = $state();*/
 
 	async function updateJellyfinHealth(): Promise<boolean> {
 		if (globalSettings.jellyfin.baseUrl) {
@@ -52,6 +54,26 @@
 		}
 	}
 
+	async function updateRadarrHealth(): Promise<boolean> {
+		if (globalSettings.radarr.baseUrl) {
+			return getRadarrHealth(
+				globalSettings.radarr.baseUrl,
+				globalSettings.radarr.apiKey || undefined
+			).then((ok) => {
+				radarrConnected = ok;
+				return ok;
+			});
+		} else {
+			radarrConnected = false;
+			return false;
+		}
+	}
+
+	onMount(async () => {
+		jellyfinConnected = await updateJellyfinHealth();
+		radarrConnected = await updateRadarrHealth();
+	});
+
 	/*function handleRemoveIntegration(service: 'sonarr' | 'radarr') {
 		// TODO: Handle integration remove with internal API endpoint
 		if (service === 'sonarr') {
@@ -61,8 +83,8 @@
 		}
 	}*/
 
-	/*$effect(() => {
-		if (sonarrConnected) {
+	$effect(() => {
+		/*if (sonarrConnected) {
 			getSonarrRootFolders(
 				values.sonarr.baseUrl || undefined,
 				values.sonarr.apiKey || undefined
@@ -86,27 +108,21 @@
 			getSonarrMonitors().then((mon) => {
 				sonarrMonitors = mon.map((p, index) => ({ id: index || 0, type: p || '' }));
 			});
-			getRadarrMonitors().then((mon) => {
-				radarrMonitors = mon.map((p, index) => ({ id: index || 0, type: p || '' }));
-			});
-		}
+		}*/
 
 		if (radarrConnected) {
 			getRadarrRootFolders(
-				values.radarr.baseUrl || undefined,
-				values.radarr.apiKey || undefined
+				globalSettings.radarr.baseUrl || undefined,
+				globalSettings.radarr.apiKey || undefined
 			).then((folders) => {
-				radarrRootFolders = folders.map((f) => ({ id: f.id || 0, path: f.path || '' }));
+				radarrRootFolders = folders.map((f) => ({ id: String(f.id) || '0', path: f.path || '' }));
 			});
 
-			getRadarrQualityProfiles(
-				values.radarr.baseUrl || undefined,
-				values.radarr.apiKey || undefined
-			).then((profiles) => {
-				radarrQualityProfiles = profiles.map((p) => ({ id: p.id || 0, name: p.name || '' }));
+			getRadarrMonitors().then((mon) => {
+				radarrMonitors = mon.map((p, index) => ({ id: String(index) || '0', type: p || '' }));
 			});
 		}
-	});*/
+	});
 </script>
 
 <div
@@ -221,30 +237,36 @@
 		</IntegrationCard>
 	</div>-->
 
-	<!--<div class="justify-self-stretch col-span-2">
+	<div class="justify-self-stretch col-span-2">
 		<IntegrationCard title="Radarr" status={radarrConnected ? 'connected' : 'disconnected'}>
 			<div class="flex flex-col gap-1">
 				<h2 class="text-sm text-zinc-500">
 					{$_('settings.integrations.baseUrl')}
 				</h2>
 				<Input
+					bind:value={globalSettings.radarr.baseUrl}
 					name="adminRadarrBaseUrl"
 					placeholder={'http://127.0.0.1:7878'}
 					klass="w-full"
-					onchange={() => updateRadarrHealth(true)}
 				/>
 			</div>
 			<div class="flex flex-col gap-1">
 				<h2 class="text-sm text-zinc-500">
 					{$_('settings.integrations.apiKey')}
 				</h2>
-				<Input name="adminRadarrApiKey" klass="w-full" onchange={() => updateRadarrHealth(true)} />
+				<Input
+					bind:value={globalSettings.radarr.apiKey}
+					name="adminRadarrApiKey"
+					type="password"
+					klass="w-full"
+				/>
 			</div>
 			<div class="grid grid-cols-[1fr_min-content] gap-2">
 				<TestConnectionButton handleHealthCheck={updateRadarrHealth} />
-				<FormButton onclick={() => handleRemoveIntegration('radarr')} type="error">
+				<Button onclick={() => handleRemoveIntegration('radarr')} variant="error">
+					<!-- TODO: handleRemoveIntegration -->
 					<Trash size="20" />
-				</FormButton>
+				</Button>
 			</div>
 			<h1 class="border-b border-zinc-800 py-2">
 				{$_('settings.integrations.options.options')}
@@ -263,49 +285,39 @@
 				{#if !radarrRootFolders}
 					<Select loading />
 				{:else}
-					<Select name="adminRadarrRootFolderPath">
+					<Select
+						bind:value={globalSettings.radarr.rootFolderPath}
+						name="adminRadarrRootFolderPath"
+					>
 						{#each radarrRootFolders as folder}
 							<option value={folder.path}>{folder.path}</option>
 						{/each}
 					</Select>
 				{/if}
 
-				<h2>
-					{$_('settings.integrations.options.qualityProfile')}
-					&lt;!&ndash; FIXME: Instead of selecting a profile that will be used by every movies. This settings should be either
-					 						removed or a default selection when a user tries to ask for a movie &ndash;&gt;
-				</h2>
-				{#if !radarrQualityProfiles}
-					<Select loading />
-				{:else}
-					<Select name="adminRadarrQualityProfileId">
-						{#each radarrQualityProfiles as profile}
-							<option value={profile.id}>{profile.name}</option>
-						{/each}
-					</Select>
-				{/if}
 				<h2>Monitor Movies</h2>
-				&lt;!&ndash; FIXME: This should not be set by the user. A movie should be automatically monitored on Radarr &ndash;&gt;
+				<!-- FIXME: This should not be set by the user. A movie should be automatically monitored on Radarr -->
 				{#if !radarrMonitors}
 					<Select loading />
 				{:else}
-					<Select name="adminRadarrMonitor">
+					<Select bind:value={globalSettings.radarr.monitor} name="adminRadarrMonitor">
 						{#each radarrMonitors as profile}
 							<option value={profile.id}>{profile.type}</option>
 						{/each}
 					</Select>
 				{/if}
 				<h2>{$_('settings.integrations.options.searchForMovie')}</h2>
-				&lt;!&ndash; FIXME: This should not be set by the user. A movie should be automatically searched on Radarr if it's
-											release date is older than the current date. Otherwise, it must be only marked as "monitored". &ndash;&gt;
-				{#if defaultSettings.radarr.startSearch === undefined}
+				<!-- FIXME: This should not be set by the user. A movie should be automatically searched
+										on Radarr if it's release date is older than the current date. Otherwise, it must be only marked
+										as "monitored". -->
+				{#if globalSettings.radarr.startSearch === undefined}
 					<Select loading />
 				{:else}
-					<Toggle name="adminRadarrStartSearch" />
+					<Toggle bind:checked={globalSettings.radarr.startSearch} name="adminRadarrStartSearch" />
 				{/if}
 			</div>
 		</IntegrationCard>
-	</div>-->
+	</div>
 
 	<div class="justify-self-stretch col-span-2">
 		<IntegrationCard title="Jellyfin" status={jellyfinConnected ? 'connected' : 'disconnected'}>

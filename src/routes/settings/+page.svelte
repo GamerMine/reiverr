@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { version } from '$app/environment';
-	import { getRadarrHealth } from '$lib/apis/radarr/radarrApi';
-	import { getSonarrHealth } from '$lib/apis/sonarr/sonarrApi';
 	import Select from '$lib/components/common/inputs/forms/Select.svelte';
 	import classNames from 'classnames';
 	import { ChevronLeft } from 'svelte-radix';
@@ -60,6 +58,22 @@
 			valuesChanged = false;
 			return;
 		}
+
+		if (currSettings.globalSettings.radarr.baseUrl?.length === 0) {
+			valuesChanged = false;
+			return;
+		}
+
+		if (
+			(!currSettings.globalSettings.radarr.monitor ||
+				!currSettings.globalSettings.radarr.rootFolderPath) &&
+			currSettings.globalSettings.radarr.baseUrl?.length !== 0 &&
+			currSettings.globalSettings.radarr.apiKey?.length !== 0
+		) {
+			valuesChanged = false;
+			return;
+		}
+
 		valuesChanged = JSON.stringify(settings) !== JSON.stringify(currSettings);
 	});
 </script>
@@ -139,6 +153,10 @@
 						if (result.type !== 'success') {
 							if (result.data?.code === 1) {
 								errorMessage = $_('settings.misc.checkJellyfinCredentials');
+							} else if (result.data?.code === 2) {
+								errorMessage = $_('settings.misc.checkRadarrCredentials');
+							} else if (result.data?.code === 3) {
+								errorMessage = $_('settings.misc.radarrConfigurationInvalid');
 							}
 						} else if (result.data?.needLogin) {
 							window.location.href = '/login';

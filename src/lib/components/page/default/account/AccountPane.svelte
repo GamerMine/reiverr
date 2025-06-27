@@ -3,8 +3,9 @@
 	import UserImage from '$lib/components/common/images/UserImage.svelte';
 	import Divider from '$lib/components/common/misc/Divider.svelte';
 	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
-	import { Exit } from 'svelte-radix';
+	import { Exit, Gear } from 'svelte-radix';
 	import { jellyfinDisconnectUser, type JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
+	import { _ } from 'svelte-i18n';
 
 	let user: JellyfinUser = JSON.parse(localStorage.getItem('user') || '{}') || undefined;
 </script>
@@ -16,7 +17,9 @@
 			<div class="ml-4 w-36">
 				<p class="truncate">{user.Name}</p>
 				<p class="text-zinc-700 text-sm truncate">
-					{user.Policy?.IsAdministrator ? 'Administrator' : 'User'}
+					{user.Policy?.IsAdministrator
+						? $_('navbar.userMenu.administrator')
+						: $_('navbar.userMenu.user')}
 				</p>
 			</div>
 		</div>
@@ -27,7 +30,7 @@
 				klass="w-full"
 				onclick={() => (window.location.href = '/settings')}
 			>
-				<Exit size="20"></Exit><span class="flex">Settings</span>
+				<Gear size="20"></Gear><span class="flex ml-2">{$_('navbar.userMenu.settings')}</span>
 			</Button>
 		</div>
 		<Divider />
@@ -40,7 +43,7 @@
 					window.location.href = '/login';
 				}}
 			>
-				<Exit size="20"></Exit><span class="flex">Logout</span>
+				<Exit size="20"></Exit><span class="flex ml-2">{$_('navbar.userMenu.logout')}</span>
 			</Button>
 		</div>
 	</div>

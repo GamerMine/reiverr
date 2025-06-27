@@ -72,9 +72,6 @@
 		<a href="/sources" class={page && getLinkStyle('/sources')}>
 			{$_('navbar.sources')}
 		</a>
-		<a href="/settings" class={page && getLinkStyle('/settings')}>
-			{$_('navbar.settings')}
-		</a>
 	</div>
 	<div class="flex gap-2 items-center">
 		<IconButton onclick={openSearchModal}>
@@ -131,13 +128,6 @@
 				class={page && getLinkStyle('/sources')}
 			>
 				{$_('navbar.sources')}
-			</a>
-			<a
-				onclick={() => (isMobileMenuVisible = false)}
-				href="/settings"
-				class={page && getLinkStyle('/settings')}
-			>
-				{$_('navbar.settings')}
 			</a>
 		</div>
 	</div>

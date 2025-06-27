@@ -8,6 +8,7 @@ import type { JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
 import type { UserSettings } from '$lib/entities/Types';
 import type { PageServerLoad } from './$types';
 import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
+import { checkRadarrConnection } from '$lib/apis/radarr/server/radarr.server';
 
 export const load: PageServerLoad = async ({ cookies }) => {
 	const userReq = await isJellyfinUserConnected(cookies);
@@ -49,6 +50,12 @@ export const actions = {
 		const adminJellyfinBaseUrl = (formData.get('adminJellyfinBaseUrl') as string).trim();
 		const adminJellyfinApiKey = (formData.get('adminJellyfinApiKey') as string).trim();
 
+		const adminRadarrBaseUrl = (formData.get('adminRadarrBaseUrl') as string).trim();
+		const adminRadarrApiKey = (formData.get('adminRadarrApiKey') as string).trim();
+		const adminRadarrRootFolderPath = (formData.get('adminRadarrRootFolderPath') as string).trim();
+		const adminRadarrMonitor = (formData.get('adminRadarrMonitor') as string).trim();
+		const adminRadarrStartSearch = (formData.get('adminRadarrStartSearch') as string) === 'on';
+
 		const newUserSettings: UserSettings = {
 			interface: {
 				language: userLanguage,
@@ -59,11 +66,15 @@ export const actions = {
 				region: userDiscoverRegion,
 				excludeLibraryItems: userDiscoverExcludeLibraryItems,
 				includedLanguages: userDiscoverIncludedLanguages
+			},
+			radarr: {
+				defaultQualityProfileId: null
 			}
 		};
 
 		await UserSettingsEntity.setUserSettings(user.Id, newUserSettings);
 
+		let needLogin = false;
 		if (user.Policy && user.Policy.IsAdministrator) {
 			if (
 				adminJellyfinBaseUrl &&
@@ -77,19 +88,43 @@ export const actions = {
 						adminJellyfinApiKey
 					);
 					cookies.delete('access_token', { path: '/' });
-					return {
-						sucess: true,
-						needLogin: true
-					};
+					needLogin = true;
 				} else {
-					return fail(404, { code: 1 });
+					return fail(422, { code: 1 });
+				}
+			}
+
+			// New Radarr BaseUrl & ApiKey
+			if (
+				adminRadarrBaseUrl &&
+				adminRadarrApiKey &&
+				adminRadarrBaseUrl !== (await GlobalSettingsEntity.getRadarrBaseUrl())
+			) {
+				const connection = await checkRadarrConnection(adminRadarrBaseUrl, adminRadarrApiKey);
+				if (connection.ok) {
+					await GlobalSettingsEntity.setRadarrApiEndpoint(adminRadarrBaseUrl, adminRadarrApiKey);
+				} else {
+					return fail(422, { code: 2 });
+				}
+			}
+
+			// If Radarr connection is possible, checks for the configuration
+			if (await checkRadarrConnection()) {
+				if (adminRadarrRootFolderPath && adminRadarrMonitor) {
+					await GlobalSettingsEntity.setRadarrApiConfiguration(
+						adminRadarrRootFolderPath,
+						adminRadarrMonitor,
+						adminRadarrStartSearch
+					);
+				} else {
+					return fail(422, { code: 3 });
 				}
 			}
 		}
 
 		return {
 			success: true,
-			needLogin: false
+			needLogin: needLogin
 		};
 	}
 };

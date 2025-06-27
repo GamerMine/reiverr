@@ -12,9 +12,8 @@ export type GlobalSettings = {
 	radarr: {
 		baseUrl: string | null;
 		apiKey: string | null;
-		rootFolderPath: string;
-		qualityProfileId: number;
-		monitor: number;
+		rootFolderPath: string | null;
+		monitor: string | null;
 		startSearch: boolean;
 	};
 	jellyfin: {
@@ -33,6 +32,9 @@ export type UserSettings = {
 		region: string;
 		excludeLibraryItems: boolean;
 		includedLanguages: string;
+	};
+	radarr: {
+		defaultQualityProfileId: number | null;
 	};
 };
 
@@ -56,9 +58,8 @@ export const defaultGlobalSettings: GlobalSettings = {
 	radarr: {
 		apiKey: null,
 		baseUrl: null,
-		qualityProfileId: 0,
-		rootFolderPath: '',
-		monitor: 1,
+		rootFolderPath: null,
+		monitor: null,
 		startSearch: true
 	},
 	jellyfin: {
@@ -77,5 +78,8 @@ export const defaultUserSettings: UserSettings = {
 		region: '',
 		excludeLibraryItems: false,
 		includedLanguages: 'en'
+	},
+	radarr: {
+		defaultQualityProfileId: null
 	}
 };

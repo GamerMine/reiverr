@@ -26,6 +26,10 @@ export class UserSettingsEntity extends BaseEntity {
 	@Column('text', { default: defaultUserSettings.discover.includedLanguages })
 	discoverIncludedLanguages: string;
 
+	// Radarr
+	@Column('integer', { default: defaultUserSettings.radarr.defaultQualityProfileId })
+	radarrQualityProfileId: number | null;
+
 	public static async getUserSettings(userId: string) {
 		const userSettings = await this.findOne({ where: { userId } });
 
@@ -51,6 +55,9 @@ export class UserSettingsEntity extends BaseEntity {
 				region: userSettingsEntity.discoverRegion,
 				excludeLibraryItems: userSettingsEntity.discoverExcludeLibraryItems,
 				includedLanguages: userSettingsEntity.discoverIncludedLanguages
+			},
+			radarr: {
+				defaultQualityProfileId: userSettingsEntity.radarrQualityProfileId
 			}
 		};
 	}
@@ -74,5 +81,7 @@ export class UserSettingsEntity extends BaseEntity {
 		userSettingsEntity.discoverRegion = newUserSettings.discover.region;
 		userSettingsEntity.discoverIncludedLanguages = newUserSettings.discover.includedLanguages;
 		userSettingsEntity.discoverExcludeLibraryItems = newUserSettings.discover.excludeLibraryItems;
+
+		userSettingsEntity.radarrQualityProfileId = newUserSettings.radarr.defaultQualityProfileId;
 	}
 }
