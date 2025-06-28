@@ -27,8 +27,11 @@ export class UserSettingsEntity extends BaseEntity {
 	discoverIncludedLanguages: string;
 
 	// Radarr
-	@Column('integer', { default: defaultUserSettings.radarr.defaultQualityProfileId })
-	radarrQualityProfileId: number | null;
+	@Column('text', {
+		nullable: true,
+		default: defaultUserSettings.radarr.defaultQualityProfileId
+	})
+	radarrQualityProfileId: string | undefined;
 
 	public static async getUserSettings(userId: string) {
 		const userSettings = await this.findOne({ where: { userId } });

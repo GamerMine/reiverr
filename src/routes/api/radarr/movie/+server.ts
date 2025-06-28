@@ -22,10 +22,15 @@ export const GET: RequestHandler = async () => {
 						'Content-Type': 'application/json'
 					}
 				});
+			})
+			.catch((e) => {
+				return new Response(JSON.stringify({}), {
+					statusText: e.cause.code
+				});
 			});
 	} else {
-		return new Response(null, {
-			status: 404
+		return new Response(JSON.stringify({}), {
+			statusText: 'No address provided'
 		});
 	}
 };
@@ -54,8 +59,8 @@ export const POST: RequestHandler = async ({ request }) => {
 				});
 			});
 	} else {
-		return new Response(null, {
-			status: 404
+		return new Response(JSON.stringify({}), {
+			statusText: 'No address provided'
 		});
 	}
 };

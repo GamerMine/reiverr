@@ -11,7 +11,7 @@ export type RadarrRootFolderResource = components['schemas']['RootFolderResource
 
 export interface RadarrMovieOptions {
 	title: string;
-	qualityProfileId: number;
+	qualityProfileId: string;
 	minimumAvailability: 'announced' | 'inCinemas' | 'released';
 	tags: number[];
 	year: number;
@@ -42,7 +42,7 @@ export const addMovieToRadarr = async (tmdbId: number) => {
 	const search = settings.globalSettings.radarr.startSearch;
 
 	const options: RadarrMovieOptions = {
-		qualityProfileId: settings.userSettings.radarr.defaultQualityProfileId || 0,
+		qualityProfileId: settings.userSettings.radarr.defaultQualityProfileId || '0',
 		rootFolderPath: settings.globalSettings.radarr.rootFolderPath || '',
 		minimumAvailability: 'announced',
 		title: tmdbMovie.title || tmdbMovie.original_title || '',
@@ -117,9 +117,12 @@ export const getRadarrHealth = async (
 	baseUrl: string | undefined = undefined,
 	apiKey: string | undefined = undefined
 ) => {
-	let request = `/api/radarr/health?baseUrl=${baseUrl}`;
-	if (apiKey) {
-		request += `&apiKey=${apiKey}`;
+	let request = `/api/radarr/health`;
+	if (baseUrl) {
+		request += `?baseUrl=${baseUrl}`;
+		if (apiKey) {
+			request += `&apiKey=${apiKey}`;
+		}
 	}
 
 	return await fetch(request, {

@@ -3,7 +3,7 @@
 
 	let {
 		type = 'text',
-		value = $bindable(type === 'text' || 'password' ? '' : 0),
+		value = $bindable(undefined),
 		placeholder = '',
 		name = '',
 		disabled = false,

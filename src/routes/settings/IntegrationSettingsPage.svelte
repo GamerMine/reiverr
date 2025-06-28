@@ -15,10 +15,11 @@
 	import { getRadarrRootFolders } from '$lib/apis/radarr/radarrApi';
 	import { _ } from 'svelte-i18n';
 	import Toggle from '$lib/components/common/inputs/forms/Toggle.svelte';
-	import type { GlobalSettings } from '$lib/entities/Types';
+	import { defaultGlobalSettings, type GlobalSettings } from '$lib/entities/Types';
 	import { jellyfinTestConnection } from '$lib/apis/jellyfin/jellyfinApi';
 	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
 	import { onMount } from 'svelte';
+	import ConfirmDialog from '$lib/components/common/inputs/forms/ConfirmDialog.svelte';
 
 	let {
 		visible,
@@ -38,6 +39,23 @@
 	let sonarrQualityProfiles: undefined | { id: number; name: string }[] = $state();
 	let sonarrLanguageProfiles: undefined | { id: number; name: string }[] = $state();
 	let sonarrMonitors: undefined | { id: number; type: string }[] = $state();*/
+
+	let confirmDialogVisible = $state(false);
+	let confirmDialogMessage = $state('');
+	let confirmDialogResolve: (confirm: boolean) => void;
+
+	function showConfirmDialog(message: string): Promise<boolean> {
+		confirmDialogMessage = message;
+		confirmDialogVisible = true;
+		return new Promise((resolve) => {
+			confirmDialogResolve = resolve;
+		});
+	}
+
+	function confirmDialog(confirm: boolean) {
+		confirmDialogVisible = false;
+		confirmDialogResolve(confirm);
+	}
 
 	async function updateJellyfinHealth(): Promise<boolean> {
 		if (globalSettings.jellyfin.baseUrl) {
@@ -74,14 +92,31 @@
 		radarrConnected = await updateRadarrHealth();
 	});
 
-	/*function handleRemoveIntegration(service: 'sonarr' | 'radarr') {
-		// TODO: Handle integration remove with internal API endpoint
-		if (service === 'sonarr') {
-			updateSonarrHealth();
-		} else if (service === 'radarr') {
-			updateRadarrHealth();
+	async function removeIntegration(service: 'sonarr' | 'radarr') {
+		let message: string;
+
+		switch (service) {
+			case 'radarr': {
+				message = $_('settings.misc.radarrRemoveConfirmDialog');
+				break;
+			}
+			default: {
+				message = '';
+			}
 		}
-	}*/
+
+		let isConfirmed = await showConfirmDialog(message);
+		if (isConfirmed) {
+			await fetch(`/api/settings?integration=${service}`, {
+				method: 'DELETE'
+			});
+
+			if (service === 'radarr') {
+				globalSettings.radarr = defaultGlobalSettings.radarr;
+				await updateRadarrHealth();
+			}
+		}
+	}
 
 	$effect(() => {
 		/*if (sonarrConnected) {
@@ -263,8 +298,11 @@
 			</div>
 			<div class="grid grid-cols-[1fr_min-content] gap-2">
 				<TestConnectionButton handleHealthCheck={updateRadarrHealth} />
-				<Button onclick={() => handleRemoveIntegration('radarr')} variant="error">
-					<!-- TODO: handleRemoveIntegration -->
+				<Button
+					onclick={async () => await removeIntegration('radarr')}
+					variant="error"
+					disabled={!radarrConnected}
+				>
 					<Trash size="20" />
 				</Button>
 			</div>
@@ -349,3 +387,6 @@
 		</IntegrationCard>
 	</div>
 </div>
+{#if confirmDialogVisible}
+	<ConfirmDialog variant="yesNo" onConfirm={confirmDialog} confirmMessage={confirmDialogMessage} />
+{/if}

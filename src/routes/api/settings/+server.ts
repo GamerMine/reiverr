@@ -1,11 +1,41 @@
+import { type RequestHandler } from '@sveltejs/kit';
+import { isJellyfinUserConnected } from '$lib/apis/jellyfin/server/jellyfin.server';
+import type { JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
 import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
-import { json, type RequestHandler } from '@sveltejs/kit';
+import { defaultGlobalSettings } from '$lib/entities/Types';
 
-export const GET: RequestHandler = async () => {
-	return json(await GlobalSettingsEntity.getClient());
-};
+export const DELETE: RequestHandler = async ({ cookies, url }) => {
+	const userReq = await isJellyfinUserConnected(cookies);
+	if (userReq.status !== 200) {
+		return new Response(JSON.stringify({}), {
+			status: 401
+		});
+	}
+	const user: JellyfinUser = await userReq.json();
 
-export const POST: RequestHandler = async ({ request }) => {
-	const values = await request.json();
-	return json(await GlobalSettingsEntity.set('default', values));
+	if (user.Policy && user.Policy.IsAdministrator) {
+		const integration = url.searchParams.get('integration');
+
+		if (integration) {
+			switch (integration) {
+				case 'radarr': {
+					await GlobalSettingsEntity.setRadarrApiEndpoint(undefined, undefined);
+					await GlobalSettingsEntity.setRadarrApiConfiguration(
+						undefined,
+						undefined,
+						defaultGlobalSettings.radarr.startSearch
+					);
+					break;
+				}
+			}
+		}
+
+		return new Response(JSON.stringify({}), {
+			status: 200
+		});
+	} else {
+		return new Response(JSON.stringify({}), {
+			status: 401
+		});
+	}
 };

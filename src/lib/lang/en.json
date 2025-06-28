@@ -165,6 +165,10 @@
 				"includedLanguagesDescription": "Filter results based on spoken language. Takes ISO 639-1 language codes separated with commas. Leave empty to disable."
 			}
 		},
+		"radarr": {
+			"preferedQualityProfile": "Prefered quality profile",
+			"preferedQualityProfileDescription": "The quality profile that will be selected by default when asking for a movie."
+		},
 		"integrations": {
 			"integrations": "Integrations",
 			"integrationsNote": "Note: Base urls must be accessible from the browser, meaning that internal docker addresses won't work, for example. API Keys <span class='font-medium underline'>will be exposed</span> to the browser.",
@@ -190,6 +194,7 @@
 			"checkRadarrCredentials": "Could not connect to Radarr. Check Radarr credentials.",
 			"radarrConfigurationInvalid": "The Radarr configuration is invalid. Please check the Root Folder field.",
 			"jellyfinConfirmChangesDialog": "By changing the Jellyfin configuration, you will be redirected to the login page.",
+			"radarrRemoveConfirmDialog": "You are about to remove the Radarr integration. Do you want to proceed?",
 			"saveChanges": "Save Changes",
 			"resetToDefaults": "Reset to Defaults ",
 			"changelog": "Changelog",

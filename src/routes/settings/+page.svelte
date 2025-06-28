@@ -14,13 +14,17 @@
 	import type { PageProps } from '../../../.svelte-kit/types/src/routes/settings/$types';
 	import { enhance } from '$app/forms';
 	import ConfirmDialog from '$lib/components/common/inputs/forms/ConfirmDialog.svelte';
+	import { onMount } from 'svelte';
+	import { getRadarrHealth } from '$lib/apis/radarr/radarrApi';
+	import RadarrSettingsPage from './RadarrSettingsPage.svelte';
 
-	type Section = 'general' | 'integrations';
+	type Section = 'general' | 'radarr' | 'integrations';
 
 	let { data }: PageProps = $props();
 
 	let openTab: Section = $state('general');
 	let errorMessage: string | undefined = $state();
+	let showRadarrSettings: boolean = $state(false);
 
 	let currSettings: Settings = $state($state.snapshot(settings));
 	let valuesChanged = $state(false);
@@ -43,7 +47,7 @@
 		});
 	}
 
-	function confirmDialog() {
+	function confirmDialog(_: boolean) {
 		confirmDialogVisible = false;
 		confirmDialogResolve();
 	}
@@ -76,6 +80,10 @@
 
 		valuesChanged = JSON.stringify(settings) !== JSON.stringify(currSettings);
 	});
+
+	onMount(async () => {
+		showRadarrSettings = await getRadarrHealth();
+	});
 </script>
 
 <div
@@ -100,6 +108,14 @@
 			<button onclick={() => (openTab = 'general')} class={openTab && getNavButtonStyle('general')}>
 				{$_('settings.navbar.general')}
 			</button>
+			{#if showRadarrSettings}
+				<button
+					onclick={() => (openTab = 'radarr')}
+					class={openTab && getNavButtonStyle('general')}
+				>
+					Radarr
+				</button>
+			{/if}
 			{#if data.isAdmin}
 				<button
 					onclick={() => (openTab = 'integrations')}
@@ -171,6 +187,11 @@
 					bind:userSettings={currSettings.userSettings}
 				/>
 
+				<RadarrSettingsPage
+					visible={openTab === 'radarr'}
+					bind:userSettings={currSettings.userSettings}
+				/>
+
 				{#if data.isAdmin}
 					<IntegrationSettingsPage
 						visible={openTab === 'integrations'}
@@ -189,5 +210,9 @@
 	</div>
 </div>
 {#if confirmDialogVisible}
-	<ConfirmDialog onConfirm={confirmDialog} confirmMessage={confirmDialogMessage} />
+	<ConfirmDialog
+		variant="confirm"
+		onConfirm={confirmDialog}
+		confirmMessage={confirmDialogMessage}
+	/>
 {/if}

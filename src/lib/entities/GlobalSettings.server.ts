@@ -9,10 +9,10 @@ export class GlobalSettingsEntity extends BaseEntity {
 	// Sonarr
 
 	@Column('text', { nullable: true, default: defaultGlobalSettings.sonarr.baseUrl })
-	sonarrBaseUrl: string | null;
+	sonarrBaseUrl: string | undefined;
 
 	@Column('text', { nullable: true, default: defaultGlobalSettings.sonarr.apiKey })
-	sonarrApiKey: string | null;
+	sonarrApiKey: string | undefined;
 
 	@Column('text', { default: defaultGlobalSettings.sonarr.rootFolderPath })
 	sonarrRootFolderPath: string;
@@ -32,16 +32,16 @@ export class GlobalSettingsEntity extends BaseEntity {
 	// Radarr
 
 	@Column('text', { nullable: true, default: defaultGlobalSettings.radarr.baseUrl })
-	radarrBaseUrl: string | null;
+	radarrBaseUrl: string | undefined;
 
 	@Column('text', { nullable: true, default: defaultGlobalSettings.radarr.apiKey })
-	radarrApiKey: string | null;
+	radarrApiKey: string | undefined;
 
 	@Column('text', { nullable: true, default: defaultGlobalSettings.radarr.rootFolderPath })
-	radarrRootFolderPath: string | null;
+	radarrRootFolderPath: string | undefined;
 
 	@Column('text', { nullable: true, default: defaultGlobalSettings.radarr.monitor })
-	radarrMonitor: string | null;
+	radarrMonitor: string | undefined;
 
 	@Column('boolean', { default: defaultGlobalSettings.radarr.startSearch })
 	radarrStartSearch: boolean;
@@ -49,10 +49,10 @@ export class GlobalSettingsEntity extends BaseEntity {
 	// Jellyfin
 
 	@Column('text', { nullable: true, default: defaultGlobalSettings.jellyfin.baseUrl })
-	jellyfinBaseUrl: string | null;
+	jellyfinBaseUrl: string | undefined;
 
 	@Column('text', { nullable: true, default: defaultGlobalSettings.jellyfin.apiKey })
-	jellyfinApiKey: string | null;
+	jellyfinApiKey: string | undefined;
 
 	public static async getClient(name = 'default'): Promise<GlobalSettings> {
 		const settings = await this.findOne({ where: { name } });
@@ -100,7 +100,7 @@ export class GlobalSettingsEntity extends BaseEntity {
 			const defaultSettings = new GlobalSettingsEntity();
 			defaultSettings.name = 'default';
 			await defaultSettings.save();
-			return null;
+			return undefined;
 		}
 
 		return settings.radarrBaseUrl;
@@ -113,7 +113,7 @@ export class GlobalSettingsEntity extends BaseEntity {
 			const defaultSettings = new GlobalSettingsEntity();
 			defaultSettings.name = 'default';
 			await defaultSettings.save();
-			return null;
+			return undefined;
 		}
 
 		return settings.radarrApiKey;
@@ -197,7 +197,11 @@ export class GlobalSettingsEntity extends BaseEntity {
 		await settings.save();
 	}
 
-	public static async setRadarrApiEndpoint(baseURL: string, apiKey: string, name = 'default') {
+	public static async setRadarrApiEndpoint(
+		baseURL: string | undefined,
+		apiKey: string | undefined,
+		name = 'default'
+	) {
 		const settings = await this.findOne({ where: { name } });
 
 		if (!settings) return;
@@ -209,8 +213,8 @@ export class GlobalSettingsEntity extends BaseEntity {
 	}
 
 	public static async setRadarrApiConfiguration(
-		rootFolderPath: string,
-		monitor: string,
+		rootFolderPath: string | undefined,
+		monitor: string | undefined,
 		startSearch: boolean,
 		name = 'default'
 	) {

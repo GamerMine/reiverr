@@ -45,16 +45,20 @@ export const actions = {
 		const userDiscoverExcludeLibraryItems =
 			(formData.get('userDiscoverExcludeLibraryItems') as string) === 'on';
 		const userDiscoverIncludedLanguages = formData.get('userDiscoverIncludedLanguages') as string;
+		const userDefaultQualityProfileId = formData.get('userDefaultQualityProfileId') as string;
 
 		// Global Settings (admin only)
-		const adminJellyfinBaseUrl = (formData.get('adminJellyfinBaseUrl') as string).trim();
-		const adminJellyfinApiKey = (formData.get('adminJellyfinApiKey') as string).trim();
+		const adminJellyfinBaseUrl = ((formData.get('adminJellyfinBaseUrl') as string) || '').trim();
+		const adminJellyfinApiKey = ((formData.get('adminJellyfinApiKey') as string) || '').trim();
 
-		const adminRadarrBaseUrl = (formData.get('adminRadarrBaseUrl') as string).trim();
-		const adminRadarrApiKey = (formData.get('adminRadarrApiKey') as string).trim();
-		const adminRadarrRootFolderPath = (formData.get('adminRadarrRootFolderPath') as string).trim();
-		const adminRadarrMonitor = (formData.get('adminRadarrMonitor') as string).trim();
-		const adminRadarrStartSearch = (formData.get('adminRadarrStartSearch') as string) === 'on';
+		const adminRadarrBaseUrl = ((formData.get('adminRadarrBaseUrl') as string) || '').trim();
+		const adminRadarrApiKey = ((formData.get('adminRadarrApiKey') as string) || '').trim();
+		const adminRadarrRootFolderPath = (
+			(formData.get('adminRadarrRootFolderPath') as string) || ''
+		).trim();
+		const adminRadarrMonitor = ((formData.get('adminRadarrMonitor') as string) || '').trim();
+		const adminRadarrStartSearch =
+			((formData.get('adminRadarrStartSearch') as string) || '') === 'on';
 
 		const newUserSettings: UserSettings = {
 			interface: {
@@ -68,7 +72,7 @@ export const actions = {
 				includedLanguages: userDiscoverIncludedLanguages
 			},
 			radarr: {
-				defaultQualityProfileId: null
+				defaultQualityProfileId: userDefaultQualityProfileId
 			}
 		};
 

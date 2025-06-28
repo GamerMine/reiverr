@@ -1,8 +1,8 @@
 export type GlobalSettings = {
 	initialised: boolean;
 	sonarr: {
-		baseUrl: string | null;
-		apiKey: string | null;
+		baseUrl: string | undefined;
+		apiKey: string | undefined;
 		rootFolderPath: string;
 		qualityProfileId: number;
 		languageProfileId: number;
@@ -10,15 +10,15 @@ export type GlobalSettings = {
 		StartSearch: boolean;
 	};
 	radarr: {
-		baseUrl: string | null;
-		apiKey: string | null;
-		rootFolderPath: string | null;
-		monitor: string | null;
+		baseUrl: string | undefined;
+		apiKey: string | undefined;
+		rootFolderPath: string | undefined;
+		monitor: string | undefined;
 		startSearch: boolean;
 	};
 	jellyfin: {
-		baseUrl: string | null;
-		apiKey: string | null;
+		baseUrl: string | undefined;
+		apiKey: string | undefined;
 	};
 };
 
@@ -34,7 +34,7 @@ export type UserSettings = {
 		includedLanguages: string;
 	};
 	radarr: {
-		defaultQualityProfileId: number | null;
+		defaultQualityProfileId: string | undefined;
 	};
 };
 
@@ -47,8 +47,8 @@ export const defaultGlobalSettings: GlobalSettings = {
 	initialised: false,
 
 	sonarr: {
-		apiKey: null,
-		baseUrl: null,
+		apiKey: undefined,
+		baseUrl: undefined,
 		monitor: 0,
 		StartSearch: true,
 		qualityProfileId: 0,
@@ -56,15 +56,15 @@ export const defaultGlobalSettings: GlobalSettings = {
 		languageProfileId: 0
 	},
 	radarr: {
-		apiKey: null,
-		baseUrl: null,
-		rootFolderPath: null,
-		monitor: null,
+		apiKey: undefined,
+		baseUrl: undefined,
+		rootFolderPath: undefined,
+		monitor: undefined,
 		startSearch: true
 	},
 	jellyfin: {
-		apiKey: null,
-		baseUrl: null
+		apiKey: undefined,
+		baseUrl: undefined
 	}
 };
 
@@ -80,6 +80,6 @@ export const defaultUserSettings: UserSettings = {
 		includedLanguages: 'en'
 	},
 	radarr: {
-		defaultQualityProfileId: null
+		defaultQualityProfileId: undefined
 	}
 };

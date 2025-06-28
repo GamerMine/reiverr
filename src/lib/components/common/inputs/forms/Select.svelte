@@ -4,7 +4,7 @@
 	import type { Snippet } from 'svelte';
 
 	let {
-		value = $bindable(''),
+		value = $bindable(undefined),
 		disabled = false,
 		loading = false,
 		name = undefined,
@@ -13,7 +13,7 @@
 
 		onchange = () => {}
 	}: {
-		value?: string;
+		value?: string | undefined;
 		disabled?: boolean;
 		loading?: boolean;
 		name?: string;
