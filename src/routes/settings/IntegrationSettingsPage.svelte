@@ -1,9 +1,8 @@
 <script lang="ts">
 	import {
-		getSonarrLanguageProfiles,
-		getSonarrQualityProfiles,
 		getSonarrRootFolders,
-		getSonarrMonitors
+		getSonarrMonitors,
+		getSonarrHealth
 	} from '$lib/apis/sonarr/sonarrApi';
 	import { getRadarrHealth, getRadarrMonitors } from '$lib/apis/radarr/radarrApi';
 	import Input from '$lib/components/common/inputs/forms/Input.svelte';
@@ -35,10 +34,8 @@
 	let radarrRootFolders: undefined | { id: string; path: string }[] = $state();
 	let radarrMonitors: undefined | { id: string; type: string }[] = $state();
 
-	/*let sonarrRootFolders: undefined | { id: number; path: string }[] = $state();
-	let sonarrQualityProfiles: undefined | { id: number; name: string }[] = $state();
-	let sonarrLanguageProfiles: undefined | { id: number; name: string }[] = $state();
-	let sonarrMonitors: undefined | { id: number; type: string }[] = $state();*/
+	let sonarrConnected: boolean = $state(false);
+	let sonarrRootFolders: undefined | { id: number; path: string }[] = $state();
 
 	let confirmDialogVisible = $state(false);
 	let confirmDialogMessage = $state('');
@@ -74,15 +71,28 @@
 
 	async function updateRadarrHealth(): Promise<boolean> {
 		if (globalSettings.radarr.baseUrl) {
-			return getRadarrHealth(
-				globalSettings.radarr.baseUrl,
-				globalSettings.radarr.apiKey || undefined
-			).then((ok) => {
-				radarrConnected = ok;
-				return ok;
-			});
+			return getRadarrHealth(globalSettings.radarr.baseUrl, globalSettings.radarr.apiKey).then(
+				(ok) => {
+					radarrConnected = ok;
+					return ok;
+				}
+			);
 		} else {
 			radarrConnected = false;
+			return false;
+		}
+	}
+
+	async function updateSonarrHealth(): Promise<boolean> {
+		if (globalSettings.sonarr.baseUrl) {
+			return getSonarrHealth(globalSettings.sonarr.baseUrl, globalSettings.sonarr.apiKey).then(
+				(ok) => {
+					sonarrConnected = ok;
+					return ok;
+				}
+			);
+		} else {
+			sonarrConnected = false;
 			return false;
 		}
 	}
@@ -90,6 +100,7 @@
 	onMount(async () => {
 		jellyfinConnected = await updateJellyfinHealth();
 		radarrConnected = await updateRadarrHealth();
+		sonarrConnected = await updateSonarrHealth();
 	});
 
 	async function removeIntegration(service: 'sonarr' | 'radarr') {
@@ -98,6 +109,10 @@
 		switch (service) {
 			case 'radarr': {
 				message = $_('settings.misc.radarrRemoveConfirmDialog');
+				break;
+			}
+			case 'sonarr': {
+				message = $_('settings.misc.sonarrRemoveConfirmDialog');
 				break;
 			}
 			default: {
@@ -114,44 +129,28 @@
 			if (service === 'radarr') {
 				globalSettings.radarr = defaultGlobalSettings.radarr;
 				await updateRadarrHealth();
+			} else if (service === 'sonarr') {
+				globalSettings.sonarr = defaultGlobalSettings.sonarr;
+				await updateSonarrHealth();
 			}
 		}
 	}
 
 	$effect(() => {
-		/*if (sonarrConnected) {
-			getSonarrRootFolders(
-				values.sonarr.baseUrl || undefined,
-				values.sonarr.apiKey || undefined
-			).then((folders) => {
-				sonarrRootFolders = folders.map((f) => ({ id: f.id || 0, path: f.path || '' }));
-			});
-
-			getSonarrQualityProfiles(
-				values.sonarr.baseUrl || undefined,
-				values.sonarr.apiKey || undefined
-			).then((profiles) => {
-				sonarrQualityProfiles = profiles.map((p) => ({ id: p.id || 0, name: p.name || '' }));
-			});
-
-			getSonarrLanguageProfiles(
-				values.sonarr.baseUrl || undefined,
-				values.sonarr.apiKey || undefined
-			).then((profiles) => {
-				sonarrLanguageProfiles = profiles.map((p) => ({ id: p.id || 0, name: p.name || '' }));
-			});
-			getSonarrMonitors().then((mon) => {
-				sonarrMonitors = mon.map((p, index) => ({ id: index || 0, type: p || '' }));
-			});
-		}*/
+		if (sonarrConnected) {
+			getSonarrRootFolders(globalSettings.sonarr.baseUrl, globalSettings.sonarr.apiKey).then(
+				(folders) => {
+					sonarrRootFolders = folders.map((f) => ({ id: f.id || 0, path: f.path || '' }));
+				}
+			);
+		}
 
 		if (radarrConnected) {
-			getRadarrRootFolders(
-				globalSettings.radarr.baseUrl || undefined,
-				globalSettings.radarr.apiKey || undefined
-			).then((folders) => {
-				radarrRootFolders = folders.map((f) => ({ id: String(f.id) || '0', path: f.path || '' }));
-			});
+			getRadarrRootFolders(globalSettings.radarr.baseUrl, globalSettings.radarr.apiKey).then(
+				(folders) => {
+					radarrRootFolders = folders.map((f) => ({ id: String(f.id) || '0', path: f.path || '' }));
+				}
+			);
 
 			getRadarrMonitors().then((mon) => {
 				radarrMonitors = mon.map((p, index) => ({ id: String(index) || '0', type: p || '' }));
@@ -172,36 +171,41 @@
 		<h1 class="font-medium text-2xl text-zinc-200 tracking-wide">
 			{$_('settings.integrations.integrations')}
 		</h1>
-		<p class="text-sm text-zinc-400">
-			<!--- @html to render underline class-->
-			{@html $_('settings.integrations.integrationsNote')}
-		</p>
 	</div>
 
-	<!--<div class="justify-self-stretch col-span-2">
+	<div class="justify-self-stretch col-span-2">
 		<IntegrationCard title="Sonarr" status={sonarrConnected ? 'connected' : 'disconnected'}>
 			<div class="flex flex-col gap-1">
 				<h2 class="text-sm text-zinc-500">
 					{$_('settings.integrations.baseUrl')}
 				</h2>
 				<Input
+					bind:value={globalSettings.sonarr.baseUrl}
 					name="adminSonarrBaseUrl"
 					placeholder={'http://127.0.0.1:8989'}
 					klass="w-full"
-					onchange={() => updateSonarrHealth(true)}
 				/>
 			</div>
 			<div class="flex flex-col gap-1">
 				<h2 class="text-sm text-zinc-500">
 					{$_('settings.integrations.apiKey')}
 				</h2>
-				<Input name="adminSonarrApiKey" klass="w-full" onchange={() => updateSonarrHealth(true)} />
+				<Input
+					bind:value={globalSettings.sonarr.apiKey}
+					name="adminSonarrApiKey"
+					klass="w-full"
+					type="password"
+				/>
 			</div>
 			<div class="grid grid-cols-[1fr_min-content] gap-2">
 				<TestConnectionButton handleHealthCheck={updateSonarrHealth} />
-				<FormButton onclick={() => handleRemoveIntegration('sonarr')} type="error">
+				<Button
+					onclick={() => removeIntegration('sonarr')}
+					variant="error"
+					disabled={!sonarrConnected}
+				>
 					<Trash size="20" />
-				</FormButton>
+				</Button>
 			</div>
 			<h1 class="border-b border-zinc-800 py-2">
 				{$_('settings.integrations.options.options')}
@@ -220,57 +224,31 @@
 				{#if !sonarrRootFolders}
 					<Select loading />
 				{:else}
-					<Select name="adminSonarrRootFolderPath">
+					<Select
+						bind:value={globalSettings.sonarr.rootFolderPath}
+						name="adminSonarrRootFolderPath"
+					>
 						{#each sonarrRootFolders as folder}
 							<option value={folder.path}>{folder.path}</option>
 						{/each}
 					</Select>
 				{/if}
 
-				<h2>
-					{$_('settings.integrations.options.qualityProfile')}
-				</h2>
-				{#if !sonarrQualityProfiles}
-					<Select loading />
-				{:else}
-					<Select name="adminSonarrQualityProfileId">
-						{#each sonarrQualityProfiles as profile}
-							<option value={profile.id}>{profile.name}</option>
-						{/each}
-					</Select>
-				{/if}
-
-				<h2>
-					{$_('settings.integrations.options.languageProfile')}
-				</h2>
-				{#if !sonarrLanguageProfiles}
-					<Select loading />
-				{:else}
-					<Select name="adminSonarrLanguageProfileId">
-						{#each sonarrLanguageProfiles as profile}
-							<option value={profile.id}>{profile.name}</option>
-						{/each}
-					</Select>
-				{/if}
 				<h2>Monitor Series</h2>
-				{#if !sonarrMonitors}
-					<Select loading />
-				{:else}
-					<Select name="adminSonarrMonitor">
-						{#each sonarrMonitors as profile}
-							<option value={profile.id}>{profile.type}</option>
-						{/each}
-					</Select>
-				{/if}
+				<Select bind:value={globalSettings.sonarr.monitor} name="adminSonarrMonitor">
+					{#each getSonarrMonitors() as monitor}
+						<option value={monitor}>{monitor}</option>
+					{/each}
+				</Select>
 				<h2>Start searching for new episodes</h2>
-				{#if defaultSettings.sonarr.StartSearch === undefined}
+				{#if globalSettings.sonarr.startSearch === undefined}
 					<Select loading />
 				{:else}
-					<Toggle name="adminSonarrStartSearch" />
+					<Toggle bind:checked={globalSettings.sonarr.startSearch} name="adminSonarrStartSearch" />
 				{/if}
 			</div>
 		</IntegrationCard>
-	</div>-->
+	</div>
 
 	<div class="justify-self-stretch col-span-2">
 		<IntegrationCard title="Radarr" status={radarrConnected ? 'connected' : 'disconnected'}>

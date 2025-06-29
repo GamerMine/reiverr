@@ -17,14 +17,17 @@
 	import { onMount } from 'svelte';
 	import { getRadarrHealth } from '$lib/apis/radarr/radarrApi';
 	import RadarrSettingsPage from './RadarrSettingsPage.svelte';
+	import SonarrSettingsPage from './SonarrSettingsPage.svelte';
+	import { getSonarrHealth } from '$lib/apis/sonarr/sonarrApi';
 
-	type Section = 'general' | 'radarr' | 'integrations';
+	type Section = 'general' | 'radarr' | 'sonarr' | 'integrations';
 
 	let { data }: PageProps = $props();
 
 	let openTab: Section = $state('general');
 	let errorMessage: string | undefined = $state();
 	let showRadarrSettings: boolean = $state(false);
+	let showSonarrSettings: boolean = $state(false);
 
 	let currSettings: Settings = $state($state.snapshot(settings));
 	let valuesChanged = $state(false);
@@ -78,11 +81,27 @@
 			return;
 		}
 
+		if (currSettings.globalSettings.sonarr.baseUrl?.length === 0) {
+			valuesChanged = false;
+			return;
+		}
+
+		if (
+			(!currSettings.globalSettings.sonarr.monitor ||
+				!currSettings.globalSettings.sonarr.rootFolderPath) &&
+			currSettings.globalSettings.sonarr.baseUrl?.length !== 0 &&
+			currSettings.globalSettings.sonarr.apiKey?.length !== 0
+		) {
+			valuesChanged = false;
+			return;
+		}
+
 		valuesChanged = JSON.stringify(settings) !== JSON.stringify(currSettings);
 	});
 
 	onMount(async () => {
 		showRadarrSettings = await getRadarrHealth();
+		showSonarrSettings = await getSonarrHealth();
 	});
 </script>
 
@@ -105,6 +124,7 @@
 				<ChevronLeft size="22" />
 				{$_('settings.navbar.settings')}
 			</button>
+			<p class="text-xs text-zinc-500 mt-1">{$_('settings.navbar.userSettings')}</p>
 			<button onclick={() => (openTab = 'general')} class={openTab && getNavButtonStyle('general')}>
 				{$_('settings.navbar.general')}
 			</button>
@@ -116,7 +136,16 @@
 					Radarr
 				</button>
 			{/if}
+			{#if showSonarrSettings}
+				<button
+					onclick={() => (openTab = 'sonarr')}
+					class={openTab && getNavButtonStyle('general')}
+				>
+					Sonarr
+				</button>
+			{/if}
 			{#if data.isAdmin}
+				<p class="text-xs text-zinc-500 mt-1">{$_('settings.navbar.adminSettings')}</p>
 				<button
 					onclick={() => (openTab = 'integrations')}
 					class={openTab && getNavButtonStyle('integrations')}
@@ -173,6 +202,10 @@
 								errorMessage = $_('settings.misc.checkRadarrCredentials');
 							} else if (result.data?.code === 3) {
 								errorMessage = $_('settings.misc.radarrConfigurationInvalid');
+							} else if (result.data?.code === 4) {
+								errorMessage = $_('settings.misc.checkSonarrCredentials');
+							} else if (result.data?.code === 5) {
+								errorMessage = $_('settings.misc.sonarrConfigurationInvalid');
 							}
 						} else if (result.data?.needLogin) {
 							window.location.href = '/login';
@@ -189,6 +222,11 @@
 
 				<RadarrSettingsPage
 					visible={openTab === 'radarr'}
+					bind:userSettings={currSettings.userSettings}
+				/>
+
+				<SonarrSettingsPage
+					visible={openTab === 'sonarr'}
 					bind:userSettings={currSettings.userSettings}
 				/>
 

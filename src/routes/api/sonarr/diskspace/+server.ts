@@ -1,14 +1,11 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import createClient from 'openapi-fetch';
 import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
-import type { paths } from '$lib/apis/radarr/radarr.generated';
+import type { paths } from '$lib/apis/sonarr/sonarr.generated';
 
-export const GET: RequestHandler = async ({ url }) => {
-	const baseUrl =
-		url.searchParams.get('baseUrl') || (await GlobalSettingsEntity.getRadarrBaseUrl());
-	const apiKeySearch: string | null = url.searchParams.get('apiKey');
-	const apiKeySetting: string | undefined = await GlobalSettingsEntity.getRadarrApiKey();
-	const apiKey: string | undefined = apiKeySearch ?? apiKeySetting;
+export const GET: RequestHandler = async () => {
+	const baseUrl = await GlobalSettingsEntity.getSonarrBaseUrl();
+	const apiKey = await GlobalSettingsEntity.getSonarrApiKey();
 
 	if (baseUrl && apiKey) {
 		return createClient<paths>({
@@ -17,7 +14,7 @@ export const GET: RequestHandler = async ({ url }) => {
 				'X-Api-Key': apiKey
 			}
 		})
-			.GET('/api/v3/health')
+			.GET('/api/v3/diskspace')
 			.then((res) => {
 				return new Response(JSON.stringify(res.data), {
 					status: res.response.status,
@@ -25,10 +22,14 @@ export const GET: RequestHandler = async ({ url }) => {
 						'Content-Type': 'application/json'
 					}
 				});
+			})
+			.catch((e) => {
+				return new Response(JSON.stringify({}), {
+					statusText: e.cause.code
+				});
 			});
 	} else {
 		return new Response(JSON.stringify({}), {
-			status: 404,
 			statusText: 'No address provided'
 		});
 	}

@@ -135,6 +135,8 @@
 	},
 	"settings": {
 		"navbar": {
+			"userSettings": "Paramètres utilisateur",
+			"adminSettings": "Paramètres administrateur",
 			"settings": "Configuration",
 			"general": "Général",
 			"integrations": "Intégrations"
@@ -158,6 +160,10 @@
 		"radarr": {
 			"preferedQualityProfile": "Profil de qualité préféré",
 			"preferedQualityProfileDescription": "Le profil de qualité qui sera selectionné par défaut lors de la demande d'un film."
+		},
+		"sonarr": {
+			"preferedQualityProfile": "Profil de qualité préféré",
+			"preferedQualityProfileDescription": "Le profil de qualité qui sera selectionné par défaut lors de la demande d'une série ou d'un épisode."
 		},
 		"integrations": {
 			"integrations": "Intégrations",
@@ -183,8 +189,11 @@
 			"checkJellyfinCredentials": "Connexion à Jellyfin impossible. Vérifiez les informations de connexions.",
 			"checkRadarrCredentials": "Connexion à Radarr impossible. Vérifiez les informations de connexions.",
 			"radarrConfigurationInvalid": "La configuration de Radarr est invalide. Vérifiez le champ Dossier racine.",
+			"checkSonarrCredentials": "Connexion à Sonarr impossible. Vérifiez les informations de connexions.",
+			"sonarrConfigurationInvalid": "La configuration de Sonarr est invalide. Vérifiez le champ Dossier racine.",
 			"jellyfinConfirmChangesDialog": "En modifiant la configuration de Jellyfin, vous allez être redirigé vers la page de connexion.",
 			"radarrRemoveConfirmDialog": "Vous êtes sur le point de supprimer l'intégration Radarr. Voulez-vous continuer ?",
+			"sonarrRemoveConfirmDialog": "Vous êtes sur le point de supprimer l'intégration Sonarr. Voulez-vous continuer ?",
 			"saveChanges": "Sauvegarder les modifications",
 			"resetToDefaults": "Réinitialiser aux paramètres par défaut",
 			"changelog": "Journal des modifications",

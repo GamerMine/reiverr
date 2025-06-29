@@ -3,7 +3,7 @@
 	import { _ } from 'svelte-i18n';
 	import classNames from 'classnames';
 	import type { UserSettings } from '$lib/entities/Types';
-	import { getRadarrQualityProfiles } from '$lib/apis/radarr/radarrApi';
+	import { getSonarrQualityProfiles } from '$lib/apis/sonarr/sonarrApi.js';
 
 	let { visible, userSettings = $bindable() }: { visible: boolean; userSettings: UserSettings } =
 		$props();
@@ -19,23 +19,23 @@
 	<h1
 		class="font-medium text-xl text-zinc-200 tracking-wide col-span-2 border-b border-zinc-800 justify-self-stretch pb-2 mt-8"
 	>
-		Radarr
+		Sonarr
 	</h1>
 	<div>
-		<h2>{$_('settings.radarr.preferedQualityProfile')}</h2>
+		<h2>{$_('settings.sonarr.preferedQualityProfile')}</h2>
 		<p class="text-sm text-zinc-500 mt-1">
-			{$_('settings.radarr.preferedQualityProfileDescription')}
+			{$_('settings.sonarr.preferedQualityProfileDescription')}
 		</p>
 	</div>
-	{#await getRadarrQualityProfiles()}
+	{#await getSonarrQualityProfiles()}
 		<Select loading />
-	{:then radarrQualityProfiles}
+	{:then sonarrQualityProfiles}
 		<Select
-			name="userRadarrDefaultQualityProfileId"
-			bind:value={userSettings.radarr.defaultQualityProfileId}
+			name="userSonarrDefaultQualityProfileId"
+			bind:value={userSettings.sonarr.defaultQualityProfileId}
 		>
 			<option value=""> {$_('settings.general.discovery.none')} </option>
-			{#each radarrQualityProfiles as profile}
+			{#each sonarrQualityProfiles as profile}
 				<option value={String(profile.id)}>{profile.name}</option>
 			{/each}
 		</Select>

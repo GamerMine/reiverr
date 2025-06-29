@@ -3,11 +3,9 @@ export type GlobalSettings = {
 	sonarr: {
 		baseUrl: string | undefined;
 		apiKey: string | undefined;
-		rootFolderPath: string;
-		qualityProfileId: number;
-		languageProfileId: number;
-		monitor: number;
-		StartSearch: boolean;
+		rootFolderPath: string | undefined;
+		monitor: string | undefined;
+		startSearch: boolean;
 	};
 	radarr: {
 		baseUrl: string | undefined;
@@ -34,7 +32,10 @@ export type UserSettings = {
 		includedLanguages: string;
 	};
 	radarr: {
-		defaultQualityProfileId: string | undefined;
+		defaultQualityProfileId: string;
+	};
+	sonarr: {
+		defaultQualityProfileId: string;
 	};
 };
 
@@ -49,11 +50,9 @@ export const defaultGlobalSettings: GlobalSettings = {
 	sonarr: {
 		apiKey: undefined,
 		baseUrl: undefined,
-		monitor: 0,
-		StartSearch: true,
-		qualityProfileId: 0,
-		rootFolderPath: '',
-		languageProfileId: 0
+		rootFolderPath: undefined,
+		monitor: undefined,
+		startSearch: true
 	},
 	radarr: {
 		apiKey: undefined,
@@ -80,6 +79,9 @@ export const defaultUserSettings: UserSettings = {
 		includedLanguages: 'en'
 	},
 	radarr: {
-		defaultQualityProfileId: undefined
+		defaultQualityProfileId: ''
+	},
+	sonarr: {
+		defaultQualityProfileId: ''
 	}
 };

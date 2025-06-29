@@ -145,6 +145,8 @@
 	},
 	"settings": {
 		"navbar": {
+			"userSettings": "User Settings",
+			"adminSettings": "Admin Settings",
 			"settings": "Configuration",
 			"general": "General",
 			"integrations": "Integrations"
@@ -168,6 +170,10 @@
 		"radarr": {
 			"preferedQualityProfile": "Prefered quality profile",
 			"preferedQualityProfileDescription": "The quality profile that will be selected by default when asking for a movie."
+		},
+		"sonarr": {
+			"preferedQualityProfile": "Prefered quality profile",
+			"preferedQualityProfileDescription": "The quality profile that will be selected by default when asking for series or episodes."
 		},
 		"integrations": {
 			"integrations": "Integrations",
@@ -193,8 +199,11 @@
 			"checkJellyfinCredentials": "Could not connect to Jellyfin. Check Jellyfin credentials.",
 			"checkRadarrCredentials": "Could not connect to Radarr. Check Radarr credentials.",
 			"radarrConfigurationInvalid": "The Radarr configuration is invalid. Please check the Root Folder field.",
+			"checkSonarrCredentials": "Could not connect to Sonarr. Check Radarr credentials.",
+			"sonarrConfigurationInvalid": "The Sonarr configuration is invalid. Please check the Root Folder field.",
 			"jellyfinConfirmChangesDialog": "By changing the Jellyfin configuration, you will be redirected to the login page.",
 			"radarrRemoveConfirmDialog": "You are about to remove the Radarr integration. Do you want to proceed?",
+			"sonarrRemoveConfirmDialog": "You are about to remove the Sonarr integration. Do you want to proceed?",
 			"saveChanges": "Save Changes",
 			"resetToDefaults": "Reset to Defaults ",
 			"changelog": "Changelog",

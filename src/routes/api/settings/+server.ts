@@ -27,6 +27,15 @@ export const DELETE: RequestHandler = async ({ cookies, url }) => {
 					);
 					break;
 				}
+				case 'sonarr': {
+					await GlobalSettingsEntity.setSonarrApiEndpoint(undefined, undefined);
+					await GlobalSettingsEntity.setSonarrApiConfiguration(
+						undefined,
+						undefined,
+						defaultGlobalSettings.sonarr.startSearch
+					);
+					break;
+				}
 			}
 		}
 

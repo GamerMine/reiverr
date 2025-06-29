@@ -5,9 +5,9 @@ import type { paths } from '$lib/apis/radarr/radarr.generated';
 
 export const GET: RequestHandler = async ({ url }) => {
 	const baseUrl =
-		url.searchParams.get('baseUrl') || (await GlobalSettingsEntity.getRadarrBaseUrl());
+		url.searchParams.get('baseUrl') || (await GlobalSettingsEntity.getSonarrBaseUrl());
 	const apiKeySearch: string | null = url.searchParams.get('apiKey');
-	const apiKeySetting: string | undefined = await GlobalSettingsEntity.getRadarrApiKey();
+	const apiKeySetting: string | undefined = await GlobalSettingsEntity.getSonarrApiKey();
 	const apiKey: string | undefined = apiKeySearch ?? apiKeySetting;
 
 	return createClient<paths>({

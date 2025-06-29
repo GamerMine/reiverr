@@ -9,6 +9,7 @@ import type { UserSettings } from '$lib/entities/Types';
 import type { PageServerLoad } from './$types';
 import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import { checkRadarrConnection } from '$lib/apis/radarr/server/radarr.server';
+import { checkSonarrConnection } from '$lib/apis/sonarr/server/sonarr.server';
 
 export const load: PageServerLoad = async ({ cookies }) => {
 	const userReq = await isJellyfinUserConnected(cookies);
@@ -45,7 +46,10 @@ export const actions = {
 		const userDiscoverExcludeLibraryItems =
 			(formData.get('userDiscoverExcludeLibraryItems') as string) === 'on';
 		const userDiscoverIncludedLanguages = formData.get('userDiscoverIncludedLanguages') as string;
-		const userDefaultQualityProfileId = formData.get('userDefaultQualityProfileId') as string;
+		const userRadarrDefaultQualityProfileId =
+			(formData.get('userRadarrDefaultQualityProfileId') as string) || '';
+		const userSonarrDefaultQualityProfileId =
+			(formData.get('userSonarrDefaultQualityProfileId') as string) || '';
 
 		// Global Settings (admin only)
 		const adminJellyfinBaseUrl = ((formData.get('adminJellyfinBaseUrl') as string) || '').trim();
@@ -60,6 +64,15 @@ export const actions = {
 		const adminRadarrStartSearch =
 			((formData.get('adminRadarrStartSearch') as string) || '') === 'on';
 
+		const adminSonarrBaseUrl = ((formData.get('adminSonarrBaseUrl') as string) || '').trim();
+		const adminSonarrApiKey = ((formData.get('adminSonarrApiKey') as string) || '').trim();
+		const adminSonarrRootFolderPath = (
+			(formData.get('adminSonarrRootFolderPath') as string) || ''
+		).trim();
+		const adminSonarrMonitor = ((formData.get('adminSonarrMonitor') as string) || '').trim();
+		const adminSonarrStartSearch =
+			((formData.get('adminSonarrStartSearch') as string) || '') === 'on';
+
 		const newUserSettings: UserSettings = {
 			interface: {
 				language: userLanguage,
@@ -72,7 +85,10 @@ export const actions = {
 				includedLanguages: userDiscoverIncludedLanguages
 			},
 			radarr: {
-				defaultQualityProfileId: userDefaultQualityProfileId
+				defaultQualityProfileId: userRadarrDefaultQualityProfileId
+			},
+			sonarr: {
+				defaultQualityProfileId: userSonarrDefaultQualityProfileId
 			}
 		};
 
@@ -122,6 +138,33 @@ export const actions = {
 					);
 				} else {
 					return fail(422, { code: 3 });
+				}
+			}
+
+			// New Sonarr BaseUrl & ApiKey
+			if (
+				adminSonarrBaseUrl &&
+				adminSonarrApiKey &&
+				adminSonarrBaseUrl !== (await GlobalSettingsEntity.getSonarrBaseUrl())
+			) {
+				const connection = await checkSonarrConnection(adminSonarrBaseUrl, adminSonarrApiKey);
+				if (connection.ok) {
+					await GlobalSettingsEntity.setSonarrApiEndpoint(adminSonarrBaseUrl, adminSonarrApiKey);
+				} else {
+					return fail(422, { code: 4 });
+				}
+			}
+
+			// If Sonarr connection is possible, checks for the configuration
+			if (await checkSonarrConnection()) {
+				if (adminSonarrRootFolderPath && adminSonarrMonitor) {
+					await GlobalSettingsEntity.setSonarrApiConfiguration(
+						adminSonarrRootFolderPath,
+						adminSonarrMonitor,
+						adminSonarrStartSearch
+					);
+				} else {
+					return fail(422, { code: 5 });
 				}
 			}
 		}

@@ -27,11 +27,12 @@ export class UserSettingsEntity extends BaseEntity {
 	discoverIncludedLanguages: string;
 
 	// Radarr
-	@Column('text', {
-		nullable: true,
-		default: defaultUserSettings.radarr.defaultQualityProfileId
-	})
-	radarrQualityProfileId: string | undefined;
+	@Column('text', { default: defaultUserSettings.radarr.defaultQualityProfileId })
+	radarrQualityProfileId: string;
+
+	// Sonarr
+	@Column('text', { default: defaultUserSettings.sonarr.defaultQualityProfileId })
+	sonarrQualityProfileId: string;
 
 	public static async getUserSettings(userId: string) {
 		const userSettings = await this.findOne({ where: { userId } });
@@ -61,6 +62,9 @@ export class UserSettingsEntity extends BaseEntity {
 			},
 			radarr: {
 				defaultQualityProfileId: userSettingsEntity.radarrQualityProfileId
+			},
+			sonarr: {
+				defaultQualityProfileId: userSettingsEntity.sonarrQualityProfileId
 			}
 		};
 	}
@@ -86,5 +90,7 @@ export class UserSettingsEntity extends BaseEntity {
 		userSettingsEntity.discoverExcludeLibraryItems = newUserSettings.discover.excludeLibraryItems;
 
 		userSettingsEntity.radarrQualityProfileId = newUserSettings.radarr.defaultQualityProfileId;
+
+		userSettingsEntity.sonarrQualityProfileId = newUserSettings.sonarr.defaultQualityProfileId;
 	}
 }
