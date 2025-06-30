@@ -34,8 +34,6 @@ export const GET: RequestHandler = async () => {
 };
 
 export const DELETE: RequestHandler = async ({ cookies }) => {
-	console.log(`Disconnecting user: ${cookies.get('access_token')}`);
-
 	cookies.delete('access_token', {
 		httpOnly: true,
 		secure: false,
