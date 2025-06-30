@@ -3,8 +3,8 @@
 	import Select from '$lib/components/common/inputs/forms/Select.svelte';
 	import classNames from 'classnames';
 	import { ChevronLeft } from 'svelte-radix';
-	import GeneralSettingsPage from './GeneralSettingsPage.svelte';
-	import IntegrationSettingsPage from './IntegrationSettingsPage.svelte';
+	import GeneralSettingsPage from '$lib/components/page/settings/GeneralSettingsPage.svelte';
+	import IntegrationSettingsPage from '$lib/components/page/settings/IntegrationSettingsPage.svelte';
 	import { fade } from 'svelte/transition';
 	import { _ } from 'svelte-i18n';
 	import { createErrorNotification } from '$lib/stores/notification.store';
@@ -16,8 +16,8 @@
 	import ConfirmDialog from '$lib/components/common/inputs/forms/ConfirmDialog.svelte';
 	import { onMount } from 'svelte';
 	import { getRadarrHealth } from '$lib/apis/radarr/radarrApi';
-	import RadarrSettingsPage from './RadarrSettingsPage.svelte';
-	import SonarrSettingsPage from './SonarrSettingsPage.svelte';
+	import RadarrSettingsPage from '$lib/components/page/settings/RadarrSettingsPage.svelte';
+	import SonarrSettingsPage from '$lib/components/page/settings/SonarrSettingsPage.svelte';
 	import { getSonarrHealth } from '$lib/apis/sonarr/sonarrApi';
 
 	type Section = 'general' | 'radarr' | 'sonarr' | 'integrations';
@@ -175,6 +175,8 @@
 		</button>
 		<Select bind:value={openTab}>
 			<option value="general"> {$_('settings.navbar.general')} </option>
+			<option value="radarr"> Radarr </option>
+			<option value="sonarr"> Sonarr </option>
 			{#if data.isAdmin}
 				<option value="integrations">
 					{$_('settings.navbar.integrations')}
@@ -237,6 +239,15 @@
 					/>
 				{/if}
 			</form>
+		</div>
+		<div class="sm:hidden px-8 pt-4 flex flex-wrap items-center justify-center space-x-2">
+			<Button type="submit" form="settingsForm" disabled={!valuesChanged} variant="success">
+				{$_('settings.misc.saveChanges')}
+			</Button>
+			<!-- FIXME: Reset button disabled for now  -->
+			<Button variant="error" onclick={() => {}}>
+				{$_('settings.misc.resetToDefaults')}
+			</Button>
 		</div>
 		<div class="flex items-center p-4 gap-8 justify-center text-zinc-500 bg-stone-950">
 			<div>v{version}</div>

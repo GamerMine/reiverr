@@ -7,8 +7,10 @@
 	import { fade } from 'svelte/transition';
 	import { modalStack } from '$lib/stores/modal.store';
 	import { _ } from 'svelte-i18n';
-	import AccountPane from '$lib/components/page/default/account/AccountPane.svelte';
+	import AccountPane from '$lib/components/page/default/navbar/AccountPane.svelte';
 	import UserImage from '$lib/components/common/images/UserImage.svelte';
+	import Divider from '$lib/components/common/misc/Divider.svelte';
+	import { jellyfinDisconnectUser } from '$lib/apis/jellyfin/jellyfinApi';
 
 	let y = $state(0);
 	let transparent = true;
@@ -128,6 +130,25 @@
 				class={page && getLinkStyle('/sources')}
 			>
 				{$_('navbar.sources')}
+			</a>
+			<Divider />
+			<a
+				onclick={() => (isMobileMenuVisible = false)}
+				href="/settings"
+				class={page && getLinkStyle('/settings')}
+			>
+				{$_('navbar.userMenu.settings')}
+			</a>
+			<a
+				onclick={async () => {
+					isMobileMenuVisible = false;
+					await jellyfinDisconnectUser();
+					window.location.href = '/login';
+				}}
+				href="/login"
+				class={page && getLinkStyle('/login')}
+			>
+				{$_('navbar.userMenu.logout')}
 			</a>
 		</div>
 	</div>

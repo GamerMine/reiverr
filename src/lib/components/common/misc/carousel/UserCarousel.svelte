@@ -1,12 +1,10 @@
 <script lang="ts">
-	import { fade } from 'svelte/transition';
 	import IconButton from '$lib/components/common/inputs/buttons/IconButton.svelte';
 	import { ChevronLeft, ChevronRight } from 'svelte-radix';
 	import classNames from 'classnames';
 	import { type Snippet, tick } from 'svelte';
 
 	let {
-		gradientFromColor = 'from-stone-950',
 		scrollClass = '',
 		heading = '',
 		klass = '',
@@ -76,7 +74,7 @@
 	<div class="relative">
 		<div
 			class={classNames(
-				'flex overflow-x-scroll items-center overflow-y-visible scrollbar-hide gap-4 relative p-1',
+				'flex overflow-x-scroll items-center overflow-y-visible scrollbar-hide gap-4 relative p-1 justify-center',
 				scrollClass
 			)}
 			bind:this={carousel}
@@ -87,19 +85,5 @@
 		>
 			{@render children?.()}
 		</div>
-		{#if scrollX > 50}
-			<div
-				transition:fade={{ duration: 200 }}
-				class={'absolute inset-y-0 left-0 w-0 sm:w-16 md:w-24 bg-gradient-to-r ' +
-					gradientFromColor}
-			></div>
-		{/if}
-		{#if carousel && scrollX < carousel?.scrollWidth - carousel?.clientWidth - 50}
-			<div
-				transition:fade={{ duration: 200 }}
-				class={'absolute inset-y-0 right-0 w-0 sm:w-16 md:w-24 bg-gradient-to-l ' +
-					gradientFromColor}
-			></div>
-		{/if}
 	</div>
 </div>

@@ -134,14 +134,14 @@
 <div class="h-screen flex flex-col relative pb-6 gap-6 xl:gap-8 overflow-hidden">
 	{#if !hideUI}
 		<div
-			class="absolute top-1/2 right-6 z-10 hover:bg-white/15 hover:rounded-4xl ease-in-out duration-300"
+			class="absolute top-1/2 right-6 hover:bg-white/15 hover:rounded-4xl ease-in-out duration-300"
 		>
 			<IconButton onclick={onNext}>
 				<ChevronRight size="38" />
 			</IconButton>
 		</div>
 		<div
-			class="absolute top-1/2 left-6 z-10 hover:bg-white/15 hover:rounded-4xl ease-in-out duration-300"
+			class="absolute top-1/2 left-6 hover:bg-white/15 hover:rounded-4xl ease-in-out duration-300"
 		>
 			<IconButton onclick={onPrevious}>
 				<ChevronLeft size="38" />

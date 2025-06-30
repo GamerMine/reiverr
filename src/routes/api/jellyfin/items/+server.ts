@@ -37,6 +37,11 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
 						'Content-Type': 'application/json'
 					}
 				});
+			})
+			.catch(() => {
+				return new Response(JSON.stringify({}), {
+					status: 504
+				});
 			});
 	} else {
 		return new Response(null, {

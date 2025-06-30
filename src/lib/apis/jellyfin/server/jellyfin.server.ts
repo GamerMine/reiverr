@@ -30,7 +30,10 @@ export async function getUserId(accessToken: string | undefined) {
 			}
 		})
 			.GET('/Users/Me', {})
-			.then((res) => res.data?.Id);
+			.then((res) => res.data?.Id)
+			.catch((_) => {
+				return undefined;
+			});
 	} else {
 		return '';
 	}
@@ -82,6 +85,12 @@ export async function isJellyfinUserConnected(cookies: Cookies) {
 					headers: {
 						'Content-Type': 'application/json'
 					}
+				});
+			})
+			.catch((err) => {
+				return new Response(JSON.stringify({}), {
+					status: 404,
+					statusText: err.cause.code
 				});
 			});
 	} else {

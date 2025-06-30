@@ -25,12 +25,22 @@ export const GET: RequestHandler = async () => {
 					'Content-Type': 'application/json'
 				}
 			});
+		})
+		.catch((err) => {
+			return new Response(JSON.stringify({}), {
+				statusText: err.cause.code
+			});
 		});
 };
 
 export const DELETE: RequestHandler = async ({ cookies }) => {
+	console.log(`Disconnecting user: ${cookies.get('access_token')}`);
+
 	cookies.delete('access_token', {
-		path: '/'
+		httpOnly: true,
+		secure: false,
+		path: '/',
+		maxAge: 0
 	});
 
 	return new Response(null);

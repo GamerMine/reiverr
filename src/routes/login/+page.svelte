@@ -62,7 +62,9 @@
 			>
 				{$_('login.whoWatching')}
 			</h1>
-			<div class="absolute items-center top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2">
+			<div
+				class="absolute items-center top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-full sm:w-1/2"
+			>
 				<UserCarousel
 					klass="transition duration-300 ease-in-out {userSelected || manualLogin
 						? 'invisible opacity-0 -translate-y-30'
@@ -129,7 +131,7 @@
 								errorMessage = $_('login.unknownError');
 							}
 						} else {
-							localStorage.setItem('user', JSON.stringify(result.data.user));
+							localStorage.setItem('user', JSON.stringify(result.data?.user));
 							window.location.href = '/';
 						}
 					};

@@ -1,4 +1,8 @@
 {
+	"general": {
+		"error": "Erreur",
+		"jellyfinUnreachable": "L'hôte Jellyfin est injoignable ! Merci de contacter votre administrateur."
+	},
 	"appName": "Reiverr",
 	"setup": {
 		"welcome": "Bienvenue !",

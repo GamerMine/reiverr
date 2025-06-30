@@ -6,7 +6,6 @@ import { UserSettingsEntity } from '$lib/entities/UserSettings.server';
 import { defaultGlobalSettings, defaultUserSettings, type Settings } from '$lib/entities/Types';
 
 export const load: LayoutServerLoad = async ({ cookies, url }) => {
-	//cookies.delete('access_token', { path: '/' });
 	const isConnected = await isJellyfinUserConnected(cookies);
 	const globalSettings = await GlobalSettingsEntity.getClient();
 	const userSettings =
@@ -17,6 +16,13 @@ export const load: LayoutServerLoad = async ({ cookies, url }) => {
 		? { userSettings, globalSettings }
 		: { userSettings: defaultUserSettings, globalSettings: defaultGlobalSettings };
 
+	if (isConnected.statusText === 'EHOSTUNREACH') {
+		return {
+			settings: undefined,
+			error: 'general.jellyfinUnreachable'
+		};
+	}
+
 	if (!['/setup'].includes(url.pathname) && !(await GlobalSettingsEntity.getJellyfinApiKey())) {
 		throw redirect(301, '/setup');
 	} else if (!['/login', '/setup'].includes(url.pathname) && isConnected.status !== 200) {
@@ -24,6 +30,7 @@ export const load: LayoutServerLoad = async ({ cookies, url }) => {
 	}
 
 	return {
-		settings
+		settings,
+		error: undefined
 	};
 };

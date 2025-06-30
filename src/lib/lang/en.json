@@ -1,4 +1,8 @@
 {
+	"general": {
+		"error": "Error",
+		"jellyfinUnreachable": "Jellyfin host is unreachable! Please contact your server administrator."
+	},
 	"appName": "Reiverr",
 	"setup": {
 		"welcome": "Welcome!",
