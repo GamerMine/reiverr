@@ -11,6 +11,7 @@
 	import { createErrorNotification } from '$lib/stores/notification.store';
 	import { onMount } from 'svelte';
 	import { animateBackground } from '$lib/utils/animation';
+	import { setTmpLanguage } from '$lib/utils';
 
 	let mainDiv: HTMLDivElement | undefined = $state();
 	let manualLogin: boolean = $state(false);
@@ -44,6 +45,7 @@
 				}
 			}, 5000);
 		}
+		setTmpLanguage(navigator.language);
 	});
 </script>
 

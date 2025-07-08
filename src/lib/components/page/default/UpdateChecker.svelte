@@ -3,7 +3,6 @@
 	import { createLocalStorageStore } from '$lib/stores/localstorage.store';
 	import { Cross2 } from 'svelte-radix';
 	import IconButton from '$lib/components/common/inputs/buttons/IconButton.svelte';
-	import axios from 'axios';
 	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
 	import { _ } from 'svelte-i18n';
 
@@ -12,9 +11,11 @@
 	const skippedVersion = createLocalStorageStore<string>('skipped-version', '');
 
 	async function fetchLatestVersion() {
-		return axios
-			.get('https://api.github.com/repos/GamerMine/reiverr/tags')
-			.then((res) => res.data?.find((v: { name: string }) => v.name.startsWith('v1'))?.name);
+		return await fetch('https://api.github.com/repos/GamerMine/reiverr/tags', {
+			method: 'GET'
+		}).then(
+			async (res) => (await res.json()).find((v: { name: string }) => v.name.startsWith('v1'))?.name
+		);
 	}
 
 	function checkVersionLatest(latestVersion: string) {

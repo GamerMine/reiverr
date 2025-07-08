@@ -7,6 +7,7 @@
 	import Input from '$lib/components/common/inputs/forms/Input.svelte';
 	import { enhance } from '$app/forms';
 	import { createErrorNotification } from '$lib/stores/notification.store';
+	import { setTmpLanguage } from '$lib/utils';
 
 	let mainDiv: HTMLDivElement | undefined = $state();
 
@@ -142,6 +143,7 @@
 		if (jellyfinForm) {
 			jellyfinForm.className = 'opacity-0 invisible absolute';
 		}
+		setTmpLanguage(navigator.language);
 	});
 </script>
 

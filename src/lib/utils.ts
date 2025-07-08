@@ -1,3 +1,5 @@
+import { locale } from 'svelte-i18n';
+
 export function formatMinutesToTime(minutes: number) {
 	const days = Math.floor(minutes / 60 / 24);
 	const hours = Math.floor((minutes / 60) % 24);
@@ -43,4 +45,8 @@ export function arrayToQuery(key: string, array: Array<string>): string {
 	ret.slice(0, ret.length - 1);
 
 	return ret;
+}
+
+export function setTmpLanguage(language: string) {
+	locale.set(language);
 }

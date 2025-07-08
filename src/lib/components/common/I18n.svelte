@@ -24,10 +24,6 @@
 		fallbackLocale: 'en'
 	});
 
-	export function setTmpLanguage(language: string) {
-		locale.set(language);
-	}
-
 	$effect(() => {
 		locale.set(settings.userSettings.interface.language);
 	});
