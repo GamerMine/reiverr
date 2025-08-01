@@ -19,7 +19,6 @@ ENV NODE_ENV=production
 COPY --from=pre-production /usr/src/app/build ./build
 
 COPY package.json .
-COPY package-lock.json .
 
 RUN npm ci --omit dev
 
@@ -37,7 +36,6 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 COPY package.json .
-COPY package-lock.json .
 
 RUN npm i
 
