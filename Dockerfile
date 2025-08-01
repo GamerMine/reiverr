@@ -1,18 +1,15 @@
-FROM node:18-alpine as pre-production
+FROM node:24.4.1-alpine as pre-production
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 COPY . .
 
-#COPY package.json .
-#COPY package-lock.json .
-
 RUN npm i
 
 RUN npm run build
 
-FROM --platform=linux/amd64 node:18-alpine as production
+FROM --platform=linux/amd64 node:24.4.1-alpine as production
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
@@ -32,7 +29,7 @@ RUN ln -s /usr/src/app/config /config
 
 CMD [ "npm", "run", "deploy" ]
 
-FROM node:18 as development
+FROM node:24.4.1 as development
 
 ENV NODE_ENV=development
 

@@ -2,8 +2,9 @@ name: Build & Deploy
 
 on:
   push:
-    tags:
-      - v*
+    branches:
+      - dev
+
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
@@ -37,4 +38,3 @@ jobs:
       - name: Push to Docker Hub
         run: |
             docker push ${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${{env.TAG}}
-            docker push ${{env.REGISTRY}}/${{env.IMAGE_NAME}}:latest

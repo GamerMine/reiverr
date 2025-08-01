@@ -1,11 +1,10 @@
-version: '3.8'
-
-name: reiverr-dev
+name: reiverr-prod
 
 services:
   reiverr-frontend:
-    container_name: reiverr-dev
-    image: ghcr.io/aleksilassila/reiverr:latest
-    restart: unless-stopped
-    volumes:
-      - ./config:/config
+    container_name: reiverr-prod
+    build:
+      context: .
+      target: production
+    ports:
+      - 9494:9494

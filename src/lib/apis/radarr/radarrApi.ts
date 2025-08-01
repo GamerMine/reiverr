@@ -17,8 +17,8 @@ export interface RadarrMovieOptions {
 	year: number;
 	rootFolderPath: string;
 	tmdbId: number;
+	monitored: boolean;
 	addOptions: {
-		monitored?: boolean;
 		searchForMovie?: boolean;
 	};
 }
@@ -49,8 +49,8 @@ export const addMovieToRadarr = async (tmdbId: number) => {
 		tmdbId: tmdbMovie.id || 0,
 		year: Number(tmdbMovie.release_date?.slice(0, 4)),
 		tags: [],
+		monitored: monitorMovie != '0',
 		addOptions: {
-			monitored: monitorMovie != '0',
 			searchForMovie: search
 		}
 	};

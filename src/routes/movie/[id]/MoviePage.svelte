@@ -149,13 +149,13 @@
 						<Button variant="primary" onclick={play}>
 							<span>{$_('library.content.play')}</span><ChevronRight size="20" />
 						</Button>
-					{:else if !radarrMovie && settings.globalSettings.radarr.baseUrl && settings.globalSettings.radarr.apiKey}
+					{:else if !radarrMovie && settings.globalSettings.radarr.baseUrl}
 						<Button variant="primary" disabled={addToRadarrLoading} onclick={addToRadarr}>
-							<span>{$_('library.content.addRadarr')}</span><Plus size="20" />
+							<Plus size="20" /><span>{$_('library.content.get')}</span>
 						</Button>
 					{:else if radarrMovie}
 						<Button variant="primary" onclick={openRequestModal}>
-							<span class="mr-2">{$_('library.content.requestMovie')}</span><Plus size="20" />
+							<Plus size="20" /><span class="mr-2">{$_('library.content.requestMovie')}</span>
 						</Button>
 					{/if}
 				{/if}
