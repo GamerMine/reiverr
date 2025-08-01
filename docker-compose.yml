@@ -3,8 +3,11 @@ name: reiverr-prod
 services:
   reiverr-frontend:
     container_name: reiverr-prod
+    image: ghcr.io/gamermine/reiverr:latest
     build:
       context: .
       target: production
     ports:
-      - 9494:9494
+      - "9494:9494"
+    volumes:
+      - ./config:/config
