@@ -32,7 +32,11 @@ export const actions = {
 			return fail(401, { code: 1 });
 		}
 
+		const proto =
+			request.headers.get('x-forwarded-proto') === 'https' || request.url.startsWith('https');
+
 		cookies.set('access_token', authResult.AccessToken, {
+			secure: proto,
 			httpOnly: true,
 			sameSite: 'strict',
 			path: '/',
