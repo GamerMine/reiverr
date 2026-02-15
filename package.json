@@ -21,7 +21,7 @@
 		"@playwright/test": "^1.54.2",
 		"@sveltejs/adapter-auto": "^6.0.1",
 		"@sveltejs/adapter-node": "^5.2.13",
-		"@sveltejs/kit": "^2.27.0",
+		"@sveltejs/kit": "2.49.5",
 		"@sveltejs/vite-plugin-svelte": "^5.1.1",
 		"@tailwindcss/postcss": "^4.1.11",
 		"classnames": "^2.5.1",
@@ -46,6 +46,6 @@
 		"openapi-fetch": "^0.14.0",
 		"reflect-metadata": "^0.2.2",
 		"sqlite3": "^5.1.7",
-		"typeorm": "^0.3.25"
+		"typeorm": "0.3.26"
 	}
 }

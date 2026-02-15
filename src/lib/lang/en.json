@@ -173,7 +173,9 @@
 		},
 		"radarr": {
 			"preferedQualityProfile": "Prefered quality profile",
-			"preferedQualityProfileDescription": "The quality profile that will be selected by default when asking for a movie."
+			"preferedQualityProfileDescription": "The quality profile that will be selected by default when asking for a movie.",
+			"askQualityProfile": "Ask quality profile",
+			"askQualityProfileDescription": "Ask the quality profile each time you ask a movie. If disabled, the preferred quality profile will be used if available."
 		},
 		"sonarr": {
 			"preferedQualityProfile": "Prefered quality profile",

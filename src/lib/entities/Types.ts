@@ -33,6 +33,7 @@ export type UserSettings = {
 	};
 	radarr: {
 		defaultQualityProfileId: string;
+		askQualityProfile: boolean;
 	};
 	sonarr: {
 		defaultQualityProfileId: string;
@@ -51,14 +52,14 @@ export const defaultGlobalSettings: GlobalSettings = {
 		apiKey: undefined,
 		baseUrl: undefined,
 		rootFolderPath: undefined,
-		monitor: undefined,
+		monitor: 'unknown',
 		startSearch: true
 	},
 	radarr: {
 		apiKey: undefined,
 		baseUrl: undefined,
 		rootFolderPath: undefined,
-		monitor: undefined,
+		monitor: 'unknown',
 		startSearch: true
 	},
 	jellyfin: {
@@ -79,7 +80,8 @@ export const defaultUserSettings: UserSettings = {
 		includedLanguages: 'en'
 	},
 	radarr: {
-		defaultQualityProfileId: ''
+		defaultQualityProfileId: '',
+		askQualityProfile: false
 	},
 	sonarr: {
 		defaultQualityProfileId: ''

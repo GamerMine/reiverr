@@ -33,9 +33,9 @@ export const getRadarrMovies = async (): Promise<RadarrMovie[]> => {
 
 export const addMovieToRadarr = async (tmdbId: number) => {
 	const tmdbMovie = await getTmdbMovie(tmdbId);
-	const radarrMovie = await lookupRadarrMovieByTmdbId(tmdbId);
+	const radarrMovies = await getRadarrMovies();
 
-	if (radarrMovie?.id) throw new Error('Movie already exists');
+	if (radarrMovies?.find((v) => v.tmdbId == tmdbId)) throw new Error('Movie already exists');
 
 	if (!tmdbMovie) throw new Error('Movie not found');
 	const monitorMovie = settings.globalSettings.radarr.monitor;
@@ -94,14 +94,6 @@ export const getRadarrDownloads = async (): Promise<RadarrDownload[]> => {
 					(record: RadarrDownload) => record.movie
 				) as RadarrDownload[]) || []
 		)) || Promise.resolve([])
-	);
-};
-
-const lookupRadarrMovieByTmdbId = async (tmdbId: number) => {
-	return (
-		(await fetch(`/api/radarr/movie/lookup/tmdb?tmdbId=${tmdbId}`, {
-			method: 'GET'
-		}).then(async (res) => (await res.json()) as any as RadarrMovie)) || Promise.resolve(undefined)
 	);
 };
 

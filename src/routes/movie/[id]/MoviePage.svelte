@@ -80,7 +80,21 @@
 	let addToRadarrLoading = $state(false);
 	function addToRadarr() {
 		addToRadarrLoading = true;
-		addMovieToRadarr(tmdbId)
+		let qualityProfileId;
+		if (
+			settings.userSettings.radarr.askQualityProfile ||
+			settings.userSettings.radarr.defaultQualityProfileId === ''
+		) {
+			// TODO: Open quality profile chooser.
+			qualityProfileId = '';
+			if (qualityProfileId === '') {
+				addToRadarrLoading = false;
+				return;
+			}
+		} else {
+			qualityProfileId = settings.userSettings.radarr.defaultQualityProfileId;
+		}
+		addMovieToRadarr(tmdbId, qualityProfileId)
 			.then(refreshRadarr)
 			.finally(() => (addToRadarrLoading = false));
 	}

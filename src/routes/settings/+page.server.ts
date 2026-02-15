@@ -48,6 +48,8 @@ export const actions = {
 		const userDiscoverIncludedLanguages = formData.get('userDiscoverIncludedLanguages') as string;
 		const userRadarrDefaultQualityProfileId =
 			(formData.get('userRadarrDefaultQualityProfileId') as string) || '';
+		const userRdarrAskQualityprofile =
+			(formData.get('userRadarrAskQualityProfile') as string) === 'on';
 		const userSonarrDefaultQualityProfileId =
 			(formData.get('userSonarrDefaultQualityProfileId') as string) || '';
 
@@ -85,7 +87,8 @@ export const actions = {
 				includedLanguages: userDiscoverIncludedLanguages
 			},
 			radarr: {
-				defaultQualityProfileId: userRadarrDefaultQualityProfileId
+				defaultQualityProfileId: userRadarrDefaultQualityProfileId,
+				askQualityProfile: userRdarrAskQualityprofile
 			},
 			sonarr: {
 				defaultQualityProfileId: userSonarrDefaultQualityProfileId
@@ -116,8 +119,8 @@ export const actions = {
 
 			// New Radarr BaseUrl & ApiKey
 			if (
-				adminRadarrBaseUrl &&
-				adminRadarrApiKey &&
+				adminRadarrBaseUrl.length !== 0 &&
+				adminRadarrApiKey.length !== 0 &&
 				adminRadarrBaseUrl !== (await GlobalSettingsEntity.getRadarrBaseUrl())
 			) {
 				const connection = await checkRadarrConnection(adminRadarrBaseUrl, adminRadarrApiKey);
@@ -129,7 +132,7 @@ export const actions = {
 			}
 
 			// If Radarr connection is possible, checks for the configuration
-			if (await checkRadarrConnection()) {
+			if ((await checkRadarrConnection()).ok) {
 				if (adminRadarrRootFolderPath && adminRadarrMonitor) {
 					await GlobalSettingsEntity.setRadarrApiConfiguration(
 						adminRadarrRootFolderPath,
@@ -143,8 +146,8 @@ export const actions = {
 
 			// New Sonarr BaseUrl & ApiKey
 			if (
-				adminSonarrBaseUrl &&
-				adminSonarrApiKey &&
+				adminSonarrBaseUrl.length !== 0 &&
+				adminSonarrApiKey.length !== 0 &&
 				adminSonarrBaseUrl !== (await GlobalSettingsEntity.getSonarrBaseUrl())
 			) {
 				const connection = await checkSonarrConnection(adminSonarrBaseUrl, adminSonarrApiKey);
@@ -156,7 +159,7 @@ export const actions = {
 			}
 
 			// If Sonarr connection is possible, checks for the configuration
-			if (await checkSonarrConnection()) {
+			if ((await checkSonarrConnection()).ok) {
 				if (adminSonarrRootFolderPath && adminSonarrMonitor) {
 					await GlobalSettingsEntity.setSonarrApiConfiguration(
 						adminSonarrRootFolderPath,

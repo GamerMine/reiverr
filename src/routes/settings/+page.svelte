@@ -74,8 +74,8 @@
 		if (
 			(!currSettings.globalSettings.radarr.monitor ||
 				!currSettings.globalSettings.radarr.rootFolderPath) &&
-			currSettings.globalSettings.radarr.baseUrl?.length !== 0 &&
-			currSettings.globalSettings.radarr.apiKey?.length !== 0
+			currSettings.globalSettings.radarr.baseUrl?.length !== undefined &&
+			currSettings.globalSettings.radarr.apiKey?.length !== undefined
 		) {
 			valuesChanged = false;
 			return;
@@ -89,14 +89,17 @@
 		if (
 			(!currSettings.globalSettings.sonarr.monitor ||
 				!currSettings.globalSettings.sonarr.rootFolderPath) &&
-			currSettings.globalSettings.sonarr.baseUrl?.length !== 0 &&
-			currSettings.globalSettings.sonarr.apiKey?.length !== 0
+			currSettings.globalSettings.sonarr.baseUrl?.length !== undefined &&
+			currSettings.globalSettings.sonarr.apiKey?.length !== undefined
 		) {
 			valuesChanged = false;
 			return;
 		}
 
 		valuesChanged = JSON.stringify(settings) !== JSON.stringify(currSettings);
+
+		console.log(JSON.stringify(settings));
+		console.log(JSON.stringify(currSettings));
 	});
 
 	onMount(async () => {

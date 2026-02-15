@@ -30,6 +30,9 @@ export class UserSettingsEntity extends BaseEntity {
 	@Column('text', { default: defaultUserSettings.radarr.defaultQualityProfileId })
 	radarrQualityProfileId: string;
 
+	@Column('boolean', { default: defaultUserSettings.radarr.askQualityProfile })
+	radarrAskQualityProfile: boolean;
+
 	// Sonarr
 	@Column('text', { default: defaultUserSettings.sonarr.defaultQualityProfileId })
 	sonarrQualityProfileId: string;
@@ -61,7 +64,8 @@ export class UserSettingsEntity extends BaseEntity {
 				includedLanguages: userSettingsEntity.discoverIncludedLanguages
 			},
 			radarr: {
-				defaultQualityProfileId: userSettingsEntity.radarrQualityProfileId
+				defaultQualityProfileId: userSettingsEntity.radarrQualityProfileId,
+				askQualityProfile: userSettingsEntity.radarrAskQualityProfile
 			},
 			sonarr: {
 				defaultQualityProfileId: userSettingsEntity.sonarrQualityProfileId
@@ -90,6 +94,7 @@ export class UserSettingsEntity extends BaseEntity {
 		userSettingsEntity.discoverExcludeLibraryItems = newUserSettings.discover.excludeLibraryItems;
 
 		userSettingsEntity.radarrQualityProfileId = newUserSettings.radarr.defaultQualityProfileId;
+		userSettingsEntity.radarrAskQualityProfile = newUserSettings.radarr.askQualityProfile;
 
 		userSettingsEntity.sonarrQualityProfileId = newUserSettings.sonarr.defaultQualityProfileId;
 	}

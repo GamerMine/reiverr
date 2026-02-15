@@ -164,7 +164,9 @@
 		},
 		"radarr": {
 			"preferedQualityProfile": "Profil de qualité préféré",
-			"preferedQualityProfileDescription": "Le profil de qualité qui sera selectionné par défaut lors de la demande d'un film."
+			"preferedQualityProfileDescription": "Le profil de qualité qui sera selectionné par défaut lors de la demande d'un film.",
+			"askQualityProfile": "Demander le profile de qualité",
+			"askQualityProfileDescription": "Demander le profil de qualité à chaque fois que vous demandez un film. Si désactivé, le profile de qualité préféré sera utilisé si disponible."
 		},
 		"sonarr": {
 			"preferedQualityProfile": "Profil de qualité préféré",

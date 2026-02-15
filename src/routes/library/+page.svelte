@@ -11,7 +11,7 @@
 	import { PLACEHOLDER_BACKDROP } from '$lib/constants';
 	import { jellyfinItemsStore, servarrDownloadsStore } from '$lib/stores/data.store';
 	import { ChevronRight } from 'svelte-radix';
-	import type { ComponentProps } from 'svelte';
+	import  { type ComponentProps } from 'svelte';
 	import { _ } from 'svelte-i18n';
 	import { fade } from 'svelte/transition';
 	import LibraryItems from './LibraryItems.svelte';

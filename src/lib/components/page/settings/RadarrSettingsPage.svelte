@@ -4,6 +4,7 @@
 	import classNames from 'classnames';
 	import type { UserSettings } from '$lib/entities/Types';
 	import { getRadarrQualityProfiles } from '$lib/apis/radarr/radarrApi';
+	import Toggle from '$lib/components/common/inputs/forms/Toggle.svelte';
 
 	let { visible, userSettings = $bindable() }: { visible: boolean; userSettings: UserSettings } =
 		$props();
@@ -40,4 +41,14 @@
 			{/each}
 		</Select>
 	{/await}
+
+	<div>
+		<h2>
+			{$_('settings.radarr.askQualityProfile')}
+		</h2>
+		<p class="text-sm text-zinc-500 mt-1">
+			{$_('settings.radarr.askQualityProfileDescription')}
+		</p>
+	</div>
+	<Toggle name="userRadarrAskQualityProfile" bind:checked={userSettings.radarr.askQualityProfile} />
 </div>
