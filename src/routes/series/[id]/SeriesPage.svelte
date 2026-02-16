@@ -31,11 +31,12 @@
 	import type { TitleId } from '$lib/types';
 	import { capitalize, formatMinutesToTime, formatSize } from '$lib/utils';
 	import classNames from 'classnames';
-	import { Archive, ChevronLeft, ChevronRight, DotFilled, Plus } from 'svelte-radix';
+	import {ActivityLog, Archive, ChevronLeft, ChevronRight, DotFilled, Plus} from 'svelte-radix';
 	import { get } from 'svelte/store';
 	import { _ } from 'svelte-i18n';
 	import { tmdbDataFormat } from '$lib/utils.js';
 	import { settings } from '$lib/stores/settings.svelte';
+	import {createSuccessNotification} from "$lib/stores/notification.store";
 
 	let {
 		titleId,
@@ -165,9 +166,27 @@
 	async function addToSonarr() {
 		const tmdbId = await data.then((d) => d.tmdbId);
 		addToSonarrLoading = true;
-		addSeriesToSonarr(tmdbId)
-			.then(refreshSonarr)
-			.finally(() => (addToSonarrLoading = false));
+
+		let qualityProfileId;
+		if (
+				settings.userSettings.sonarr.askQualityProfile ||
+				settings.userSettings.sonarr.defaultQualityProfileId === ''
+		) {
+			// TODO: Open quality profile chooser.
+			qualityProfileId = '';
+			if (qualityProfileId === '') {
+				addToSonarrLoading = false;
+				return;
+			}
+		} else {
+			qualityProfileId = settings.userSettings.sonarr.defaultQualityProfileId;
+		}
+
+		addSeriesToSonarr(tmdbId, qualityProfileId)
+			.then(() => {
+				refreshSonarr();
+				createSuccessNotification("Episode(s) added to queue", "The episode(s) will be added to the library once available.")
+			});
 	}
 
 	async function openRequestModal() {
@@ -227,7 +246,7 @@
 	<TitlePageLayout
 		titleInformation={{
 			tmdbId,
-			type: 'series',
+			type: 'tv',
 			backdropUriCandidates: tmdbSeries?.images?.backdrops?.map((b) => b.file_path || '') || [],
 			posterPath: tmdbSeries?.poster_path || '',
 			title: tmdbSeries?.name || '',
@@ -255,8 +274,7 @@
 					<OpenInButton
 						title={tmdbSeries?.name}
 						jellyfinItem={$jellyfinItemStore.item}
-						sonarrSeries={$sonarrSeriesStore.item}
-						type="series"
+						type="tv"
 						{tmdbId}
 					/>
 					{#if !!nextJellyfinEpisode}
@@ -267,13 +285,13 @@
 							</span>
 							<ChevronRight size="20" />
 						</Button>
-					{:else if !$sonarrSeriesStore.item && settings.globalSettings.sonarr.apiKey && settings.globalSettings.sonarr.baseUrl}
+					{:else if !$sonarrSeriesStore.item && settings.globalSettings.sonarr.baseUrl}
 						<Button variant="primary" disabled={addToSonarrLoading} onclick={addToSonarr}>
-							<span>{$_('library.content.addSonarr')}</span><Plus size="20" />
+							<Plus size="20" /><span>{$_('library.content.get')}</span>
 						</Button>
 					{:else if $sonarrSeriesStore.item}
-						<Button variant="primary" onclick={openRequestModal}>
-							<span class="mr-2">{$_('library.content.requestSeries')}</span><Plus size="20" />
+						<Button variant="primary" disabled>
+							<ActivityLog size="20" /><span class="ml-2">{$_('library.content.inqueue')}</span>
 						</Button>
 					{/if}
 				{/if}
@@ -452,9 +470,6 @@
 				{/if}
 
 				<div class="flex gap-4 flex-wrap col-span-4 sm:col-span-6 mt-4">
-					<Button onclick={openRequestModal}>
-						<span class="mr-2">{$_('library.content.requestSeries')}</span><Plus size="20" />
-					</Button>
 					<Button>
 						<span class="mr-2">{$_('library.content.manage')}</span><Archive size="20" />
 					</Button>

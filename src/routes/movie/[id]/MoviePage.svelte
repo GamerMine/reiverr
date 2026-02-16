@@ -100,7 +100,7 @@
 		addMovieToRadarr(tmdbId, qualityProfileId)
 			.then(() => {
 				refreshRadarr();
-				createSuccessNotification("Movie added to queue", "The movie will be added to the library once downloaded.");
+				createSuccessNotification("Movie added to queue", "The movie will be added to the library once available."); //FIXME: Add translation
 			});
 	}
 
@@ -173,7 +173,7 @@
 							<Plus size="20" /><span>{$_('library.content.get')}</span>
 						</Button>
 					{:else if radarrMovie}
-						<Button variant="secondary" disabled={true}>
+						<Button variant="secondary" disabled>
 							<ActivityLog size="20" /><span class="ml-2">{$_('library.content.inqueue')}</span>
 						</Button>
 					{/if}

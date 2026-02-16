@@ -37,6 +37,9 @@ export class UserSettingsEntity extends BaseEntity {
 	@Column('text', { default: defaultUserSettings.sonarr.defaultQualityProfileId })
 	sonarrQualityProfileId: string;
 
+	@Column('boolean', { default: defaultUserSettings.sonarr.askQualityProfile })
+	sonarrAskQualityProfile: boolean;
+
 	public static async getUserSettings(userId: string) {
 		const userSettings = await this.findOne({ where: { userId } });
 
@@ -68,7 +71,8 @@ export class UserSettingsEntity extends BaseEntity {
 				askQualityProfile: userSettingsEntity.radarrAskQualityProfile
 			},
 			sonarr: {
-				defaultQualityProfileId: userSettingsEntity.sonarrQualityProfileId
+				defaultQualityProfileId: userSettingsEntity.sonarrQualityProfileId,
+				askQualityProfile: userSettingsEntity.sonarrAskQualityProfile
 			}
 		};
 	}
@@ -97,5 +101,6 @@ export class UserSettingsEntity extends BaseEntity {
 		userSettingsEntity.radarrAskQualityProfile = newUserSettings.radarr.askQualityProfile;
 
 		userSettingsEntity.sonarrQualityProfileId = newUserSettings.sonarr.defaultQualityProfileId;
+		userSettingsEntity.sonarrAskQualityProfile = newUserSettings.sonarr.askQualityProfile;
 	}
 }

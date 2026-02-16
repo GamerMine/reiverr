@@ -53,18 +53,18 @@ export const getDiskSpace = async (): Promise<DiskSpaceInfo[]> => {
 	);
 };
 
-export const addSeriesToSonarr = async (tmdbId: number) => {
+export const addSeriesToSonarr = async (tmdbId: number, qualityProfileId: string) => {
 	const tmdbSeries = await getTmdbSeries(tmdbId);
 
 	if (!tmdbSeries || !tmdbSeries.external_ids.tvdb_id || !tmdbSeries.name)
-		throw new Error('Movie not found');
+		throw new Error('TV show not found');
 
 	let monitorType = settings.globalSettings.sonarr.monitor;
 	let search = settings.globalSettings.sonarr.startSearch;
 	const options: SonarrSeriesOptions = {
 		title: tmdbSeries.name,
 		tvdbId: tmdbSeries.external_ids.tvdb_id,
-		qualityProfileId: settings.userSettings.sonarr.defaultQualityProfileId || '0',
+		qualityProfileId: qualityProfileId || '0',
 		monitored: monitorType != 'none',
 		addOptions: {
 			monitor: monitorType ? (monitorType as any) : 'none',

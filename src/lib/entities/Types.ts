@@ -37,6 +37,7 @@ export type UserSettings = {
 	};
 	sonarr: {
 		defaultQualityProfileId: string;
+		askQualityProfile: boolean;
 	};
 };
 
@@ -84,6 +85,7 @@ export const defaultUserSettings: UserSettings = {
 		askQualityProfile: false
 	},
 	sonarr: {
-		defaultQualityProfileId: ''
+		defaultQualityProfileId: '',
+		askQualityProfile: false,
 	}
 };

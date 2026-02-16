@@ -13,6 +13,8 @@ import {
 import { derived, writable } from 'svelte/store';
 import { settings } from '$lib/stores/settings.svelte';
 
+// TODO: These stores could be "converted" to global state variables for easier use.
+
 async function waitForSettings() {
 	return new Promise((resolve) => {
 		resolve(settings);

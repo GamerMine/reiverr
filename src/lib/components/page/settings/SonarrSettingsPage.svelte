@@ -4,6 +4,7 @@
 	import classNames from 'classnames';
 	import type { UserSettings } from '$lib/entities/Types';
 	import { getSonarrQualityProfiles } from '$lib/apis/sonarr/sonarrApi.js';
+	import Toggle from "$lib/components/common/inputs/forms/Toggle.svelte";
 
 	let { visible, userSettings = $bindable() }: { visible: boolean; userSettings: UserSettings } =
 		$props();
@@ -40,4 +41,13 @@
 			{/each}
 		</Select>
 	{/await}
+	<div>
+		<h2>
+			{$_('settings.sonarr.askQualityProfile')}
+		</h2>
+		<p class="text-sm text-zinc-500 mt-1">
+			{$_('settings.sonarr.askQualityProfileDescription')}
+		</p>
+	</div>
+	<Toggle name="userSonarrAskQualityProfile" bind:checked={userSettings.sonarr.askQualityProfile} />
 </div>
