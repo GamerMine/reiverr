@@ -67,3 +67,19 @@ export function createErrorNotification(title: string, details: string, type = '
 		description: details
 	});
 }
+
+export function createInfoNotification(title: string, details: string, type = 'info') {
+	return notificationStack.create(Notification, {
+		type,
+		title,
+		description: details
+	})
+}
+
+export function createSuccessNotification(title: string, details: string, type = 'success') {
+	return notificationStack.create(Notification, {
+		type,
+		title,
+		description: details
+	})
+}

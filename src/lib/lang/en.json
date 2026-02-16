@@ -101,7 +101,7 @@
 			"minLeft": "min left",
 			"get": "Obtenir",
 			"addSonarr": "Add to Sonarr",
-			"requestMovie": "Request movie",
+			"inqueue": "In Queue",
 			"requestSeries": "Request series",
 			"sizeDisk": "Size on disk",
 			"downloadedIn": "Downloaded In",

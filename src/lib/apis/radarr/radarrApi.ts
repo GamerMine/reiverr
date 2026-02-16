@@ -31,7 +31,7 @@ export const getRadarrMovies = async (): Promise<RadarrMovie[]> => {
 	);
 };
 
-export const addMovieToRadarr = async (tmdbId: number) => {
+export const addMovieToRadarr = async (tmdbId: number, qualityProfileId: string) => {
 	const tmdbMovie = await getTmdbMovie(tmdbId);
 	const radarrMovies = await getRadarrMovies();
 
@@ -42,7 +42,7 @@ export const addMovieToRadarr = async (tmdbId: number) => {
 	const search = settings.globalSettings.radarr.startSearch;
 
 	const options: RadarrMovieOptions = {
-		qualityProfileId: settings.userSettings.radarr.defaultQualityProfileId || '0',
+		qualityProfileId: qualityProfileId || '0',
 		rootFolderPath: settings.globalSettings.radarr.rootFolderPath || '',
 		minimumAvailability: 'announced',
 		title: tmdbMovie.title || tmdbMovie.original_title || '',

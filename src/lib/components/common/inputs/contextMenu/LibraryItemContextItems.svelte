@@ -4,8 +4,6 @@
 		setJellyfinItemWatched,
 		type JellyfinItem
 	} from '$lib/apis/jellyfin/jellyfinApi';
-	import type { RadarrMovie } from '$lib/apis/radarr/radarrApi';
-	import type { SonarrSeries } from '$lib/apis/sonarr/sonarrApi';
 	import { jellyfinItemsStore } from '$lib/stores/data.store';
 	import type { TitleType } from '$lib/types';
 	import Divider from '../../misc/Divider.svelte';
@@ -15,14 +13,10 @@
 
 	let {
 		jellyfinItem = undefined,
-		sonarrSeries = undefined,
-		radarrMovie = undefined,
 		type,
 		tmdbId
 	}: {
 		jellyfinItem?: JellyfinItem;
-		sonarrSeries?: SonarrSeries;
-		radarrMovie?: RadarrMovie;
 		type: TitleType;
 		tmdbId: number;
 	} = $props();
@@ -63,23 +57,6 @@
 <ContextMenuItem disabled={!jellyfinItem?.Id} onclick={handleOpenInJellyfin}>
 	{$_('library.LibraryItemContext.openJellyfin')}
 </ContextMenuItem>
-{#if type === 'movie'}
-	<ContextMenuItem
-		disabled={!radarrMovie}
-		onclick={() =>
-			window.open(settings.globalSettings.radarr.baseUrl + '/movie/' + radarrMovie?.tmdbId)}
-	>
-		{$_('library.LibraryItemContext.openRadarr')}
-	</ContextMenuItem>
-{:else}
-	<ContextMenuItem
-		disabled={!sonarrSeries}
-		onclick={() =>
-			window.open(settings.globalSettings.sonarr.baseUrl + '/series/' + sonarrSeries?.titleSlug)}
-	>
-		{$_('library.LibraryItemContext.openSonarr')}
-	</ContextMenuItem>
-{/if}
 <ContextMenuItem onclick={() => window.open(`https://www.themoviedb.org/${type}/${tmdbId}`)}>
 	{$_('library.LibraryItemContext.openTMDB')}
 </ContextMenuItem>

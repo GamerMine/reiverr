@@ -1,7 +1,5 @@
 <script lang="ts">
 	import type { JellyfinItem } from '$lib/apis/jellyfin/jellyfinApi';
-	import type { RadarrMovie } from '$lib/apis/radarr/radarrApi';
-	import type { SonarrSeries } from '$lib/apis/sonarr/sonarrApi';
 	import type { TitleType } from '$lib/types';
 	import { DotsVertical } from 'svelte-radix';
 	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
@@ -12,8 +10,6 @@
 		title = '',
 
 		jellyfinItem = undefined,
-		sonarrSeries = undefined,
-		radarrMovie = undefined,
 
 		type,
 		tmdbId
@@ -21,8 +17,6 @@
 		title?: string;
 
 		jellyfinItem?: JellyfinItem;
-		sonarrSeries?: SonarrSeries;
-		radarrMovie?: RadarrMovie;
 
 		type: TitleType;
 		tmdbId: number;
@@ -31,7 +25,7 @@
 
 <ContextMenuButton heading={title}>
 	{#snippet menu()}
-		<LibraryItemContextItems {jellyfinItem} {sonarrSeries} {radarrMovie} {type} {tmdbId} />
+		<LibraryItemContextItems {jellyfinItem} {type} {tmdbId} />
 	{/snippet}
 	<Button slim>
 		<DotsVertical size="24" />

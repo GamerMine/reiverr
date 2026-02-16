@@ -24,10 +24,13 @@
 	import { modalStack } from '$lib/stores/modal.store';
 	import { formatMinutesToTime, formatSize } from '$lib/utils';
 	import classNames from 'classnames';
-	import { Archive, ChevronRight, DotFilled, Plus } from 'svelte-radix';
+	import { ActivityLog, Archive, ChevronRight, DotFilled, Plus } from 'svelte-radix';
 	import type { ComponentProps } from 'svelte';
 	import { _ } from 'svelte-i18n';
 	import { settings } from '$lib/stores/settings.svelte';
+	import {
+		createSuccessNotification
+	} from "$lib/stores/notification.store";
 
 	let {
 		tmdbId,
@@ -95,8 +98,10 @@
 			qualityProfileId = settings.userSettings.radarr.defaultQualityProfileId;
 		}
 		addMovieToRadarr(tmdbId, qualityProfileId)
-			.then(refreshRadarr)
-			.finally(() => (addToRadarrLoading = false));
+			.then(() => {
+				refreshRadarr();
+				createSuccessNotification("Movie added to queue", "The movie will be added to the library once downloaded.");
+			});
 	}
 
 	function openRequestModal() {
@@ -158,7 +163,7 @@
 				{:else}
 					{@const jellyfinItem = $jellyfinItemStore.item}
 					{@const radarrMovie = $radarrMovieStore.item}
-					<OpenInButton title={movie?.title} {jellyfinItem} {radarrMovie} type="movie" {tmdbId} />
+					<OpenInButton title={movie?.title} {jellyfinItem} type="movie" {tmdbId} />
 					{#if jellyfinItem}
 						<Button variant="primary" onclick={play}>
 							<span>{$_('library.content.play')}</span><ChevronRight size="20" />
@@ -168,8 +173,8 @@
 							<Plus size="20" /><span>{$_('library.content.get')}</span>
 						</Button>
 					{:else if radarrMovie}
-						<Button variant="primary" onclick={openRequestModal}>
-							<Plus size="20" /><span class="mr-2">{$_('library.content.requestMovie')}</span>
+						<Button variant="secondary" disabled={true}>
+							<ActivityLog size="20" /><span class="ml-2">{$_('library.content.inqueue')}</span>
 						</Button>
 					{/if}
 				{/if}
@@ -269,9 +274,6 @@
 				{/if}
 
 				<div class="flex gap-4 flex-wrap col-span-4 sm:col-span-6 mt-4">
-					<Button onclick={openRequestModal}>
-						<span class="mr-2">{$_('library.content.requestMovie')}</span><Plus size="20" />
-					</Button>
 					<Button>
 						<span class="mr-2">{$_('library.content.manage')}</span><Archive size="20" />
 					</Button>

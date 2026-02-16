@@ -20,7 +20,7 @@
 		description: string;
 		duration?: number;
 
-		type?: 'info' | 'error' | 'warning';
+		type?: 'success' | 'info' | 'error' | 'warning';
 	} = $props();
 
 	function handleClose() {
@@ -30,6 +30,7 @@
 
 <div
 	class={classNames('rounded-lg backdrop-blur-xl overflow-hidden', 'flex flex-col w-72', {
+		'bg-green-900/60': type === 'success',
 		'bg-zinc-900/60': type === 'info',
 		'bg-red-900/60': type === 'error',
 		'bg-yellow-900/60': type === 'warning'

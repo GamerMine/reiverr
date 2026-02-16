@@ -10,11 +10,14 @@
 		"sourceMap": true,
 		"strict": true,
 		"target": "ES2022",
+		"types": ["node"],
+		"typeRoots": ["node_modules/@types"],
 		"module": "ES2022",
-		"lib": ["es6"],
+		"lib": ["es2022"],
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
-		"strictPropertyInitialization": false
+		"strictPropertyInitialization": false,
+		"verbatimModuleSyntax": true
 	}
 	// Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
 	//
