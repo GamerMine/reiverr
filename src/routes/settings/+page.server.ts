@@ -64,10 +64,6 @@ export const actions = {
 		const adminRadarrRootFolderPath = (
 			(formData.get('adminRadarrRootFolderPath') as string) || ''
 		).trim();
-		const adminRadarrMonitor = ((formData.get('adminRadarrMonitor') as string) || '').trim();
-		const adminRadarrStartSearch =
-			((formData.get('adminRadarrStartSearch') as string) || '') === 'on';
-
 		const adminSonarrBaseUrl = ((formData.get('adminSonarrBaseUrl') as string) || '').trim();
 		const adminSonarrApiKey = ((formData.get('adminSonarrApiKey') as string) || '').trim();
 		const adminSonarrRootFolderPath = (
@@ -136,11 +132,9 @@ export const actions = {
 
 			// If Radarr connection is possible, checks for the configuration
 			if ((await checkRadarrConnection()).ok) {
-				if (adminRadarrRootFolderPath && adminRadarrMonitor) {
+				if (adminRadarrRootFolderPath) {
 					await GlobalSettingsEntity.setRadarrApiConfiguration(
 						adminRadarrRootFolderPath,
-						adminRadarrMonitor,
-						adminRadarrStartSearch
 					);
 				} else {
 					return fail(422, { code: 3 });

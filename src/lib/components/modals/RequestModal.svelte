@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { downloadRadarrMovie, fetchRadarrReleases } from '$lib/apis/radarr/radarrApi';
+	import {downloadRadarrMovie, fetchRadarrReleases, removeMovieFromRadarr} from '$lib/apis/radarr/radarrApi';
 	import {
 		downloadSonarrEpisode,
 		fetchSonarrReleases,
@@ -12,6 +12,8 @@
 	import { modalStack } from '$lib/stores/modal.store';
 	import ModalContent from '$lib/components/common/modal/ModalContainer.svelte';
 	import ModalHeader from '$lib/components/common/modal/ModalHeader.svelte';
+	import {createSuccessNotification} from "$lib/stores/notification.store";
+	import {radarrMoviesStore} from "$lib/stores/data.store";
 
 	let {
 		modalId,
@@ -87,6 +89,7 @@
 				downloadFetchingGuid = undefined;
 				if (ok) {
 					downloadingGuid = guid;
+					createSuccessNotification("Movie added to queue", "The movie will be added to the library once available."); //FIXME: Add translation
 				}
 			});
 		} else {
@@ -111,12 +114,21 @@
 			showDetailsId = id;
 		}
 	}
+
+	function userClose() {
+		if (radarrId) removeMovieFromRadarr(radarrId)
+		else console.error("NOT IMPLEMENTED: Removing Sonarr episodes.") // FIXME
+
+		radarrMoviesStore.refreshIn()
+
+		groupId ? modalStack.closeGroup(groupId) : modalStack.close(modalId);
+	}
 </script>
 
 <ModalContent>
 	<ModalHeader
 		back={groupId ? () => modalStack.close(modalId) : undefined}
-		close={() => (groupId ? modalStack.closeGroup(groupId) : modalStack.close(modalId))}
+		close={userClose}
 		text={title}
 	/>
 	{#await fetchReleases()}

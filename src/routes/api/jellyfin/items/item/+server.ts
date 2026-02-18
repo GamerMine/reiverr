@@ -3,8 +3,11 @@ import createClient from 'openapi-fetch';
 import type { paths } from '$lib/apis/jellyfin/jellyfin.generated';
 import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import { getUserId } from '$lib/apis/jellyfin/server/jellyfin.server';
+import {assertUserAuth} from "$lib/apis/utils.server";
 
 export const GET: RequestHandler = async ({ url, cookies }) => {
+	await assertUserAuth(cookies);
+
 	return createClient<paths>({
 		baseUrl: (await GlobalSettingsEntity.getJellyfinBaseUrl()) || undefined,
 		headers: {

@@ -2,8 +2,11 @@ import type { RequestHandler } from '@sveltejs/kit';
 import createClient from 'openapi-fetch';
 import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import type { paths } from '$lib/apis/radarr/radarr.generated';
+import {assertAdminAuth} from "$lib/apis/utils.server";
 
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ cookies, url }) => {
+	await assertAdminAuth(cookies);
+
 	const baseUrl =
 		url.searchParams.get('baseUrl') || (await GlobalSettingsEntity.getSonarrBaseUrl());
 	const apiKeySearch: string | null = url.searchParams.get('apiKey');

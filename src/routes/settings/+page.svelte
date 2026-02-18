@@ -72,8 +72,7 @@
 		}
 
 		if (
-			(!currSettings.globalSettings.radarr.monitor ||
-				!currSettings.globalSettings.radarr.rootFolderPath) &&
+			!currSettings.globalSettings.radarr.rootFolderPath &&
 			currSettings.globalSettings.radarr.baseUrl?.length !== undefined &&
 			currSettings.globalSettings.radarr.apiKey?.length !== undefined
 		) {
@@ -97,9 +96,6 @@
 		}
 
 		valuesChanged = JSON.stringify(settings) !== JSON.stringify(currSettings);
-
-		console.log(JSON.stringify(settings));
-		console.log(JSON.stringify(currSettings));
 	});
 
 	onMount(async () => {
@@ -192,7 +188,7 @@
 		<div class="overflow-y-auto overflow-x-hidden scrollbar-custom px-8 h-screen">
 			<form
 				id="settingsForm"
-				class="max-w-screen-md mx-auto mb-auto w-full"
+				class="max-w-3xl mx-auto mb-auto w-full"
 				method="POST"
 				use:enhance={() => {
 					return async ({ result, update }) => {

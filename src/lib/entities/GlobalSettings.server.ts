@@ -34,12 +34,6 @@ export class GlobalSettingsEntity extends BaseEntity {
 	@Column('text', { nullable: true, default: defaultGlobalSettings.radarr.rootFolderPath })
 	radarrRootFolderPath: string | null;
 
-	@Column('text', { nullable: true, default: defaultGlobalSettings.radarr.monitor })
-	radarrMonitor: string | null;
-
-	@Column('boolean', { default: defaultGlobalSettings.radarr.startSearch })
-	radarrStartSearch: boolean;
-
 	// Jellyfin
 
 	@Column('text', { nullable: true, default: defaultGlobalSettings.jellyfin.baseUrl })
@@ -153,8 +147,6 @@ export class GlobalSettingsEntity extends BaseEntity {
 			radarr: {
 				...defaultGlobalSettings.radarr,
 				baseUrl: settings.radarrBaseUrl ?? undefined,
-				monitor: settings.radarrMonitor ?? undefined,
-				startSearch: settings.radarrStartSearch,
 				rootFolderPath: settings.radarrRootFolderPath ?? undefined
 			},
 			jellyfin: {
@@ -190,8 +182,6 @@ export class GlobalSettingsEntity extends BaseEntity {
 		}
 		settings.radarrBaseUrl = values.radarr.baseUrl ?? null;
 		settings.radarrRootFolderPath = values.radarr.rootFolderPath ?? null;
-		settings.radarrMonitor = values.radarr.monitor ?? null;
-		settings.radarrStartSearch = values.radarr.startSearch;
 
 		if (values.jellyfin.apiKey) {
 			settings.jellyfinApiKey = values.jellyfin.apiKey;
@@ -233,8 +223,6 @@ export class GlobalSettingsEntity extends BaseEntity {
 
 	public static async setRadarrApiConfiguration(
 		rootFolderPath: string | undefined,
-		monitor: string | undefined,
-		startSearch: boolean,
 		name = 'default'
 	) {
 		const settings = await this.findOne({ where: { name } });
@@ -242,8 +230,6 @@ export class GlobalSettingsEntity extends BaseEntity {
 		if (!settings) return;
 
 		settings.radarrRootFolderPath = rootFolderPath ?? null;
-		settings.radarrMonitor = monitor ?? null;
-		settings.radarrStartSearch = startSearch;
 
 		await settings.save();
 	}

@@ -36,10 +36,7 @@ export const addMovieToRadarr = async (tmdbId: number, qualityProfileId: string)
 	const radarrMovies = await getRadarrMovies();
 
 	if (radarrMovies?.find((v) => v.tmdbId == tmdbId)) throw new Error('Movie already exists');
-
 	if (!tmdbMovie) throw new Error('Movie not found');
-	const monitorMovie = settings.globalSettings.radarr.monitor;
-	const search = settings.globalSettings.radarr.startSearch;
 
 	const options: RadarrMovieOptions = {
 		qualityProfileId: qualityProfileId || '0',
@@ -49,9 +46,9 @@ export const addMovieToRadarr = async (tmdbId: number, qualityProfileId: string)
 		tmdbId: tmdbMovie.id || 0,
 		year: Number(tmdbMovie.release_date?.slice(0, 4)),
 		tags: [],
-		monitored: monitorMovie != '0',
+		monitored: false,
 		addOptions: {
-			searchForMovie: search
+			searchForMovie: false
 		}
 	};
 
@@ -138,6 +135,15 @@ export const getRadarrRootFolders = async (
 	}).then(async (res): Promise<RadarrRootFolderResource[]> => (await res.json()) || []);
 };
 
+export const removeMovieFromRadarr = async (id: number, deleteFiles: boolean = false) => {
+	let request = `/api/radarr/movie?movieId=${id}&deleteFiles=${deleteFiles}`
+	return (
+		(await fetch(request, {
+			method: 'DELETE',
+		}).then(async (res) => await res.json())) || Promise.resolve(undefined)
+	);
+}
+
 export const getRadarrQualityProfiles = async () => {
 	return await fetch('/api/radarr/qualityprofile', {
 		method: 'GET'
@@ -153,7 +159,3 @@ export function getRadarrPosterUrl(item: RadarrMovie, original = false) {
 
 	return url;
 }
-
-export const getRadarrMonitors = async () => {
-	return ['unknown', 'Movie Only', 'Movie and Collection'];
-};

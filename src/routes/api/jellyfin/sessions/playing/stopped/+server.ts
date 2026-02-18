@@ -2,8 +2,11 @@ import type { RequestHandler } from '@sveltejs/kit';
 import createClient from 'openapi-fetch';
 import type { paths } from '$lib/apis/jellyfin/jellyfin.generated';
 import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
+import {assertUserAuth} from "$lib/apis/utils.server";
 
 export const POST: RequestHandler = async ({ cookies, request }) => {
+	await assertUserAuth(cookies);
+
 	const requestData = await request.json();
 
 	return createClient<paths>({

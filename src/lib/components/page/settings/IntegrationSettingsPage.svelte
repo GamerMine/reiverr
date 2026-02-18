@@ -4,7 +4,7 @@
 		getSonarrMonitors,
 		getSonarrHealth
 	} from '$lib/apis/sonarr/sonarrApi';
-	import { getRadarrHealth, getRadarrMonitors } from '$lib/apis/radarr/radarrApi';
+	import { getRadarrHealth } from '$lib/apis/radarr/radarrApi';
 	import Input from '$lib/components/common/inputs/forms/Input.svelte';
 	import Select from '$lib/components/common/inputs/forms/Select.svelte';
 	import classNames from 'classnames';
@@ -32,7 +32,6 @@
 
 	let radarrConnected: boolean = $state(false);
 	let radarrRootFolders: undefined | { id: string; path: string }[] = $state();
-	let radarrMonitors: undefined | { id: string; type: string }[] = $state();
 
 	let sonarrConnected: boolean = $state(false);
 	let sonarrRootFolders: undefined | { id: number; path: string }[] = $state();
@@ -151,10 +150,6 @@
 					radarrRootFolders = folders.map((f) => ({ id: String(f.id) || '0', path: f.path || '' }));
 				}
 			);
-
-			getRadarrMonitors().then((mon) => {
-				radarrMonitors = mon.map((p, index) => ({ id: String(index) || '0', type: p || '' }));
-			});
 		}
 	});
 </script>
@@ -309,27 +304,6 @@
 							<option value={folder.path}>{folder.path}</option>
 						{/each}
 					</Select>
-				{/if}
-
-				<h2>Monitor Movies</h2>
-				<!-- FIXME: This should not be set by the user. A movie should be automatically monitored on Radarr -->
-				{#if !radarrMonitors}
-					<Select loading />
-				{:else}
-					<Select bind:value={globalSettings.radarr.monitor} name="adminRadarrMonitor">
-						{#each radarrMonitors as profile}
-							<option value={profile.id}>{profile.type}</option>
-						{/each}
-					</Select>
-				{/if}
-				<h2>{$_('settings.integrations.options.searchForMovie')}</h2>
-				<!-- FIXME: This should not be set by the user. A movie should be automatically searched
-										on Radarr if it's release date is older than the current date. Otherwise, it must be only marked
-										as "monitored". -->
-				{#if globalSettings.radarr.startSearch === undefined}
-					<Select loading />
-				{:else}
-					<Toggle bind:checked={globalSettings.radarr.startSearch} name="adminRadarrStartSearch" />
 				{/if}
 			</div>
 		</IntegrationCard>

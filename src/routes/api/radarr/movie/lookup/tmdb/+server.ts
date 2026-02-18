@@ -2,11 +2,14 @@ import type { RequestHandler } from '@sveltejs/kit';
 import createClient from 'openapi-fetch';
 import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import type { paths } from '$lib/apis/radarr/radarr.generated';
+import {assertParam, assertUserAuth} from "$lib/apis/utils.server";
 
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ cookies, url }) => {
+	await assertUserAuth(cookies);
+
 	const baseUrl = await GlobalSettingsEntity.getRadarrBaseUrl();
 	const apiKey = await GlobalSettingsEntity.getRadarrApiKey();
-	const tmdbId = url.searchParams.get('tmdbId');
+	const tmdbId = assertParam(url, "tmdbId");
 
 	if (baseUrl && apiKey) {
 		return createClient<paths>({

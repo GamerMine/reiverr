@@ -12,7 +12,7 @@
 	import CarouselPlaceholderItems from '$lib/components/common/misc/carousel/CarouselPlaceholderItems.svelte';
 	import PersonCard from '$lib/components/common/misc/cards/PersonCard.svelte';
 	import ProgressBar from '$lib/components/common/ProgressBar.svelte';
-	import RequestModal from '$lib/components/RequestModal/RequestModal.svelte';
+	import RequestModal from '$lib/components/modals/RequestModal.svelte';
 	import OpenInButton from '$lib/components/TitlePageLayout/OpenInButton.svelte';
 	import TitlePageLayout from '$lib/components/TitlePageLayout/TitlePageLayout.svelte';
 	import { playerState } from '$lib/components/VideoPlayer/VideoPlayer';
@@ -28,9 +28,7 @@
 	import type { ComponentProps } from 'svelte';
 	import { _ } from 'svelte-i18n';
 	import { settings } from '$lib/stores/settings.svelte';
-	import {
-		createSuccessNotification
-	} from "$lib/stores/notification.store";
+	import QualityProfileModal from "$lib/components/modals/QualityProfileModal.svelte";
 
 	let {
 		tmdbId,
@@ -83,25 +81,38 @@
 	let addToRadarrLoading = $state(false);
 	function addToRadarr() {
 		addToRadarrLoading = true;
-		let qualityProfileId;
+		// FIXME: Needs to be refactored.
 		if (
 			settings.userSettings.radarr.askQualityProfile ||
 			settings.userSettings.radarr.defaultQualityProfileId === ''
 		) {
-			// TODO: Open quality profile chooser.
-			qualityProfileId = '';
-			if (qualityProfileId === '') {
-				addToRadarrLoading = false;
-				return;
-			}
-		} else {
-			qualityProfileId = settings.userSettings.radarr.defaultQualityProfileId;
-		}
-		addMovieToRadarr(tmdbId, qualityProfileId)
-			.then(() => {
-				refreshRadarr();
-				createSuccessNotification("Movie added to queue", "The movie will be added to the library once available."); //FIXME: Add translation
+			modalStack.create(QualityProfileModal, {
+				type: "movie",
+				selection: (sel: string) => {
+					if (sel === '') {
+						addToRadarrLoading = false;
+						return;
+					}
+
+					addMovieToRadarr(tmdbId, sel)
+						.then(() => {
+							refreshRadarr().then(() => {
+								openRequestModal();
+								addToRadarrLoading = false;
+							});
+						});
+					return;
+				}
 			});
+		} else {
+			addMovieToRadarr(tmdbId, settings.userSettings.radarr.defaultQualityProfileId)
+				.then(() => {
+					refreshRadarr().then(() => {
+						openRequestModal();
+						addToRadarrLoading = true;
+					});
+				});
+		}
 	}
 
 	function openRequestModal() {

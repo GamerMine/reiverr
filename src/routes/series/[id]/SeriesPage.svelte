@@ -17,7 +17,7 @@
 	import UiCarousel from '$lib/components/common/misc/carousel/UICarousel.svelte';
 	import EpisodeCard from '$lib/components/common/misc/cards/EpisodeCard.svelte';
 	import PersonCard from '$lib/components/common/misc/cards/PersonCard.svelte';
-	import SeriesRequestModal from '$lib/components/RequestModal/SeriesRequestModal.svelte';
+	import SeriesRequestModal from '$lib/components/modals/SeriesRequestModal.svelte';
 	import OpenInButton from '$lib/components/TitlePageLayout/OpenInButton.svelte';
 	import TitlePageLayout from '$lib/components/TitlePageLayout/TitlePageLayout.svelte';
 	import { playerState } from '$lib/components/VideoPlayer/VideoPlayer';

@@ -2,8 +2,11 @@ import type { RequestHandler } from '@sveltejs/kit';
 import createClient from 'openapi-fetch';
 import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import type { paths } from '$lib/apis/sonarr/sonarr.generated';
+import {assertUserAuth} from "$lib/apis/utils.server";
 
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ cookies, url }) => {
+	await assertUserAuth(cookies);
+
 	const baseUrl = await GlobalSettingsEntity.getSonarrBaseUrl();
 	const apiKey = await GlobalSettingsEntity.getSonarrApiKey();
 
@@ -49,7 +52,9 @@ export const GET: RequestHandler = async ({ url }) => {
 	}
 };
 
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ cookies, request }) => {
+	await assertUserAuth(cookies);
+
 	const baseUrl = await GlobalSettingsEntity.getSonarrBaseUrl();
 	const apiKey = await GlobalSettingsEntity.getSonarrApiKey();
 	const requestData = await request.json();

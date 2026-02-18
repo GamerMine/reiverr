@@ -22,8 +22,7 @@ export const DELETE: RequestHandler = async ({ cookies, url }) => {
 					await GlobalSettingsEntity.setRadarrApiEndpoint(undefined, undefined);
 					await GlobalSettingsEntity.setRadarrApiConfiguration(
 						undefined,
-						undefined,
-						defaultGlobalSettings.radarr.startSearch
+						undefined
 					);
 					break;
 				}

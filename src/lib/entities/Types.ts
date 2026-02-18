@@ -11,8 +11,6 @@ export type GlobalSettings = {
 		baseUrl: string | undefined;
 		apiKey: string | undefined;
 		rootFolderPath: string | undefined;
-		monitor: string | undefined;
-		startSearch: boolean;
 	};
 	jellyfin: {
 		baseUrl: string | undefined;
@@ -60,8 +58,6 @@ export const defaultGlobalSettings: GlobalSettings = {
 		apiKey: undefined,
 		baseUrl: undefined,
 		rootFolderPath: undefined,
-		monitor: 'unknown',
-		startSearch: true
 	},
 	jellyfin: {
 		apiKey: undefined,

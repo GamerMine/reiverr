@@ -5,8 +5,8 @@ import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 
 export const GET: RequestHandler = async ({ url }) => {
 	const apiKeySearch: string | null = url.searchParams.get('apiKey');
-	const apiKeySetting: string | null = await GlobalSettingsEntity.getJellyfinApiKey();
-	const apiKey: string | null = apiKeySearch ?? apiKeySetting;
+	const apiKeySetting: string | null | undefined = await GlobalSettingsEntity.getJellyfinApiKey();
+	const apiKey: string | null | undefined = apiKeySearch ?? apiKeySetting;
 
 	return createClient<paths>({
 		baseUrl: url.searchParams.get('baseUrl') || undefined,

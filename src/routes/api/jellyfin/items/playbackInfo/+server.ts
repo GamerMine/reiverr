@@ -3,8 +3,11 @@ import createClient from 'openapi-fetch';
 import type { paths } from '$lib/apis/jellyfin/jellyfin.generated';
 import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import { getUserId } from '$lib/apis/jellyfin/server/jellyfin.server';
+import {assertUserAuth} from "$lib/apis/utils.server";
 
 export const POST: RequestHandler = async ({ url, cookies, request }) => {
+	await assertUserAuth(cookies);
+
 	const requestBody = await request.json();
 
 	return createClient<paths>({
