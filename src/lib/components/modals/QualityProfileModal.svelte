@@ -24,7 +24,7 @@
 <ModalContainer>
     <ModalHeader
         back={groupId ? () => modalStack.close(modalId) : undefined}
-        close={() => (groupId ? modalStack.closeGroup(groupId) : modalStack.close(modalId))}
+        close={() => {groupId ? modalStack.closeGroup(groupId) : modalStack.close(modalId); selection(-1)}}
         text={"Choose Quality Profile"}/> <!-- TODO: Add translation -->
     {#await type === "movie" ? getRadarrQualityProfiles() : getSonarrQualityProfiles()}
         <div class="text-sm text-zinc-200 opacity-50 font-light p-4">Loading...</div>
@@ -34,7 +34,7 @@
                 <button
                     class="flex px-4 py-2 gap-4 hover:bg-lighten items-center justify-between cursor-pointer text-sm hover:bg-zinc-600"
                     onclick={() => {
-                        selection(profile.id || 0);
+                        selection(profile.id || -1);
                         groupId ? modalStack.closeGroup(groupId) : modalStack.close(modalId);
                     }}
                 >

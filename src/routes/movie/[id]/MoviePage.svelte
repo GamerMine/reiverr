@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addMovieToRadarr } from '$lib/apis/radarr/radarrApi';
+	import {addMovieToRadarr, removeMovieFromRadarr} from '$lib/apis/radarr/radarrApi';
 	import {
 		getTmdbMovie,
 		getTmdbMovieRecommendations,
@@ -24,7 +24,7 @@
 	import { modalStack } from '$lib/stores/modal.store';
 	import { formatMinutesToTime, formatSize } from '$lib/utils';
 	import classNames from 'classnames';
-	import { ActivityLog, Archive, ChevronRight, DotFilled, Plus } from 'svelte-radix';
+	import { ActivityLog, Archive, ChevronRight, DotFilled, Plus, Trash } from 'svelte-radix';
 	import type { ComponentProps } from 'svelte';
 	import { _ } from 'svelte-i18n';
 	import { settings } from '$lib/stores/settings.svelte';
@@ -88,13 +88,13 @@
 		) {
 			modalStack.create(QualityProfileModal, {
 				type: "movie",
-				selection: (sel: string) => {
-					if (sel === '') {
+				selection: (sel: number) => {
+					if (sel === -1) {
 						addToRadarrLoading = false;
 						return;
 					}
 
-					addMovieToRadarr(tmdbId, sel)
+					addMovieToRadarr(tmdbId, sel.toString())
 						.then(() => {
 							refreshRadarr().then(() => {
 								openRequestModal();
@@ -121,6 +121,11 @@
 		modalStack.create(RequestModal, {
 			radarrId: $radarrMovieStore.item?.id
 		});
+	}
+
+	function removeMovie() {
+		if ($radarrMovieStore.item?.id) removeMovieFromRadarr($radarrMovieStore.item?.id, true)
+		refreshRadarr();
 	}
 </script>
 
@@ -186,6 +191,9 @@
 					{:else if radarrMovie}
 						<Button variant="secondary" disabled>
 							<ActivityLog size="20" /><span class="ml-2">{$_('library.content.inqueue')}</span>
+						</Button>
+						<Button variant="error" klass="!px-2" onclick={removeMovie}>
+							<Trash size="20" />
 						</Button>
 					{/if}
 				{/if}
