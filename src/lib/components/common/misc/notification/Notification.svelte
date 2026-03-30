@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { notificationStack } from '$lib/stores/notification.store';
+	import '$lib/stores/notification.store';
 	import classNames from 'classnames';
 	import { Cross2, ExclamationTriangle } from 'svelte-radix';
 	import { fade, fly } from 'svelte/transition';
 	import IconButton from '$lib/components/common/inputs/buttons/IconButton.svelte';
+	import notificationStore from "$lib/stores/notification.store";
 
 	let {
 		id,
@@ -24,7 +25,7 @@
 	} = $props();
 
 	function handleClose() {
-		notificationStack.close(id);
+		notificationStore.close(id);
 	}
 </script>
 

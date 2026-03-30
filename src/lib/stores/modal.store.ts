@@ -1,72 +1,69 @@
-import type { TitleId } from '$lib/types';
-import { writable } from 'svelte/store';
+import type {TitleId} from '$lib/types';
 import TitlePageModal from '../components/TitlePageLayout/TitlePageModal.svelte';
-import type { Component } from 'svelte';
+import type {Component} from 'svelte';
 
 type ModalItem = {
-	id: symbol;
-	group: symbol;
-	component: Component<any, any, any>;
-	props: Record<string, any>;
+    id: symbol;
+    group: symbol;
+    component: Component<any, any, any>;
+    props: Record<string, any>;
 };
-function createDynamicModalStack() {
-	const store = writable<{ stack: ModalItem[]; top: ModalItem | undefined }>({
-		stack: [],
-		top: undefined
-	});
 
-	function close(symbol: symbol) {
-		store.update((s) => {
-			s.stack = s.stack.filter((i) => i.id !== symbol);
-			s.top = s.stack[s.stack.length - 1];
-			return s;
-		});
-	}
+class ModalStore {
+    _stack: ModalItem[] = $state([])
+    _top: ModalItem | undefined = $state(undefined)
+    _lastTitle: symbol | undefined = $state(undefined)
 
-	function closeGroup(group: symbol) {
-		store.update((s) => {
-			s.stack = s.stack.filter((i) => i.group !== group);
-			s.top = s.stack[s.stack.length - 1];
-			return s;
-		});
-	}
+    get stack() {
+        return this._stack;
+    }
 
-	function create(
-		component: Component<any, any, any>,
-		props: Record<string, any>,
-		group: symbol | undefined = undefined
-	) {
-		const id = Symbol();
-		const item = { id, component, props, group: group || id };
-		store.update((s) => {
-			s.stack.push(item);
-			s.top = item;
-			return s;
-		});
-		return id;
-	}
+    get top() {
+        return this._top;
+    }
 
-	function reset() {
-		store.set({ stack: [], top: undefined });
-	}
+    get lastTitle() {
+        return this._lastTitle;
+    }
 
-	return {
-		...store,
-		create,
-		close,
-		closeGroup,
-		reset
-	};
+    create(
+        component: Component<any, any, any>,
+        props: Record<string, any>,
+        group: symbol | undefined = undefined
+    ) {
+        const id = Symbol();
+        const item = {id, component, props, group: group || id};
+        this._stack.push(item);
+        this._top = item;
+
+        return id;
+    }
+
+    createTitle(titleId: TitleId) {
+        if (this._lastTitle) {
+            this.close(this._lastTitle);
+        }
+        this._lastTitle = this.create(TitlePageModal, {
+            titleId
+        });
+    }
+
+    close(symbol: symbol) {
+        this._stack = this._stack.filter((item) => item.id !== symbol);
+        this._top = this._stack[this._stack.length - 1];
+    }
+
+    closeGroup(group: symbol) {
+        this._stack = this._stack.filter((item) => item.group !== group);
+        this._top = this._stack[this._stack.length - 1];
+    }
+
+    reset() {
+        this._stack = []
+        this._top = undefined;
+        this._lastTitle = undefined;
+    }
 }
 
-export const modalStack = createDynamicModalStack();
-
-let lastTitleModal: symbol | undefined = undefined;
-export function openTitleModal(titleId: TitleId) {
-	if (lastTitleModal) {
-		modalStack.close(lastTitleModal);
-	}
-	lastTitleModal = modalStack.create(TitlePageModal, {
-		titleId
-	});
-}
+const modalStore = new ModalStore();
+export default modalStore;

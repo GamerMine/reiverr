@@ -1,85 +1,77 @@
-import { writable } from 'svelte/store';
 import Notification from '$lib/components/common/misc/notification/Notification.svelte';
-import type { Component } from 'svelte';
+import type {Component} from 'svelte';
 
 export type NotificationItem = {
-	id: symbol;
-	component: Component<any, any, any>;
-	props: Record<string, any>;
-	timeout: NodeJS.Timeout | undefined;
-	duration: number;
-	height: number;
+    id: symbol;
+    component: Component<any, any, any>;
+    props: Record<string, any>;
+    timeout: NodeJS.Timeout | undefined;
+    duration: number;
+    height: number;
 };
 
-function createNotificationStack() {
-	const stack = writable<NotificationItem[]>([]);
+class NotificationStore {
+    _stack: NotificationItem[] = $state([])
 
-	function create(
-		component: Component<any, any, any>,
-		props: Record<string, any>,
-		duration = 5000
-	) {
-		const id = Symbol();
-		const item: NotificationItem = {
-			id,
-			component,
-			props,
-			timeout: undefined,
-			duration,
-			height: 0
-		};
+    get stack() {
+        return this._stack
+    }
 
-		if (duration > 0) {
-			item.timeout = setTimeout(() => {
-				close(id);
-			}, duration);
-		}
+    create(
+        component: Component<any, any, any>,
+        props: Record<string, any>,
+        duration = 5000
+    ) {
+        const id = Symbol();
+        const item: NotificationItem = {
+            id,
+            component,
+            props,
+            timeout: undefined,
+            duration,
+            height: 0
+        };
 
-		stack.update((s) => {
-			s.push(item);
-			return s;
-		});
+        if (duration > 0) {
+            item.timeout = setTimeout(() => {
+                this.close(id);
+            }, duration);
+        }
 
-		return id;
-	}
+        this._stack.push(item);
 
-	function close(id: symbol) {
-		stack.update((s) => {
-			clearTimeout(s.find((i) => i.id === id)?.timeout);
-			s = s.filter((i) => i.id !== id);
-			return s;
-		});
-	}
+        return id;
+    }
 
-	return {
-		...stack,
-		create,
-		close
-	};
+    createError(title: string, details: string, type = 'error') {
+        return this.create(Notification, {
+            type,
+            title,
+            description: details
+        });
+    }
+
+    createInfo(title: string, details: string, type = 'info') {
+        return this.create(Notification, {
+            type,
+            title,
+            description: details
+        })
+    }
+
+    createSuccess(title: string, details: string, type = 'success') {
+        return this.create(Notification, {
+            type,
+            title,
+            description: details
+        })
+    }
+
+    close(id: symbol) {
+        clearTimeout(this._stack.find((i) => i.id === id)?.timeout);
+        this._stack = this._stack.filter((i) => i.id !== id);
+    }
 }
 
-export const notificationStack = createNotificationStack();
-
-export function createErrorNotification(title: string, details: string, type = 'error') {
-	return notificationStack.create(Notification, {
-		type,
-		title,
-		description: details
-	});
-}
-
-export function createInfoNotification(title: string, details: string, type = 'info') {
-	return notificationStack.create(Notification, {
-		type,
-		title,
-		description: details
-	})
-}
-
-export function createSuccessNotification(title: string, details: string, type = 'success') {
-	return notificationStack.create(Notification, {
-		type,
-		title,
-		description: details
-	})
-}
+const notificationStore = new NotificationStore();
+export default notificationStore;
