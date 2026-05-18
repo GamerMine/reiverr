@@ -7,6 +7,7 @@
 		placeholder = '',
 		name = '',
 		disabled = false,
+		required = false,
 
 		klass = '',
 
@@ -17,6 +18,7 @@
 		placeholder?: string;
 		name?: string;
 		disabled?: boolean;
+		required?: boolean;
 
 		klass?: string;
 
@@ -42,6 +44,7 @@
 			bind:value
 			oninput={handleChange}
 			class={classNames(klass, baseStyles)}
+			{required}
 		/>
 	{:else if type === 'password'}
 		<input
@@ -52,6 +55,7 @@
 			bind:value
 			oninput={handleChange}
 			class={classNames(klass, baseStyles)}
+			{required}
 		/>
 	{:else if type === 'number'}
 		<input
@@ -62,6 +66,7 @@
 			bind:value
 			oninput={handleChange}
 			class={classNames(klass, baseStyles, 'w-28')}
+			{required}
 		/>
 	{/if}
 </div>

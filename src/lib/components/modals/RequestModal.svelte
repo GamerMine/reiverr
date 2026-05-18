@@ -14,7 +14,7 @@
 	import HeightHider from '../HeightHider.svelte';
 	import IconButton from '$lib/components/common/inputs/buttons/IconButton.svelte';
 	import { modalStack } from '$lib/stores/modal.store';
-	import ModalContent from '$lib/components/common/modal/ModalContainer.svelte';
+	import ModalContainer from '$lib/components/common/modal/ModalContainer.svelte';
 	import ModalHeader from '$lib/components/common/modal/ModalHeader.svelte';
 	import {createSuccessNotification} from "$lib/stores/notification.store";
 	import {radarrMoviesStore} from "$lib/stores/data.store";
@@ -125,7 +125,7 @@
 	}
 </script>
 
-<ModalContent>
+<ModalContainer>
 	<ModalHeader
 		back={groupId ? () => modalStack.close(modalId) : undefined}
 		close={userClose}
@@ -216,4 +216,4 @@
 			<div class="text-sm text-zinc-200 opacity-50 font-light p-4">No releases found.</div>
 		{/if}
 	{/await}
-</ModalContent>
+</ModalContainer>

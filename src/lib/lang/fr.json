@@ -146,7 +146,7 @@
 			"settings": "Configuration",
 			"general": "Général",
 			"integrations": "Intégrations",
-			"filtering": "Profils de filtrage"
+			"filtering": "Profiles de filtrage"
 		},
 		"general": {
 			"userInterface": {
@@ -184,10 +184,13 @@
 			}
 		},
 		"filtering": {
-			"filteringProfiles": "Profils de filtrage",
+			"filteringProfiles": "Profiles de filtrage",
 			"letUserChoose": "Laisser l'utilisateur choisir [TODO]",
 			"letUserChooseDescription": "Si coché, n'importe quel utilisateur peux choisir parmis l'un des profils disponible ici.",
-			"addProfile": "Ajouter un profile"
+			"addProfile": "Ajouter un profile",
+			"profileName": "Nom du profile",
+			"language": "Langue",
+			"qualities": "Qualitées vidéo"
 		},
 		"misc": {
 			"invalidConfiguration": "Configuration Invalide",
@@ -238,5 +241,65 @@
 			"canceled": "Annulée",
 			"pilot": "Épisode Pilote"
 		}
+	},
+	"languages": {
+		"any": "Toute",
+		"afrikaans": "Afrikaans",
+		"albanian": "Albanais",
+		"arabic": "Arabe",
+		"bengali": "Bengali",
+		"bosnian": "Bosnien",
+		"bulgarian": "Bulgare",
+		"catalan": "Catalan",
+		"chinese": "Chinois",
+		"croatian": "Croate",
+		"czech": "Tchèque",
+		"danish": "Danois",
+		"dutch": "Néerlandais",
+		"english": "Anglais",
+		"estonian": "Estonien",
+		"finnish": "Finnois",
+		"flemish": "Flammand",
+		"french": "Français",
+		"georgian": "Géorgien",
+		"german": "Allemand",
+		"greek": "Grec",
+		"hebrew": "Hébreu",
+		"hindi": "Hindi",
+		"hungarian": "Hongrois",
+		"icelandic": "Islandais",
+		"indonesian": "Indonésien",
+		"italian": "Italien",
+		"japanese": "Japonais",
+		"kannada": "Kannada",
+		"korean": "Koréen",
+		"latvian": "Letton",
+		"lithuanian": "Lituanien",
+		"macedonian": "Macédonien",
+		"malayalam": "Malayalam",
+		"marathi": "Marathi",
+		"mongolian": "Mongol",
+		"norwegian": "Norvégien",
+		"persian": "Persan",
+		"polish": "Polonais",
+		"portuguese": "Portugais",
+		"portuguese (brazil)": "Portugais (Brésil)",
+		"romanian": "Roumain",
+		"romansh": "Romansh",
+		"russian": "Russe",
+		"serbian": "Serbe",
+		"slovak": "Slovaque",
+		"slovenian": "Slovène",
+		"spanish": "Espagnol",
+		"spanish (latino)": "Espagnol (Latino)",
+		"swedish": "Suédois",
+		"tagalog": "Tagalog",
+		"tamil": "Tamoul",
+		"telugu": "Télougou",
+		"thai": "Thaï",
+		"turkish": "Turc",
+		"ukrainian": "Ukrainien",
+		"urdu": "Ourdou",
+		"vietnamese": "Vietnamien"
 	}
 }

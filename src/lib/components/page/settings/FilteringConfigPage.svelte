@@ -4,6 +4,8 @@
 	import { type GlobalSettings } from '$lib/entities/Types';
 	import Toggle from "$lib/components/common/inputs/forms/Toggle.svelte";
 	import { Plus } from 'svelte-radix';
+	import {modalStack} from "$lib/stores/modal.store";
+	import FilteringProfileModal from "$lib/components/modals/FilteringProfileModal.svelte";
 
 	let {
 		visible,
@@ -13,6 +15,10 @@
 		globalSettings: GlobalSettings;
 	} = $props();
 
+	function addProfile(e: MouseEvent) {
+		e.preventDefault();
+		modalStack.create(FilteringProfileModal, {});
+	}
 </script>
 
 <div
@@ -37,11 +43,14 @@
 		</p>
 	</div>
 	<Toggle name="userAutoplayTrailers" />
-</div>
 
-<div class="flex flex-wrap gap-2 my-8">
-	<div class="bg-neutral-900 rounded-md h-50 w-80 flex justify-center items-center hover:cursor-pointer hover:bg-neutral-800 transition-colors duration-200">
-		<Plus size="40"/>
-		<h2>{$_('settings.filtering.addProfile')}</h2>
+	<div class="flex flex-wrap gap-2 my-8 col-span-2">
+		<button
+				class="bg-neutral-900 rounded-md h-50 w-80 flex justify-center items-center hover:cursor-pointer hover:bg-neutral-800 transition-colors duration-200"
+				onclick={addProfile}
+		>
+			<Plus size="40"/>
+			<h2>{$_('settings.filtering.addProfile')}</h2>
+		</button>
 	</div>
 </div>
