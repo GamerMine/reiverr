@@ -28,7 +28,6 @@
 	import type { ComponentProps } from 'svelte';
 	import { _ } from 'svelte-i18n';
 	import { settings } from '$lib/stores/settings.svelte';
-	import QualityProfileModal from "$lib/components/modals/QualityProfileModal.svelte";
 
 	let {
 		tmdbId,
@@ -81,38 +80,14 @@
 	let addToRadarrLoading = $state(false);
 	function addToRadarr() {
 		addToRadarrLoading = true;
-		// FIXME: Needs to be refactored.
-		if (
-			settings.userSettings.radarr.askQualityProfile ||
-			settings.userSettings.radarr.defaultQualityProfileId === ''
-		) {
-			modalStack.create(QualityProfileModal, {
-				type: "movie",
-				selection: (sel: number) => {
-					if (sel === -1) {
-						addToRadarrLoading = false;
-						return;
-					}
 
-					addMovieToRadarr(tmdbId, sel.toString())
-						.then(() => {
-							refreshRadarr().then(() => {
-								openRequestModal();
-								addToRadarrLoading = false;
-							});
-						});
-					return;
-				}
-			});
-		} else {
-			addMovieToRadarr(tmdbId, settings.userSettings.radarr.defaultQualityProfileId)
-				.then(() => {
-					refreshRadarr().then(() => {
-						openRequestModal();
-						addToRadarrLoading = true;
-					});
+		addMovieToRadarr(tmdbId)
+			.then(() => {
+				refreshRadarr().then(() => {
+					openRequestModal();
+					addToRadarrLoading = false;
 				});
-		}
+			});
 	}
 
 	function openRequestModal() {

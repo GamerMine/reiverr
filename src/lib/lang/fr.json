@@ -145,7 +145,8 @@
 			"adminSettings": "Paramètres administrateur",
 			"settings": "Configuration",
 			"general": "Général",
-			"integrations": "Intégrations"
+			"integrations": "Intégrations",
+			"filtering": "Profils de filtrage"
 		},
 		"general": {
 			"userInterface": {
@@ -162,16 +163,6 @@
 				"includedLanguages": "Langues incluses",
 				"includedLanguagesDescription": "Filtrer les résultats en fonction de la langue parlée. Prends les codes ISO 639-1 séparés par des virgules. Laisser vide pour désactiver."
 			}
-		},
-		"radarr": {
-			"preferedQualityProfile": "Profil de qualité préféré",
-			"preferedQualityProfileDescription": "Le profil de qualité qui sera selectionné par défaut lors de la demande d'un film.",
-			"askQualityProfile": "Demander le profile de qualité",
-			"askQualityProfileDescription": "Demander le profil de qualité à chaque fois que vous demandez un film. Si désactivé, le profile de qualité préféré sera utilisé si disponible."
-		},
-		"sonarr": {
-			"preferedQualityProfile": "Profil de qualité préféré",
-			"preferedQualityProfileDescription": "Le profil de qualité qui sera selectionné par défaut lors de la demande d'une série ou d'un épisode."
 		},
 		"integrations": {
 			"integrations": "Intégrations",
@@ -191,6 +182,12 @@
 				"jellyfinUser": "Utilisateur de Jellyfin",
 				"searchForMovie": "Recherche automatique du film sur Radarr"
 			}
+		},
+		"filtering": {
+			"filteringProfiles": "Profils de filtrage",
+			"letUserChoose": "Laisser l'utilisateur choisir [TODO]",
+			"letUserChooseDescription": "Si coché, n'importe quel utilisateur peux choisir parmis l'un des profils disponible ici.",
+			"addProfile": "Ajouter un profile"
 		},
 		"misc": {
 			"invalidConfiguration": "Configuration Invalide",

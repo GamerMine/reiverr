@@ -12,7 +12,6 @@ export type SonarrEpisode = components['schemas']['EpisodeResource'];
 
 export interface SonarrSeriesOptions {
 	title: string;
-	qualityProfileId: string;
 	seasonFolder: boolean;
 	monitored: boolean;
 	tvdbId: number;
@@ -53,7 +52,7 @@ export const getDiskSpace = async (): Promise<DiskSpaceInfo[]> => {
 	);
 };
 
-export const addSeriesToSonarr = async (tmdbId: number, qualityProfileId: string) => {
+export const addSeriesToSonarr = async (tmdbId: number) => {
 	const tmdbSeries = await getTmdbSeries(tmdbId);
 
 	if (!tmdbSeries || !tmdbSeries.external_ids.tvdb_id || !tmdbSeries.name)
@@ -64,7 +63,6 @@ export const addSeriesToSonarr = async (tmdbId: number, qualityProfileId: string
 	const options: SonarrSeriesOptions = {
 		title: tmdbSeries.name,
 		tvdbId: tmdbSeries.external_ids.tvdb_id,
-		qualityProfileId: qualityProfileId || '0',
 		monitored: monitorType != 'none',
 		addOptions: {
 			monitor: monitorType ? (monitorType as any) : 'none',

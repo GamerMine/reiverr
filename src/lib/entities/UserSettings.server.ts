@@ -26,20 +26,6 @@ export class UserSettingsEntity extends BaseEntity {
 	@Column('text', { default: defaultUserSettings.discover.includedLanguages })
 	discoverIncludedLanguages: string;
 
-	// Radarr
-	@Column('text', { default: defaultUserSettings.radarr.defaultQualityProfileId })
-	radarrQualityProfileId: string;
-
-	@Column('boolean', { default: defaultUserSettings.radarr.askQualityProfile })
-	radarrAskQualityProfile: boolean;
-
-	// Sonarr
-	@Column('text', { default: defaultUserSettings.sonarr.defaultQualityProfileId })
-	sonarrQualityProfileId: string;
-
-	@Column('boolean', { default: defaultUserSettings.sonarr.askQualityProfile })
-	sonarrAskQualityProfile: boolean;
-
 	public static async getUserSettings(userId: string) {
 		const userSettings = await this.findOne({ where: { userId } });
 
@@ -66,14 +52,6 @@ export class UserSettingsEntity extends BaseEntity {
 				excludeLibraryItems: userSettingsEntity.discoverExcludeLibraryItems,
 				includedLanguages: userSettingsEntity.discoverIncludedLanguages
 			},
-			radarr: {
-				defaultQualityProfileId: userSettingsEntity.radarrQualityProfileId,
-				askQualityProfile: userSettingsEntity.radarrAskQualityProfile
-			},
-			sonarr: {
-				defaultQualityProfileId: userSettingsEntity.sonarrQualityProfileId,
-				askQualityProfile: userSettingsEntity.sonarrAskQualityProfile
-			}
 		};
 	}
 
@@ -96,11 +74,5 @@ export class UserSettingsEntity extends BaseEntity {
 		userSettingsEntity.discoverRegion = newUserSettings.discover.region;
 		userSettingsEntity.discoverIncludedLanguages = newUserSettings.discover.includedLanguages;
 		userSettingsEntity.discoverExcludeLibraryItems = newUserSettings.discover.excludeLibraryItems;
-
-		userSettingsEntity.radarrQualityProfileId = newUserSettings.radarr.defaultQualityProfileId;
-		userSettingsEntity.radarrAskQualityProfile = newUserSettings.radarr.askQualityProfile;
-
-		userSettingsEntity.sonarrQualityProfileId = newUserSettings.sonarr.defaultQualityProfileId;
-		userSettingsEntity.sonarrAskQualityProfile = newUserSettings.sonarr.askQualityProfile;
 	}
 }

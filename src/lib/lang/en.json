@@ -153,7 +153,8 @@
 			"adminSettings": "Admin Settings",
 			"settings": "Configuration",
 			"general": "General",
-			"integrations": "Integrations"
+			"integrations": "Integrations",
+			"filtering": "Filtering profiles"
 		},
 		"general": {
 			"userInterface": {
@@ -170,16 +171,6 @@
 				"includedLanguages": "Included languages",
 				"includedLanguagesDescription": "Filter results based on spoken language. Takes ISO 639-1 language codes separated with commas. Leave empty to disable."
 			}
-		},
-		"radarr": {
-			"preferedQualityProfile": "Prefered quality profile",
-			"preferedQualityProfileDescription": "The quality profile that will be selected by default when asking for a movie.",
-			"askQualityProfile": "Ask quality profile",
-			"askQualityProfileDescription": "Ask the quality profile each time you ask a movie. If disabled, the preferred quality profile will be used if available."
-		},
-		"sonarr": {
-			"preferedQualityProfile": "Prefered quality profile",
-			"preferedQualityProfileDescription": "The quality profile that will be selected by default when asking for series or episodes."
 		},
 		"integrations": {
 			"integrations": "Integrations",
@@ -199,6 +190,12 @@
 				"jellyfinUser": "Jellyfin User",
 				"searchForMovie": "Automatic movie search on Radarr"
 			}
+		},
+		"filtering": {
+			"filteringProfiles": "Filtering profiles",
+			"letUserChoose": "Let the user choose [TODO]",
+			"letUserChooseDescription": "If checked, any user can choose one of the profile available here.",
+			"addProfile": "Add a profile"
 		},
 		"misc": {
 			"invalidConfiguration": "Invalid Configuration",

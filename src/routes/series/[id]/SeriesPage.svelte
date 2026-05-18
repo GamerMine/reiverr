@@ -167,22 +167,7 @@
 		const tmdbId = await data.then((d) => d.tmdbId);
 		addToSonarrLoading = true;
 
-		let qualityProfileId;
-		if (
-				settings.userSettings.sonarr.askQualityProfile ||
-				settings.userSettings.sonarr.defaultQualityProfileId === ''
-		) {
-			// TODO: Open quality profile chooser.
-			qualityProfileId = '';
-			if (qualityProfileId === '') {
-				addToSonarrLoading = false;
-				return;
-			}
-		} else {
-			qualityProfileId = settings.userSettings.sonarr.defaultQualityProfileId;
-		}
-
-		addSeriesToSonarr(tmdbId, qualityProfileId)
+		addSeriesToSonarr(tmdbId)
 			.then(() => {
 				refreshSonarr();
 				createSuccessNotification("Episode(s) added to queue", "The episode(s) will be added to the library once available.")

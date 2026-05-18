@@ -46,14 +46,6 @@ export const actions = {
 		const userDiscoverExcludeLibraryItems =
 			(formData.get('userDiscoverExcludeLibraryItems') as string) === 'on';
 		const userDiscoverIncludedLanguages = formData.get('userDiscoverIncludedLanguages') as string;
-		const userRadarrDefaultQualityProfileId =
-			(formData.get('userRadarrDefaultQualityProfileId') as string) || '';
-		const userRadarrAskQualityprofile =
-			(formData.get('userRadarrAskQualityProfile') as string) === 'on';
-		const userSonarrDefaultQualityProfileId =
-			(formData.get('userSonarrDefaultQualityProfileId') as string) || '';
-		const userSonarrAskQualityprofile =
-			(formData.get('userSonarrAskQualityProfile') as string) === 'on';
 
 		// Global Settings (admin only)
 		const adminJellyfinBaseUrl = ((formData.get('adminJellyfinBaseUrl') as string) || '').trim();
@@ -83,14 +75,6 @@ export const actions = {
 				region: userDiscoverRegion,
 				excludeLibraryItems: userDiscoverExcludeLibraryItems,
 				includedLanguages: userDiscoverIncludedLanguages
-			},
-			radarr: {
-				defaultQualityProfileId: userRadarrDefaultQualityProfileId,
-				askQualityProfile: userRadarrAskQualityprofile
-			},
-			sonarr: {
-				defaultQualityProfileId: userSonarrDefaultQualityProfileId,
-				askQualityProfile: userSonarrAskQualityprofile
 			}
 		};
 

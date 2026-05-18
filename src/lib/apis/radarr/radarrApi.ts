@@ -31,7 +31,7 @@ export const getRadarrMovies = async (): Promise<RadarrMovie[]> => {
 	);
 };
 
-export const addMovieToRadarr = async (tmdbId: number, qualityProfileId: string) => {
+export const addMovieToRadarr = async (tmdbId: number) => {
 	const tmdbMovie = await getTmdbMovie(tmdbId);
 	const radarrMovies = await getRadarrMovies();
 
@@ -39,7 +39,7 @@ export const addMovieToRadarr = async (tmdbId: number, qualityProfileId: string)
 	if (!tmdbMovie) throw new Error('Movie not found');
 
 	const options: RadarrMovieOptions = {
-		qualityProfileId: qualityProfileId || '0',
+		qualityProfileId: '1',
 		rootFolderPath: settings.globalSettings.radarr.rootFolderPath || '',
 		minimumAvailability: 'announced',
 		title: tmdbMovie.title || tmdbMovie.original_title || '',
@@ -64,7 +64,7 @@ export const fetchRadarrReleases = async (movieId: number) => {
 	return (
 		(await fetch(`/api/radarr/release?movieId=${movieId}`, {
 			method: 'GET'
-		}).then(async (res): Promise<RadarrReleaseResource> => (await res.json()) || [])) ||
+		}).then(async (res): Promise<RadarrReleaseResource[]> => (await res.json()) || [])) ||
 		Promise.resolve([])
 	);
 };

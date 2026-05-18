@@ -14,20 +14,14 @@
 	import type { PageProps } from '../../../.svelte-kit/types/src/routes/settings/$types';
 	import { enhance } from '$app/forms';
 	import ConfirmDialog from '$lib/components/common/inputs/forms/ConfirmDialog.svelte';
-	import { onMount } from 'svelte';
-	import { getRadarrHealth } from '$lib/apis/radarr/radarrApi';
-	import RadarrSettingsPage from '$lib/components/page/settings/RadarrSettingsPage.svelte';
-	import SonarrSettingsPage from '$lib/components/page/settings/SonarrSettingsPage.svelte';
-	import { getSonarrHealth } from '$lib/apis/sonarr/sonarrApi';
+	import FilteringConfigPage from "$lib/components/page/settings/FilteringConfigPage.svelte";
 
-	type Section = 'general' | 'radarr' | 'sonarr' | 'integrations';
+	type Section = 'general' | 'integrations' | 'filtering';
 
 	let { data }: PageProps = $props();
 
 	let openTab: Section = $state('general');
 	let errorMessage: string | undefined = $state();
-	let showRadarrSettings: boolean = $state(false);
-	let showSonarrSettings: boolean = $state(false);
 
 	let currSettings: Settings = $state($state.snapshot(settings));
 	let valuesChanged = $state(false);
@@ -97,11 +91,6 @@
 
 		valuesChanged = JSON.stringify(settings) !== JSON.stringify(currSettings);
 	});
-
-	onMount(async () => {
-		showRadarrSettings = await getRadarrHealth();
-		showSonarrSettings = await getSonarrHealth();
-	});
 </script>
 
 <div
@@ -127,22 +116,6 @@
 			<button onclick={() => (openTab = 'general')} class={openTab && getNavButtonStyle('general')}>
 				{$_('settings.navbar.general')}
 			</button>
-			{#if showRadarrSettings}
-				<button
-					onclick={() => (openTab = 'radarr')}
-					class={openTab && getNavButtonStyle('general')}
-				>
-					Radarr
-				</button>
-			{/if}
-			{#if showSonarrSettings}
-				<button
-					onclick={() => (openTab = 'sonarr')}
-					class={openTab && getNavButtonStyle('general')}
-				>
-					Sonarr
-				</button>
-			{/if}
 			{#if data.isAdmin}
 				<p class="text-xs text-zinc-500 mt-1">{$_('settings.navbar.adminSettings')}</p>
 				<button
@@ -150,6 +123,12 @@
 					class={openTab && getNavButtonStyle('integrations')}
 				>
 					{$_('settings.navbar.integrations')}
+				</button>
+				<button
+						onclick={() => (openTab = 'filtering')}
+						class={openTab && getNavButtonStyle('filtering')}
+				>
+					{$_('settings.navbar.filtering')}
 				</button>
 			{/if}
 		</div>
@@ -174,8 +153,6 @@
 		</button>
 		<Select bind:value={openTab}>
 			<option value="general"> {$_('settings.navbar.general')} </option>
-			<option value="radarr"> Radarr </option>
-			<option value="sonarr"> Sonarr </option>
 			{#if data.isAdmin}
 				<option value="integrations">
 					{$_('settings.navbar.integrations')}
@@ -221,19 +198,13 @@
 					bind:userSettings={currSettings.userSettings}
 				/>
 
-				<RadarrSettingsPage
-					visible={openTab === 'radarr'}
-					bind:userSettings={currSettings.userSettings}
-				/>
-
-				<SonarrSettingsPage
-					visible={openTab === 'sonarr'}
-					bind:userSettings={currSettings.userSettings}
-				/>
-
 				{#if data.isAdmin}
 					<IntegrationSettingsPage
 						visible={openTab === 'integrations'}
+						bind:globalSettings={currSettings.globalSettings}
+					/>
+					<FilteringConfigPage
+						visible={openTab === 'filtering'}
 						bind:globalSettings={currSettings.globalSettings}
 					/>
 				{/if}

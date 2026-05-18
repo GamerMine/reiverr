@@ -2,7 +2,7 @@
 
 set -e
 
-NAMES=( "jellyfin" "radarr" "sonarr" )
+NAMES=( "jellyfin" "radarr" "sonarr" "prowlarr" "flaresolverr" )
 
 for NAME in "${NAMES[@]}"; do
   res="$(docker container list -a -f "NAME=$NAME" | wc -l)"

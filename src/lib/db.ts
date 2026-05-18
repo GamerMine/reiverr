@@ -5,15 +5,10 @@ import { UserSettingsEntity } from '$lib/entities/UserSettings.server';
 
 class TypeOrm {
 	private static instance: Promise<DataSource | null> | null = null;
-
-	private constructor() {
-		// Private constructor to prevent external instantiation
-	}
-
 	public static getDb(): Promise<DataSource | null> {
 		if (!TypeOrm.instance) {
 			TypeOrm.instance = new DataSource({
-				type: 'sqlite',
+				type: 'better-sqlite3',
 				database: 'config/reiverr.sqlite',
 				synchronize: true,
 				entities: [GlobalSettingsEntity, UserSettingsEntity],

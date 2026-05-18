@@ -1,5 +1,9 @@
 <script lang="ts">
-	import {downloadRadarrMovie, fetchRadarrReleases, removeMovieFromRadarr} from '$lib/apis/radarr/radarrApi';
+	import {
+		downloadRadarrMovie,
+		fetchRadarrReleases,
+		removeMovieFromRadarr
+	} from '$lib/apis/radarr/radarrApi';
 	import {
 		downloadSonarrEpisode,
 		fetchSonarrReleases,
@@ -14,6 +18,7 @@
 	import ModalHeader from '$lib/components/common/modal/ModalHeader.svelte';
 	import {createSuccessNotification} from "$lib/stores/notification.store";
 	import {radarrMoviesStore} from "$lib/stores/data.store";
+	import Select from "$lib/components/common/inputs/forms/Select.svelte";
 
 	let {
 		modalId,
@@ -61,18 +66,13 @@
 						seasonPack?.sonarrId as number,
 						seasonPack?.seasonNumber as number
 					);
+		releases.sort((a, b) => (b.seeders || 0) - (a.seeders || 0));
 
 		let filtered = releases.slice();
-
-		filtered.sort((a, b) => (b.seeders || 0) - (a.seeders || 0));
 		filtered = (filtered as any)
-			.filter((release: any) => release?.quality?.quality?.resolution > 720)
 			.slice(0, 5);
 
 		const releasesSkipped = releases.length - filtered.length;
-
-		releases.sort((a, b) => (b.size || 0) - (a.size || 0));
-		filtered.sort((a, b) => (b.size || 0) - (a.size || 0));
 
 		return {
 			releases,
@@ -132,8 +132,20 @@
 		text={title}
 	/>
 	{#await fetchReleases()}
-		<div class="text-sm text-zinc-200 opacity-50 font-light p-4">Loading...</div>
+		<div class="text-sm text-zinc-200 opacity-50 font-light p-4">Retrieving indexers data, please be patient (this can take a few minutes)...</div> <!--FIXME: Add translations-->
 	{:then { releases, filtered, releasesSkipped }}
+		<div class="mx-2 mt-2 flex gap-2">
+			<Select>
+				<option value="4k">4k</option>
+				<option value="1080p">1080p</option>
+				<option value="720p">720p</option>
+				<option value="480p">480p</option>
+			</Select>
+			<Select>
+				<option value="french">French</option>
+				<option value="english">English</option>
+			</Select>
+		</div>
 		{#if showAllReleases ? releases?.length : filtered?.length}
 			<div
 				class="flex flex-col divide-y divide-zinc-700 max-h-[60vh] overflow-y-scroll scrollbar-hide"

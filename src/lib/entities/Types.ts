@@ -29,14 +29,6 @@ export type UserSettings = {
 		excludeLibraryItems: boolean;
 		includedLanguages: string;
 	};
-	radarr: {
-		defaultQualityProfileId: string;
-		askQualityProfile: boolean;
-	};
-	sonarr: {
-		defaultQualityProfileId: string;
-		askQualityProfile: boolean;
-	};
 };
 
 export type Settings = {
@@ -76,12 +68,4 @@ export const defaultUserSettings: UserSettings = {
 		excludeLibraryItems: false,
 		includedLanguages: 'en'
 	},
-	radarr: {
-		defaultQualityProfileId: '',
-		askQualityProfile: false
-	},
-	sonarr: {
-		defaultQualityProfileId: '',
-		askQualityProfile: false,
-	}
 };
