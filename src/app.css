@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@tailwind preflight;
+@tailwind utilities;
+@reference "tailwindcss";
 
 @layer base {
 	button:not(:disabled),

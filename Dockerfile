@@ -1,18 +1,18 @@
-FROM node:24.4.1-alpine as pre-production
+FROM node:26-alpine as pre-production
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 COPY . .
 
-RUN npm i
+RUN npm ci
 
 RUN npm run build
 
-FROM --platform=linux/amd64 node:24.4.1-alpine as production
+FROM --platform=linux/amd64 node:26-alpine as production
 
 RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+WORKDIR /usr/src/appn
 
 ENV NODE_ENV=production
 
