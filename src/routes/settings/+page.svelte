@@ -17,6 +17,7 @@
 	import FilteringConfigPage from "$lib/components/page/settings/FilteringConfigPage.svelte";
 	import {goto} from "$app/navigation";
 	import {onMount} from "svelte";
+	import Option from "$lib/components/common/inputs/forms/Option.svelte";
 
 	type Section = 'general' | 'integrations' | 'filtering';
 
@@ -163,11 +164,9 @@
 			{$_('settings.navbar.settings')}
 		</button>
 		<Select bind:value={openTab}>
-			<option value="general"> {$_('settings.navbar.general')} </option>
+			<Option value="general" label={$_('settings.navbar.general')} />
 			{#if data.isAdmin}
-				<option value="integrations">
-					{$_('settings.navbar.integrations')}
-				</option>
+				<Option value="integrations" label={$_('settings.navbar.integrations')} />
 			{/if}
 		</Select>
 	</div>

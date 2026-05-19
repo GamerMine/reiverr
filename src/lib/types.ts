@@ -4,3 +4,7 @@ export type TitleId = {
 	provider: 'tmdb' | 'tvdb';
 	type: TitleType;
 };
+export type SelectOption = {
+	value: string;
+	label: string;
+}

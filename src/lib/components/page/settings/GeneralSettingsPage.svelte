@@ -7,6 +7,7 @@
 	import { _, dictionary } from 'svelte-i18n';
 	import classNames from 'classnames';
 	import type { UserSettings } from '$lib/entities/Types';
+	import Option from "$lib/components/common/inputs/forms/Option.svelte";
 
 	let { visible, userSettings = $bindable() }: { visible: boolean; userSettings: UserSettings } =
 		$props();
@@ -27,7 +28,7 @@
 	<h2>{$_('settings.general.userInterface.language')}</h2>
 	<Select name="userLanguage" bind:value={userSettings.interface.language}>
 		{#each Object.entries(ISO_LANGUAGES).filter( ([c]) => Object.keys($dictionary).includes(c) ) as [code, lang]}
-			<option value={code}>{`${lang?.name} - ${lang?.nativeName}`}</option>
+			<Option value={code} label={`${lang?.name} - ${lang?.nativeName}`} />
 		{/each}
 	</Select>
 	<h2>
@@ -53,9 +54,9 @@
 		{$_('settings.general.discovery.region')}
 	</h2>
 	<Select name="userDiscoverRegion" bind:value={userSettings.discover.region}>
-		<option value=""> {$_('settings.general.discovery.none')} </option>
+		<Option value="" label={$_('settings.general.discovery.none')}/>
 		{#each Object.entries(ISO_REGIONS) as [code, region]}
-			<option value={code}>{region}</option>
+			<Option value={code} label={region} />
 		{/each}
 	</Select>
 	<h2>{$_('settings.general.discovery.excludeLibraryItemsFromDiscovery')}</h2>

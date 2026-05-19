@@ -11,6 +11,7 @@ import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import { checkRadarrConnection } from '$lib/apis/radarr/server/radarr.server';
 import { checkSonarrConnection } from '$lib/apis/sonarr/server/sonarr.server';
 import {FilteringProfilesEntity} from "$lib/entities/FilteringProfiles.server";
+import {LANGUAGES} from "$lib/constants";
 
 export const load: PageServerLoad = async ({ cookies }) => {
 	const userReq = await isJellyfinUserConnected(cookies);
@@ -181,6 +182,10 @@ export const actions = {
 		const profileName = formData.get('profileName') as string;
 		const language = formData.get('language') as string;
 		const qualities = formData.getAll('qualities') as string[];
+
+		if (!LANGUAGES.includes(language)) {
+			return fail(400);
+		}
 
 		const profile: FilteringProfile = {
 			name: profileName,

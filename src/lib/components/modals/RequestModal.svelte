@@ -19,6 +19,7 @@
 	import {createSuccessNotification} from "$lib/stores/notification.store";
 	import {radarrMoviesStore} from "$lib/stores/data.store";
 	import Select from "$lib/components/common/inputs/forms/Select.svelte";
+	import Option from "$lib/components/common/inputs/forms/Option.svelte";
 
 	let {
 		modalId,
@@ -136,14 +137,14 @@
 	{:then { releases, filtered, releasesSkipped }}
 		<div class="mx-2 mt-2 flex gap-2">
 			<Select>
-				<option value="4k">4k</option>
-				<option value="1080p">1080p</option>
-				<option value="720p">720p</option>
-				<option value="480p">480p</option>
+				<Option value="4k" label="4k"/>
+				<Option value="1080p" label="1080p"/>
+				<Option value="720p" label="720p"/>
+				<Option value="480p" label="480p"/>
 			</Select>
 			<Select>
-				<option value="french">French</option>
-				<option value="english">English</option>
+				<Option value="french" label="french"/>
+				<Option value="english" label="english"/>
 			</Select>
 		</div>
 		{#if showAllReleases ? releases?.length : filtered?.length}

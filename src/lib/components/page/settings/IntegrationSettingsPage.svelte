@@ -19,6 +19,7 @@
 	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
 	import { onMount } from 'svelte';
 	import ConfirmDialog from '$lib/components/common/inputs/forms/ConfirmDialog.svelte';
+	import Option from "$lib/components/common/inputs/forms/Option.svelte";
 
 	let {
 		visible,
@@ -224,7 +225,7 @@
 						name="adminSonarrRootFolderPath"
 					>
 						{#each sonarrRootFolders as folder}
-							<option value={folder.path}>{folder.path}</option>
+							<Option value={folder.path} label={folder.path} />
 						{/each}
 					</Select>
 				{/if}
@@ -232,7 +233,7 @@
 				<h2>Monitor Series</h2>
 				<Select bind:value={globalSettings.sonarr.monitor} name="adminSonarrMonitor">
 					{#each getSonarrMonitors() as monitor}
-						<option value={monitor}>{monitor}</option>
+						<Option value={monitor} label={monitor} />
 					{/each}
 				</Select>
 				<h2>Start searching for new episodes</h2>
@@ -301,7 +302,7 @@
 						name="adminRadarrRootFolderPath"
 					>
 						{#each radarrRootFolders as folder}
-							<option value={folder.path}>{folder.path}</option>
+							<Option value={folder.path} label={folder.path}/>
 						{/each}
 					</Select>
 				{/if}

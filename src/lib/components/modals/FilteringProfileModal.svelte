@@ -11,6 +11,7 @@
     import { enhance } from '$app/forms';
     import {createErrorNotification} from "$lib/stores/notification.store";
     import {invalidateAll} from "$app/navigation";
+    import Option from "$lib/components/common/inputs/forms/Option.svelte";
 
     let {
         modalId
@@ -50,18 +51,18 @@
             {$_('settings.filtering.language')}
         </h2>
         <Select name="language" disabled={disableInputs}>
-            <option value="any"> {$_('languages.any')} </option>
+            <Option value="any" label={$_('languages.any')} />
             {#each LANGUAGES as lang}
-                <option value={lang}>{$_("languages."+lang)}</option>
+                <Option value={lang} label={$_("languages."+lang)}/>
             {/each}
         </Select>
         <h2>
             {$_('settings.filtering.qualities')}
         </h2>
         <Select name="qualities" disabled={disableInputs}>
-            <option value="any"> {$_('languages.any')} </option>
+            <Option value="any" label={$_('languages.any')}/>
             {#each QUALITY_DEFS as quality}
-                <option value={quality}>{quality}</option>
+                <Option value={quality} label={quality} />
             {/each}
         </Select>
         <div class="col-start-2 flex justify-end">

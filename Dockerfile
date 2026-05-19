@@ -12,7 +12,7 @@ RUN npm run build
 FROM --platform=linux/amd64 node:26-alpine as production
 
 RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/appn
+WORKDIR /usr/src/app
 
 ENV NODE_ENV=production
 

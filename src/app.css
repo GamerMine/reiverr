@@ -1,4 +1,4 @@
-@tailwind preflight;
+@import "tailwindcss/preflight";
 @tailwind utilities;
 @reference "tailwindcss";
 
@@ -18,7 +18,7 @@
 }
 
 @utility scrollbar-hide {
-	@apply [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden
+	@apply [-ms-overflow-style:none] scrollbar-none [&::-webkit-scrollbar]:hidden
 }
 
 a {
