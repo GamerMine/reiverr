@@ -15,6 +15,8 @@
 	import { enhance } from '$app/forms';
 	import ConfirmDialog from '$lib/components/common/inputs/forms/ConfirmDialog.svelte';
 	import FilteringConfigPage from "$lib/components/page/settings/FilteringConfigPage.svelte";
+	import {goto} from "$app/navigation";
+	import {onMount} from "svelte";
 
 	type Section = 'general' | 'integrations' | 'filtering';
 
@@ -48,6 +50,15 @@
 		confirmDialogVisible = false;
 		confirmDialogResolve();
 	}
+
+	function setTab(section: Section) {
+		openTab = section;
+		goto(`?#${openTab}`);
+	}
+
+	onMount(() => {
+		if (location.hash) openTab = location.hash.slice(1) as Section;
+	})
 
 	$effect(() => {
 		if (errorMessage) {
@@ -113,19 +124,19 @@
 				{$_('settings.navbar.settings')}
 			</button>
 			<p class="text-xs text-zinc-500 mt-1">{$_('settings.navbar.userSettings')}</p>
-			<button onclick={() => (openTab = 'general')} class={openTab && getNavButtonStyle('general')}>
+			<button onclick={() => setTab('general')} class={openTab && getNavButtonStyle('general')}>
 				{$_('settings.navbar.general')}
 			</button>
 			{#if data.isAdmin}
 				<p class="text-xs text-zinc-500 mt-1">{$_('settings.navbar.adminSettings')}</p>
 				<button
-					onclick={() => (openTab = 'integrations')}
+					onclick={() => setTab('integrations')}
 					class={openTab && getNavButtonStyle('integrations')}
 				>
 					{$_('settings.navbar.integrations')}
 				</button>
 				<button
-						onclick={() => (openTab = 'filtering')}
+						onclick={() => setTab('filtering')}
 						class={openTab && getNavButtonStyle('filtering')}
 				>
 					{$_('settings.navbar.filtering')}
@@ -133,7 +144,7 @@
 			{/if}
 		</div>
 		<div class="flex flex-col gap-2">
-			<Button type="submit" form="settingsForm" disabled={!valuesChanged} variant="success">
+			<Button type="submit" form="settingsForm" disabled={!valuesChanged} variant="success" formaction="?/save">
 				{$_('settings.misc.saveChanges')}
 			</Button>
 			<!-- FIXME: Reset button disabled for now  -->
@@ -205,7 +216,7 @@
 					/>
 					<FilteringConfigPage
 						visible={openTab === 'filtering'}
-						bind:globalSettings={currSettings.globalSettings}
+						profiles={data.filteringProfiles}
 					/>
 				{/if}
 			</form>

@@ -9,6 +9,7 @@
 		variant = 'secondary',
 		slim = false,
 		disabled = false,
+		formaction = undefined,
 
 		href = undefined,
 		target = '_self',
@@ -28,6 +29,7 @@
 		variant?: 'primary' | 'secondary' | 'tertiary' | 'success' | 'error';
 		slim?: boolean;
 		disabled?: boolean;
+		formaction?: string;
 
 		href?: string;
 		target?: string;
@@ -96,6 +98,7 @@
 	{disabled}
 	{type}
 	{form}
+	{formaction}
 >
 	{@render children?.()}
 </button>

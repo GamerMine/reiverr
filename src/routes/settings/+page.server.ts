@@ -5,11 +5,12 @@ import {
 import { UserSettingsEntity } from '$lib/entities/UserSettings.server';
 import { fail } from '@sveltejs/kit';
 import type { JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
-import type { UserSettings } from '$lib/entities/Types';
+import type {FilteringProfile, UserSettings} from '$lib/entities/Types';
 import type { PageServerLoad } from './$types';
 import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import { checkRadarrConnection } from '$lib/apis/radarr/server/radarr.server';
 import { checkSonarrConnection } from '$lib/apis/sonarr/server/sonarr.server';
+import {FilteringProfilesEntity} from "$lib/entities/FilteringProfiles.server";
 
 export const load: PageServerLoad = async ({ cookies }) => {
 	const userReq = await isJellyfinUserConnected(cookies);
@@ -19,14 +20,16 @@ export const load: PageServerLoad = async ({ cookies }) => {
 	}
 
 	const user: JellyfinUser = await userReq.json();
+	const filteringProfiles = await FilteringProfilesEntity.getAll();
 
 	return {
-		isAdmin: user.Policy?.IsAdministrator || false
+		isAdmin: user.Policy?.IsAdministrator || false,
+		filteringProfiles
 	};
 };
 
 export const actions = {
-	default: async ({ request, cookies }) => {
+	save: async ({ request, cookies }) => {
 		const formData = await request.formData();
 		const userReq = await isJellyfinUserConnected(cookies);
 		if (userReq.status !== 200) {
@@ -157,5 +160,38 @@ export const actions = {
 			success: true,
 			needLogin: needLogin
 		};
+	},
+
+	createFilteringProfile: async ({ request, cookies }) => {
+		const formData = await request.formData();
+		const userReq = await isJellyfinUserConnected(cookies);
+		if (userReq.status !== 200) {
+			return fail(userReq.status);
+		}
+		const user: JellyfinUser = await userReq.json();
+
+		if (!user.Id) {
+			return fail(401);
+		}
+
+		if (!user.Policy || !user.Policy.IsAdministrator) {
+			return fail(403);
+		}
+
+		const profileName = formData.get('profileName') as string;
+		const language = formData.get('language') as string;
+		const qualities = formData.getAll('qualities') as string[];
+
+		const profile: FilteringProfile = {
+			name: profileName,
+			language,
+			qualities
+		}
+
+		await FilteringProfilesEntity.createFilteringProfile(profile);
+
+		return {
+			success: true,
+		}
 	}
 };

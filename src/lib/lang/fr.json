@@ -190,7 +190,8 @@
 			"addProfile": "Ajouter un profile",
 			"profileName": "Nom du profile",
 			"language": "Langue",
-			"qualities": "Qualitées vidéo"
+			"qualities": "Qualitées vidéo",
+			"add": "Créer"
 		},
 		"misc": {
 			"invalidConfiguration": "Configuration Invalide",

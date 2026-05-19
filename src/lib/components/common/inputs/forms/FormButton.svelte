@@ -44,6 +44,7 @@
 >
 	{#if loading}
 		<Update class="animate-spin" size="14" />
+	{:else}
+		{@render children?.()}
 	{/if}
-	{@render children?.()}
 </button>

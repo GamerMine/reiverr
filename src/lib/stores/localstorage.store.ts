@@ -11,5 +11,3 @@ export function createLocalStorageStore<T>(key: string, defaultValue: T) {
 		}
 	};
 }
-
-export const skippedVersion = createLocalStorageStore<string | null>('skipped-version', null);

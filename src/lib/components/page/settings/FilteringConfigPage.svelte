@@ -1,18 +1,18 @@
 <script lang="ts">
 	import classNames from 'classnames';
 	import { _ } from 'svelte-i18n';
-	import { type GlobalSettings } from '$lib/entities/Types';
 	import Toggle from "$lib/components/common/inputs/forms/Toggle.svelte";
 	import { Plus } from 'svelte-radix';
 	import {modalStack} from "$lib/stores/modal.store";
 	import FilteringProfileModal from "$lib/components/modals/FilteringProfileModal.svelte";
+	import type {FilteringProfile} from "$lib/entities/Types";
 
 	let {
 		visible,
-		globalSettings = $bindable()
+		profiles = [],
 	}: {
 		visible: boolean;
-		globalSettings: GlobalSettings;
+		profiles?: FilteringProfile[];
 	} = $props();
 
 	function addProfile(e: MouseEvent) {
@@ -52,5 +52,13 @@
 			<Plus size="40"/>
 			<h2>{$_('settings.filtering.addProfile')}</h2>
 		</button>
+		{#each profiles as profile}
+			<button
+				class="bg-neutral-900 rounded-md h-50 w-80 flex justify-center items-center hover:cursor-pointer hover:bg-neutral-800 transition-colors duration-200"
+				onclick={(e) => e.preventDefault()}
+			>
+				<h2>{profile.name}</h2>
+			</button>
+		{/each}
 	</div>
 </div>

@@ -36,6 +36,13 @@ export type Settings = {
 	globalSettings: GlobalSettings;
 };
 
+export type FilteringProfile = {
+	id?: number | undefined;
+	name: string;
+	language: string;
+	qualities: string[];
+}
+
 export const defaultGlobalSettings: GlobalSettings = {
 	initialised: false,
 

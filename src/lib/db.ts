@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { GlobalSettingsEntity } from './entities/GlobalSettings.server';
 import { UserSettingsEntity } from '$lib/entities/UserSettings.server';
+import {FilteringProfilesEntity} from "$lib/entities/FilteringProfiles.server";
 
 class TypeOrm {
 	private static instance: Promise<DataSource | null> | null = null;
@@ -11,7 +12,7 @@ class TypeOrm {
 				type: 'better-sqlite3',
 				database: 'config/reiverr.sqlite',
 				synchronize: true,
-				entities: [GlobalSettingsEntity, UserSettingsEntity],
+				entities: [GlobalSettingsEntity, UserSettingsEntity, FilteringProfilesEntity],
 				logging: false
 			})
 				.initialize()

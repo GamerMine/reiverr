@@ -198,7 +198,8 @@
 			"addProfile": "Add a profile",
 			"profileName": "Profile name",
 			"language": "Language",
-			"qualities": "Video qualities"
+			"qualities": "Video qualities",
+			"add": "Add"
 		},
 		"misc": {
 			"invalidConfiguration": "Invalid Configuration",
