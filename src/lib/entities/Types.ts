@@ -1,3 +1,5 @@
+import * as v from "valibot";
+
 export type GlobalSettings = {
 	initialised: boolean;
 	sonarr: {
@@ -36,12 +38,14 @@ export type Settings = {
 	globalSettings: GlobalSettings;
 };
 
-export type FilteringProfile = {
-	id?: number | undefined;
-	name: string;
-	language: string;
-	qualities: string[];
-}
+export const FilteringProfileSchema = v.object({
+	id: v.number(),
+	name: v.string(),
+	language: v.string(),
+	qualities: v.array(v.string())
+});
+
+export type FilteringProfile = v.InferOutput<typeof FilteringProfileSchema>;
 
 export const defaultGlobalSettings: GlobalSettings = {
 	initialised: false,

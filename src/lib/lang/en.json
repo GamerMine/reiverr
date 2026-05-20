@@ -1,6 +1,8 @@
 {
 	"general": {
 		"error": "Error",
+		"select": "Select",
+		"success": "Success",
 		"jellyfinUnreachable": "Jellyfin host is unreachable! Please contact your server administrator."
 	},
 	"appName": "Reiverr",
@@ -199,7 +201,9 @@
 			"profileName": "Profile name",
 			"language": "Language",
 			"qualities": "Video qualities",
-			"add": "Add"
+			"add": "Add",
+			"filteringProfileCreatedSuccess": "Filtering profile created successfully",
+			"filteringProfileDeleteSuccess": "Filtering profile deletion successfull"
 		},
 		"misc": {
 			"invalidConfiguration": "Invalid Configuration",

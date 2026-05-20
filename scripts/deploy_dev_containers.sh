@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -xe
 
 source scripts/deploy_jellyfin_dev.sh
 source scripts/deploy_radarr_dev.sh

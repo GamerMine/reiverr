@@ -14,8 +14,18 @@ const config = {
 	kit: {
 		adapter: adapter(),
 
+		experimental: {
+			remoteFunctions: true
+		},
+
 		version: {
 			name: pkg.version
+		}
+	},
+
+	compilerOptions: {
+		experimental: {
+			async: true
 		}
 	},
 

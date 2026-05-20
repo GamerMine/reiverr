@@ -11,7 +11,7 @@ import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import { checkRadarrConnection } from '$lib/apis/radarr/server/radarr.server';
 import { checkSonarrConnection } from '$lib/apis/sonarr/server/sonarr.server';
 import {FilteringProfilesEntity} from "$lib/entities/FilteringProfiles.server";
-import {LANGUAGES} from "$lib/constants";
+import {LANGUAGES, QUALITY_DEFS} from "$lib/constants";
 
 export const load: PageServerLoad = async ({ cookies }) => {
 	const userReq = await isJellyfinUserConnected(cookies);
@@ -187,7 +187,14 @@ export const actions = {
 			return fail(400);
 		}
 
+		for (const quality of qualities) {
+			if (!QUALITY_DEFS.includes(quality)) {
+				return fail(400);
+			}
+		}
+
 		const profile: FilteringProfile = {
+			id: 0,
 			name: profileName,
 			language,
 			qualities

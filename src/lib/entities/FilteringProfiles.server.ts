@@ -20,6 +20,7 @@ export class FilteringProfilesEntity extends BaseEntity {
 
         for (const profile of (await this.find())) {
             profiles.push({
+                id: profile.id,
                 name: profile.name,
                 language: profile.language,
                 qualities: profile.qualities,
@@ -36,5 +37,9 @@ export class FilteringProfilesEntity extends BaseEntity {
         profile.qualities = newProfile.qualities;
 
         await profile.save();
+    }
+
+    public static async deleteFilteringProfile(id: number) {
+        await this.delete({id: id})
     }
 }

@@ -2,10 +2,13 @@
 	import classNames from 'classnames';
 	import { _ } from 'svelte-i18n';
 	import Toggle from "$lib/components/common/inputs/forms/Toggle.svelte";
-	import { Plus } from 'svelte-radix';
+	import { Plus, Trash } from 'svelte-radix';
 	import {modalStack} from "$lib/stores/modal.store";
 	import FilteringProfileModal from "$lib/components/modals/FilteringProfileModal.svelte";
 	import type {FilteringProfile} from "$lib/entities/Types";
+	import {deleteFilteringProfile} from "$lib/remote/settings.remote";
+	import {invalidateAll} from "$app/navigation";
+	import {createSuccessNotification} from "$lib/stores/notification.store";
 
 	let {
 		visible,
@@ -18,6 +21,21 @@
 	function addProfile(e: MouseEvent) {
 		e.preventDefault();
 		modalStack.create(FilteringProfileModal, {});
+	}
+
+	function editProfile(e: MouseEvent, profile: FilteringProfile) {
+		e.preventDefault();
+		modalStack.create(FilteringProfileModal, {
+			editProfile: profile
+		})
+	}
+
+	async function deleteProfile(profile: FilteringProfile) {
+		const res = await deleteFilteringProfile(profile).run();
+		await invalidateAll();
+		if (res.success) {
+			createSuccessNotification($_("general.success"), $_("settings.filtering.filteringProfileDeleteSuccess"))
+		}
 	}
 </script>
 
@@ -54,10 +72,21 @@
 		</button>
 		{#each profiles as profile}
 			<button
-				class="bg-neutral-900 rounded-md h-50 w-80 flex justify-center items-center hover:cursor-pointer hover:bg-neutral-800 transition-colors duration-200"
-				onclick={(e) => e.preventDefault()}
+				class="bg-neutral-900 rounded-md h-50 w-80 hover:cursor-pointer flex hover:bg-neutral-800 transition-colors duration-200"
+				onclick={(e) => editProfile(e, profile)}
 			>
-				<h2>{profile.name}</h2>
+				<div class="p-4 w-full">
+					<div class="flex justify-between">
+						<p class="text-xl font-bold text-start">{profile.name}</p>
+						<Trash class="bg-red-700 p-1 rounded-md hover:bg-red-900 transition-colors duration-100" size="30" onclick={() => deleteProfile(profile)}/>
+					</div>
+					<p class="text-zinc-500 flex mt-1 border-t border-zinc-600">{$_("settings.filtering.language")}:&nbsp<span class="text-white">{$_("languages."+profile.language)}</span></p>
+					<p class="text-zinc-500 flex flex-wrap gap-1">{$_("settings.filtering.qualities")}:&nbsp
+						{#each profile.qualities as quality}
+							<span class="bg-amber-300 px-2 py-1 rounded-2xl text-xs text-black">{quality}</span>
+						{/each}
+					</p>
+				</div>
 			</button>
 		{/each}
 	</div>

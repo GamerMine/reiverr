@@ -1,6 +1,8 @@
 {
 	"general": {
 		"error": "Erreur",
+		"select": "Sélection",
+		"success": "Succès",
 		"jellyfinUnreachable": "L'hôte Jellyfin est injoignable ! Merci de contacter votre administrateur."
 	},
 	"appName": "Reiverr",
@@ -191,7 +193,9 @@
 			"profileName": "Nom du profile",
 			"language": "Langue",
 			"qualities": "Qualitées vidéo",
-			"add": "Créer"
+			"add": "Créer",
+			"filteringProfileCreatedSuccess": "Profile de filtrage créé avec succès",
+			"filteringProfileDeleteSuccess": "Profile de filtrage supprimé"
 		},
 		"misc": {
 			"invalidConfiguration": "Configuration Invalide",
