@@ -7,6 +7,7 @@ export const TMDB_PROFILE_SMALL = 'https://www.themoviedb.org/t/p/w185';
 
 export const PLACEHOLDER_BACKDROP = '/placeholder.jpg';
 export const LANGUAGES = [
+	"any",
 	"afrikaans",
 	"albanian",
 	"arabic",

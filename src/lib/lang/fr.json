@@ -3,6 +3,8 @@
 		"error": "Erreur",
 		"select": "Sélection",
 		"success": "Succès",
+		"add": "Créer",
+		"edit": "Modifier",
 		"jellyfinUnreachable": "L'hôte Jellyfin est injoignable ! Merci de contacter votre administrateur."
 	},
 	"appName": "Reiverr",
@@ -190,10 +192,10 @@
 			"letUserChoose": "Laisser l'utilisateur choisir [TODO]",
 			"letUserChooseDescription": "Si coché, n'importe quel utilisateur peux choisir parmis l'un des profils disponible ici.",
 			"addProfile": "Ajouter un profile",
+			"editProfile": "Modifier un profile",
 			"profileName": "Nom du profile",
 			"language": "Langue",
 			"qualities": "Qualitées vidéo",
-			"add": "Créer",
 			"filteringProfileCreatedSuccess": "Profile de filtrage créé avec succès",
 			"filteringProfileDeleteSuccess": "Profile de filtrage supprimé"
 		},

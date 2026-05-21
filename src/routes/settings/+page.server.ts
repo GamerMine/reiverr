@@ -205,5 +205,54 @@ export const actions = {
 		return {
 			success: true,
 		}
+	},
+
+	editFilteringProfile: async ({ request, cookies }) => {
+		const formData = await request.formData();
+		const userReq = await isJellyfinUserConnected(cookies);
+		if (userReq.status !== 200) {
+			return fail(userReq.status);
+		}
+		const user: JellyfinUser = await userReq.json();
+
+		if (!user.Id) {
+			return fail(401);
+		}
+
+		if (!user.Policy || !user.Policy.IsAdministrator) {
+			return fail(403);
+		}
+
+		const profileId = formData.get('profileId') as string;
+		const profileName = formData.get('profileName') as string;
+		const language = formData.get('language') as string;
+		const qualities = formData.getAll('qualities') as string[];
+
+		if (!profileId || Number.isNaN(profileId)) {
+			return fail(400);
+		}
+
+		if (!LANGUAGES.includes(language)) {
+			return fail(400);
+		}
+
+		for (const quality of qualities) {
+			if (!QUALITY_DEFS.includes(quality)) {
+				return fail(400);
+			}
+		}
+
+		const profile: FilteringProfile = {
+			id: Number(profileId),
+			name: profileName,
+			language,
+			qualities
+		}
+
+		await FilteringProfilesEntity.editFilteringProfile(profile);
+
+		return {
+			success: true,
+		}
 	}
 };

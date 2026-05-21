@@ -7,7 +7,7 @@
 	import '../app.css';
 	import type { LayoutServerData } from './$types';
 	import Notifications from '$lib/components/common/misc/notification/Notifications.svelte';
-	import type { Snippet } from 'svelte';
+	import {type Snippet} from 'svelte';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { CrossCircled } from 'svelte-radix';
 	import { fade } from 'svelte/transition';
@@ -18,16 +18,19 @@
 	let criticalErrorMessage: string | undefined = $state();
 	let showCriticalError: boolean = $state(false);
 
-	if (data.settings) {
-		settings.userSettings = data.settings.userSettings;
-		settings.globalSettings = data.settings.globalSettings;
-	} else {
-		criticalErrorMessage = data.error;
-		showCriticalError = true;
-		setTimeout(() => {
-			window.location.reload();
-		}, 20000);
-	}
+	// This has been done to prevent showing the 'state_referenced_locally' warning.
+	(() => {
+		if (data.settings) {
+			settings.userSettings = data.settings.userSettings;
+			settings.globalSettings = data.settings.globalSettings;
+		} else {
+			criticalErrorMessage = data.error;
+			showCriticalError = true;
+			setTimeout(() => {
+				window.location.reload();
+			}, 20000);
+		}
+	})()
 </script>
 
 <I18n />

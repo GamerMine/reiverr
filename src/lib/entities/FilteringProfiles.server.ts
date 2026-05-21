@@ -39,6 +39,18 @@ export class FilteringProfilesEntity extends BaseEntity {
         await profile.save();
     }
 
+    public static async editFilteringProfile(newProfile: FilteringProfile) {
+        const profile = await this.findOne({ where: { id: newProfile.id } });
+
+        if (!profile) return;
+
+        profile.name = newProfile.name;
+        profile.language = newProfile.language;
+        profile.qualities = newProfile.qualities;
+
+        await profile.save();
+    }
+
     public static async deleteFilteringProfile(id: number) {
         await this.delete({id: id})
     }

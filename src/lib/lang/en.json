@@ -3,6 +3,8 @@
 		"error": "Error",
 		"select": "Select",
 		"success": "Success",
+		"add": "Add",
+		"edit": "Edit",
 		"jellyfinUnreachable": "Jellyfin host is unreachable! Please contact your server administrator."
 	},
 	"appName": "Reiverr",
@@ -198,10 +200,10 @@
 			"letUserChoose": "Let the user choose [TODO]",
 			"letUserChooseDescription": "If checked, any user can choose one of the profile available here.",
 			"addProfile": "Add a profile",
+			"editProfile": "Edit a profile",
 			"profileName": "Profile name",
 			"language": "Language",
 			"qualities": "Video qualities",
-			"add": "Add",
 			"filteringProfileCreatedSuccess": "Filtering profile created successfully",
 			"filteringProfileDeleteSuccess": "Filtering profile deletion successfull"
 		},

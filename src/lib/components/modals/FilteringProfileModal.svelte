@@ -6,15 +6,15 @@
     import {LANGUAGES, QUALITY_DEFS} from "$lib/constants";
     import Input from "$lib/components/common/inputs/forms/Input.svelte";
     import ModalContainer from "$lib/components/common/modal/ModalContainer.svelte";
-    import { Plus } from "svelte-radix";
+    import { Plus, Pencil2 } from "svelte-radix";
     import FormButton from "$lib/components/common/inputs/forms/FormButton.svelte";
     import { enhance } from '$app/forms';
     import {createErrorNotification, createSuccessNotification} from "$lib/stores/notification.store";
     import {invalidateAll} from "$app/navigation";
     import Option from "$lib/components/common/inputs/forms/Option.svelte";
     import type {FilteringProfile} from "$lib/entities/Types";
-    import {onMount} from "svelte";
     import type {SelectOption} from "$lib/types";
+    import {SvelteSet} from "svelte/reactivity";
 
     let {
         modalId,
@@ -26,36 +26,38 @@
 
     let disableInputs = $state(false);
     let nameValue = $state("");
-    let languageValue: SelectOption[] = $state([]);
-    let qualitiesValue: SelectOption[] = $state([]);
+    let languageValue = $state(new SvelteSet<SelectOption>());
+    let qualitiesValue = $state(new SvelteSet<SelectOption>());
 
     function userClose() {
         modalStack.close(modalId);
     }
 
-    onMount(() => {
+    // This has been done to prevent showing the 'state_referenced_locally' warning.
+    (() => {
         if (editProfile) {
             nameValue = editProfile.name;
-            languageValue = [{
+            languageValue.add({
                 value: editProfile.language,
-                label: $_("languages."+editProfile.language)
-            }];
+                label: $_("languages." + editProfile.language)
+            });
             for (const val of editProfile.qualities) {
-                qualitiesValue.push({
+                qualitiesValue.add({
                     value: val,
                     label: val
                 });
             }
         }
-    })
+    })();
+
 </script>
 
 <ModalContainer>
     <ModalHeader
             close={userClose}
-            text={$_("settings.filtering.addProfile")}
+            text={editProfile ? $_("settings.filtering.editProfile") : $_("settings.filtering.addProfile")}
     />
-    <form class="grid grid-cols-2 p-4 gap-2" method="POST" action="?/createFilteringProfile" use:enhance={() => {
+    <form class="grid grid-cols-2 p-4 gap-2" method="POST" action={editProfile ? "?/editFilteringProfile" : "?/createFilteringProfile"} use:enhance={() => {
         disableInputs = true;
         return async ({result}) => {
             if (result.type === 'success') {
@@ -75,8 +77,7 @@
         <h2>
             {$_('settings.filtering.language')}
         </h2>
-        <Select name="language" disabled={disableInputs} value={languageValue}>
-            <Option value="any" label={$_('languages.any')} />
+        <Select name="language" disabled={disableInputs} selectedValues={languageValue}>
             {#each LANGUAGES as lang}
                 <Option value={lang} label={$_("languages."+lang)}/>
             {/each}
@@ -84,15 +85,22 @@
         <h2>
             {$_('settings.filtering.qualities')}
         </h2>
-        <Select name="qualities" disabled={disableInputs} multiple value={qualitiesValue}>
+        <Select name="qualities" disabled={disableInputs} multiple selectedValues={qualitiesValue}>
             {#each QUALITY_DEFS as quality}
                 <Option value={quality} label={quality} />
             {/each}
         </Select>
         <div class="col-start-2 flex justify-end">
-            <FormButton type="base" loading={disableInputs}>
-                <Plus size="20"/><span class="flex">{$_('settings.filtering.add')}</span>
-            </FormButton>
+            {#if editProfile}
+                <input type="hidden" name="profileId" value={editProfile.id} />
+                <FormButton type="base" loading={disableInputs}>
+                    <Pencil2 size="20"/><span class="flex">{$_('general.edit')}</span>
+                </FormButton>
+            {:else}
+                <FormButton type="base" loading={disableInputs}>
+                    <Plus size="20"/><span class="flex">{$_('general.add')}</span>
+                </FormButton>
+            {/if}
         </div>
     </form>
 </ModalContainer>

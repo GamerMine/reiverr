@@ -50,3 +50,15 @@ export function arrayToQuery(key: string, array: Array<string>): string {
 export function setTmpLanguage(language: string) {
 	locale.set(language);
 }
+
+export function portal(node: HTMLElement) {
+	document.body.appendChild(node);
+
+	return {
+		destroy() {
+			if (node.parentNode) {
+				node.parentNode.removeChild(node);
+			}
+		}
+	};
+}

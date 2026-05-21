@@ -6,23 +6,26 @@
 	import {SvelteSet} from "svelte/reactivity";
 	import { _ } from 'svelte-i18n';
 	import { Cross2 } from "svelte-radix";
+    import { portal } from '$lib/utils';
 
 	let {
-		value = $bindable([]),
+		value = $bindable(undefined),
 		disabled = false,
 		loading = false,
 		name = undefined,
 		multiple = false,
+		selectedValues = new SvelteSet<SelectOption>(),
 
 		children = undefined,
 
 		onchange = () => {}
 	}: {
-		value?: SelectOption[];
+		value?: string;
 		disabled?: boolean;
 		loading?: boolean;
 		name?: string;
 		multiple?: boolean;
+		selectedValues?: SvelteSet<SelectOption>;
 
 		children?: Snippet;
 
@@ -32,49 +35,86 @@
 	let options = new SvelteSet<SelectOption>();
 	let selectedOptionLabel: string | undefined = $state("");
 	let dropdownOpen: boolean = $state(false);
+	let dropdownStyle = $state('');
+	let triggerElt: HTMLElement;
 	let selectElt: HTMLElement;
-	let selectedValues = $state(new SvelteSet<SelectOption>());
 
 	setContext('select', {
 		register: (opt: SelectOption) => options.add(opt),
 		unregister: (opt: SelectOption) => options.delete(opt),
 	});
 
-	document.addEventListener('click', e => {
+	function updateDropdownPosition() {
+		if (!triggerElt) return;
+
+		const rect = triggerElt.getBoundingClientRect();
+
+		dropdownStyle = `
+		position: fixed;
+		top: ${rect.bottom + 4}px;
+		left: ${rect.left}px;
+		width: ${rect.width}px;
+		z-index: 1000;
+	`;
+	}
+
+	function handleClickOutside(e: MouseEvent) {
 		if (selectElt && !selectElt.contains(e.target as Node)) dropdownOpen = false;
-	})
+	}
+
+	function handleViewportChange() {
+		if (dropdownOpen) {
+			updateDropdownPosition();
+		}
+	}
 
 	function addValue(option: SelectOption) {
 		onchange();
 		if (multiple) {
-			selectedValues.add(option);
-			dropdownOpen = true;
+			if (![...selectedValues].some(s => s.value === option.value)) {
+				selectedValues.add(option);
+			}
 		} else {
 			dropdownOpen = false;
 			selectedOptionLabel = option.label;
 			selectedValues.clear();
 			selectedValues.add(option);
 		}
-		value = [...selectedValues];
+		value = option.value;
 	}
 
 	function removeValue(option: SelectOption) {
 		onchange();
-		selectedValues.delete(option);
-		value = [...selectedValues];
+		const match = [...selectedValues].find(s => s.value === option.value);
+		if (match) selectedValues.delete(match);
+		value = option.value;
 	}
 
-	onMount(() => {
-		console.log(value);
-		if (value && value.length > 0) {
-			for (const val of value) {
-				selectedValues.add(val);
+	$effect(() => {
+		if (!multiple) {
+			selectedValues = selectedValues;
+			if (selectedValues.size === 0) {
+				let selectedOption = options.values().next().value;
+				selectedOptionLabel = selectedOption?.label;
+				if (selectedOption && !multiple) selectedValues.add(selectedOption);
+			} else {
+				selectedOptionLabel = selectedValues.values().next().value?.label;
 			}
-		} else {
-			let selectedOption = options.values().next().value;
-			selectedOptionLabel = selectedOption?.label;
-			if (selectedOption && !multiple) selectedValues.add(selectedOption);
 		}
+	})
+
+	onMount(() => {
+		document.addEventListener('click', handleClickOutside);
+
+		window.addEventListener('scroll', handleViewportChange, true);
+		window.addEventListener('resize', handleViewportChange);
+
+		return () => {
+			document.removeEventListener('click', handleClickOutside);
+
+			window.removeEventListener('scroll', handleViewportChange, true);
+			window.removeEventListener('resize', handleViewportChange);
+		};
 	})
 </script>
 
@@ -92,38 +132,49 @@
 	</div>
 
 	<div bind:this={selectElt}>
-		<div
-				class={classNames('relative w-max min-w-32 h-min bg-zinc-800 rounded-lg py-1.5 cursor-pointer', {
+		<button
+				type="button"
+				class={classNames('relative bg-zinc-800 rounded-lg py-1.5 cursor-pointer text-nowrap', {
 			'opacity-50': disabled,
 			'animate-pulse pointer-events-none': loading
 		})}
-				onclick={() => dropdownOpen = !dropdownOpen}
+				onclick={() => {
+					dropdownOpen = !dropdownOpen;
+					if (dropdownOpen) updateDropdownPosition();
+				}}
+				bind:this={triggerElt}
 		>
 			{#if multiple}
-				<h2 class="ml-2">{$_("general.select")}</h2>
+				<h2 class="pl-2 pr-8">{$_("general.select")}</h2>
 			{:else}
-				<h2 class="ml-2">{selectedOptionLabel}</h2>
+				<h2 class="pl-2 pr-8">{selectedOptionLabel}</h2>
 			{/if}
 			<div class="absolute inset-y-0 right-2 flex items-center justify-center">
 				<CaretDown size="20" />
 			</div>
-		</div>
-		<div class={classNames("text-center absolute scroll-auto bg-zinc-800 z-100 rounded-md overflow-scroll max-h-80", {
-			'hidden': !dropdownOpen
-		})}>
-			{#each options as option}
-				{#if !multiple || !selectedValues.has(option)}
-					<h2
-						class="py-1 px-2 hover:bg-zinc-700 cursor-default"
-						onclick={() => addValue(option)}
-					>
-						{option.label}
-					</h2>
-				{/if}
-			{/each}
-		</div>
+		</button>
 	</div>
 </div>
+
+<div
+		use:portal
+		style={dropdownStyle}
+		class={classNames("text-center bg-zinc-800 z-100 rounded-md overflow-y-auto max-h-80", {
+		'hidden': !dropdownOpen
+	})}>
+	{#each options as option}
+		{#if !multiple || ![...selectedValues].some(s => s.value === option.value)}
+			<button
+					type="button"
+					class="py-1 px-2 hover:bg-zinc-700 cursor-default w-full"
+					onclick={() => addValue(option)}
+			>
+				{option.label}
+			</button>
+		{/if}
+	{/each}
+</div>
+
 {#each selectedValues as value}
 	<input type="hidden" name={name} value={value.value}>
 {/each}
