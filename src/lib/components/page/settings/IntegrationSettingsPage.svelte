@@ -223,6 +223,7 @@
 					<Select
 						bind:value={globalSettings.sonarr.rootFolderPath}
 						name="adminSonarrRootFolderPath"
+						selectedValues={globalSettings.sonarr.rootFolderPath}
 					>
 						{#each sonarrRootFolders as folder}
 							<Option value={folder.path} label={folder.path} />
@@ -231,7 +232,7 @@
 				{/if}
 
 				<h2>Monitor Series</h2>
-				<Select bind:value={globalSettings.sonarr.monitor} name="adminSonarrMonitor">
+				<Select bind:value={globalSettings.sonarr.monitor} name="adminSonarrMonitor" selectedValues={globalSettings.sonarr.monitor}>
 					{#each getSonarrMonitors() as monitor}
 						<Option value={monitor} label={monitor} />
 					{/each}
@@ -300,6 +301,7 @@
 					<Select
 						bind:value={globalSettings.radarr.rootFolderPath}
 						name="adminRadarrRootFolderPath"
+						selectedValues={globalSettings.radarr.rootFolderPath}
 					>
 						{#each radarrRootFolders as folder}
 							<Option value={folder.path} label={folder.path}/>

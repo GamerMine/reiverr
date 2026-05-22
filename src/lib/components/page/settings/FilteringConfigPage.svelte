@@ -30,7 +30,8 @@
 		})
 	}
 
-	async function deleteProfile(profile: FilteringProfile) {
+	async function deleteProfile(e: MouseEvent, profile: FilteringProfile) {
+		e.stopPropagation();
 		const res = await deleteFilteringProfile(profile).run();
 		await invalidateAll();
 		if (res.success) {
@@ -72,20 +73,26 @@
 		</button>
 		{#each profiles as profile}
 			<button
-				class="bg-neutral-900 rounded-md h-50 w-80 hover:cursor-pointer flex hover:bg-neutral-800 transition-colors duration-200"
+				class="bg-neutral-900 rounded-md h-50 w-80 hover:cursor-pointer flex hover:bg-neutral-800 transition-colors duration-200 overflow-hidden"
 				onclick={(e) => editProfile(e, profile)}
 			>
 				<div class="p-4 w-full">
 					<div class="flex justify-between">
 						<p class="text-xl font-bold text-start">{profile.name}</p>
-						<Trash class="bg-red-700 p-1 rounded-md hover:bg-red-900 transition-colors duration-100" size="30" onclick={() => deleteProfile(profile)}/>
+						<Trash class="bg-red-700 p-1 rounded-md hover:bg-red-900 transition-colors duration-100" size="30" onclick={(e) => deleteProfile(e, profile)}/>
 					</div>
-					<p class="text-zinc-500 flex mt-1 border-t border-zinc-600">{$_("settings.filtering.language")}:&nbsp<span class="text-white">{$_("languages."+profile.language)}</span></p>
-					<p class="text-zinc-500 flex flex-wrap gap-1">{$_("settings.filtering.qualities")}:&nbsp
-						{#each profile.qualities as quality}
-							<span class="bg-amber-300 px-2 py-1 rounded-2xl text-xs text-black">{quality}</span>
-						{/each}
-					</p>
+					<div class="overflow-y-auto max-h-[calc(100%-2rem)] scrollbar-thumb-zinc-600">
+						<p class="text-zinc-500 flex mt-1 border-t border-zinc-600">
+							{$_("settings.filtering.language")}:&nbsp;
+							<span class="text-white">{$_("languages."+profile.language)}</span>
+						</p>
+						<p class="text-zinc-500 flex flex-wrap gap-1">
+							{$_("settings.filtering.qualities")}:&nbsp;
+							{#each profile.qualities as quality}
+								<span class="bg-amber-300 px-2 py-1 rounded-2xl text-xs text-black">{quality}</span>
+							{/each}
+						</p>
+					</div>
 				</div>
 			</button>
 		{/each}

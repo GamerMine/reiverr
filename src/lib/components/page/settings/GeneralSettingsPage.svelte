@@ -26,7 +26,7 @@
 		{$_('settings.general.userInterface.userInterface')}
 	</h1>
 	<h2>{$_('settings.general.userInterface.language')}</h2>
-	<Select name="userLanguage" bind:value={userSettings.interface.language}>
+	<Select name="userLanguage" bind:value={userSettings.interface.language} selectedValues={userSettings.interface.language}>
 		{#each Object.entries(ISO_LANGUAGES).filter( ([c]) => Object.keys($dictionary).includes(c) ) as [code, lang]}
 			<Option value={code} label={`${lang?.name} - ${lang?.nativeName}`} />
 		{/each}
@@ -53,8 +53,8 @@
 	<h2>
 		{$_('settings.general.discovery.region')}
 	</h2>
-	<Select name="userDiscoverRegion" bind:value={userSettings.discover.region}>
-		<Option value="" label={$_('settings.general.discovery.none')}/>
+	<Select name="userDiscoverRegion" bind:value={userSettings.discover.region} selectedValues={userSettings.discover.region}>
+		<Option value="none" label={$_('settings.general.discovery.none')}/>
 		{#each Object.entries(ISO_REGIONS) as [code, region]}
 			<Option value={code} label={region} />
 		{/each}

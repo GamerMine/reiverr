@@ -13,8 +13,6 @@
     import {invalidateAll} from "$app/navigation";
     import Option from "$lib/components/common/inputs/forms/Option.svelte";
     import type {FilteringProfile} from "$lib/entities/Types";
-    import type {SelectOption} from "$lib/types";
-    import {SvelteSet} from "svelte/reactivity";
 
     let {
         modalId,
@@ -25,31 +23,10 @@
     } = $props();
 
     let disableInputs = $state(false);
-    let nameValue = $state("");
-    let languageValue = $state(new SvelteSet<SelectOption>());
-    let qualitiesValue = $state(new SvelteSet<SelectOption>());
 
     function userClose() {
         modalStack.close(modalId);
     }
-
-    // This has been done to prevent showing the 'state_referenced_locally' warning.
-    (() => {
-        if (editProfile) {
-            nameValue = editProfile.name;
-            languageValue.add({
-                value: editProfile.language,
-                label: $_("languages." + editProfile.language)
-            });
-            for (const val of editProfile.qualities) {
-                qualitiesValue.add({
-                    value: val,
-                    label: val
-                });
-            }
-        }
-    })();
-
 </script>
 
 <ModalContainer>
@@ -73,11 +50,11 @@
         <h2>
             {$_('settings.filtering.profileName')}
         </h2>
-        <Input name="profileName" type="text" required disabled={disableInputs} value={nameValue} />
+        <Input name="profileName" type="text" required disabled={disableInputs} value={editProfile ? editProfile.name : undefined} />
         <h2>
             {$_('settings.filtering.language')}
         </h2>
-        <Select name="language" disabled={disableInputs} selectedValues={languageValue}>
+        <Select name="language" disabled={disableInputs} selectedValues={editProfile ? editProfile.language : undefined}>
             {#each LANGUAGES as lang}
                 <Option value={lang} label={$_("languages."+lang)}/>
             {/each}
@@ -85,7 +62,7 @@
         <h2>
             {$_('settings.filtering.qualities')}
         </h2>
-        <Select name="qualities" disabled={disableInputs} multiple selectedValues={qualitiesValue}>
+        <Select name="qualities" disabled={disableInputs} multiple selectedValues={editProfile ? editProfile.qualities : undefined}>
             {#each QUALITY_DEFS as quality}
                 <Option value={quality} label={quality} />
             {/each}

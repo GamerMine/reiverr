@@ -14,7 +14,7 @@
 		loading = false,
 		name = undefined,
 		multiple = false,
-		selectedValues = new SvelteSet<SelectOption>(),
+		selectedValues,
 
 		children = undefined,
 
@@ -25,7 +25,7 @@
 		loading?: boolean;
 		name?: string;
 		multiple?: boolean;
-		selectedValues?: SvelteSet<SelectOption>;
+		selectedValues?: string[] | string;
 
 		children?: Snippet;
 
@@ -68,37 +68,50 @@
 		}
 	}
 
+	function getLabel(value: string | undefined) {
+		if (value === undefined) return null;
+		for (const option of options) {
+			if (option.value === value) {
+				return option.label;
+			}
+		}
+		return null;
+	}
+
 	function addValue(option: SelectOption) {
 		onchange();
-		if (multiple) {
-			if (![...selectedValues].some(s => s.value === option.value)) {
-				selectedValues.add(option);
+		if (multiple && typeof selectedValues === "object") {
+			if (!selectedValues.includes(option.value)) {
+				selectedValues = selectedValues.concat(option.value);
 			}
 		} else {
 			dropdownOpen = false;
 			selectedOptionLabel = option.label;
-			selectedValues.clear();
-			selectedValues.add(option);
+			selectedValues = option.value;
 		}
 		value = option.value;
 	}
 
-	function removeValue(option: SelectOption) {
-		onchange();
-		const match = [...selectedValues].find(s => s.value === option.value);
-		if (match) selectedValues.delete(match);
-		value = option.value;
+	function removeValue(val: string) {
+		if (typeof selectedValues === "object") {
+			onchange();
+			selectedValues = selectedValues.filter((e) => e !== val);
+			value = val;
+		}
 	}
 
 	$effect(() => {
-		if (!multiple) {
-			selectedValues = selectedValues;
-			if (selectedValues.size === 0) {
+		if (selectedValues === undefined) {
+			if (multiple) selectedValues = []
+			else selectedValues = ""
+		}
+		if (!multiple && typeof selectedValues === "string") {
+			if (selectedValues.length === 0) {
 				let selectedOption = options.values().next().value;
 				selectedOptionLabel = selectedOption?.label;
-				if (selectedOption && !multiple) selectedValues.add(selectedOption);
+				if (selectedOption) selectedValues = selectedOption.value;
 			} else {
-				selectedOptionLabel = selectedValues.values().next().value?.label;
+				selectedOptionLabel = selectedValues;
 			}
 		}
 	})
@@ -120,11 +133,11 @@
 
 {@render children?.()}
 <div>
-	<div class="flex flex-wrap gap-2">
-		{#if multiple}
+	<div class="flex flex-wrap gap-2 max-h-24 overflow-y-auto">
+		{#if multiple && typeof selectedValues === "object"}
 			{#each selectedValues as value}
 				<div class="bg-amber-300 px-2 py-1 rounded-2xl flex gap-1">
-					<p class="text-xs text-black">{value.label}</p>
+					<p class="text-xs text-black">{getLabel(value)}</p>
 					<Cross2 color="black" size="17" class=" rounded-2xl hover:bg-amber-500 p-0.5" onclick={() => removeValue(value)}/>
 				</div>
 			{/each}
@@ -147,7 +160,7 @@
 			{#if multiple}
 				<h2 class="pl-2 pr-8">{$_("general.select")}</h2>
 			{:else}
-				<h2 class="pl-2 pr-8">{selectedOptionLabel}</h2>
+				<h2 class="pl-2 pr-8">{getLabel(selectedOptionLabel)}</h2>
 			{/if}
 			<div class="absolute inset-y-0 right-2 flex items-center justify-center">
 				<CaretDown size="20" />
@@ -163,7 +176,7 @@
 		'hidden': !dropdownOpen
 	})}>
 	{#each options as option}
-		{#if !multiple || ![...selectedValues].some(s => s.value === option.value)}
+		{#if !multiple || !(typeof selectedValues === "object" && selectedValues.includes(option.value))}
 			<button
 					type="button"
 					class="py-1 px-2 hover:bg-zinc-700 cursor-default w-full"
@@ -175,6 +188,10 @@
 	{/each}
 </div>
 
-{#each selectedValues as value}
-	<input type="hidden" name={name} value={value.value}>
-{/each}
+{#if typeof selectedValues === "object"}
+	{#each selectedValues as val}
+		<input type="hidden" name={name} value={val}>
+	{/each}
+{:else}
+	<input type="hidden" name={name} value={selectedValues}>
+{/if}

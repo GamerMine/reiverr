@@ -163,7 +163,7 @@
 			<ChevronLeft size="22" />
 			{$_('settings.navbar.settings')}
 		</button>
-		<Select bind:value={openTab}>
+		<Select bind:value={openTab} selectedValues={openTab}>
 			<Option value="general" label={$_('settings.navbar.general')} />
 			{#if data.isAdmin}
 				<Option value="integrations" label={$_('settings.navbar.integrations')} />
