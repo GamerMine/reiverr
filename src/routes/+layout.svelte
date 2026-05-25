@@ -7,7 +7,7 @@
 	import '../app.css';
 	import type { LayoutServerData } from './$types';
 	import Notifications from '$lib/components/common/misc/notification/Notifications.svelte';
-	import {type Snippet} from 'svelte';
+	import { type Snippet } from 'svelte';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { CrossCircled } from 'svelte-radix';
 	import { fade } from 'svelte/transition';
@@ -30,7 +30,7 @@
 				window.location.reload();
 			}, 20000);
 		}
-	})()
+	})();
 </script>
 
 <I18n />
@@ -48,13 +48,13 @@
 	<UpdateChecker />
 	{#if showCriticalError}
 		<div
-			class="fixed inset-0 backdrop-blur-3xl flex items-center justify-center z-50"
+			class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-3xl"
 			transition:fade
 		>
-			<div class="bg-zinc-800/50 rounded-lg p-6 shadow-lg max-w-sm w-full text-center">
+			<div class="w-full max-w-sm rounded-lg bg-zinc-800/50 p-6 text-center shadow-lg">
 				<div class="grid grid-cols-3">
 					<CrossCircled size="30" color="rgb(130 24 26)" />
-					<h1 class="text-3xl text-red-900 font-bold mb-4">Error</h1>
+					<h1 class="mb-4 text-3xl font-bold text-red-900">Error</h1>
 				</div>
 				{#if criticalErrorMessage}
 					<p class="text-lg">{$_(criticalErrorMessage)}</p>

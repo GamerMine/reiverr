@@ -256,6 +256,20 @@
       "pilot": "Pilot"
     }
   },
+  "service": {
+    "tasks": {
+      "test": {
+        "single": "Test the scheduling of a single tasks",
+        "multiple": "Test the scheduling of {count} tasks (success: {success} / error: {error})",
+        "success": "Execution #{id} (success)",
+        "error": "Execution #{id} (error)"
+      }
+    },
+    "messages": {
+      "unknownTaskType": "Unknown task type: {type}",
+      "queuingFailed": "Failed to queue task execution: {error}"
+    }
+  },
   "languages": {
     "original": "Original",
     "afrikaans": "Afrikaans",

@@ -1,0 +1,79 @@
+name: reiverr-dev
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:14.2-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+      - ./cache/postgres:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  jellyfin:
+    container_name: jellyfin
+    image: jellyfin/jellyfin:10
+    ports:
+      - "8096:8096/tcp"
+      - "7359:7359/udp"
+    volumes:
+      - ./cache/jellyfin/config:/config
+      - ./cache/jellyfin/cache:/cache
+      - ./cache/jellyfin/media:/media
+    restart: unless-stopped
+
+  radarr:
+    container_name: radarr
+    image: linuxserver/radarr:6.0.4
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+    ports:
+      - "7878:7878"
+    volumes:
+      - ./cache/radarr/config:/config
+      - ./cache/jellyfin/media:/movies
+      - ./cache/radarr/downloads:/downloads
+    restart: unless-stopped
+
+  sonarr:
+    container_name: sonarr
+    image: linuxserver/sonarr:4.0.16
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+    ports:
+      - "8989:8989"
+    volumes:
+      - ./cache/sonarr/config:/config
+      - ./cache/jellyfin/media:/tv
+      - ./cache/sonarr/downloads:/downloads
+    restart: unless-stopped
+
+  prowlarr:
+    container_name: prowlarr
+    image: linuxserver/prowlarr:2.3.0
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+    ports:
+      - "9696:9696"
+    volumes:
+      - ./cache/prowlarr/config:/config
+    restart: unless-stopped
+
+  flaresolverr:
+    container_name: flaresolverr
+    image: ghcr.io/flaresolverr/flaresolverr:v3.4.6
+    environment:
+      - LOG_LEVEL=info
+    ports:
+      - "8191:8191"
+    restart: unless-stopped
