@@ -1,25 +1,20 @@
 <script lang="ts">
-	import {
-		getSonarrRootFolders,
-		getSonarrMonitors,
-		getSonarrHealth
-	} from '$lib/apis/sonarr/sonarrApi';
-	import { getRadarrHealth } from '$lib/apis/radarr/radarrApi';
+	import { getSonarrHealth, getSonarrRootFolders } from '$lib/apis/sonarr/sonarrApi';
+	import { getRadarrHealth, getRadarrRootFolders } from '$lib/apis/radarr/radarrApi';
 	import Input from '$lib/components/common/inputs/forms/Input.svelte';
 	import Select from '$lib/components/common/inputs/forms/Select.svelte';
 	import classNames from 'classnames';
 	import { Trash } from 'svelte-radix';
 	import IntegrationCard from './IntegrationCard.svelte';
 	import TestConnectionButton from './TestConnectionButton.svelte';
-	import { getRadarrRootFolders } from '$lib/apis/radarr/radarrApi';
 	import { _ } from 'svelte-i18n';
-	import Toggle from '$lib/components/common/inputs/forms/Toggle.svelte';
 	import { defaultGlobalSettings, type GlobalSettings } from '$lib/entities/Types';
 	import { jellyfinTestConnection } from '$lib/apis/jellyfin/jellyfinApi';
 	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
 	import { onMount } from 'svelte';
 	import ConfirmDialog from '$lib/components/common/inputs/forms/ConfirmDialog.svelte';
-	import Option from "$lib/components/common/inputs/forms/Option.svelte";
+	import Option from '$lib/components/common/inputs/forms/Option.svelte';
+	import { saveSettings } from '$lib/remote/settings.remote';
 
 	let {
 		visible,
@@ -71,12 +66,13 @@
 
 	async function updateRadarrHealth(): Promise<boolean> {
 		if (globalSettings.radarr.baseUrl) {
-			return getRadarrHealth(globalSettings.radarr.baseUrl, globalSettings.radarr.apiKey).then(
-				(ok) => {
-					radarrConnected = ok;
-					return ok;
-				}
-			);
+			return getRadarrHealth(
+				globalSettings.radarr.baseUrl,
+				globalSettings.radarr.apiKey
+			).then((ok) => {
+				radarrConnected = ok;
+				return ok;
+			});
 		} else {
 			radarrConnected = false;
 			return false;
@@ -85,12 +81,13 @@
 
 	async function updateSonarrHealth(): Promise<boolean> {
 		if (globalSettings.sonarr.baseUrl) {
-			return getSonarrHealth(globalSettings.sonarr.baseUrl, globalSettings.sonarr.apiKey).then(
-				(ok) => {
-					sonarrConnected = ok;
-					return ok;
-				}
-			);
+			return getSonarrHealth(
+				globalSettings.sonarr.baseUrl,
+				globalSettings.sonarr.apiKey
+			).then((ok) => {
+				sonarrConnected = ok;
+				return ok;
+			});
 		} else {
 			sonarrConnected = false;
 			return false;
@@ -148,7 +145,10 @@
 		if (radarrConnected) {
 			getRadarrRootFolders(globalSettings.radarr.baseUrl, globalSettings.radarr.apiKey).then(
 				(folders) => {
-					radarrRootFolders = folders.map((f) => ({ id: String(f.id) || '0', path: f.path || '' }));
+					radarrRootFolders = folders.map((f) => ({
+						id: String(f.id) || '0',
+						path: f.path || ''
+					}));
 				}
 			);
 		}
@@ -170,16 +170,16 @@
 	</div>
 
 	<div class="justify-self-stretch col-span-2">
-		<IntegrationCard title="Sonarr" status={sonarrConnected ? 'connected' : 'disconnected'}>
+		<IntegrationCard status={sonarrConnected ? 'connected' : 'disconnected'} title="Sonarr">
 			<div class="flex flex-col gap-1">
 				<h2 class="text-sm text-zinc-500">
 					{$_('settings.integrations.baseUrl')}
 				</h2>
 				<Input
 					bind:value={globalSettings.sonarr.baseUrl}
-					name="adminSonarrBaseUrl"
-					placeholder={'http://127.0.0.1:8989'}
 					klass="w-full"
+					name={saveSettings.fields.adminSonarrBaseUrl.as('text').name}
+					placeholder="http://127.0.0.1:8989"
 				/>
 			</div>
 			<div class="flex flex-col gap-1">
@@ -188,17 +188,17 @@
 				</h2>
 				<Input
 					bind:value={globalSettings.sonarr.apiKey}
-					name="adminSonarrApiKey"
 					klass="w-full"
+					name={saveSettings.fields.adminSonarrApiKey.as('password').name}
 					type="password"
 				/>
 			</div>
 			<div class="grid grid-cols-[1fr_min-content] gap-2">
 				<TestConnectionButton handleHealthCheck={updateSonarrHealth} />
 				<Button
+					disabled={!sonarrConnected}
 					onclick={() => removeIntegration('sonarr')}
 					variant="error"
-					disabled={!sonarrConnected}
 				>
 					<Trash size="20" />
 				</Button>
@@ -222,42 +222,29 @@
 				{:else}
 					<Select
 						bind:value={globalSettings.sonarr.rootFolderPath}
-						name="adminSonarrRootFolderPath"
+						name={saveSettings.fields.adminSonarrRootFolderPath.as('select').name}
 						selectedValues={globalSettings.sonarr.rootFolderPath}
 					>
-						{#each sonarrRootFolders as folder}
+						{#each sonarrRootFolders as folder (folder)}
 							<Option value={folder.path} label={folder.path} />
 						{/each}
 					</Select>
-				{/if}
-
-				<h2>Monitor Series</h2>
-				<Select bind:value={globalSettings.sonarr.monitor} name="adminSonarrMonitor" selectedValues={globalSettings.sonarr.monitor}>
-					{#each getSonarrMonitors() as monitor}
-						<Option value={monitor} label={monitor} />
-					{/each}
-				</Select>
-				<h2>Start searching for new episodes</h2>
-				{#if globalSettings.sonarr.startSearch === undefined}
-					<Select loading />
-				{:else}
-					<Toggle bind:checked={globalSettings.sonarr.startSearch} name="adminSonarrStartSearch" />
 				{/if}
 			</div>
 		</IntegrationCard>
 	</div>
 
 	<div class="justify-self-stretch col-span-2">
-		<IntegrationCard title="Radarr" status={radarrConnected ? 'connected' : 'disconnected'}>
+		<IntegrationCard status={radarrConnected ? 'connected' : 'disconnected'} title="Radarr">
 			<div class="flex flex-col gap-1">
 				<h2 class="text-sm text-zinc-500">
 					{$_('settings.integrations.baseUrl')}
 				</h2>
 				<Input
 					bind:value={globalSettings.radarr.baseUrl}
-					name="adminRadarrBaseUrl"
-					placeholder={'http://127.0.0.1:7878'}
 					klass="w-full"
+					name={saveSettings.fields.adminRadarrBaseUrl.as('text').name}
+					placeholder="http://127.0.0.1:7878"
 				/>
 			</div>
 			<div class="flex flex-col gap-1">
@@ -266,17 +253,17 @@
 				</h2>
 				<Input
 					bind:value={globalSettings.radarr.apiKey}
-					name="adminRadarrApiKey"
-					type="password"
 					klass="w-full"
+					name={saveSettings.fields.adminRadarrApiKey.as('password').name}
+					type="password"
 				/>
 			</div>
 			<div class="grid grid-cols-[1fr_min-content] gap-2">
 				<TestConnectionButton handleHealthCheck={updateRadarrHealth} />
 				<Button
+					disabled={!radarrConnected}
 					onclick={async () => await removeIntegration('radarr')}
 					variant="error"
-					disabled={!radarrConnected}
 				>
 					<Trash size="20" />
 				</Button>
@@ -300,11 +287,11 @@
 				{:else}
 					<Select
 						bind:value={globalSettings.radarr.rootFolderPath}
-						name="adminRadarrRootFolderPath"
+						name={saveSettings.fields.adminRadarrRootFolderPath.as('select').name}
 						selectedValues={globalSettings.radarr.rootFolderPath}
 					>
-						{#each radarrRootFolders as folder}
-							<Option value={folder.path} label={folder.path}/>
+						{#each radarrRootFolders as folder (folder)}
+							<Option value={folder.path} label={folder.path} />
 						{/each}
 					</Select>
 				{/if}
@@ -313,16 +300,16 @@
 	</div>
 
 	<div class="justify-self-stretch col-span-2">
-		<IntegrationCard title="Jellyfin" status={jellyfinConnected ? 'connected' : 'disconnected'}>
+		<IntegrationCard status={jellyfinConnected ? 'connected' : 'disconnected'} title="Jellyfin">
 			<div class="flex flex-col gap-1">
 				<h2 class="text-sm text-zinc-500">
 					{$_('settings.integrations.baseUrl')}
 				</h2>
 				<Input
-					name="adminJellyfinBaseUrl"
 					bind:value={globalSettings.jellyfin.baseUrl}
-					placeholder={'http://127.0.0.1:8096'}
 					klass="w-full"
+					name={saveSettings.fields.adminJellyfinBaseUrl.as('text').name}
+					placeholder="http://127.0.0.1:8096"
 				/>
 			</div>
 			<div class="flex flex-col gap-1">
@@ -330,10 +317,10 @@
 					{$_('settings.integrations.apiKey')}
 				</h2>
 				<Input
-					name="adminJellyfinApiKey"
 					bind:value={globalSettings.jellyfin.apiKey}
-					type="password"
 					klass="w-full"
+					name={saveSettings.fields.adminJellyfinApiKey.as('text').name}
+					type="password"
 				/>
 			</div>
 			<div class="grid grid-cols-[1fr_min-content]">
@@ -343,5 +330,9 @@
 	</div>
 </div>
 {#if confirmDialogVisible}
-	<ConfirmDialog variant="yesNo" onConfirm={confirmDialog} confirmMessage={confirmDialogMessage} />
+	<ConfirmDialog
+		variant="yesNo"
+		onConfirm={confirmDialog}
+		confirmMessage={confirmDialogMessage}
+	/>
 {/if}

@@ -6,8 +6,8 @@ export const TMDB_POSTER_SMALL = 'https://www.themoviedb.org/t/p/w342';
 export const TMDB_PROFILE_SMALL = 'https://www.themoviedb.org/t/p/w185';
 
 export const PLACEHOLDER_BACKDROP = '/placeholder.jpg';
-export const LANGUAGES = [
-	"any",
+export const LANGUAGES = [ // TODO: Load languages from Radarr and/or Sonarr API at startup
+	"original",
 	"afrikaans",
 	"albanian",
 	"arabic",

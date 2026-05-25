@@ -7,7 +7,8 @@
 	import { _, dictionary } from 'svelte-i18n';
 	import classNames from 'classnames';
 	import type { UserSettings } from '$lib/entities/Types';
-	import Option from "$lib/components/common/inputs/forms/Option.svelte";
+	import Option from '$lib/components/common/inputs/forms/Option.svelte';
+	import { saveSettings } from '$lib/remote/settings.remote';
 
 	let { visible, userSettings = $bindable() }: { visible: boolean; userSettings: UserSettings } =
 		$props();
@@ -26,23 +27,30 @@
 		{$_('settings.general.userInterface.userInterface')}
 	</h1>
 	<h2>{$_('settings.general.userInterface.language')}</h2>
-	<Select name="userLanguage" bind:value={userSettings.interface.language} selectedValues={userSettings.interface.language}>
-		{#each Object.entries(ISO_LANGUAGES).filter( ([c]) => Object.keys($dictionary).includes(c) ) as [code, lang]}
+	<Select
+		bind:value={userSettings.interface.language}
+		name={saveSettings.fields.userLanguage.as('select').name}
+		selectedValues={userSettings.interface.language}
+	>
+		{#each Object.entries(ISO_LANGUAGES).filter( ([c]) => Object.keys($dictionary).includes(c) ) as [code, lang] (lang)}
 			<Option value={code} label={`${lang?.name} - ${lang?.nativeName}`} />
 		{/each}
 	</Select>
 	<h2>
 		{$_('settings.general.userInterface.autoplayTrailers')}
 	</h2>
-	<Toggle name="userAutoplayTrailers" bind:checked={userSettings.interface.autoplayTrailers} />
+	<Toggle
+		bind:checked={userSettings.interface.autoplayTrailers}
+		name={saveSettings.fields.userAutoplayTrailers.as('checkbox').name}
+	/>
 
 	<h2>
 		{$_('settings.general.userInterface.animationDuration')}
 	</h2>
 	<Input
-		name="userAnimationDuration"
-		type="number"
 		bind:value={userSettings.interface.animationDuration}
+		name={saveSettings.fields.userAnimationDuration.as('number').name}
+		type="number"
 	/>
 
 	<h1
@@ -53,16 +61,20 @@
 	<h2>
 		{$_('settings.general.discovery.region')}
 	</h2>
-	<Select name="userDiscoverRegion" bind:value={userSettings.discover.region} selectedValues={userSettings.discover.region}>
-		<Option value="none" label={$_('settings.general.discovery.none')}/>
-		{#each Object.entries(ISO_REGIONS) as [code, region]}
+	<Select
+		bind:value={userSettings.discover.region}
+		name={saveSettings.fields.userDiscoverRegion.as('select').name}
+		selectedValues={userSettings.discover.region}
+	>
+		<Option label={$_('settings.general.discovery.none')} value="none" />
+		{#each Object.entries(ISO_REGIONS) as [code, region] (region)}
 			<Option value={code} label={region} />
 		{/each}
 	</Select>
 	<h2>{$_('settings.general.discovery.excludeLibraryItemsFromDiscovery')}</h2>
 	<Toggle
-		name="userDiscoverExcludeLibraryItems"
 		bind:checked={userSettings.discover.excludeLibraryItems}
+		name={saveSettings.fields.userDiscoverExcludeLibraryItems.as('checkbox').name}
 	/>
 
 	<div>
@@ -74,8 +86,8 @@
 		</p>
 	</div>
 	<Input
-		name="userDiscoverIncludedLanguages"
-		placeholder={'en,fr,de'}
 		bind:value={userSettings.discover.includedLanguages}
+		name={saveSettings.fields.userDiscoverIncludedLanguages.as('text').name}
+		placeholder="en,fr,de"
 	/>
 </div>

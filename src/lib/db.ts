@@ -3,6 +3,9 @@ import { DataSource } from 'typeorm';
 import { GlobalSettingsEntity } from './entities/GlobalSettings.server';
 import { UserSettingsEntity } from '$lib/entities/UserSettings.server';
 import {FilteringProfilesEntity} from "$lib/entities/FilteringProfiles.server";
+import {CustomProfilesEntity} from "$lib/entities/CustomProfiles.server";
+
+// FIXME: Should not be used in production...
 
 class TypeOrm {
 	private static instance: Promise<DataSource | null> | null = null;
@@ -12,8 +15,8 @@ class TypeOrm {
 				type: 'better-sqlite3',
 				database: 'config/reiverr.sqlite',
 				synchronize: true,
-				entities: [GlobalSettingsEntity, UserSettingsEntity, FilteringProfilesEntity],
-				logging: false
+				entities: [GlobalSettingsEntity, UserSettingsEntity, FilteringProfilesEntity, CustomProfilesEntity],
+				logging: false,
 			})
 				.initialize()
 				.then((fulfilled) => {

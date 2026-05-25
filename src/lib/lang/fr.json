@@ -194,7 +194,8 @@
 			"addProfile": "Ajouter un profile",
 			"editProfile": "Modifier un profile",
 			"profileName": "Nom du profile",
-			"language": "Langue",
+			"defaultProfile": "Profile par défaut",
+			"languages": "Langues",
 			"qualities": "Qualitées vidéo",
 			"filteringProfileCreatedSuccess": "Profile de filtrage créé avec succès",
 			"filteringProfileDeleteSuccess": "Profile de filtrage supprimé"
@@ -209,6 +210,7 @@
 			"jellyfinConfirmChangesDialog": "En modifiant la configuration de Jellyfin, vous allez être redirigé vers la page de connexion.",
 			"radarrRemoveConfirmDialog": "Vous êtes sur le point de supprimer l'intégration Radarr. Voulez-vous continuer ?",
 			"sonarrRemoveConfirmDialog": "Vous êtes sur le point de supprimer l'intégration Sonarr. Voulez-vous continuer ?",
+			"changesSavedSuccess": "Paramètres modifiés avec succès.",
 			"saveChanges": "Sauvegarder les modifications",
 			"resetToDefaults": "Réinitialiser aux paramètres par défaut",
 			"changelog": "Journal des modifications",
@@ -250,7 +252,7 @@
 		}
 	},
 	"languages": {
-		"any": "Toute",
+		"original": "Original",
 		"afrikaans": "Afrikaans",
 		"albanian": "Albanais",
 		"arabic": "Arabe",

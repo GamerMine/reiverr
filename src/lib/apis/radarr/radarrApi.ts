@@ -1,5 +1,4 @@
 import type { components } from '$lib/apis/radarr/radarr.generated';
-import { getTmdbMovie } from '$lib/apis/tmdb/tmdbApi';
 import { settings } from '$lib/stores/settings.svelte';
 
 export type DiskSpaceInfo = components['schemas']['DiskSpaceResource'];
@@ -10,46 +9,31 @@ export type RadarrReleaseResource = components['schemas']['ReleaseResource'];
 export type RadarrRootFolderResource = components['schemas']['RootFolderResource'];
 
 export interface RadarrMovieOptions {
-	title: string;
 	qualityProfileId: string;
-	minimumAvailability: 'announced' | 'inCinemas' | 'released';
-	tags: number[];
-	year: number;
 	rootFolderPath: string;
 	tmdbId: number;
 	monitored: boolean;
-	addOptions: {
-		searchForMovie?: boolean;
-	};
 }
 
 export const getRadarrMovies = async (): Promise<RadarrMovie[]> => {
 	return (
 		(await fetch('/api/radarr/movie', {
 			method: 'GET'
-		}).then(async (res): Promise<RadarrMovie[]> => (await res.json()) || [])) || Promise.resolve([])
+		}).then(async (res): Promise<RadarrMovie[]> => (await res.json()) || [])) ||
+		Promise.resolve([])
 	);
 };
 
-export const addMovieToRadarr = async (tmdbId: number) => {
-	const tmdbMovie = await getTmdbMovie(tmdbId);
+/*export const addMovieToRadarr = async (tmdbId: number) => {
 	const radarrMovies = await getRadarrMovies();
 
 	if (radarrMovies?.find((v) => v.tmdbId == tmdbId)) throw new Error('Movie already exists');
-	if (!tmdbMovie) throw new Error('Movie not found');
 
 	const options: RadarrMovieOptions = {
 		qualityProfileId: '1',
 		rootFolderPath: settings.globalSettings.radarr.rootFolderPath || '',
-		minimumAvailability: 'announced',
-		title: tmdbMovie.title || tmdbMovie.original_title || '',
-		tmdbId: tmdbMovie.id || 0,
-		year: Number(tmdbMovie.release_date?.slice(0, 4)),
-		tags: [],
+		tmdbId: tmdbId,
 		monitored: false,
-		addOptions: {
-			searchForMovie: false
-		}
 	};
 
 	return (
@@ -58,7 +42,7 @@ export const addMovieToRadarr = async (tmdbId: number) => {
 			body: JSON.stringify(options)
 		}).then(async (res) => await res.json())) || Promise.resolve(undefined)
 	);
-};
+};*/
 
 export const fetchRadarrReleases = async (movieId: number) => {
 	return (
@@ -136,13 +120,13 @@ export const getRadarrRootFolders = async (
 };
 
 export const removeMovieFromRadarr = async (id: number, deleteFiles: boolean = false) => {
-	let request = `/api/radarr/movie?movieId=${id}&deleteFiles=${deleteFiles}`
+	const request = `/api/radarr/movie?movieId=${id}&deleteFiles=${deleteFiles}`;
 	return (
 		(await fetch(request, {
-			method: 'DELETE',
+			method: 'DELETE'
 		}).then(async (res) => await res.json())) || Promise.resolve(undefined)
 	);
-}
+};
 
 export const getRadarrQualityProfiles = async () => {
 	return await fetch('/api/radarr/qualityprofile', {

@@ -2,12 +2,13 @@ import * as v from "valibot";
 
 export type GlobalSettings = {
 	initialised: boolean;
+	general: {
+		downloadLanguages: string[];
+	},
 	sonarr: {
 		baseUrl: string | undefined;
 		apiKey: string | undefined;
 		rootFolderPath: string | undefined;
-		monitor: string | undefined;
-		startSearch: boolean;
 	};
 	radarr: {
 		baseUrl: string | undefined;
@@ -41,8 +42,8 @@ export type Settings = {
 export const FilteringProfileSchema = v.object({
 	id: v.number(),
 	name: v.string(),
-	language: v.string(),
-	qualities: v.array(v.string())
+	qualities: v.array(v.string()),
+	isDefault: v.boolean(),
 });
 
 export type FilteringProfile = v.InferOutput<typeof FilteringProfileSchema>;
@@ -50,12 +51,13 @@ export type FilteringProfile = v.InferOutput<typeof FilteringProfileSchema>;
 export const defaultGlobalSettings: GlobalSettings = {
 	initialised: false,
 
+	general : {
+		downloadLanguages: [],
+	},
 	sonarr: {
 		apiKey: undefined,
 		baseUrl: undefined,
 		rootFolderPath: undefined,
-		monitor: 'unknown',
-		startSearch: true
 	},
 	radarr: {
 		apiKey: undefined,

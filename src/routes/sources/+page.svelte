@@ -14,7 +14,6 @@
 	out:fade|global={{ duration: settings.userSettings.interface.animationDuration }}
 >
 	<div class="flex flex-col gap-4 max-w-3xl flex-1">
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<RadarrStats large />
 		<SonarrStats large />
 		<!-- <div

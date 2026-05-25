@@ -13,10 +13,10 @@ export const load: PageServerLoad = async ({ url }) => {
 
 export const actions = {
 	default: async ({ request }) => {
-		let formData = await request.formData();
-		let baseURL = formData.get('baseURL') as string;
-		let apiKey = formData.get('apiKey') as string;
-		let jellyfinConnection = await checkJellyfinConnection(baseURL, apiKey);
+		const formData = await request.formData();
+		const baseURL = formData.get('baseURL') as string;
+		const apiKey = formData.get('apiKey') as string;
+		const jellyfinConnection = await checkJellyfinConnection(baseURL, apiKey);
 
 		if (jellyfinConnection.status === 404) {
 			return fail(jellyfinConnection.status, { code: 1 });

@@ -23,10 +23,10 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 
 export const actions = {
 	default: async ({ request, cookies }) => {
-		let formData = await request.formData();
-		let username = (formData.get('username') as string) ?? '';
-		let password = (formData.get('password') as string) ?? '';
-		let authResult = await authenticateJellyfinUser(username, password);
+		const formData = await request.formData();
+		const username = (formData.get('username') as string) ?? '';
+		const password = (formData.get('password') as string) ?? '';
+		const authResult = await authenticateJellyfinUser(username, password);
 
 		if (!authResult || !authResult.AccessToken) {
 			return fail(401, { code: 1 });

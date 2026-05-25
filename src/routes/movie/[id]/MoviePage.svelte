@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {addMovieToRadarr, removeMovieFromRadarr} from '$lib/apis/radarr/radarrApi';
+	import { removeMovieFromRadarr } from '$lib/apis/radarr/radarrApi';
 	import {
 		getTmdbMovie,
 		getTmdbMovieRecommendations,
@@ -12,7 +12,6 @@
 	import CarouselPlaceholderItems from '$lib/components/common/misc/carousel/CarouselPlaceholderItems.svelte';
 	import PersonCard from '$lib/components/common/misc/cards/PersonCard.svelte';
 	import ProgressBar from '$lib/components/common/ProgressBar.svelte';
-	import RequestModal from '$lib/components/modals/RequestModal.svelte';
 	import OpenInButton from '$lib/components/TitlePageLayout/OpenInButton.svelte';
 	import TitlePageLayout from '$lib/components/TitlePageLayout/TitlePageLayout.svelte';
 	import { playerState } from '$lib/components/VideoPlayer/VideoPlayer';
@@ -21,13 +20,13 @@
 		createRadarrDownloadStore,
 		createRadarrMovieStore
 	} from '$lib/stores/data.store';
-	import { modalStack } from '$lib/stores/modal.store';
 	import { formatMinutesToTime, formatSize } from '$lib/utils';
 	import classNames from 'classnames';
 	import { ActivityLog, Archive, ChevronRight, DotFilled, Plus, Trash } from 'svelte-radix';
 	import type { ComponentProps } from 'svelte';
 	import { _ } from 'svelte-i18n';
 	import { settings } from '$lib/stores/settings.svelte';
+	import { addMovieToRadarr } from '$lib/remote/radarr.remote';
 
 	let {
 		tmdbId,
@@ -81,25 +80,15 @@
 	function addToRadarr() {
 		addToRadarrLoading = true;
 
-		addMovieToRadarr(tmdbId)
-			.then(() => {
-				refreshRadarr().then(() => {
-					openRequestModal();
-					addToRadarrLoading = false;
-				});
+		addMovieToRadarr(tmdbId).then(() => {
+			refreshRadarr().then(() => {
+				addToRadarrLoading = false;
 			});
-	}
-
-	function openRequestModal() {
-		if (!$radarrMovieStore.item?.id) return;
-
-		modalStack.create(RequestModal, {
-			radarrId: $radarrMovieStore.item?.id
 		});
 	}
 
 	function removeMovie() {
-		if ($radarrMovieStore.item?.id) removeMovieFromRadarr($radarrMovieStore.item?.id, true)
+		if ($radarrMovieStore.item?.id) removeMovieFromRadarr($radarrMovieStore.item?.id, true);
 		refreshRadarr();
 	}
 </script>
@@ -160,12 +149,18 @@
 							<span>{$_('library.content.play')}</span><ChevronRight size="20" />
 						</Button>
 					{:else if !radarrMovie && settings.globalSettings.radarr.baseUrl}
-						<Button variant="primary" disabled={addToRadarrLoading} onclick={addToRadarr}>
+						<Button
+							variant="primary"
+							disabled={addToRadarrLoading}
+							onclick={addToRadarr}
+						>
 							<Plus size="20" /><span>{$_('library.content.get')}</span>
 						</Button>
 					{:else if radarrMovie}
 						<Button variant="secondary" disabled>
-							<ActivityLog size="20" /><span class="ml-2">{$_('library.content.inqueue')}</span>
+							<ActivityLog size="20" /><span class="ml-2"
+								>{$_('library.content.inqueue')}</span
+							>
 						</Button>
 						<Button variant="error" klass="!px-2" onclick={removeMovie}>
 							<Trash size="20" />
@@ -260,7 +255,10 @@
 						<h2 class="font-medium">
 							{download?.estimatedCompletionTime
 								? formatMinutesToTime(
-										(new Date(download.estimatedCompletionTime).getTime() - Date.now()) / 1000 / 60
+										(new Date(download.estimatedCompletionTime).getTime() -
+											Date.now()) /
+											1000 /
+											60
 									)
 								: 'Stalled'}
 						</h2>
@@ -269,7 +267,9 @@
 
 				<div class="flex gap-4 flex-wrap col-span-4 sm:col-span-6 mt-4">
 					<Button>
-						<span class="mr-2">{$_('library.content.manage')}</span><Archive size="20" />
+						<span class="mr-2">{$_('library.content.manage')}</span><Archive
+							size="20"
+						/>
 					</Button>
 				</div>
 			{:else if $radarrMovieStore.loading}
@@ -308,9 +308,11 @@
 				{#if castProps?.length}
 					<Carousel gradientFromColor="from-stone-950">
 						{#snippet title()}
-							<div class="font-medium text-lg">{$_('library.content.castAndCrew')}</div>
+							<div class="font-medium text-lg">
+								{$_('library.content.castAndCrew')}
+							</div>
 						{/snippet}
-						{#each castProps as prop}
+						{#each castProps as prop (prop)}
 							<PersonCard {...prop} />
 						{/each}
 					</Carousel>
@@ -323,7 +325,7 @@
 								{$_('library.content.recommendations')}
 							</div>
 						{/snippet}
-						{#each tmdbRecommendationProps as prop}
+						{#each tmdbRecommendationProps as prop (prop)}
 							<Card {...prop} openInModal={isModal} />
 						{/each}
 					</Carousel>
@@ -336,7 +338,7 @@
 								{$_('library.content.similarMovies')}
 							</div>
 						{/snippet}
-						{#each tmdbSimilarProps as prop}
+						{#each tmdbSimilarProps as prop (prop)}
 							<Card {...prop} openInModal={isModal} />
 						{/each}
 					</Carousel>

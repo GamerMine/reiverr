@@ -1,57 +1,74 @@
-import {BaseEntity, Column, Entity, PrimaryGeneratedColumn} from "typeorm";
-import type {FilteringProfile} from "$lib/entities/Types";
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import type { FilteringProfile } from '$lib/entities/Types';
 
-@Entity({name: "filteringProfiles"})
+@Entity({ name: 'filteringProfiles' })
 export class FilteringProfilesEntity extends BaseEntity {
-    @PrimaryGeneratedColumn()
-    id: number;
+	@PrimaryGeneratedColumn()
+	id: number;
 
-    @Column('text')
-    name: string;
+	@Column('text')
+	name: string;
 
-    @Column('text')
-    language: string;
+	@Column('simple-array')
+	qualities: string[];
 
-    @Column('simple-array')
-    qualities: string[];
+	@Column('boolean')
+	isDefault: boolean;
 
-    public static async getAll(): Promise<FilteringProfile[]> {
-        let profiles: FilteringProfile[] = [];
+	@Column('integer')
+	sonarrId: number;
 
-        for (const profile of (await this.find())) {
-            profiles.push({
-                id: profile.id,
-                name: profile.name,
-                language: profile.language,
-                qualities: profile.qualities,
-            });
-        }
+	@Column('integer')
+	radarrId: number;
 
-        return profiles;
-    }
+	public static async getAll(): Promise<FilteringProfile[]> {
+		const profiles: FilteringProfile[] = [];
 
-    public static async createFilteringProfile(newProfile: FilteringProfile) {
-        const profile = new FilteringProfilesEntity();
-        profile.name = newProfile.name;
-        profile.language = newProfile.language;
-        profile.qualities = newProfile.qualities;
+		for (const profile of await this.find()) {
+			profiles.push({
+				id: profile.id,
+				name: profile.name,
+				qualities: profile.qualities,
+				isDefault: profile.isDefault
+			});
+		}
 
-        await profile.save();
-    }
+		return profiles;
+	}
 
-    public static async editFilteringProfile(newProfile: FilteringProfile) {
-        const profile = await this.findOne({ where: { id: newProfile.id } });
+	public static async getDefaultProfile() {
+		return await this.findOne({ where: { isDefault: true } });
+	}
 
-        if (!profile) return;
+	public static async createFilteringProfile(newProfile: FilteringProfile) {
+		const profile = new FilteringProfilesEntity();
+		await this.setProfile(profile, newProfile);
+	}
 
-        profile.name = newProfile.name;
-        profile.language = newProfile.language;
-        profile.qualities = newProfile.qualities;
+	public static async editFilteringProfile(newProfile: FilteringProfile) {
+		const profile = await this.findOne({ where: { id: newProfile.id } });
 
-        await profile.save();
-    }
+		if (!profile) return;
 
-    public static async deleteFilteringProfile(id: number) {
-        await this.delete({id: id})
-    }
+		await this.setProfile(profile, newProfile);
+	}
+
+	public static async deleteFilteringProfile(id: number) {
+		await this.delete({ id: id });
+	}
+
+	private static async setProfile(
+		profile: FilteringProfilesEntity,
+		newProfile: FilteringProfile
+	) {
+		profile.name = newProfile.name;
+		profile.qualities = newProfile.qualities;
+		profile.isDefault = newProfile.isDefault;
+
+		if (newProfile.isDefault) {
+			await this.update({ isDefault: true }, { isDefault: false });
+		}
+
+		await profile.save();
+	}
 }
