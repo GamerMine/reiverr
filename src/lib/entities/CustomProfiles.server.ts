@@ -1,20 +1,54 @@
-import {BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
-import {GlobalSettingsEntity} from "$lib/entities/GlobalSettings.server";
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 
-@Entity({name: 'customProfiles'})
-export class CustomProfilesEntity extends BaseEntity {
-    @PrimaryGeneratedColumn()
-    id: number
+@Entity({ name: 'customFormats' })
+export class CustomFormatsEntity extends BaseEntity {
+	@PrimaryGeneratedColumn()
+	id: number;
 
-    @ManyToOne(() => GlobalSettingsEntity, (entity) => entity.downloadLanguages)
-    globalSettings: GlobalSettingsEntity;
+	@ManyToOne(() => GlobalSettingsEntity, (entity) => entity.downloadLanguages)
+	globalSettings: GlobalSettingsEntity;
 
-    @Column('text')
-    lang: string;
+	@Column('text')
+	lang: string;
 
-    @Column('integer')
-    sonarrId: number;
+	@Column('integer', { nullable: true })
+	sonarrId: number | undefined;
 
-    @Column('integer')
-    radarrId: number;
+	@Column('integer', { nullable: true })
+	radarrId: number | undefined;
+
+	/**
+	 * Get all custom formats entries as a map keyed by lang
+	 */
+	public static async getAll() {
+		const profiles = new Map<string, CustomFormatsEntity>();
+
+		for (const profile of await this.find()) {
+			profiles.set(profile.lang, profile);
+		}
+
+		return profiles;
+	}
+
+	public static async createFormat(
+		lang: string,
+		radarrId: number | undefined,
+		sonarrId: number | undefined
+	) {
+		const globalSettings = await GlobalSettingsEntity.getDefault();
+		if (!globalSettings) return false;
+		const customFormat = new CustomFormatsEntity();
+		customFormat.lang = lang;
+		customFormat.radarrId = radarrId;
+		customFormat.sonarrId = sonarrId;
+		customFormat.globalSettings = globalSettings;
+
+		await customFormat.save();
+		return true;
+	}
+
+	public static async deleteFormat(id: number) {
+		await this.delete({ id: id });
+	}
 }

@@ -6,7 +6,7 @@
 	import { modalStack } from '$lib/stores/modal.store';
 	import FilteringProfileModal from '$lib/components/modals/FilteringProfileModal.svelte';
 	import type { FilteringProfile, GlobalSettings } from '$lib/entities/Types';
-	import { deleteFilteringProfile } from '$lib/remote/settings.remote';
+	import { deleteFilteringProfile, saveSettings } from '$lib/remote/settings.remote';
 	import { invalidateAll } from '$app/navigation';
 	import { createSuccessNotification } from '$lib/stores/notification.store';
 	import { LANGUAGES } from '$lib/constants';
@@ -76,7 +76,7 @@
 	<Select
 		bind:selectedValues={globalSettings.general.downloadLanguages}
 		multiple
-		name="downloadLanguages"
+		name={saveSettings.fields.adminDownloadLanguages.as('select multiple').name}
 	>
 		{#each LANGUAGES as lang (lang)}
 			<Option value={lang} label={$_('languages.' + lang)} />

@@ -17,6 +17,7 @@ import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import { UserSettingsEntity } from '$lib/entities/UserSettings.server';
 import { Radarr } from '$lib/server/radarr.server';
 import { Sonarr } from '$lib/server/sonarr.server';
+import { CustomFormatsEntity } from '$lib/entities/CustomProfiles.server';
 
 // TODO: Add more error message when success: false
 
@@ -37,7 +38,7 @@ export const saveSettings = form(
 		adminSonarrBaseUrl: v.optional(v.string()),
 		adminSonarrApiKey: v.optional(v.string()),
 		adminSonarrRootFolderPath: v.optional(v.string()),
-		adminDownloadLanguage: v.optional(v.array(v.string()))
+		adminDownloadLanguages: v.optional(v.array(v.string()))
 	}),
 	async ({
 		userLanguage,
@@ -55,7 +56,7 @@ export const saveSettings = form(
 		adminSonarrBaseUrl,
 		adminSonarrApiKey,
 		adminSonarrRootFolderPath,
-		adminDownloadLanguage
+		adminDownloadLanguages
 	}) => {
 		const { cookies } = getRequestEvent();
 		const userReq = await isJellyfinUserConnected(cookies);
@@ -116,7 +117,7 @@ export const saveSettings = form(
 					adminRadarrBaseUrl,
 					adminRadarrApiKey
 				);
-				if (connection.ok) {
+				if (connection) {
 					await GlobalSettingsEntity.setRadarrApiEndpoint(
 						adminRadarrBaseUrl,
 						adminRadarrApiKey
@@ -127,7 +128,7 @@ export const saveSettings = form(
 			}
 
 			// If Radarr connection is possible, checks for the configuration
-			if ((await Radarr.checkConnection()).ok) {
+			if (await Radarr.checkConnection()) {
 				if (adminRadarrRootFolderPath) {
 					await GlobalSettingsEntity.setRadarrApiConfiguration(adminRadarrRootFolderPath);
 				} else {
@@ -145,7 +146,7 @@ export const saveSettings = form(
 					adminSonarrBaseUrl,
 					adminSonarrApiKey
 				);
-				if (connection.ok) {
+				if (connection) {
 					await GlobalSettingsEntity.setSonarrApiEndpoint(
 						adminSonarrBaseUrl,
 						adminSonarrApiKey
@@ -156,11 +157,51 @@ export const saveSettings = form(
 			}
 
 			// If Sonarr connection is possible, checks for the configuration
-			if ((await Sonarr.checkConnection()).ok) {
+			if (await Sonarr.checkConnection()) {
 				if (adminSonarrRootFolderPath) {
 					await GlobalSettingsEntity.setSonarrApiConfiguration(adminSonarrRootFolderPath);
 				} else {
 					return { success: false };
+				}
+			}
+
+			// Set other admin settings
+			// FIXME: This should be moved to a task.
+			{
+				if (!adminDownloadLanguages) adminDownloadLanguages = [];
+				if (adminDownloadLanguages) {
+					const availableCustomProfiles = await CustomFormatsEntity.getAll();
+
+					for (const lang of adminDownloadLanguages) {
+						if (!availableCustomProfiles.has(lang)) {
+							let radarrId: number | undefined = undefined;
+							let sonarrId: number | undefined = undefined;
+
+							if (await Radarr.checkConnection()) {
+								const radarrRes = await Radarr.addCustomFormat(lang);
+								if (!radarrRes.success || !radarrRes.id) return { success: false };
+								radarrId = radarrRes.id;
+							}
+							if (await Sonarr.checkConnection()) {
+								const sonarrRes = await Sonarr.addCustomFormat(lang);
+								if (!sonarrRes.success || !sonarrRes.id) return { success: false };
+								sonarrId = sonarrRes.id;
+							}
+							if (!(await CustomFormatsEntity.createFormat(lang, radarrId, sonarrId)))
+								return { success: false };
+						}
+						availableCustomProfiles.delete(lang);
+					}
+
+					const radarrIds: number[] = [];
+					const sonarrIds: number[] = [];
+					for (const profile of availableCustomProfiles.values()) {
+						if (profile.radarrId) radarrIds.push(profile.radarrId);
+						if (profile.sonarrId) sonarrIds.push(profile.sonarrId);
+						await CustomFormatsEntity.deleteFormat(profile.id);
+					}
+					if (radarrIds.length > 0) await Radarr.deleteCustomFormats(radarrIds);
+					if (sonarrIds.length > 0) await Sonarr.deleteCustomFormats(sonarrIds);
 				}
 			}
 		}

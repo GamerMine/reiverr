@@ -5,7 +5,7 @@ import { UserSettingsEntity } from '$lib/entities/UserSettings.server';
 import { FilteringProfilesEntity } from '$lib/entities/FilteringProfiles.server';
 import { TaskEntity } from '$lib/entities/Task.server';
 import { TaskExecutionEntity } from '$lib/entities/TaskExecution.server';
-import { CustomProfilesEntity } from '$lib/entities/CustomProfiles.server';
+import { CustomFormatsEntity } from '$lib/entities/CustomProfiles.server';
 import { env } from '$env/dynamic/private';
 
 class TypeOrm {
@@ -26,7 +26,7 @@ class TypeOrm {
 					GlobalSettingsEntity,
 					UserSettingsEntity,
 					FilteringProfilesEntity,
-					CustomProfilesEntity,
+					CustomFormatsEntity,
 					TaskEntity,
 					TaskExecutionEntity
 				],

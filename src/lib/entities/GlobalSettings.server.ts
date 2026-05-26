@@ -1,272 +1,279 @@
-import {BaseEntity, Column, Entity, OneToMany, PrimaryColumn} from 'typeorm';
-import {defaultGlobalSettings, type GlobalSettings} from '$lib/entities/Types';
-import {CustomProfilesEntity} from "$lib/entities/CustomProfiles.server";
+import { BaseEntity, Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { defaultGlobalSettings, type GlobalSettings } from '$lib/entities/Types';
+import { CustomFormatsEntity } from '$lib/entities/CustomProfiles.server';
 
-@Entity({name: 'globalSettings'})
+@Entity({ name: 'globalSettings' })
 export class GlobalSettingsEntity extends BaseEntity {
-    @PrimaryColumn('text')
-    name: string;
+	@PrimaryColumn('text')
+	name: string;
 
-    // General
-    @OneToMany(() => CustomProfilesEntity, (entity) => entity.globalSettings)
-    downloadLanguages: CustomProfilesEntity[];
+	// General
+	@OneToMany(() => CustomFormatsEntity, (entity) => entity.globalSettings)
+	downloadLanguages: CustomFormatsEntity[];
 
-    // Sonarr
-    @Column('text', {nullable: true, default: defaultGlobalSettings.sonarr.baseUrl})
-    sonarrBaseUrl: string | null;
+	// Sonarr
+	@Column('text', { nullable: true, default: defaultGlobalSettings.sonarr.baseUrl })
+	sonarrBaseUrl: string | null;
 
-    @Column('text', {nullable: true, default: defaultGlobalSettings.sonarr.apiKey})
-    sonarrApiKey: string | null;
+	@Column('text', { nullable: true, default: defaultGlobalSettings.sonarr.apiKey })
+	sonarrApiKey: string | null;
 
-    @Column('text', {nullable: true, default: defaultGlobalSettings.sonarr.rootFolderPath})
-    sonarrRootFolderPath: string | null;
+	@Column('text', { nullable: true, default: defaultGlobalSettings.sonarr.rootFolderPath })
+	sonarrRootFolderPath: string | null;
 
-    // Radarr
-    @Column('text', {nullable: true, default: defaultGlobalSettings.radarr.baseUrl})
-    radarrBaseUrl: string | null;
+	// Radarr
+	@Column('text', { nullable: true, default: defaultGlobalSettings.radarr.baseUrl })
+	radarrBaseUrl: string | null;
 
-    @Column('text', {nullable: true, default: defaultGlobalSettings.radarr.apiKey})
-    radarrApiKey: string | null;
+	@Column('text', { nullable: true, default: defaultGlobalSettings.radarr.apiKey })
+	radarrApiKey: string | null;
 
-    @Column('text', {nullable: true, default: defaultGlobalSettings.radarr.rootFolderPath})
-    radarrRootFolderPath: string | null;
+	@Column('text', { nullable: true, default: defaultGlobalSettings.radarr.rootFolderPath })
+	radarrRootFolderPath: string | null;
 
-    // Jellyfin
-    @Column('text', {nullable: true, default: defaultGlobalSettings.jellyfin.baseUrl})
-    jellyfinBaseUrl: string | null;
+	// Jellyfin
+	@Column('text', { nullable: true, default: defaultGlobalSettings.jellyfin.baseUrl })
+	jellyfinBaseUrl: string | null;
 
-    @Column('text', {nullable: true, default: defaultGlobalSettings.jellyfin.apiKey})
-    jellyfinApiKey: string | null;
+	@Column('text', { nullable: true, default: defaultGlobalSettings.jellyfin.apiKey })
+	jellyfinApiKey: string | null;
 
-    public static async getClient(name = 'default'): Promise<GlobalSettings> {
-        const settings = await this.findOne({where: {name}, relations: {downloadLanguages: true}});
+	public static async getDefault(name = 'default') {
+		return await this.findOne({ where: { name }, relations: { downloadLanguages: true } });
+	}
 
-        if (!settings) {
-            const defaultSettings = new GlobalSettingsEntity();
-            defaultSettings.name = 'default';
-            await defaultSettings.save();
-            return this.get(defaultSettings);
-        }
+	public static async getClient(name = 'default'): Promise<GlobalSettings> {
+		const settings = await this.findOne({
+			where: { name },
+			relations: { downloadLanguages: true }
+		});
 
-        return this.get(settings);
-    }
+		if (!settings) {
+			const defaultSettings = new GlobalSettingsEntity();
+			defaultSettings.name = 'default';
+			await defaultSettings.save();
+			return this.get(defaultSettings);
+		}
 
-    public static async getJellyfinBaseUrl(name = 'default') {
-        const settings = await this.findOne({where: {name}});
+		return this.get(settings);
+	}
 
-        if (!settings) {
-            const defaultSettings = new GlobalSettingsEntity();
-            defaultSettings.name = 'default';
-            await defaultSettings.save();
-            return null;
-        }
+	public static async getJellyfinBaseUrl(name = 'default') {
+		const settings = await this.findOne({ where: { name } });
 
-        return settings.jellyfinBaseUrl ?? undefined;
-    }
+		if (!settings) {
+			const defaultSettings = new GlobalSettingsEntity();
+			defaultSettings.name = 'default';
+			await defaultSettings.save();
+			return null;
+		}
 
-    public static async getJellyfinApiKey(name = 'default') {
-        const settings = await this.findOne({where: {name}});
+		return settings.jellyfinBaseUrl ?? undefined;
+	}
 
-        if (!settings) {
-            const defaultSettings = new GlobalSettingsEntity();
-            defaultSettings.name = 'default';
-            await defaultSettings.save();
-            return null;
-        }
+	public static async getJellyfinApiKey(name = 'default') {
+		const settings = await this.findOne({ where: { name } });
 
-        return settings.jellyfinApiKey ?? undefined;
-    }
+		if (!settings) {
+			const defaultSettings = new GlobalSettingsEntity();
+			defaultSettings.name = 'default';
+			await defaultSettings.save();
+			return null;
+		}
 
-    public static async getRadarrBaseUrl(name = 'default') {
-        const settings = await this.findOne({where: {name}});
+		return settings.jellyfinApiKey ?? undefined;
+	}
 
-        if (!settings) {
-            const defaultSettings = new GlobalSettingsEntity();
-            defaultSettings.name = 'default';
-            await defaultSettings.save();
-            return undefined;
-        }
+	public static async getRadarrBaseUrl(name = 'default') {
+		const settings = await this.findOne({ where: { name } });
 
-        return settings.radarrBaseUrl ?? undefined;
-    }
+		if (!settings) {
+			const defaultSettings = new GlobalSettingsEntity();
+			defaultSettings.name = 'default';
+			await defaultSettings.save();
+			return undefined;
+		}
 
-    public static async getRadarrApiKey(name = 'default') {
-        const settings = await this.findOne({where: {name}});
+		return settings.radarrBaseUrl ?? undefined;
+	}
 
-        if (!settings) {
-            const defaultSettings = new GlobalSettingsEntity();
-            defaultSettings.name = 'default';
-            await defaultSettings.save();
-            return undefined;
-        }
+	public static async getRadarrApiKey(name = 'default') {
+		const settings = await this.findOne({ where: { name } });
 
-        return settings.radarrApiKey ?? undefined;
-    }
+		if (!settings) {
+			const defaultSettings = new GlobalSettingsEntity();
+			defaultSettings.name = 'default';
+			await defaultSettings.save();
+			return undefined;
+		}
 
-    public static async getSonarrBaseUrl(name = 'default') {
-        const settings = await this.findOne({where: {name}});
+		return settings.radarrApiKey ?? undefined;
+	}
 
-        if (!settings) {
-            const defaultSettings = new GlobalSettingsEntity();
-            defaultSettings.name = 'default';
-            await defaultSettings.save();
-            return undefined;
-        }
+	public static async getSonarrBaseUrl(name = 'default') {
+		const settings = await this.findOne({ where: { name } });
 
-        return settings.sonarrBaseUrl ?? undefined;
-    }
+		if (!settings) {
+			const defaultSettings = new GlobalSettingsEntity();
+			defaultSettings.name = 'default';
+			await defaultSettings.save();
+			return undefined;
+		}
 
-    public static async getSonarrApiKey(name = 'default') {
-        const settings = await this.findOne({where: {name}});
+		return settings.sonarrBaseUrl ?? undefined;
+	}
 
-        if (!settings) {
-            const defaultSettings = new GlobalSettingsEntity();
-            defaultSettings.name = 'default';
-            await defaultSettings.save();
-            return undefined;
-        }
+	public static async getSonarrApiKey(name = 'default') {
+		const settings = await this.findOne({ where: { name } });
 
-        return settings.sonarrApiKey ?? undefined;
-    }
+		if (!settings) {
+			const defaultSettings = new GlobalSettingsEntity();
+			defaultSettings.name = 'default';
+			await defaultSettings.save();
+			return undefined;
+		}
 
-    public static async getDownloadLanguages(name = 'default') {
-        const settings = await this.findOne({where: {name}});
+		return settings.sonarrApiKey ?? undefined;
+	}
 
-        if (!settings) {
-            const defaultSettings = new GlobalSettingsEntity();
-            defaultSettings.name = 'default';
-            await defaultSettings.save();
-            return [];
-        }
+	public static async getDownloadLanguages(name = 'default') {
+		const settings = await this.findOne({ where: { name } });
 
-        return settings.downloadLanguages ?? [];
-    }
+		if (!settings) {
+			const defaultSettings = new GlobalSettingsEntity();
+			defaultSettings.name = 'default';
+			await defaultSettings.save();
+			return [];
+		}
 
-    static get(settings: GlobalSettingsEntity): GlobalSettings {
-        return {
-            ...defaultGlobalSettings,
+		return settings.downloadLanguages ?? [];
+	}
 
-            general: {
-                downloadLanguages: settings.downloadLanguages.map((e) => e.lang),
-            },
-            sonarr: {
-                ...defaultGlobalSettings.sonarr,
-                baseUrl: settings.sonarrBaseUrl ?? undefined,
-                rootFolderPath: settings.sonarrRootFolderPath ?? undefined
-            },
-            radarr: {
-                ...defaultGlobalSettings.radarr,
-                baseUrl: settings.radarrBaseUrl ?? undefined,
-                rootFolderPath: settings.radarrRootFolderPath ?? undefined
-            },
-            jellyfin: {
-                ...defaultGlobalSettings.jellyfin,
-                baseUrl: settings.jellyfinBaseUrl ?? undefined
-            },
-            initialised: true
-        };
-    }
+	static get(settings: GlobalSettingsEntity): GlobalSettings {
+		return {
+			...defaultGlobalSettings,
 
-    public static async set(
-        name: string,
-        values: GlobalSettings
-    ): Promise<GlobalSettingsEntity | null> {
-        const settings = await this.findOne({where: {name}});
+			general: {
+				downloadLanguages: settings.downloadLanguages.map((e) => e.lang)
+			},
+			sonarr: {
+				...defaultGlobalSettings.sonarr,
+				baseUrl: settings.sonarrBaseUrl ?? undefined,
+				rootFolderPath: settings.sonarrRootFolderPath ?? undefined
+			},
+			radarr: {
+				...defaultGlobalSettings.radarr,
+				baseUrl: settings.radarrBaseUrl ?? undefined,
+				rootFolderPath: settings.radarrRootFolderPath ?? undefined
+			},
+			jellyfin: {
+				...defaultGlobalSettings.jellyfin,
+				baseUrl: settings.jellyfinBaseUrl ?? undefined
+			},
+			initialised: true
+		};
+	}
 
-        if (!settings) return null;
+	public static async set(
+		name: string,
+		values: GlobalSettings
+	): Promise<GlobalSettingsEntity | null> {
+		const settings = await this.findOne({ where: { name } });
 
-        if (values.sonarr.apiKey) {
-            settings.sonarrApiKey = values.sonarr.apiKey;
-        } else if (!values.sonarr.baseUrl) {
-            settings.sonarrApiKey = values.sonarr.apiKey ?? null;
-        }
-        settings.sonarrBaseUrl = values.sonarr.baseUrl ?? null;
-        settings.sonarrRootFolderPath = values.sonarr.rootFolderPath ?? null;
+		if (!settings) return null;
 
-        if (values.radarr.apiKey) {
-            settings.radarrApiKey = values.radarr.apiKey;
-        } else if (!values.radarr.baseUrl) {
-            settings.radarrApiKey = values.radarr.apiKey ?? null;
-        }
-        settings.radarrBaseUrl = values.radarr.baseUrl ?? null;
-        settings.radarrRootFolderPath = values.radarr.rootFolderPath ?? null;
+		if (values.sonarr.apiKey) {
+			settings.sonarrApiKey = values.sonarr.apiKey;
+		} else if (!values.sonarr.baseUrl) {
+			settings.sonarrApiKey = values.sonarr.apiKey ?? null;
+		}
+		settings.sonarrBaseUrl = values.sonarr.baseUrl ?? null;
+		settings.sonarrRootFolderPath = values.sonarr.rootFolderPath ?? null;
 
-        if (values.jellyfin.apiKey) {
-            settings.jellyfinApiKey = values.jellyfin.apiKey;
-        } else if (!values.jellyfin.baseUrl) {
-            settings.jellyfinApiKey = values.jellyfin.apiKey ?? null;
-        }
-        settings.jellyfinBaseUrl = values.jellyfin.baseUrl ?? null;
+		if (values.radarr.apiKey) {
+			settings.radarrApiKey = values.radarr.apiKey;
+		} else if (!values.radarr.baseUrl) {
+			settings.radarrApiKey = values.radarr.apiKey ?? null;
+		}
+		settings.radarrBaseUrl = values.radarr.baseUrl ?? null;
+		settings.radarrRootFolderPath = values.radarr.rootFolderPath ?? null;
 
-        await settings.save();
+		if (values.jellyfin.apiKey) {
+			settings.jellyfinApiKey = values.jellyfin.apiKey;
+		} else if (!values.jellyfin.baseUrl) {
+			settings.jellyfinApiKey = values.jellyfin.apiKey ?? null;
+		}
+		settings.jellyfinBaseUrl = values.jellyfin.baseUrl ?? null;
 
-        return settings;
-    }
+		await settings.save();
 
-    public static async setJellyfinApiEndpoint(baseURL: string, apiKey: string, name = 'default') {
-        const settings = await this.findOne({where: {name}});
+		return settings;
+	}
 
-        if (!settings) return;
+	public static async setJellyfinApiEndpoint(baseURL: string, apiKey: string, name = 'default') {
+		const settings = await this.findOne({ where: { name } });
 
-        settings.jellyfinBaseUrl = baseURL;
-        settings.jellyfinApiKey = apiKey;
+		if (!settings) return;
 
-        await settings.save();
-    }
+		settings.jellyfinBaseUrl = baseURL;
+		settings.jellyfinApiKey = apiKey;
 
-    public static async setRadarrApiEndpoint(
-        baseURL: string | undefined,
-        apiKey: string | undefined,
-        name = 'default'
-    ) {
-        const settings = await this.findOne({where: {name}});
+		await settings.save();
+	}
 
-        if (!settings) return;
+	public static async setRadarrApiEndpoint(
+		baseURL: string | undefined,
+		apiKey: string | undefined,
+		name = 'default'
+	) {
+		const settings = await this.findOne({ where: { name } });
 
-        settings.radarrBaseUrl = baseURL ?? null;
-        settings.radarrApiKey = apiKey ?? null;
+		if (!settings) return;
 
-        await settings.save();
-    }
+		settings.radarrBaseUrl = baseURL ?? null;
+		settings.radarrApiKey = apiKey ?? null;
 
-    public static async setRadarrApiConfiguration(
-        rootFolderPath: string | undefined,
-        name = 'default'
-    ) {
-        const settings = await this.findOne({where: {name}});
+		await settings.save();
+	}
 
-        if (!settings) return;
+	public static async setRadarrApiConfiguration(
+		rootFolderPath: string | undefined,
+		name = 'default'
+	) {
+		const settings = await this.findOne({ where: { name } });
 
-        settings.radarrRootFolderPath = rootFolderPath ?? null;
+		if (!settings) return;
 
-        await settings.save();
-    }
+		settings.radarrRootFolderPath = rootFolderPath ?? null;
 
-    public static async setSonarrApiEndpoint(
-        baseURL: string | undefined,
-        apiKey: string | undefined,
-        name = 'default'
-    ) {
-        const settings = await this.findOne({where: {name}});
+		await settings.save();
+	}
 
-        if (!settings) return;
+	public static async setSonarrApiEndpoint(
+		baseURL: string | undefined,
+		apiKey: string | undefined,
+		name = 'default'
+	) {
+		const settings = await this.findOne({ where: { name } });
 
-        settings.sonarrBaseUrl = baseURL ?? null;
-        settings.sonarrApiKey = apiKey ?? null;
+		if (!settings) return;
 
-        await settings.save();
-    }
+		settings.sonarrBaseUrl = baseURL ?? null;
+		settings.sonarrApiKey = apiKey ?? null;
 
-    public static async setSonarrApiConfiguration(
-        rootFolderPath: string | undefined,
-        name = 'default'
-    ) {
-        const settings = await this.findOne({where: {name}});
+		await settings.save();
+	}
 
-        if (!settings) return;
+	public static async setSonarrApiConfiguration(
+		rootFolderPath: string | undefined,
+		name = 'default'
+	) {
+		const settings = await this.findOne({ where: { name } });
 
-        settings.sonarrRootFolderPath = rootFolderPath ?? null;
+		if (!settings) return;
 
-        await settings.save();
-    }
+		settings.sonarrRootFolderPath = rootFolderPath ?? null;
+
+		await settings.save();
+	}
 }
