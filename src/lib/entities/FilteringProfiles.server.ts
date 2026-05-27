@@ -15,12 +15,6 @@ export class FilteringProfilesEntity extends BaseEntity {
 	@Column('boolean')
 	isDefault: boolean;
 
-	@Column('integer')
-	sonarrId: number;
-
-	@Column('integer')
-	radarrId: number;
-
 	public static async getAll(): Promise<FilteringProfile[]> {
 		const profiles: FilteringProfile[] = [];
 

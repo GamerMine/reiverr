@@ -17,7 +17,8 @@ import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import { UserSettingsEntity } from '$lib/entities/UserSettings.server';
 import { Radarr } from '$lib/server/radarr.server';
 import { Sonarr } from '$lib/server/sonarr.server';
-import { CustomFormatsEntity } from '$lib/entities/CustomProfiles.server';
+import { CustomFormatsEntity } from '$lib/entities/CustomFormats.server';
+import { QualityProfilesEntity } from '$lib/entities/QualityProfiles.server';
 
 // TODO: Add more error message when success: false
 
@@ -168,6 +169,9 @@ export const saveSettings = form(
 			// Set other admin settings
 			// FIXME: This should be moved to a task.
 			{
+				const radarrConnection = await Radarr.checkConnection();
+				const sonarrConnection = await Sonarr.checkConnection();
+				// Handling Custom Format creation and deletion
 				if (!adminDownloadLanguages) adminDownloadLanguages = [];
 				if (adminDownloadLanguages) {
 					const availableCustomProfiles = await CustomFormatsEntity.getAll();
@@ -177,22 +181,22 @@ export const saveSettings = form(
 							let radarrId: number | undefined = undefined;
 							let sonarrId: number | undefined = undefined;
 
-							if (await Radarr.checkConnection()) {
+							if (radarrConnection) {
 								const radarrRes = await Radarr.addCustomFormat(lang);
 								if (!radarrRes.success || !radarrRes.id) return { success: false };
 								radarrId = radarrRes.id;
 							}
-							if (await Sonarr.checkConnection()) {
+							if (sonarrConnection) {
 								const sonarrRes = await Sonarr.addCustomFormat(lang);
 								if (!sonarrRes.success || !sonarrRes.id) return { success: false };
 								sonarrId = sonarrRes.id;
 							}
-							if (!(await CustomFormatsEntity.createFormat(lang, radarrId, sonarrId)))
-								return { success: false };
+							await CustomFormatsEntity.createFormat(lang, radarrId, sonarrId);
 						}
 						availableCustomProfiles.delete(lang);
 					}
 
+					// Removing unused custom formats
 					const radarrIds: number[] = [];
 					const sonarrIds: number[] = [];
 					for (const profile of availableCustomProfiles.values()) {
@@ -202,6 +206,38 @@ export const saveSettings = form(
 					}
 					if (radarrIds.length > 0) await Radarr.deleteCustomFormats(radarrIds);
 					if (sonarrIds.length > 0) await Sonarr.deleteCustomFormats(sonarrIds);
+				}
+
+				// Handling Quality Profiles
+				const profiles = await FilteringProfilesEntity.getAll();
+				for (const profile of profiles) {
+					for (const lang of adminDownloadLanguages) {
+						if (!(await QualityProfilesEntity.profileExists(profile.id, lang))) {
+							let radarrId: number | undefined = undefined;
+							let sonarrId: number | undefined = undefined;
+
+							if (radarrConnection) {
+								const res = await Radarr.addQualityProfile(
+									profile.name,
+									lang,
+									profile.qualities
+								);
+								if (!res.success || !res.id) return { success: false };
+								radarrId = res.id;
+							}
+							if (sonarrConnection) {
+								const res = await Sonarr.addQualityProfile(
+									profile.name,
+									lang,
+									profile.qualities
+								);
+								if (!res.success || !res.id) return { success: false };
+								sonarrId = res.id;
+							}
+
+							await QualityProfilesEntity.createProfile(lang, radarrId, sonarrId);
+						}
+					}
 				}
 			}
 		}

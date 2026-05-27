@@ -56,15 +56,8 @@ export const LANGUAGES = [
 	'vietnamese'
 ];
 export const QUALITY_DEFS = [
-	'WORKPRINT',
-	'CAM',
-	'TELESYNC',
-	'TELECINE',
-	'REGIONAL',
-	'DVDSCR',
 	'SDTV',
 	'DVD',
-	'DVD-R',
 	'WEBDL-480p',
 	'WEBRip-480p',
 	'Bluray-480p',
@@ -77,12 +70,11 @@ export const QUALITY_DEFS = [
 	'WEBDL-1080p',
 	'WEBRip-1080p',
 	'Bluray-1080p',
-	'Remux-1080p',
+	'Bluray-1080p Remux',
 	'HDTV-2160p',
 	'WEBDL-2160p',
 	'WEBRip-2160p',
 	'Bluray-2160p',
-	'Remux-2160p',
-	'BR-DISK',
+	'Bluray-2160p Remux',
 	'Raw-HD'
 ];

@@ -37,7 +37,7 @@ export class CustomFormatsEntity extends BaseEntity {
 		sonarrId: number | undefined
 	) {
 		const globalSettings = await GlobalSettingsEntity.getDefault();
-		if (!globalSettings) return false;
+		if (!globalSettings) throw 'Global settings must exists before creating a format';
 		const customFormat = new CustomFormatsEntity();
 		customFormat.lang = lang;
 		customFormat.radarrId = radarrId;
@@ -45,7 +45,6 @@ export class CustomFormatsEntity extends BaseEntity {
 		customFormat.globalSettings = globalSettings;
 
 		await customFormat.save();
-		return true;
 	}
 
 	public static async deleteFormat(id: number) {

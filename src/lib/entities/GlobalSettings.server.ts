@@ -1,6 +1,6 @@
 import { BaseEntity, Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { defaultGlobalSettings, type GlobalSettings } from '$lib/entities/Types';
-import { CustomFormatsEntity } from '$lib/entities/CustomProfiles.server';
+import { CustomFormatsEntity } from '$lib/entities/CustomFormats.server';
 
 @Entity({ name: 'globalSettings' })
 export class GlobalSettingsEntity extends BaseEntity {
