@@ -249,13 +249,15 @@ export const saveSettings = form(
 	}
 );
 
-export const createFilteringProfile = form(
+export const createUpdateFilteringProfile = form(
 	v.object({
-		name: v.pipe(v.string(), v.nonEmpty()),
-		isDefault: v.boolean(),
-		qualities: v.array(v.pipe(v.string(), v.nonEmpty()))
+		profileName: v.pipe(v.string(), v.nonEmpty()),
+		isDefault: v.optional(v.boolean()),
+		qualities: v.array(v.pipe(v.string(), v.nonEmpty())),
+		action: v.picklist(['create', 'update']),
+		profileId: v.optional(v.number())
 	}),
-	async ({ name, isDefault, qualities }) => {
+	async ({ profileName, isDefault, qualities, action, profileId }) => {
 		const { cookies } = getRequestEvent();
 		await assertAdminUserAuth(cookies);
 
@@ -263,20 +265,25 @@ export const createFilteringProfile = form(
 			if (!QUALITY_DEFS.includes(quality)) return { success: false };
 		}
 
-		// 1. Check if languages are set in GlobalSettings. If not skip to 3
 		const languages = await GlobalSettingsEntity.getDownloadLanguages();
 		if (languages.length > 0) {
-			// 2. Create quality profile on Radarr and Sonarr
+			// TODO: Create quality profile on Radarr and Sonarr
 		}
 
-		// 3. Create the filtering profile in database
 		const profile: FilteringProfile = {
 			id: 0,
-			name,
+			name: profileName,
 			qualities,
-			isDefault
+			isDefault: !!isDefault
 		};
-		await FilteringProfilesEntity.createFilteringProfile(profile);
+
+		if (action === 'update') {
+			if (!profileId || Number.isNaN(profileId)) return { success: false };
+			profile.id = Number(profileId);
+			await FilteringProfilesEntity.editFilteringProfile(profile);
+		} else if (action === 'create') {
+			await FilteringProfilesEntity.createFilteringProfile(profile);
+		}
 
 		return { success: true };
 	}

@@ -11,10 +11,10 @@
 
 		klass = '',
 
-		onchange = (_) => {}
+		onchange = () => {}
 	}: {
 		type?: 'text' | 'number' | 'password';
-		value?: any;
+		value?: string | number;
 		placeholder?: string;
 		name?: string;
 		disabled?: boolean;

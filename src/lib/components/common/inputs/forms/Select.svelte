@@ -152,12 +152,14 @@
 		<button
 			bind:this={triggerElt}
 			class={classNames('relative bg-zinc-800 rounded-lg py-1.5 cursor-pointer text-nowrap', {
-				'opacity-50': disabled,
+				'opacity-50 cursor-default': disabled,
 				'animate-pulse pointer-events-none': loading
 			})}
 			onclick={() => {
-				dropdownOpen = !dropdownOpen;
-				if (dropdownOpen) updateDropdownPosition();
+				if (!disabled || !loading) {
+					dropdownOpen = !dropdownOpen;
+					if (dropdownOpen) updateDropdownPosition();
+				}
 			}}
 			type="button"
 		>

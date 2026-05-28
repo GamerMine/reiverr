@@ -8,7 +8,6 @@
 	import ModalContainer from '$lib/components/common/modal/ModalContainer.svelte';
 	import { Plus, Pencil2 } from 'svelte-radix';
 	import FormButton from '$lib/components/common/inputs/forms/FormButton.svelte';
-	import { enhance } from '$app/forms';
 	import {
 		createErrorNotification,
 		createSuccessNotification
@@ -17,6 +16,7 @@
 	import Option from '$lib/components/common/inputs/forms/Option.svelte';
 	import type { FilteringProfile } from '$lib/entities/Types';
 	import Toggle from '$lib/components/common/inputs/forms/Toggle.svelte';
+	import { createUpdateFilteringProfile } from '$lib/remote/settings.remote';
 
 	let {
 		modalId,
@@ -41,13 +41,9 @@
 			: $_('settings.filtering.addProfile')}
 	/>
 	<form
-		class="grid grid-cols-2 p-4 gap-3 items-center"
-		method="POST"
-		action={editProfile ? '?/editFilteringProfile' : '?/createFilteringProfile'}
-		use:enhance={() => {
-			disableInputs = true;
-			return async ({ result }) => {
-				if (result.type === 'success') {
+		{...createUpdateFilteringProfile.enhance(async (form) => {
+			if (await form.submit()) {
+				if (form.result?.success) {
 					modalStack.close(modalId);
 					await invalidateAll();
 					createSuccessNotification(
@@ -58,28 +54,32 @@
 					createErrorNotification('ERROR', 'TODO'); // TODO: Add reasons
 				}
 				disableInputs = false;
-			};
-		}}
+			}
+		})}
+		class="grid grid-cols-2 p-4 gap-3 items-center"
+		onsubmit={() => (disableInputs = true)}
 	>
 		<h2>
 			{$_('settings.filtering.profileName')}
 		</h2>
 		<Input
-			name="profileName"
+			name={createUpdateFilteringProfile.fields.profileName.as('text').name}
 			type="text"
 			required
-			disabled={disableInputs}
-			value={editProfile ? editProfile.name : undefined}
+			value={editProfile?.name}
 		/>
 		<h2>
 			{$_('settings.filtering.defaultProfile')}
 		</h2>
-		<Toggle name="defaultProfile" checked={editProfile ? editProfile.isDefault : false} />
+		<Toggle
+			name={createUpdateFilteringProfile.fields.isDefault.as('checkbox').name}
+			checked={editProfile ? editProfile.isDefault : false}
+		/>
 		<h2>
 			{$_('settings.filtering.qualities')}
 		</h2>
 		<Select
-			name="qualities"
+			name={createUpdateFilteringProfile.fields.qualities.as('select multiple').name}
 			disabled={disableInputs}
 			multiple
 			selectedValues={editProfile ? editProfile.qualities : undefined}
@@ -90,12 +90,24 @@
 		</Select>
 		<div class="col-start-2 flex justify-end">
 			{#if editProfile}
-				<input type="hidden" name="profileId" value={editProfile.id} />
-				<FormButton type="base" loading={disableInputs}>
+				<input
+					name={createUpdateFilteringProfile.fields.profileId.as('number').name}
+					type="hidden"
+					value={editProfile.id}
+				/>
+				<FormButton
+					{...createUpdateFilteringProfile.fields.action.as('submit', 'update')}
+					type="base"
+					loading={disableInputs}
+				>
 					<Pencil2 size="20" /><span class="flex">{$_('general.edit')}</span>
 				</FormButton>
 			{:else}
-				<FormButton type="base" loading={disableInputs}>
+				<FormButton
+					{...createUpdateFilteringProfile.fields.action.as('submit', 'create')}
+					type="base"
+					loading={disableInputs}
+				>
 					<Plus size="20" /><span class="flex">{$_('general.add')}</span>
 				</FormButton>
 			{/if}

@@ -111,7 +111,7 @@
 						/>
 					</div>
 					<div class="overflow-y-auto max-h-[calc(100%-2rem)] scrollbar-thumb-zinc-600">
-						<p class="text-zinc-500 flex flex-wrap gap-1">
+						<p class="text-zinc-500 flex flex-wrap gap-1 border-t mt-1.5 pt-1">
 							{$_('settings.filtering.qualities')}:&nbsp;
 							{#each profile.qualities as quality (quality)}
 								<span class="bg-amber-300 px-2 py-1 rounded-2xl text-xs text-black"

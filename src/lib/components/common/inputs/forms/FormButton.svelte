@@ -7,16 +7,20 @@
 		type = 'base',
 		loading = false,
 		disabled = false,
+		name = undefined,
+		value = undefined,
 
 		klass = '',
 
 		children,
 
-		onclick = (_) => {}
+		onclick = () => {}
 	}: {
 		type?: 'base' | 'success' | 'error';
 		loading?: boolean;
 		disabled?: boolean;
+		name?: string;
+		value?: string | number;
 
 		klass?: string;
 
@@ -36,11 +40,14 @@
 			'bg-green-500/20 text-green-200 border-green-900': type === 'success',
 			'bg-red-500/20 text-red-200 border-red-900': type === 'error',
 			'bg-white text-zinc-900 font-extrabold': type === 'base',
-			'hover:bg-amber-400 focus-within:bg-amber-400 hover:border-amber-400 focus-within:border-amber-400': type === 'base' && !disabled,
+			'hover:bg-amber-400 focus-within:bg-amber-400 hover:border-amber-400 focus-within:border-amber-400':
+				type === 'base' && !disabled,
 			'cursor-not-allowed opacity-75 pointer-events-none': disabled || loading
 		},
 		klass
 	)}
+	{name}
+	{value}
 >
 	{#if loading}
 		<Update class="animate-spin" size="14" />
