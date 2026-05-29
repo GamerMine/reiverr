@@ -1,15 +1,17 @@
 import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import createClient from 'openapi-fetch';
-import type { paths } from '$lib/apis/sonarr/sonarr.generated';
-import type { components } from '$lib/apis/sonarr/sonarr.generated';
+import type {
+	components as SonarrComponents,
+	paths as SonarrPaths
+} from '$lib/apis/sonarr/sonarr.generated';
 
 export namespace Sonarr {
-	let qualityDefs: components['schemas']['Quality'][] = [];
+	let qualityDefs: SonarrComponents['schemas']['QualityDefinitionResource'][] = [];
+	let languages: SonarrComponents['schemas']['LanguageResource'][] = [];
 
 	async function getQualityDefs() {
 		if (qualityDefs.length === 0) {
 			const client = await getClient();
-			if (!client) return qualityDefs;
 
 			const { data: defs } = await client.GET('/api/v3/qualitydefinition');
 			if (!defs) return qualityDefs;
@@ -20,13 +22,26 @@ export namespace Sonarr {
 		return qualityDefs;
 	}
 
+	async function getLanguages() {
+		if (languages.length === 0) {
+			const client = await getClient();
+
+			const { data: langs } = await client.GET('/api/v3/language');
+			if (!langs) return languages;
+
+			languages = langs;
+		}
+
+		return languages;
+	}
+
 	export async function getClient() {
 		const baseUrl = await GlobalSettingsEntity.getSonarrBaseUrl();
 		const apiKey = await GlobalSettingsEntity.getSonarrApiKey();
 
-		if (!baseUrl || !apiKey) return undefined;
+		if (!baseUrl || !apiKey) throw 'Cannot create Sonarr client without api informations';
 
-		return createClient<paths>({
+		return createClient<SonarrPaths>({
 			baseUrl: baseUrl,
 			headers: {
 				'X-Api-Key': apiKey
@@ -44,7 +59,7 @@ export namespace Sonarr {
 		}
 		if (!baseURL || !apiKey) return false;
 
-		const conn = await createClient<paths>({
+		const conn = await createClient<SonarrPaths>({
 			baseUrl: baseURL,
 			headers: {
 				'X-Api-Key': apiKey
@@ -56,22 +71,20 @@ export namespace Sonarr {
 
 	export async function addCustomFormat(lang: string) {
 		const client = await getClient();
-		if (!client) return { success: false, error: 'Radarr host not set' };
 
-		// FIXME: Instead of asking the API each time we create a Custom Format,
-		//  all the available languages cache it (like Quality Definitions)
-		const { data: languages } = await client.GET('/api/v3/language');
-		if (!languages) return { success: false, error: "Can't get languages from Sonarr" };
+		const languages = await getLanguages();
+		if (languages.length === 0)
+			return { success: false, error: "Can't get languages from Sonarr" };
 		const sonarrLang = languages.find((e) => e.nameLower === lang);
 		if (!sonarrLang || !sonarrLang.id)
 			return { success: false, error: `Can't find language: ${lang} on Sonarr` };
 
 		const res = await client.POST('/api/v3/customformat', {
 			body: {
-				name: `Not ${lang}`,
+				name: `Not ${lang} [Reiverr]`,
 				specifications: [
 					{
-						name: `Not ${lang}`,
+						name: `Not ${lang} [Reiverr]`,
 						implementation: 'LanguageSpecification',
 						negate: true,
 						required: false,
@@ -87,31 +100,32 @@ export namespace Sonarr {
 		});
 
 		if (!res.response.ok || !res.data)
-			return { success: false, error: res.response.statusText };
+			return { success: false, error: JSON.stringify(res.error, null, 2) };
 		else return { success: true, id: res.data.id };
 	}
 
-	export async function addQualityProfile(name: string, lang: string, qualities: string[]) {
+	export async function addQualityProfile(name: string, lang: string, quals: string[]) {
+		const qualities = Array.from(quals);
 		const client = await getClient();
-		if (!client) return { success: false, error: 'Radarr host not set' };
 
 		const qualityDefs = await getQualityDefs();
 		if (qualityDefs.length === 0)
 			return { success: false, error: "Can't get quality definitions from Radarr" };
 
-		const items: components['schemas']['QualityProfileQualityItemResource'][] = [];
-		const formatItems: components['schemas']['ProfileFormatItemResource'][] = [];
+		const items: SonarrComponents['schemas']['QualityProfileQualityItemResource'][] = [];
+		const formatItems: SonarrComponents['schemas']['ProfileFormatItemResource'][] = [];
 		let cutoff: number | undefined;
 
 		for (const def of qualityDefs) {
-			const item: components['schemas']['QualityProfileQualityItemResource'] = {};
-			item.quality = def;
+			const item: SonarrComponents['schemas']['QualityProfileQualityItemResource'] = {};
+			item.quality = def.quality;
 			item.allowed = false;
 			for (let i = 0; i < qualities.length; i++) {
-				if (qualities[i] === def.name) {
+				if (qualities[i] === def.quality?.name) {
 					item.allowed = true;
-					cutoff = def.id;
-					qualities = qualities.splice(i, 1);
+					cutoff = def.quality.id;
+					qualities.splice(i, 1);
+					break;
 				}
 			}
 
@@ -125,7 +139,7 @@ export namespace Sonarr {
 		if (formats) {
 			for (const format of formats) {
 				formatItems.push({
-					id: format.id,
+					format: format.id,
 					name: format.name,
 					score: format.name?.includes(lang) ? -1000 : 0
 				});
@@ -134,7 +148,7 @@ export namespace Sonarr {
 
 		const res = await client.POST('/api/v3/qualityprofile', {
 			body: {
-				name: `${name} - ${lang}`,
+				name: `${name} - ${lang} [Reiverr]`,
 				cutoff: cutoff,
 				items: items,
 				formatItems: formatItems,
@@ -143,13 +157,12 @@ export namespace Sonarr {
 		});
 
 		if (!res.response.ok || !res.data)
-			return { success: false, error: res.response.statusText };
+			return { success: false, error: JSON.stringify(res.error, null, 2) };
 		return { success: res.response.ok, id: res.data.id };
 	}
 
 	export async function deleteCustomFormats(id: number[]) {
 		const client = await getClient();
-		if (!client) return { success: false, error: 'Sonarr host not set' };
 
 		const res = await client.DELETE('/api/v3/customformat/bulk', {
 			body: {
@@ -162,7 +175,6 @@ export namespace Sonarr {
 
 	export async function getAllCustomFormats() {
 		const client = await getClient();
-		if (!client) return undefined;
 
 		return await client.GET('/api/v3/customformat');
 	}

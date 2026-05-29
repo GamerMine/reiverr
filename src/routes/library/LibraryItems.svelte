@@ -11,7 +11,11 @@
 	import { getJellyfinPosterUrl, type JellyfinItem } from '$lib/apis/jellyfin/jellyfinApi';
 	import { getRadarrPosterUrl, type RadarrMovie } from '$lib/apis/radarr/radarrApi';
 	import { getSonarrPosterUrl, type SonarrSeries } from '$lib/apis/sonarr/sonarrApi';
-	import { jellyfinItemsStore, radarrMoviesStore, sonarrSeriesStore } from '$lib/stores/data.store';
+	import {
+		jellyfinItemsStore,
+		radarrMoviesStore,
+		sonarrSeriesStore
+	} from '$lib/stores/data.store';
 	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
 	import ContextMenu from '$lib/components/common/inputs/contextMenu/ContextMenu.svelte';
 	import SelectableContextMenuItem from '$lib/components/common/inputs/contextMenu/SelectableContextMenuItem.svelte';
@@ -109,16 +113,23 @@
 		if (page === 0) posterProps = [];
 
 		const jellyfinItemsPromise = jellyfinItemsStore.promise
-			.then((i) => i.filter((i) => i.Name?.toLowerCase().includes(searchQuery.toLowerCase())) || [])
+			.then(
+				(i) =>
+					i.filter((i) => i.Name?.toLowerCase().includes(searchQuery.toLowerCase())) || []
+			)
 			.then((i) => {
 				const sorted = i.sort((a, b) => {
 					if (sort === SortBy.DateAdded) {
-						return new Date(b.DateCreated || 0).getTime() - new Date(a.DateCreated || 0).getTime();
+						return (
+							new Date(b.DateCreated || 0).getTime() -
+							new Date(a.DateCreated || 0).getTime()
+						);
 					} else if (sort === SortBy.Rating) {
 						return (b.CommunityRating || 0) - (a.CommunityRating || 0);
 					} else if (sort === SortBy.ReleaseDate) {
 						return (
-							new Date(b.PremiereDate || 0).getTime() - new Date(a.PremiereDate || 0).getTime()
+							new Date(b.PremiereDate || 0).getTime() -
+							new Date(a.PremiereDate || 0).getTime()
 						);
 					} else if (sort === SortBy.Size) {
 						return (b.RunTimeTicks || 0) - (a.RunTimeTicks || 0);
@@ -140,11 +151,15 @@
 
 		if (tab === 'available') {
 			props = await jellyfinItemsPromise.then((items) =>
-				items.filter((i) => !i.UserData?.Played).map((item) => getPropsFromJellyfinItem(item))
+				items
+					.filter((i) => !i.UserData?.Played)
+					.map((item) => getPropsFromJellyfinItem(item))
 			);
 		} else if (tab === 'watched') {
 			props = await jellyfinItemsPromise.then((items) =>
-				items.filter((i) => i.UserData?.Played).map((item) => getPropsFromJellyfinItem(item))
+				items
+					.filter((i) => i.UserData?.Played)
+					.map((item) => getPropsFromJellyfinItem(item))
 			);
 		} else if (tab === 'unavailable') {
 			props = await Promise.all([
@@ -161,11 +176,15 @@
 						.filter((i) => i.title?.toLowerCase().includes(searchQuery.toLowerCase()))
 						.filter(
 							(i) =>
-								!jellyfinItems.find((j) => j.ProviderIds?.Tmdb === String((<any>i).tmdbId || '-'))
+								!jellyfinItems.find(
+									(j) => j.ProviderIds?.Tmdb === String((<any>i).tmdbId || '-')
+								)
 						)
 						.filter(
 							(i) =>
-								!jellyfinItems.find((j) => j.ProviderIds?.Tvdb === String((<any>i).tvdbId || '-'))
+								!jellyfinItems.find(
+									(j) => j.ProviderIds?.Tvdb === String((<any>i).tvdbId || '-')
+								)
 						)
 						.map((i) => getPropsfromServarrItem(i))
 				);
@@ -262,7 +281,7 @@
 		<div class="flex items-center gap-3 justify-end shrink-0 flex-initial relative">
 			<ContextMenu heading={$_('library.sort.sortBy')} position="absolute">
 				{#snippet menu()}
-					{#each Object.values(SortBy) as sortOption}
+					{#each Object.values(SortBy) as sortOption (sortOption)}
 						<SelectableContextMenuItem
 							selected={$sortBy === sortOption}
 							onclick={() => {
@@ -274,7 +293,7 @@
 						</SelectableContextMenuItem>
 					{/each}
 					<Divider />
-					{#each Object.values(SortOrder) as order}
+					{#each Object.values(SortOrder) as order (order)}
 						<SelectableContextMenuItem
 							selected={$sortOrder === order}
 							onclick={() => {
@@ -307,7 +326,7 @@
 				<CardPlaceholder orientation="portrait" size="dynamic" {index} />
 			{/each}
 		{:else}
-			{#each posterProps.slice(0, PAGE_SIZE + page * PAGE_SIZE) as prop}
+			{#each posterProps.slice(0, PAGE_SIZE + page * PAGE_SIZE) as prop (prop)}
 				<Poster {...prop} />
 			{:else}
 				<div class="flex-1 flex font-medium text-zinc-500 col-span-full mb-64">
@@ -323,7 +342,8 @@
 
 	{#if !libraryLoading && posterProps.length > 0}
 		<div class="mx-auto my-4">
-			<Button onclick={() => (page = page + 1)} disabled={!hasMore}>{$_('library.loadMore')}</Button
+			<Button onclick={() => (page = page + 1)} disabled={!hasMore}
+				>{$_('library.loadMore')}</Button
 			>
 		</div>
 	{/if}

@@ -16,10 +16,10 @@
 	import { modalStack } from '$lib/stores/modal.store';
 	import ModalContainer from '$lib/components/common/modal/ModalContainer.svelte';
 	import ModalHeader from '$lib/components/common/modal/ModalHeader.svelte';
-	import {createSuccessNotification} from "$lib/stores/notification.store";
-	import {radarrMoviesStore} from "$lib/stores/data.store";
-	import Select from "$lib/components/common/inputs/forms/Select.svelte";
-	import Option from "$lib/components/common/inputs/forms/Option.svelte";
+	import { createSuccessNotification } from '$lib/stores/notification.store';
+	import { radarrMoviesStore } from '$lib/stores/data.store';
+	import Select from '$lib/components/common/inputs/forms/Select.svelte';
+	import Option from '$lib/components/common/inputs/forms/Option.svelte';
 
 	let {
 		modalId,
@@ -70,8 +70,7 @@
 		releases.sort((a, b) => (b.seeders || 0) - (a.seeders || 0));
 
 		let filtered = releases.slice();
-		filtered = (filtered as any)
-			.slice(0, 5);
+		filtered = (filtered as any).slice(0, 5);
 
 		const releasesSkipped = releases.length - filtered.length;
 
@@ -90,7 +89,10 @@
 				downloadFetchingGuid = undefined;
 				if (ok) {
 					downloadingGuid = guid;
-					createSuccessNotification("Movie added to queue", "The movie will be added to the library once available."); //FIXME: Add translation
+					createSuccessNotification(
+						'Movie added to queue',
+						'The movie will be added to the library once available.'
+					); //FIXME: Add translation
 				}
 			});
 		} else {
@@ -117,10 +119,10 @@
 	}
 
 	function userClose() {
-		if (radarrId) removeMovieFromRadarr(radarrId)
-		else console.error("NOT IMPLEMENTED: Removing Sonarr episodes.") // FIXME
+		if (radarrId) removeMovieFromRadarr(radarrId);
+		else console.error('NOT IMPLEMENTED: Removing Sonarr episodes.'); // FIXME
 
-		radarrMoviesStore.refreshIn()
+		radarrMoviesStore.refreshIn();
 
 		groupId ? modalStack.closeGroup(groupId) : modalStack.close(modalId);
 	}
@@ -133,25 +135,28 @@
 		text={title}
 	/>
 	{#await fetchReleases()}
-		<div class="text-sm text-zinc-200 opacity-50 font-light p-4">Retrieving indexers data, please be patient (this can take a few minutes)...</div> <!--FIXME: Add translations-->
+		<div class="text-sm text-zinc-200 opacity-50 font-light p-4">
+			Retrieving indexers data, please be patient (this can take a few minutes)...
+		</div>
+		<!--FIXME: Add translations-->
 	{:then { releases, filtered, releasesSkipped }}
 		<div class="mx-2 mt-2 flex gap-2">
 			<Select>
-				<Option value="4k" label="4k"/>
-				<Option value="1080p" label="1080p"/>
-				<Option value="720p" label="720p"/>
-				<Option value="480p" label="480p"/>
+				<Option value="4k" label="4k" />
+				<Option value="1080p" label="1080p" />
+				<Option value="720p" label="720p" />
+				<Option value="480p" label="480p" />
 			</Select>
 			<Select>
-				<Option value="french" label="french"/>
-				<Option value="english" label="english"/>
+				<Option value="french" label="french" />
+				<Option value="english" label="english" />
 			</Select>
 		</div>
 		{#if showAllReleases ? releases?.length : filtered?.length}
 			<div
 				class="flex flex-col divide-y divide-zinc-700 max-h-[60vh] overflow-y-scroll scrollbar-hide"
 			>
-				{#each showAllReleases ? releases : filtered as release}
+				{#each showAllReleases ? releases : filtered as release (release)}
 					<div>
 						<!-- svelte-ignore a11y_click_events_have_key_events -->
 						<!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -184,14 +189,18 @@
 							</div>
 						</div>
 						<HeightHider visible={showDetailsId === release.guid}>
-							<div class="flex gap-1 text-xs text-zinc-400 px-4 py-2 items-center flex-wrap">
+							<div
+								class="flex gap-1 text-xs text-zinc-400 px-4 py-2 items-center flex-wrap"
+							>
 								<div>
 									{release.title}
 								</div>
 								<DotFilled size="15" />
 								<div>{formatMinutesToTime(release.ageMinutes || 0)} old</div>
 								<DotFilled size="15" />
-								<div><b>{release.seeders} seeders</b> / {release.leechers} leechers</div>
+								<div>
+									<b>{release.seeders} seeders</b> / {release.leechers} leechers
+								</div>
 								<DotFilled size="15" />
 								{#if release.seeders}
 									<div>

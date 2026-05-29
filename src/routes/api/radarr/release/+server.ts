@@ -2,14 +2,14 @@ import type { RequestHandler } from '@sveltejs/kit';
 import createClient from 'openapi-fetch';
 import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import type { paths } from '$lib/apis/radarr/radarr.generated';
-import {assertParam, assertUserAuth} from "$lib/apis/utils.server";
+import { assertParam, assertUserAuth } from '$lib/server/utils.server';
 
 export const GET: RequestHandler = async ({ cookies, url }) => {
 	await assertUserAuth(cookies);
 
 	const baseUrl = await GlobalSettingsEntity.getRadarrBaseUrl();
 	const apiKey = await GlobalSettingsEntity.getRadarrApiKey();
-	const movieId = assertParam(url, "movieId");
+	const movieId = assertParam(url, 'movieId');
 
 	if (baseUrl && apiKey) {
 		return createClient<paths>({

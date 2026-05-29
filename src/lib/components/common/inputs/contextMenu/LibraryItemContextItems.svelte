@@ -23,26 +23,33 @@
 
 	let watched = $state(false);
 	$effect(() => {
-		watched = jellyfinItem?.UserData?.Played !== undefined ? jellyfinItem.UserData?.Played : false;
+		watched =
+			jellyfinItem?.UserData?.Played !== undefined ? jellyfinItem.UserData?.Played : false;
 	});
 
 	function handleSetWatched() {
 		if (jellyfinItem?.Id) {
 			watched = true;
-			setJellyfinItemWatched(jellyfinItem.Id).finally(() => jellyfinItemsStore.refreshIn(3000));
+			setJellyfinItemWatched(jellyfinItem.Id).finally(() =>
+				jellyfinItemsStore.refreshIn(3000)
+			);
 		}
 	}
 
 	function handleSetUnwatched() {
 		if (jellyfinItem?.Id) {
 			watched = false;
-			setJellyfinItemUnwatched(jellyfinItem.Id).finally(() => jellyfinItemsStore.refreshIn(3000));
+			setJellyfinItemUnwatched(jellyfinItem.Id).finally(() =>
+				jellyfinItemsStore.refreshIn(3000)
+			);
 		}
 	}
 
 	function handleOpenInJellyfin() {
 		window.open(
-			settings.globalSettings.jellyfin.baseUrl + '/web/index.html#!/details?id=' + jellyfinItem?.Id
+			settings.globalSettings.jellyfin.baseUrl +
+				'/web/index.html#!/details?id=' +
+				jellyfinItem?.Id
 		);
 	}
 </script>

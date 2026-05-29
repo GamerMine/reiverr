@@ -1,5 +1,5 @@
 import type { components } from '$lib/apis/radarr/radarr.generated';
-import { settings } from '$lib/stores/settings.svelte';
+import { settings } from '$lib/stores/settings.svelte.js';
 
 export type DiskSpaceInfo = components['schemas']['DiskSpaceResource'];
 export type RadarrDownload = components['schemas']['QueueResource'] & { movie: RadarrMovie };

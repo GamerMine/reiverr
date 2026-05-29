@@ -57,7 +57,9 @@
 		<div class="z-10">
 			<div class="flex gap-2 rounded-xs items-center justify-center pt-20">
 				<div class="rounded-full bg-amber-300 h-11 w-11"></div>
-				<h1 class="font-display uppercase font-semibold tracking-wider text-5xl">Reiverr</h1>
+				<h1 class="font-display uppercase font-semibold tracking-wider text-5xl">
+					Reiverr
+				</h1>
 			</div>
 			<h1
 				class="flex font-display font-semibold text-4xl items-center justify-center pt-10 w-screen"
@@ -72,7 +74,7 @@
 						? 'invisible opacity-0 -translate-y-30'
 						: 'visible'}"
 				>
-					{#each users as user}
+					{#each users as user (user)}
 						<UserCard {user} onclick={() => askForPassword(user)}></UserCard>
 					{/each}
 				</UserCarousel>
@@ -146,7 +148,9 @@
 					disabled={isInputDisabled}
 					klass="absolute items-center left-1/2 -translate-x-1/2 transition duration-300 ease-in-out {manualLogin
 						? 'visible opacity-90 -translate-y-46'
-						: 'opacity-0 translate-y-30 invisible'} {errorMessage ? 'bg-red-500/20!' : ''}"
+						: 'opacity-0 translate-y-30 invisible'} {errorMessage
+						? 'bg-red-500/20!'
+						: ''}"
 					onchange={() => {
 						if (errorMessage) {
 							errorMessage = undefined;
@@ -161,7 +165,9 @@
 					klass="absolute items-center left-1/2 -translate-x-1/2 transition duration-300 ease-in-out {userSelected ||
 					manualLogin
 						? 'visible opacity-90 -translate-y-35'
-						: 'opacity-0 translate-y-30 invisible'} {errorMessage ? 'bg-red-500/20!' : ''}"
+						: 'opacity-0 translate-y-30 invisible'} {errorMessage
+						? 'bg-red-500/20!'
+						: ''}"
 					onchange={() => {
 						if (errorMessage) {
 							errorMessage = undefined;

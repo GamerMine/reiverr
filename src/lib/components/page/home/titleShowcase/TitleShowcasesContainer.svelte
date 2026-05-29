@@ -26,7 +26,8 @@
 	let nextUpProps = Promise.all([nextUpP, continueWatchingP])
 		.then(([nextUp, continueWatching]) => [
 			...(continueWatching || []),
-			...(nextUp?.filter((i) => !continueWatching?.find((c) => c.SeriesId === i.SeriesId)) || [])
+			...(nextUp?.filter((i) => !continueWatching?.find((c) => c.SeriesId === i.SeriesId)) ||
+				[])
 		])
 		.then((items) =>
 			Promise.all(
@@ -36,7 +37,10 @@
 					);
 
 					return {
-						tmdbId: Number(item.ProviderIds?.Tmdb) || Number(parentSeries?.ProviderIds?.Tmdb) || 0,
+						tmdbId:
+							Number(item.ProviderIds?.Tmdb) ||
+							Number(parentSeries?.ProviderIds?.Tmdb) ||
+							0,
 						jellyfinId: item.Id,
 						backdropUrl: getJellyfinBackdrop(item),
 						title: item.Name || '',
@@ -198,7 +202,7 @@
 				{#await nextUpProps}
 					<CarouselPlaceholderItems />
 				{:then props}
-					{#each props as prop}
+					{#each props as prop (prop)}
 						<EpisodeCard
 							onclick={() => (window.location.href = `/${prop.type}/${prop.tmdbId}`)}
 							{...prop}

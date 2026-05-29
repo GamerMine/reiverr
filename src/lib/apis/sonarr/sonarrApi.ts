@@ -1,6 +1,6 @@
 import type { components } from '$lib/apis/sonarr/sonarr.generated';
-import { getTmdbSeries } from '../tmdb/tmdbApi';
-import { settings } from '$lib/stores/settings.svelte';
+import { getTmdbSeries } from '$lib/apis/tmdb/tmdbApi';
+import { settings } from '$lib/stores/settings.svelte.js';
 
 export type SonarrSeries = components['schemas']['SeriesResource'];
 export type SonarrReleaseResource = components['schemas']['ReleaseResource'];
@@ -58,8 +58,8 @@ export const addSeriesToSonarr = async (tmdbId: number) => {
 	if (!tmdbSeries || !tmdbSeries.external_ids.tvdb_id || !tmdbSeries.name)
 		throw new Error('TV show not found');
 
-	let monitorType = settings.globalSettings.sonarr.monitor;
-	let search = settings.globalSettings.sonarr.startSearch;
+	const monitorType = settings.globalSettings.sonarr.monitor;
+	const search = settings.globalSettings.sonarr.startSearch;
 	const options: SonarrSeriesOptions = {
 		title: tmdbSeries.name,
 		tvdbId: tmdbSeries.external_ids.tvdb_id,

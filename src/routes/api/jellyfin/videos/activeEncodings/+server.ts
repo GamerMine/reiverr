@@ -3,7 +3,7 @@ import createClient from 'openapi-fetch';
 import type { paths } from '$lib/apis/jellyfin/jellyfin.generated';
 import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import { getDeviceId } from '$lib/apis/jellyfin/server/jellyfin.server';
-import {assertUserAuth} from "$lib/apis/utils.server";
+import { assertUserAuth } from '$lib/server/utils.server';
 
 export const DELETE: RequestHandler = async ({ cookies, url }) => {
 	await assertUserAuth(cookies);

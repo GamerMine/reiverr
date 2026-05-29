@@ -46,7 +46,7 @@
 		});
 
 		for (const [social, id] of Object.entries(tmdbPerson.external_ids)) {
-			if (Boolean(id)) {
+			if (id) {
 				switch (social) {
 					case 'facebook_id':
 						tmdbSocials.push({
@@ -172,7 +172,7 @@
 					<p class="text-zinc-400 text-sm">{$_('library.personPage.externalLinks')}</p>
 					<h2 class="pt-2 text-sm">
 						<div class="flex flex-wrap gap-2">
-							{#each tmdbSocials ?? [] as Prop}
+							{#each tmdbSocials ?? [] as Prop (Prop)}
 								<a href={Prop.url} target="_blank">
 									<Prop.icon class="h-6 w-6 shrink-0 text-white" />
 								</a>
@@ -185,7 +185,10 @@
 				<p class="text-zinc-400 text-sm">{$_('library.personPage.knownFor')}</p>
 				<h2 class="font-medium">
 					{person?.known_for_department
-						? $_('data.known_for_department.' + tmdbDataFormat(person?.known_for_department))
+						? $_(
+								'data.known_for_department.' +
+									tmdbDataFormat(person?.known_for_department)
+							)
 						: $_('data.unknown')}
 				</h2>
 			</div>
@@ -233,7 +236,7 @@
 					{#snippet title()}
 						<div class="font-medium text-lg">{$_('library.personPage.knownFor')}</div>
 					{/snippet}
-					{#each knownForProps as prop}
+					{#each knownForProps as prop (prop)}
 						<Poster orientation="portrait" {...prop} openInModal={isModal} />
 					{/each}
 				</Carousel>

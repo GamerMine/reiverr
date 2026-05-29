@@ -1,7 +1,7 @@
 import type { components } from '$lib/apis/jellyfin/jellyfin.generated';
 import type { DeviceProfile } from '$lib/apis/jellyfin/playback-profiles';
 import { arrayToQuery } from '$lib/utils';
-import { settings } from '$lib/stores/settings.svelte';
+import { settings } from '$lib/stores/settings.svelte.js';
 
 export type JellyfinItem = components['schemas']['BaseItemDto'];
 export type JellyfinUser = components['schemas']['UserDto'];

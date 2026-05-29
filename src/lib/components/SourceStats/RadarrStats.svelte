@@ -19,7 +19,10 @@
 			(await discSpacePromise)[0] ||
 			undefined;
 
-		const spaceOccupied = availableMovies.reduce((acc, movie) => acc + (movie?.sizeOnDisk || 0), 0);
+		const spaceOccupied = availableMovies.reduce(
+			(acc, movie) => acc + (movie?.sizeOnDisk || 0),
+			0
+		);
 
 		return {
 			moviesCount: availableMovies.length,

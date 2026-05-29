@@ -2,9 +2,9 @@ import type { RequestHandler } from '@sveltejs/kit';
 import createClient from 'openapi-fetch';
 import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import type { paths } from '$lib/apis/sonarr/sonarr.generated';
-import {assertUserAuth} from "$lib/apis/utils.server";
+import { assertUserAuth } from '$lib/server/utils.server';
 
-export const GET: RequestHandler = async ({cookies}) => {
+export const GET: RequestHandler = async ({ cookies }) => {
 	await assertUserAuth(cookies);
 
 	const baseUrl = await GlobalSettingsEntity.getSonarrBaseUrl();

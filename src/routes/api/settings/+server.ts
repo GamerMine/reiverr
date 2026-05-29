@@ -20,10 +20,7 @@ export const DELETE: RequestHandler = async ({ cookies, url }) => {
 			switch (integration) {
 				case 'radarr': {
 					await GlobalSettingsEntity.setRadarrApiEndpoint(undefined, undefined);
-					await GlobalSettingsEntity.setRadarrApiConfiguration(
-						undefined,
-						undefined
-					);
+					await GlobalSettingsEntity.setRadarrApiConfiguration(undefined, undefined);
 					break;
 				}
 				case 'sonarr': {

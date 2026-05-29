@@ -39,7 +39,9 @@
 		const filtered = settings.userSettings.discover.excludeLibraryItems
 			? items.filter(
 					async (item) =>
-						!(await jellyfinItemsPromise).find((i) => i.ProviderIds?.Tmdb === String(item.id))
+						!(await jellyfinItemsPromise).find(
+							(i) => i.ProviderIds?.Tmdb === String(item.id)
+						)
 				)
 			: items;
 
@@ -68,7 +70,10 @@
 						backdropUri: actor.profile_path || '',
 						name: actor.name || '',
 						subtitle: actor.known_for_department
-							? $_('data.known_for_department.' + tmdbDataFormat(actor.known_for_department))
+							? $_(
+									'data.known_for_department.' +
+										tmdbDataFormat(actor.known_for_department)
+								)
 							: $_('data.unknown')
 					}))
 			);

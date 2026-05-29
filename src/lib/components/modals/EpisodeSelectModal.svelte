@@ -47,7 +47,7 @@
 				{#if episodes.length === 0}
 					<div class="px-4 py-1 text-xs text-gray-400">No episodes</div>
 				{:else}
-					{#each episodes as episode}
+					{#each episodes as episode (episode)}
 						<!-- svelte-ignore a11y_click_events_have_key_events -->
 						<!-- svelte-ignore a11y_no_static_element_interactions -->
 						<div
@@ -57,7 +57,9 @@
 							<div class="flex flex-col gap-1">
 								<div class="text-sm font-medium">{episode.title}</div>
 								<div class="text-xs text-gray-400">
-									{episode.episodeNumber ? `Episode ${episode.episodeNumber}` : 'Special'}
+									{episode.episodeNumber
+										? `Episode ${episode.episodeNumber}`
+										: 'Special'}
 								</div>
 							</div>
 							<div class="text-xs text-gray-400">

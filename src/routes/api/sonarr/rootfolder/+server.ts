@@ -2,7 +2,7 @@ import type { RequestHandler } from '@sveltejs/kit';
 import createClient from 'openapi-fetch';
 import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import type { paths } from '$lib/apis/radarr/radarr.generated';
-import {assertAdminAuth} from "$lib/apis/utils.server";
+import { assertAdminAuth } from '$lib/server/utils.server';
 
 export const GET: RequestHandler = async ({ cookies, url }) => {
 	await assertAdminAuth(cookies);

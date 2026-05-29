@@ -3,12 +3,15 @@ import createClient from 'openapi-fetch';
 import type { components, paths } from '$lib/apis/jellyfin/jellyfin.generated';
 import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import { getUserId } from '$lib/apis/jellyfin/server/jellyfin.server';
-import {assertParam, assertUserAuth} from "$lib/apis/utils.server";
+import { assertParam, assertUserAuth } from '$lib/server/utils.server';
 
 export const GET: RequestHandler = async ({ cookies, url }) => {
 	await assertUserAuth(cookies);
 
-	const includeItemTypes = assertParam(url, 'includeItemTypes') as unknown as components['schemas']['BaseItemKind'][];
+	const includeItemTypes = assertParam(
+		url,
+		'includeItemTypes'
+	) as unknown as components['schemas']['BaseItemKind'][];
 	const fields = assertParam(url, 'fields') as unknown as components['schemas']['ItemFields'][];
 	const baseUrl = await GlobalSettingsEntity.getJellyfinBaseUrl();
 

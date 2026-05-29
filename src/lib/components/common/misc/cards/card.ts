@@ -9,7 +9,9 @@ import type { ComponentProps } from 'svelte';
 import type Card from './Card.svelte';
 import { TMDB_BACKDROP_SMALL } from '$lib/constants';
 
-export const fetchCardTmdbMovieProps = async (movie: TmdbMovie2): Promise<ComponentProps<typeof Card>> => {
+export const fetchCardTmdbMovieProps = async (
+	movie: TmdbMovie2
+): Promise<ComponentProps<typeof Card>> => {
 	const backdropUri = await getTmdbMovieBackdrop(movie.id || 0);
 
 	const movieAny = movie as any;

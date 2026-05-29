@@ -55,7 +55,6 @@
 
 	// Find the correct functions
 	let elem = document.createElement('div');
-	// @ts-ignore
 	if (elem.requestFullscreen) {
 		reqFullscreenFunc = (elem) => {
 			elem.requestFullscreen();
@@ -63,38 +62,26 @@
 		fullscreenChangeEvent = 'fullscreenchange';
 		getFullscreenElement = () => <HTMLElement>document.fullscreenElement;
 		if (document.exitFullscreen) exitFullscreen = () => document.exitFullscreen();
-		// @ts-ignore
 	} else if (elem.webkitRequestFullscreen) {
 		reqFullscreenFunc = (elem) => {
-			// @ts-ignore
 			elem.webkitRequestFullscreen();
 		};
 		fullscreenChangeEvent = 'webkitfullscreenchange';
-		// @ts-ignore
 		getFullscreenElement = () => <HTMLElement>document.webkitFullscreenElement;
-		// @ts-ignore
 		if (document.webkitExitFullscreen) exitFullscreen = () => document.webkitExitFullscreen();
-		// @ts-ignore
 	} else if (elem.msRequestFullscreen) {
 		reqFullscreenFunc = (elem) => {
-			// @ts-ignore
 			elem.msRequestFullscreen();
 		};
 		fullscreenChangeEvent = 'MSFullscreenChange';
-		// @ts-ignore
 		getFullscreenElement = () => <HTMLElement>document.msFullscreenElement;
-		// @ts-ignore
 		if (document.msExitFullscreen) exitFullscreen = () => document.msExitFullscreen();
-		// @ts-ignore
 	} else if (elem.mozRequestFullScreen) {
 		reqFullscreenFunc = (elem) => {
-			// @ts-ignore
 			elem.mozRequestFullScreen();
 		};
 		fullscreenChangeEvent = 'mozfullscreenchange';
-		// @ts-ignore
 		getFullscreenElement = () => <HTMLElement>document.mozFullScreenElement;
-		// @ts-ignore
 		if (document.mozCancelFullScreen) exitFullscreen = () => document.mozCancelFullScreen();
 	}
 
@@ -133,7 +120,12 @@
 				maxBitrate || getQualities(item?.Height || 1080)[0].maxBitrate
 			).then(async (playbackInfo) => {
 				if (!playbackInfo) return;
-				const { playbackUri, playSessionId: sessionId, mediaSourceId, directPlay } = playbackInfo;
+				const {
+					playbackUri,
+					playSessionId: sessionId,
+					mediaSourceId,
+					directPlay
+				} = playbackInfo;
 
 				if (!playbackUri || !sessionId) {
 					console.log('No playback URL or session ID', playbackUri, sessionId);
@@ -203,7 +195,11 @@
 				};
 
 				stopCallback = () => {
-					reportJellyfinPlaybackStopped(itemId, sessionId, video.currentTime * 10_000_000);
+					reportJellyfinPlaybackStopped(
+						itemId,
+						sessionId,
+						video.currentTime * 10_000_000
+					);
 					deleteEncoding();
 				};
 			})
@@ -329,10 +325,8 @@
 	function handleRequestFullscreen() {
 		if (reqFullscreenFunc) {
 			fullscreen = !fullscreen;
-			// @ts-ignore
 		} else if (video.webkitEnterFullScreen) {
 			// Edge case to allow fullscreen on iPhone
-			// @ts-ignore
 			video.webkitEnterFullScreen();
 		}
 	}
@@ -371,7 +365,6 @@
 	in:fade|global={{ duration: 300, easing: linear }}
 	out:fade|global={{ duration: 200, easing: linear }}
 >
-	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<div
 		class="w-screen h-screen flex items-center justify-center"
 		bind:this={videoWrapper}
@@ -382,7 +375,6 @@
 		}}
 		in:fade|global={{ duration: 500, delay: 1200, easing: linear }}
 	>
-		<!-- svelte-ignore a11y_media_has_caption -->
 		<video
 			bind:this={video}
 			bind:paused
@@ -431,7 +423,8 @@
 								ontouchend={onSeekEnd}
 							/>
 						</div>
-						<span class="whitespace-nowrap tabular-nums">{secondsToTime(duration)}</span>
+						<span class="whitespace-nowrap tabular-nums">{secondsToTime(duration)}</span
+						>
 					</div>
 
 					<div class="flex items-center justify-between mb-2 w-full">
@@ -446,7 +439,7 @@
 						<div class="flex items-center space-x-3">
 							<ContextMenuButton heading="Quality">
 								{#snippet menu()}
-									{#each getQualities(resolution) as quality}
+									{#each getQualities(resolution) as quality (quality)}
 										<SelectableContextMenuItem
 											selected={quality.maxBitrate === currentBitrate}
 											onclick={() => handleSelectQuality(quality.maxBitrate)}

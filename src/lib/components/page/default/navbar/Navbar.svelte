@@ -80,7 +80,10 @@
 			<MagnifyingGlass size="20" />
 		</IconButton>
 		<IconButton onclick={() => (openAccountMenu = !openAccountMenu)}>
-			<UserImage user={JSON.parse(localStorage.getItem('user') || '{}') || undefined} size={8} />
+			<UserImage
+				user={JSON.parse(localStorage.getItem('user') || '{}') || undefined}
+				size={8}
+			/>
 		</IconButton>
 	</div>
 </div>
@@ -114,7 +117,11 @@
 		transition:fade={{ duration: 150 }}
 	>
 		<div class="row-span-2 flex flex-col gap-4 items-center justify-center">
-			<a onclick={() => (isMobileMenuVisible = false)} href="/" class={page && getLinkStyle('/')}>
+			<a
+				onclick={() => (isMobileMenuVisible = false)}
+				href="/"
+				class={page && getLinkStyle('/')}
+			>
 				{$_('navbar.home')}
 			</a>
 			<a

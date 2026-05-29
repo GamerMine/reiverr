@@ -1,6 +1,6 @@
 import { defaultGlobalSettings, defaultUserSettings, type Settings } from '$lib/entities/Types';
 
-export let settings: Settings = $state({
+export const settings: Settings = $state({
 	userSettings: defaultUserSettings,
 	globalSettings: defaultGlobalSettings
 });

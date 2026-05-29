@@ -30,7 +30,9 @@
 				klass="w-full"
 				onclick={() => (window.location.href = '/settings')}
 			>
-				<Gear size="20"></Gear><span class="flex ml-2">{$_('navbar.userMenu.settings')}</span>
+				<Gear size="20"></Gear><span class="flex ml-2"
+					>{$_('navbar.userMenu.settings')}</span
+				>
 			</Button>
 		</div>
 		<Divider />

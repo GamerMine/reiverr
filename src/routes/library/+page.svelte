@@ -11,7 +11,7 @@
 	import { PLACEHOLDER_BACKDROP } from '$lib/constants';
 	import { jellyfinItemsStore, servarrDownloadsStore } from '$lib/stores/data.store';
 	import { ChevronRight } from 'svelte-radix';
-	import  { type ComponentProps } from 'svelte';
+	import { type ComponentProps } from 'svelte';
 	import { _ } from 'svelte-i18n';
 	import { fade } from 'svelte/transition';
 	import LibraryItems from './LibraryItems.svelte';
@@ -129,7 +129,8 @@
 							<div class="flex gap-2 mt-4">
 								<Button
 									variant="primary"
-									onclick={() => showcase?.Id && playerState.streamJellyfinId(showcase?.Id)}
+									onclick={() =>
+										showcase?.Id && playerState.streamJellyfinId(showcase?.Id)}
 								>
 									{$_('library.content.play')}<ChevronRight size="20" />
 								</Button>
@@ -138,7 +139,9 @@
 										showcase?.ProviderIds?.Tmdb || showcase?.ProviderIds?.Tvdb
 									}`}
 								>
-									<span>{$_('titleShowcase.details')}</span><ChevronRight size="20" />
+									<span>{$_('titleShowcase.details')}</span><ChevronRight
+										size="20"
+									/>
 								</Button>
 							</div>
 						</div>

@@ -2,9 +2,9 @@ import type { RequestHandler } from '@sveltejs/kit';
 import createClient from 'openapi-fetch';
 import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import type { paths } from '$lib/apis/radarr/radarr.generated';
-import {assertParam, assertUserAuth} from "$lib/apis/utils.server";
+import { assertParam, assertUserAuth } from '$lib/server/utils.server';
 
-export const GET: RequestHandler = async ({cookies}) => {
+export const GET: RequestHandler = async ({ cookies }) => {
 	await assertUserAuth(cookies);
 
 	const baseUrl = await GlobalSettingsEntity.getRadarrBaseUrl();
@@ -40,7 +40,7 @@ export const GET: RequestHandler = async ({cookies}) => {
 
 export const POST: RequestHandler = async ({ cookies, request }) => {
 	await assertUserAuth(cookies);
-	
+
 	const baseUrl = await GlobalSettingsEntity.getRadarrBaseUrl();
 	const apiKey = await GlobalSettingsEntity.getRadarrApiKey();
 	const requestData = await request.json();
@@ -70,13 +70,13 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
 	}
 };
 
-export const DELETE: RequestHandler = async ({cookies, url}) => {
+export const DELETE: RequestHandler = async ({ cookies, url }) => {
 	await assertUserAuth(cookies);
 
 	const baseUrl = await GlobalSettingsEntity.getRadarrBaseUrl();
 	const apiKey = await GlobalSettingsEntity.getRadarrApiKey();
-	const movieId = assertParam(url, "movieId");
-	const deleteFiles = assertParam(url, "deleteFiles");
+	const movieId = assertParam(url, 'movieId');
+	const deleteFiles = assertParam(url, 'deleteFiles');
 
 	if (baseUrl && apiKey) {
 		return createClient<paths>({
@@ -91,7 +91,7 @@ export const DELETE: RequestHandler = async ({cookies, url}) => {
 						id: +movieId
 					},
 					query: {
-						deleteFiles: (deleteFiles === 'true')
+						deleteFiles: deleteFiles === 'true'
 					}
 				}
 			})
@@ -108,4 +108,4 @@ export const DELETE: RequestHandler = async ({cookies, url}) => {
 			statusText: 'No address provided'
 		});
 	}
-}
+};

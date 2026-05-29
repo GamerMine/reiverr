@@ -51,7 +51,7 @@ export class UserSettingsEntity extends BaseEntity {
 				region: userSettingsEntity.discoverRegion,
 				excludeLibraryItems: userSettingsEntity.discoverExcludeLibraryItems,
 				includedLanguages: userSettingsEntity.discoverIncludedLanguages
-			},
+			}
 		};
 	}
 
@@ -73,6 +73,7 @@ export class UserSettingsEntity extends BaseEntity {
 
 		userSettingsEntity.discoverRegion = newUserSettings.discover.region;
 		userSettingsEntity.discoverIncludedLanguages = newUserSettings.discover.includedLanguages;
-		userSettingsEntity.discoverExcludeLibraryItems = newUserSettings.discover.excludeLibraryItems;
+		userSettingsEntity.discoverExcludeLibraryItems =
+			newUserSettings.discover.excludeLibraryItems;
 	}
 }

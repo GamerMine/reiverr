@@ -1,12 +1,13 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
-import { GlobalSettingsEntity } from './entities/GlobalSettings.server';
+import { env } from '$env/dynamic/private';
+import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import { UserSettingsEntity } from '$lib/entities/UserSettings.server';
 import { FilteringProfilesEntity } from '$lib/entities/FilteringProfiles.server';
 import { TaskEntity } from '$lib/entities/Task.server';
 import { TaskExecutionEntity } from '$lib/entities/TaskExecution.server';
 import { CustomFormatsEntity } from '$lib/entities/CustomFormats.server';
-import { env } from '$env/dynamic/private';
+import { QualityProfilesEntity } from '$lib/entities/QualityProfiles.server';
 
 class TypeOrm {
 	private static instance: Promise<DataSource | null> | null = null;
@@ -27,6 +28,7 @@ class TypeOrm {
 					UserSettingsEntity,
 					FilteringProfilesEntity,
 					CustomFormatsEntity,
+					QualityProfilesEntity,
 					TaskEntity,
 					TaskExecutionEntity
 				],

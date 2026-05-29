@@ -50,7 +50,9 @@
 						type: (i as any).media_type === 'movie' ? 'movie' : 'series',
 						posterUri: i.poster_path || '',
 						title: i.title || i.name || '',
-						year: new Date(i.release_date || i.first_air_date || Date.now()).getFullYear(),
+						year: new Date(
+							i.release_date || i.first_air_date || Date.now()
+						).getFullYear(),
 						seasons: undefined,
 						overview: i.overview || ''
 					}));
@@ -89,16 +91,17 @@
 		<div class="text-sm text-zinc-200 opacity-50 font-light p-4">{$_('search.noResults')}</div>
 	{:else}
 		<div class="py-2">
-			{#each resultProps.slice(0, 5) as result}
-				<!-- svelte-ignore a11y_click_events_have_key_events -->
-				<!-- svelte-ignore a11y_no_static_element_interactions -->
+			{#each resultProps.slice(0, 5) as result (result)}
 				<a
 					class="flex px-4 py-2 gap-4 hover:bg-lighten focus-visible:bg-lighten cursor-pointer outline-hidden"
 					href={`/${result.type}/${result.tmdbId}`}
 					onclick={handleClose}
 				>
 					<div
-						style={"background-image: url('" + TMDB_POSTER_SMALL + result.posterUri + "');"}
+						style={"background-image: url('" +
+							TMDB_POSTER_SMALL +
+							result.posterUri +
+							"');"}
 						class="bg-center bg-cover w-16 h-24 rounded-xs"
 					></div>
 					<div class="flex-1 flex flex-col gap-1">

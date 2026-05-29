@@ -31,12 +31,12 @@
 	import type { TitleId } from '$lib/types';
 	import { capitalize, formatMinutesToTime, formatSize } from '$lib/utils';
 	import classNames from 'classnames';
-	import {ActivityLog, Archive, ChevronLeft, ChevronRight, DotFilled, Plus} from 'svelte-radix';
+	import { ActivityLog, Archive, ChevronLeft, ChevronRight, DotFilled, Plus } from 'svelte-radix';
 	import { get } from 'svelte/store';
 	import { _ } from 'svelte-i18n';
 	import { tmdbDataFormat } from '$lib/utils.js';
 	import { settings } from '$lib/stores/settings.svelte';
-	import {createSuccessNotification} from "$lib/stores/notification.store";
+	import { createSuccessNotification } from '$lib/stores/notification.store';
 
 	let {
 		titleId,
@@ -167,11 +167,13 @@
 		const tmdbId = await data.then((d) => d.tmdbId);
 		addToSonarrLoading = true;
 
-		addSeriesToSonarr(tmdbId)
-			.then(() => {
-				refreshSonarr();
-				createSuccessNotification("Episode(s) added to queue", "The episode(s) will be added to the library once available.")
-			});
+		addSeriesToSonarr(tmdbId).then(() => {
+			refreshSonarr();
+			createSuccessNotification(
+				'Episode(s) added to queue',
+				'The episode(s) will be added to the library once available.'
+			);
+		});
 	}
 
 	async function openRequestModal() {
@@ -194,7 +196,10 @@
 				? episodeComponents[nextJellyfinEpisode?.IndexNumber - 1]
 				: undefined;
 
-			if (episodeComponent && nextJellyfinEpisode?.ParentIndexNumber === visibleSeasonNumber) {
+			if (
+				episodeComponent &&
+				nextJellyfinEpisode?.ParentIndexNumber === visibleSeasonNumber
+			) {
 				const parent = episodeComponent.offsetParent;
 
 				if (parent) {
@@ -232,7 +237,8 @@
 		titleInformation={{
 			tmdbId,
 			type: 'tv',
-			backdropUriCandidates: tmdbSeries?.images?.backdrops?.map((b) => b.file_path || '') || [],
+			backdropUriCandidates:
+				tmdbSeries?.images?.backdrops?.map((b) => b.file_path || '') || [],
 			posterPath: tmdbSeries?.poster_path || '',
 			title: tmdbSeries?.name || '',
 			tagline: tmdbSeries?.tagline || tmdbSeries?.name || '',
@@ -244,7 +250,9 @@
 		{#snippet title_info()}
 			{new Date(tmdbSeries?.first_air_date || Date.now()).getFullYear()}
 			<DotFilled />
-			{tmdbSeries?.status ? $_('data.status.' + tmdbDataFormat(tmdbSeries?.status)) : undefined}
+			{tmdbSeries?.status
+				? $_('data.status.' + tmdbDataFormat(tmdbSeries?.status))
+				: undefined}
 			<DotFilled />
 			<a href={tmdbUrl} target="_blank">{tmdbSeries?.vote_average?.toFixed(1)} TMDB</a>
 		{/snippet}
@@ -271,12 +279,18 @@
 							<ChevronRight size="20" />
 						</Button>
 					{:else if !$sonarrSeriesStore.item && settings.globalSettings.sonarr.baseUrl}
-						<Button variant="primary" disabled={addToSonarrLoading} onclick={addToSonarr}>
+						<Button
+							variant="primary"
+							disabled={addToSonarrLoading}
+							onclick={addToSonarr}
+						>
 							<Plus size="20" /><span>{$_('library.content.get')}</span>
 						</Button>
 					{:else if $sonarrSeriesStore.item}
 						<Button variant="primary" disabled>
-							<ActivityLog size="20" /><span class="ml-2">{$_('library.content.inqueue')}</span>
+							<ActivityLog size="20" /><span class="ml-2"
+								>{$_('library.content.inqueue')}</span
+							>
 						</Button>
 					{/if}
 				{/if}
@@ -292,8 +306,10 @@
 			>
 				{#snippet title()}
 					<UiCarousel klass="flex gap-6">
-						{#each [...Array(tmdbSeries?.number_of_seasons || 0).keys()].map((i) => i + 1) as seasonNumber}
-							{@const season = tmdbSeries?.seasons?.find((s) => s.season_number === seasonNumber)}
+						{#each [...Array(tmdbSeries?.number_of_seasons || 0).keys()].map((i) => i + 1) as seasonNumber (seasonNumber)}
+							{@const season = tmdbSeries?.seasons?.find(
+								(s) => s.season_number === seasonNumber
+							)}
 							{@const isSelected = season?.season_number === visibleSeasonNumber}
 							<button
 								class={classNames(
@@ -303,9 +319,11 @@
 										'text-zinc-500 hover:text-zinc-200 cursor-pointer':
 											(!isSelected || seasonSelectVisible === false) &&
 											tmdbSeries?.number_of_seasons !== 1,
-										'text-zinc-500 cursor-default': tmdbSeries?.number_of_seasons === 1,
+										'text-zinc-500 cursor-default':
+											tmdbSeries?.number_of_seasons === 1,
 										hidden:
-											!seasonSelectVisible && visibleSeasonNumber !== (season?.season_number || 1)
+											!seasonSelectVisible &&
+											visibleSeasonNumber !== (season?.season_number || 1)
 									}
 								)}
 								onclick={() => {
@@ -321,7 +339,10 @@
 							>
 								<ChevronLeft
 									size="20"
-									class={seasonSelectVisible || tmdbSeries?.number_of_seasons === 1 ? 'hidden' : ''}
+									class={seasonSelectVisible ||
+									tmdbSeries?.number_of_seasons === 1
+										? 'hidden'
+										: ''}
 								/>
 								{$_('library.content.season')}
 								{season?.season_number}
@@ -333,8 +354,9 @@
 					{#await seasonsData[visibleSeasonNumber - 1]}
 						<CarouselPlaceholderItems />
 					{:then seasonEpisodes}
-						{#each seasonEpisodes || [] as props, i}
-							{@const jellyfinData = jellyfinEpisodeData[`S${visibleSeasonNumber}E${i + 1}`]}
+						{#each seasonEpisodes || [] as props, i (props)}
+							{@const jellyfinData =
+								jellyfinEpisodeData[`S${visibleSeasonNumber}E${i + 1}`]}
 							<div bind:this={episodeComponents[i]}>
 								<EpisodeCard
 									{...props}
@@ -416,7 +438,9 @@
 			<div class="col-span-2 lg:col-span-1">
 				<p class="text-zinc-400 text-sm">{$_('library.content.spokenLanguages')}</p>
 				<h2 class="font-medium">
-					{tmdbSeries?.spoken_languages?.map((l) => capitalize(l.english_name || '')).join(', ')}
+					{tmdbSeries?.spoken_languages
+						?.map((l) => capitalize(l.english_name || ''))
+						.join(', ')}
 				</h2>
 			</div>
 		{/snippet}
@@ -443,11 +467,16 @@
 				{#if $sonarrDownloadStore.downloads?.length}
 					{@const download = $sonarrDownloadStore.downloads?.[0]}
 					<div class="col-span-2 lg:col-span-1">
-						<p class="text-zinc-400 text-sm">{$_('library.content.downloadCompletedIn')}</p>
+						<p class="text-zinc-400 text-sm">
+							{$_('library.content.downloadCompletedIn')}
+						</p>
 						<h2 class="font-medium">
 							{download?.estimatedCompletionTime
 								? formatMinutesToTime(
-										(new Date(download?.estimatedCompletionTime).getTime() - Date.now()) / 1000 / 60
+										(new Date(download?.estimatedCompletionTime).getTime() -
+											Date.now()) /
+											1000 /
+											60
 									)
 								: 'Stalled'}
 						</h2>
@@ -456,7 +485,9 @@
 
 				<div class="flex gap-4 flex-wrap col-span-4 sm:col-span-6 mt-4">
 					<Button>
-						<span class="mr-2">{$_('library.content.manage')}</span><Archive size="20" />
+						<span class="mr-2">{$_('library.content.manage')}</span><Archive
+							size="20"
+						/>
 					</Button>
 				</div>
 			{:else if $sonarrSeriesStore.loading}
@@ -495,10 +526,12 @@
 				{#if castProps?.length}
 					<Carousel gradientFromColor="from-stone-950">
 						{#snippet title()}
-							<div class="font-medium text-lg">{$_('library.content.castAndCrew')}</div>
+							<div class="font-medium text-lg">
+								{$_('library.content.castAndCrew')}
+							</div>
 						{/snippet}
-						{#each castProps as prop}
-							<PersonCard {...prop} />
+						{#each castProps as castProp (castProp)}
+							<PersonCard {...castProp} />
 						{/each}
 					</Carousel>
 				{/if}
@@ -510,8 +543,8 @@
 								{$_('library.content.recommendations')}
 							</div>
 						{/snippet}
-						{#each tmdbRecommendationProps as prop}
-							<Card {...prop} openInModal={isModal} />
+						{#each tmdbRecommendationProps as tmdbRecommendationProp (tmdbRecommendationProp)}
+							<Card {...tmdbRecommendationProp} openInModal={isModal} />
 						{/each}
 					</Carousel>
 				{/if}
@@ -523,8 +556,8 @@
 								{$_('library.content.similarSeries')}
 							</div>
 						{/snippet}
-						{#each tmdbSimilarProps as prop}
-							<Card {...prop} openInModal={isModal} />
+						{#each tmdbSimilarProps as tmdbSimilarProp (tmdbSimilarProp)}
+							<Card {...tmdbSimilarProp} openInModal={isModal} />
 						{/each}
 					</Carousel>
 				{/if}

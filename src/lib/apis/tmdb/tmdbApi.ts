@@ -3,7 +3,7 @@ import { TMDB_API_KEY, TMDB_BACKDROP_SMALL } from '$lib/constants';
 import createClient from 'openapi-fetch';
 import type { operations, paths } from './tmdb.generated';
 import type { TitleType } from '$lib/types';
-import { settings } from '$lib/stores/settings.svelte';
+import { settings } from '$lib/stores/settings.svelte.js';
 
 const CACHE_ONE_DAY = 'max-age=86400';
 const CACHE_FOUR_DAYS = 'max-age=345600';
@@ -176,7 +176,9 @@ export const getTmdbSeriesBackdrop = async (tmdbId: number) =>
 			.then(
 				(r) =>
 					(
-						r?.backdrops?.find((b) => b.iso_639_1 === settings.userSettings.interface.language) ||
+						r?.backdrops?.find(
+							(b) => b.iso_639_1 === settings.userSettings.interface.language
+						) ||
 						r?.backdrops?.find((b) => b.iso_639_1 === 'en') ||
 						r?.backdrops?.find((b) => b.iso_639_1) ||
 						r?.backdrops?.[0]
@@ -191,7 +193,9 @@ export const getTmdbMovieBackdrop = async (tmdbId: number) =>
 			.then(
 				(r) =>
 					(
-						r?.backdrops?.find((b) => b.iso_639_1 === settings.userSettings.interface.language) ||
+						r?.backdrops?.find(
+							(b) => b.iso_639_1 === settings.userSettings.interface.language
+						) ||
 						r?.backdrops?.find((b) => b.iso_639_1 === 'en') ||
 						r?.backdrops?.find((b) => b.iso_639_1) ||
 						r?.backdrops?.[0]

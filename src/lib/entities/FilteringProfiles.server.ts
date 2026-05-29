@@ -15,10 +15,15 @@ export class FilteringProfilesEntity extends BaseEntity {
 	@Column('boolean')
 	isDefault: boolean;
 
-	public static async getAll(): Promise<FilteringProfile[]> {
+	public static async getAll(server: boolean = false): Promise<FilteringProfile[]> {
 		const profiles: FilteringProfile[] = [];
+		const entities = await this.find();
 
-		for (const profile of await this.find()) {
+		if (server) {
+			return entities;
+		}
+
+		for (const profile of entities) {
 			profiles.push({
 				id: profile.id,
 				name: profile.name,
@@ -36,7 +41,7 @@ export class FilteringProfilesEntity extends BaseEntity {
 
 	public static async createFilteringProfile(newProfile: FilteringProfile) {
 		const profile = new FilteringProfilesEntity();
-		await this.setProfile(profile, newProfile);
+		return await this.setProfile(profile, newProfile);
 	}
 
 	public static async editFilteringProfile(newProfile: FilteringProfile) {
@@ -44,7 +49,7 @@ export class FilteringProfilesEntity extends BaseEntity {
 
 		if (!profile) return;
 
-		await this.setProfile(profile, newProfile);
+		return await this.setProfile(profile, newProfile);
 	}
 
 	public static async deleteFilteringProfile(id: number) {
@@ -64,5 +69,7 @@ export class FilteringProfilesEntity extends BaseEntity {
 		}
 
 		await profile.save();
+
+		return profile;
 	}
 }

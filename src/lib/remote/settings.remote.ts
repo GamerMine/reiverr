@@ -11,7 +11,7 @@ import {
 import type { JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
 import { FilteringProfilesEntity } from '$lib/entities/FilteringProfiles.server';
 import * as v from 'valibot';
-import { assertAdminUserAuth } from '$lib/apis/utils.server';
+import { assertAdminUserAuth } from '$lib/server/utils.server';
 import { QUALITY_DEFS } from '$lib/constants';
 import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import { UserSettingsEntity } from '$lib/entities/UserSettings.server';
@@ -167,7 +167,8 @@ export const saveSettings = form(
 			}
 
 			// Set other admin settings
-			// FIXME: This should be moved to a task.
+			// FIXME: All API related stuff must be moved to a task.
+			// 	Reiverr database operations should be kept here.
 			{
 				const radarrConnection = await Radarr.checkConnection();
 				const sonarrConnection = await Sonarr.checkConnection();
@@ -183,12 +184,22 @@ export const saveSettings = form(
 
 							if (radarrConnection) {
 								const radarrRes = await Radarr.addCustomFormat(lang);
-								if (!radarrRes.success || !radarrRes.id) return { success: false };
+								if (!radarrRes.success || !radarrRes.id) {
+									console.error(
+										`Unable to add Custom Format on Radarr for ${lang}. Reason:\n${radarrRes.error}`
+									);
+									return { success: false };
+								}
 								radarrId = radarrRes.id;
 							}
 							if (sonarrConnection) {
 								const sonarrRes = await Sonarr.addCustomFormat(lang);
-								if (!sonarrRes.success || !sonarrRes.id) return { success: false };
+								if (!sonarrRes.success || !sonarrRes.id) {
+									console.error(
+										`Unable to add Custom Format on Sonarr for ${lang}. Reason:\n${sonarrRes.error}`
+									);
+									return { success: false };
+								}
 								sonarrId = sonarrRes.id;
 							}
 							await CustomFormatsEntity.createFormat(lang, radarrId, sonarrId);
@@ -197,21 +208,22 @@ export const saveSettings = form(
 					}
 
 					// Removing unused custom formats
-					const radarrIds: number[] = [];
-					const sonarrIds: number[] = [];
+					/*const radarrIds: number[] = [];
+					const sonarrIds: number[] = [];*/
 					for (const profile of availableCustomProfiles.values()) {
-						if (profile.radarrId) radarrIds.push(profile.radarrId);
-						if (profile.sonarrId) sonarrIds.push(profile.sonarrId);
+						/*if (profile.radarrId) radarrIds.push(profile.radarrId);
+						if (profile.sonarrId) sonarrIds.push(profile.sonarrId);*/
 						await CustomFormatsEntity.deleteFormat(profile.id);
 					}
-					if (radarrIds.length > 0) await Radarr.deleteCustomFormats(radarrIds);
-					if (sonarrIds.length > 0) await Sonarr.deleteCustomFormats(sonarrIds);
+					/*if (radarrIds.length > 0) await Radarr.deleteCustomFormats(radarrIds);
+					if (sonarrIds.length > 0) await Sonarr.deleteCustomFormats(sonarrIds);*/
 				}
 
 				// Handling Quality Profiles
-				const profiles = await FilteringProfilesEntity.getAll();
+				const profiles = await FilteringProfilesEntity.getAll(true);
+				const langs = await CustomFormatsEntity.getAll();
 				for (const profile of profiles) {
-					for (const lang of adminDownloadLanguages) {
+					for (const [lang, format] of langs.entries()) {
 						if (!(await QualityProfilesEntity.profileExists(profile.id, lang))) {
 							let radarrId: number | undefined = undefined;
 							let sonarrId: number | undefined = undefined;
@@ -222,7 +234,12 @@ export const saveSettings = form(
 									lang,
 									profile.qualities
 								);
-								if (!res.success || !res.id) return { success: false };
+								if (!res.success || !res.id) {
+									console.error(
+										`Unable to add Quality Profile on Radarr for ${profile.name}. Reason:\n${res.error}`
+									);
+									return { success: false };
+								}
 								radarrId = res.id;
 							}
 							if (sonarrConnection) {
@@ -231,11 +248,21 @@ export const saveSettings = form(
 									lang,
 									profile.qualities
 								);
-								if (!res.success || !res.id) return { success: false };
+								if (!res.success || !res.id) {
+									console.error(
+										`Unable to add Quality Profile on Sonarr for ${profile.name}. Reason:\n${res.error}`
+									);
+									return { success: false };
+								}
 								sonarrId = res.id;
 							}
 
-							await QualityProfilesEntity.createProfile(lang, radarrId, sonarrId);
+							await QualityProfilesEntity.createProfile(
+								format,
+								radarrId,
+								sonarrId,
+								profile as FilteringProfilesEntity
+							);
 						}
 					}
 				}
@@ -265,11 +292,6 @@ export const createUpdateFilteringProfile = form(
 			if (!QUALITY_DEFS.includes(quality)) return { success: false };
 		}
 
-		const languages = await GlobalSettingsEntity.getDownloadLanguages();
-		if (languages.length > 0) {
-			// TODO: Create quality profile on Radarr and Sonarr
-		}
-
 		const profile: FilteringProfile = {
 			id: 0,
 			name: profileName,
@@ -277,12 +299,34 @@ export const createUpdateFilteringProfile = form(
 			isDefault: !!isDefault
 		};
 
+		let entity;
 		if (action === 'update') {
 			if (!profileId || Number.isNaN(profileId)) return { success: false };
 			profile.id = Number(profileId);
-			await FilteringProfilesEntity.editFilteringProfile(profile);
-		} else if (action === 'create') {
-			await FilteringProfilesEntity.createFilteringProfile(profile);
+			entity = await FilteringProfilesEntity.editFilteringProfile(profile);
+		} else {
+			entity = await FilteringProfilesEntity.createFilteringProfile(profile);
+		}
+
+		if (!entity) return { success: false };
+
+		const languages = await CustomFormatsEntity.getAll();
+		for (const [lang, format] of languages.entries()) {
+			let radarrId: number | undefined = undefined;
+			let sonarrId: number | undefined = undefined;
+
+			if (await Radarr.checkConnection()) {
+				const res = await Radarr.addQualityProfile(profileName, lang, qualities);
+				if (!res.success || !res.id) return { success: false };
+				radarrId = res.id;
+			}
+			if (await Sonarr.checkConnection()) {
+				const res = await Sonarr.addQualityProfile(profileName, lang, qualities);
+				if (!res.success || !res.id) return { success: false };
+				sonarrId = res.id;
+			}
+
+			await QualityProfilesEntity.createProfile(format, radarrId, sonarrId, entity);
 		}
 
 		return { success: true };
