@@ -263,6 +263,10 @@
         "multiple": "Test the scheduling of {count} tasks (success: {success} / error: {error})",
         "success": "Execution #{id} (success)",
         "error": "Execution #{id} (error)"
+      },
+      "sync": {
+        "languagesSync": "Language synchronization",
+        "languagesSyncOn": "Language synchronization on {platform}"
       }
     },
     "messages": {

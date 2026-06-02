@@ -19,6 +19,8 @@ import { Radarr } from '$lib/server/radarr.server';
 import { Sonarr } from '$lib/server/sonarr.server';
 import { CustomFormatsEntity } from '$lib/entities/CustomFormats.server';
 import { QualityProfilesEntity } from '$lib/entities/QualityProfiles.server';
+import { In, Not } from 'typeorm';
+import { scheduleTask, TaskType } from '$lib/service/scheduler.server';
 
 // TODO: Add more error message when success: false
 
@@ -170,102 +172,29 @@ export const saveSettings = form(
 			// FIXME: All API related stuff must be moved to a task.
 			// 	Reiverr database operations should be kept here.
 			{
-				const radarrConnection = await Radarr.checkConnection();
-				const sonarrConnection = await Sonarr.checkConnection();
 				// Handling Custom Format creation and deletion
 				if (!adminDownloadLanguages) adminDownloadLanguages = [];
-				if (adminDownloadLanguages) {
-					const availableCustomProfiles = await CustomFormatsEntity.getAll();
-
-					for (const lang of adminDownloadLanguages) {
-						if (!availableCustomProfiles.has(lang)) {
-							let radarrId: number | undefined = undefined;
-							let sonarrId: number | undefined = undefined;
-
-							if (radarrConnection) {
-								const radarrRes = await Radarr.addCustomFormat(lang);
-								if (!radarrRes.success || !radarrRes.id) {
-									console.error(
-										`Unable to add Custom Format on Radarr for ${lang}. Reason:\n${radarrRes.error}`
-									);
-									return { success: false };
-								}
-								radarrId = radarrRes.id;
-							}
-							if (sonarrConnection) {
-								const sonarrRes = await Sonarr.addCustomFormat(lang);
-								if (!sonarrRes.success || !sonarrRes.id) {
-									console.error(
-										`Unable to add Custom Format on Sonarr for ${lang}. Reason:\n${sonarrRes.error}`
-									);
-									return { success: false };
-								}
-								sonarrId = sonarrRes.id;
-							}
-							await CustomFormatsEntity.createFormat(lang, radarrId, sonarrId);
-						}
-						availableCustomProfiles.delete(lang);
-					}
-
-					// Removing unused custom formats
-					/*const radarrIds: number[] = [];
-					const sonarrIds: number[] = [];*/
-					for (const profile of availableCustomProfiles.values()) {
-						/*if (profile.radarrId) radarrIds.push(profile.radarrId);
-						if (profile.sonarrId) sonarrIds.push(profile.sonarrId);*/
-						await CustomFormatsEntity.deleteFormat(profile.id);
-					}
-					/*if (radarrIds.length > 0) await Radarr.deleteCustomFormats(radarrIds);
-					if (sonarrIds.length > 0) await Sonarr.deleteCustomFormats(sonarrIds);*/
-				}
+				await CustomFormatsEntity.upsertFormats(adminDownloadLanguages);
+				await CustomFormatsEntity.delete({
+					lang: Not(In(adminDownloadLanguages))
+				});
+				await scheduleTask(TaskType.SYNC_CUSTOM_FORMATS, undefined);
 
 				// Handling Quality Profiles
-				const profiles = await FilteringProfilesEntity.getAll(true);
+				/*const profiles = await FilteringProfilesEntity.getAll(true);
 				const langs = await CustomFormatsEntity.getAll();
 				for (const profile of profiles) {
 					for (const [lang, format] of langs.entries()) {
 						if (!(await QualityProfilesEntity.profileExists(profile.id, lang))) {
-							let radarrId: number | undefined = undefined;
-							let sonarrId: number | undefined = undefined;
-
-							if (radarrConnection) {
-								const res = await Radarr.addQualityProfile(
-									profile.name,
-									lang,
-									profile.qualities
-								);
-								if (!res.success || !res.id) {
-									console.error(
-										`Unable to add Quality Profile on Radarr for ${profile.name}. Reason:\n${res.error}`
-									);
-									return { success: false };
-								}
-								radarrId = res.id;
-							}
-							if (sonarrConnection) {
-								const res = await Sonarr.addQualityProfile(
-									profile.name,
-									lang,
-									profile.qualities
-								);
-								if (!res.success || !res.id) {
-									console.error(
-										`Unable to add Quality Profile on Sonarr for ${profile.name}. Reason:\n${res.error}`
-									);
-									return { success: false };
-								}
-								sonarrId = res.id;
-							}
-
 							await QualityProfilesEntity.createProfile(
 								format,
-								radarrId,
-								sonarrId,
+								undefined,
+								undefined,
 								profile as FilteringProfilesEntity
 							);
 						}
 					}
-				}
+				}*/
 			}
 		}
 

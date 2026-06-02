@@ -12,10 +12,10 @@ export class CustomFormatsEntity extends BaseEntity {
 	@Column('text')
 	lang: string;
 
-	@Column('integer', { nullable: true })
+	@Column('integer', { nullable: true, default: undefined })
 	sonarrId: number | undefined;
 
-	@Column('integer', { nullable: true })
+	@Column('integer', { nullable: true, default: undefined })
 	radarrId: number | undefined;
 
 	/**
@@ -31,23 +31,15 @@ export class CustomFormatsEntity extends BaseEntity {
 		return profiles;
 	}
 
-	public static async createFormat(
-		lang: string,
-		radarrId: number | undefined,
-		sonarrId: number | undefined
-	) {
+	public static async upsertFormats(langs: string[]) {
 		const globalSettings = await GlobalSettingsEntity.getDefault();
 		if (!globalSettings) throw 'Global settings must exists before creating a format';
-		const customFormat = new CustomFormatsEntity();
-		customFormat.lang = lang;
-		customFormat.radarrId = radarrId;
-		customFormat.sonarrId = sonarrId;
-		customFormat.globalSettings = globalSettings;
-
-		await customFormat.save();
-	}
-
-	public static async deleteFormat(id: number) {
-		await this.delete({ id: id });
+		await this.upsert(
+			langs.map((lang) => ({ lang, globalSettings })),
+			{
+				conflictPaths: ['lang'],
+				skipUpdateIfNoValuesChanged: true
+			}
+		);
 	}
 }

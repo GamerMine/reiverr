@@ -84,7 +84,7 @@ export class GlobalSettingsEntity extends BaseEntity {
 		return settings.jellyfinApiKey ?? undefined;
 	}
 
-	public static async getRadarrBaseUrl(name = 'default') {
+	public static async getRadarrApi(name = 'default') {
 		const settings = await this.findOne({ where: { name } });
 
 		if (!settings) {
@@ -94,10 +94,21 @@ export class GlobalSettingsEntity extends BaseEntity {
 			return undefined;
 		}
 
-		return settings.radarrBaseUrl ?? undefined;
+		return {
+			apiUrl: settings.radarrBaseUrl ?? undefined,
+			apiKey: settings.radarrApiKey ?? undefined
+		};
+	}
+
+	public static async getRadarrBaseUrl(name = 'default') {
+		return (await GlobalSettingsEntity.getRadarrApi(name))?.apiUrl ?? undefined;
 	}
 
 	public static async getRadarrApiKey(name = 'default') {
+		return (await GlobalSettingsEntity.getRadarrApi(name))?.apiKey ?? undefined;
+	}
+
+	public static async getSonarrApi(name = 'default') {
 		const settings = await this.findOne({ where: { name } });
 
 		if (!settings) {
@@ -107,33 +118,18 @@ export class GlobalSettingsEntity extends BaseEntity {
 			return undefined;
 		}
 
-		return settings.radarrApiKey ?? undefined;
+		return {
+			apiUrl: settings.sonarrBaseUrl ?? undefined,
+			apiKey: settings.sonarrApiKey ?? undefined
+		};
 	}
 
 	public static async getSonarrBaseUrl(name = 'default') {
-		const settings = await this.findOne({ where: { name } });
-
-		if (!settings) {
-			const defaultSettings = new GlobalSettingsEntity();
-			defaultSettings.name = 'default';
-			await defaultSettings.save();
-			return undefined;
-		}
-
-		return settings.sonarrBaseUrl ?? undefined;
+		return (await GlobalSettingsEntity.getSonarrApi(name))?.apiUrl ?? undefined;
 	}
 
 	public static async getSonarrApiKey(name = 'default') {
-		const settings = await this.findOne({ where: { name } });
-
-		if (!settings) {
-			const defaultSettings = new GlobalSettingsEntity();
-			defaultSettings.name = 'default';
-			await defaultSettings.save();
-			return undefined;
-		}
-
-		return settings.sonarrApiKey ?? undefined;
+		return (await GlobalSettingsEntity.getSonarrApi(name))?.apiKey ?? undefined;
 	}
 
 	public static async getDownloadLanguages(name = 'default') {

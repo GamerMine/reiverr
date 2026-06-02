@@ -16,3 +16,9 @@ export const MessageObjectSchema = v.object({
 	values: v.optional(v.record(v.string(), v.union([v.string(), v.number(), v.date()])))
 });
 export type MessageObject = InferOutput<typeof MessageObjectSchema>;
+
+export type Result<TResultData extends object> = {
+	success: boolean;
+	error?: string;
+	data?: TResultData;
+};

@@ -5,9 +5,9 @@ import type {
 	paths as SonarrPaths
 } from '$lib/apis/sonarr/sonarr.generated';
 
+// TODO: Remove this file when all is moved to Connector
 export namespace Sonarr {
 	let qualityDefs: SonarrComponents['schemas']['QualityDefinitionResource'][] = [];
-	let languages: SonarrComponents['schemas']['LanguageResource'][] = [];
 
 	async function getQualityDefs() {
 		if (qualityDefs.length === 0) {
@@ -20,19 +20,6 @@ export namespace Sonarr {
 		}
 
 		return qualityDefs;
-	}
-
-	async function getLanguages() {
-		if (languages.length === 0) {
-			const client = await getClient();
-
-			const { data: langs } = await client.GET('/api/v3/language');
-			if (!langs) return languages;
-
-			languages = langs;
-		}
-
-		return languages;
 	}
 
 	export async function getClient() {
@@ -67,41 +54,6 @@ export namespace Sonarr {
 		}).GET('/api/v3/health');
 
 		return conn.response.ok;
-	}
-
-	export async function addCustomFormat(lang: string) {
-		const client = await getClient();
-
-		const languages = await getLanguages();
-		if (languages.length === 0)
-			return { success: false, error: "Can't get languages from Sonarr" };
-		const sonarrLang = languages.find((e) => e.nameLower === lang);
-		if (!sonarrLang || !sonarrLang.id)
-			return { success: false, error: `Can't find language: ${lang} on Sonarr` };
-
-		const res = await client.POST('/api/v3/customformat', {
-			body: {
-				name: `Not ${lang} [Reiverr]`,
-				specifications: [
-					{
-						name: `Not ${lang} [Reiverr]`,
-						implementation: 'LanguageSpecification',
-						negate: true,
-						required: false,
-						fields: [
-							{
-								name: 'value',
-								value: sonarrLang.id
-							}
-						]
-					}
-				]
-			}
-		});
-
-		if (!res.response.ok || !res.data)
-			return { success: false, error: JSON.stringify(res.error, null, 2) };
-		else return { success: true, id: res.data.id };
 	}
 
 	export async function addQualityProfile(name: string, lang: string, quals: string[]) {
@@ -171,11 +123,5 @@ export namespace Sonarr {
 		});
 
 		return { success: res.response.ok };
-	}
-
-	export async function getAllCustomFormats() {
-		const client = await getClient();
-
-		return await client.GET('/api/v3/customformat');
 	}
 }

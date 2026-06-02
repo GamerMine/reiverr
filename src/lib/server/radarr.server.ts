@@ -5,9 +5,9 @@ import type {
 } from '$lib/apis/radarr/radarr.generated';
 import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 
+// TODO: Remove this file when all is moved to Connector
 export namespace Radarr {
 	let qualityDefs: RadarrComponents['schemas']['QualityDefinitionResource'][] = [];
-	let languages: RadarrComponents['schemas']['LanguageResource'][] = [];
 
 	async function getQualityDefs() {
 		if (qualityDefs.length === 0) {
@@ -20,20 +20,6 @@ export namespace Radarr {
 		}
 
 		return qualityDefs;
-	}
-
-	async function getLanguages() {
-		if (languages.length === 0) {
-			const client = await getClient();
-			if (!client) return languages;
-
-			const { data: langs } = await client.GET('/api/v3/language');
-			if (!langs) return languages;
-
-			languages = langs;
-		}
-
-		return languages;
 	}
 
 	export async function getClient() {
@@ -68,41 +54,6 @@ export namespace Radarr {
 		}).GET('/api/v3/health');
 
 		return conn.response.ok;
-	}
-
-	export async function addCustomFormat(lang: string) {
-		const client = await getClient();
-
-		const languages = await getLanguages();
-		if (languages.length === 0)
-			return { success: false, error: "Can't get languages from Radarr" };
-		const radarrLang = languages.find((e) => e.nameLower === lang);
-		if (!radarrLang || !radarrLang.id)
-			return { success: false, error: `Can't find language: ${lang} on Radarr` };
-
-		const res = await client.POST('/api/v3/customformat', {
-			body: {
-				name: `Not ${lang} [Reiverr]`,
-				specifications: [
-					{
-						name: `Not ${lang} [Reiverr]`,
-						implementation: 'LanguageSpecification',
-						negate: true,
-						required: false,
-						fields: [
-							{
-								name: 'value',
-								value: radarrLang.id
-							}
-						]
-					}
-				]
-			}
-		});
-
-		if (!res.response.ok || !res.data)
-			return { success: false, error: JSON.stringify(res.error, null, 2) };
-		else return { success: true, id: res.data.id };
 	}
 
 	export async function addQualityProfile(name: string, lang: string, quals: string[]) {
@@ -166,17 +117,5 @@ export namespace Radarr {
 		if (!res.response.ok || !res.data)
 			return { success: false, error: JSON.stringify(res.error, null, 2) };
 		return { success: res.response.ok, id: res.data.id };
-	}
-
-	export async function deleteCustomFormats(id: number[]) {
-		const client = await getClient();
-
-		const res = await client.DELETE('/api/v3/customformat/bulk', {
-			body: {
-				ids: id
-			}
-		});
-
-		return { success: res.response.ok };
 	}
 }
