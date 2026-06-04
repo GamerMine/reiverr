@@ -169,33 +169,32 @@ export const saveSettings = form(
 			}
 
 			// Set other admin settings
-			// FIXME: All API related stuff must be moved to a task.
-			// 	Reiverr database operations should be kept here.
-			{
-				// Handling Custom Format creation and deletion
-				if (!adminDownloadLanguages) adminDownloadLanguages = [];
-				await CustomFormatsEntity.upsertFormats(adminDownloadLanguages);
-				await CustomFormatsEntity.delete({
-					lang: Not(In(adminDownloadLanguages))
-				});
-				await scheduleTask(TaskType.SYNC_CUSTOM_FORMATS, undefined);
+			if (!adminDownloadLanguages) adminDownloadLanguages = [];
+			await CustomFormatsEntity.upsertFormats(adminDownloadLanguages);
+			await QualityProfilesEntity.delete({
+				customFormat: { lang: Not(In(adminDownloadLanguages)) }
+			});
+			await CustomFormatsEntity.delete({
+				lang: Not(In(adminDownloadLanguages))
+			});
+			await scheduleTask(TaskType.SYNC_CUSTOM_FORMATS, undefined);
 
-				// Handling Quality Profiles
-				/*const profiles = await FilteringProfilesEntity.getAll(true);
-				const langs = await CustomFormatsEntity.getAll();
-				for (const profile of profiles) {
-					for (const [lang, format] of langs.entries()) {
-						if (!(await QualityProfilesEntity.profileExists(profile.id, lang))) {
-							await QualityProfilesEntity.createProfile(
-								format,
-								undefined,
-								undefined,
-								profile as FilteringProfilesEntity
-							);
-						}
-					}
-				}*/
+			const [filteringProfiles, formats] = await Promise.all([
+				FilteringProfilesEntity.find(),
+				CustomFormatsEntity.find()
+			]);
+			const profiles: QualityProfilesEntity[] = [];
+			for (const filteringProfile of filteringProfiles) {
+				for (const format of formats) {
+					profiles.push(
+						QualityProfilesEntity.create({ customFormat: format, filteringProfile })
+					);
+				}
 			}
+			await QualityProfilesEntity.upsert(profiles, {
+				conflictPaths: ['customFormat', 'filteringProfile'],
+				skipUpdateIfNoValuesChanged: true
+			});
 		}
 
 		return {

@@ -103,6 +103,9 @@ async function queueExecution(task: TaskEntity) {
 				execution.task = task;
 				execution.data = data;
 				await execution.save();
+				await taskExecutors[task.type].execute(data, async (current, total) => {
+					console.log(`Progress: ${current}/${total}`);
+				});
 			});
 
 			if (error) {
@@ -137,12 +140,13 @@ export async function scheduleTask(
 ): Promise<TaskEntity> {
 	const task = new TaskEntity();
 	task.data = data;
+	task.type = type;
 	task.cron = cron;
 
-	await scheduleExecution(task);
-	await task.save();
+	const saved = await task.save();
+	await scheduleExecution(saved);
 
-	return task;
+	return saved;
 }
 
 /** Modifies a task.

@@ -54,11 +54,8 @@ export class TestExecutor implements TaskExecutor {
 			await queue({ id: i + testData.successCount, success: false });
 		}
 	}
-	async execute(
-		data: TestExecutionData,
-		progress: TaskProgressCallback
-	): Promise<void | MessageObject> {
-		console.log(`Executing test #${data.id}`);
+	async execute(data: unknown, progress: TaskProgressCallback): Promise<void | MessageObject> {
+		/*console.log(`Executing test #${data.id}`);
 		if (data.success) {
 			for (let i = 0; i < 100; i++) {
 				await new Promise((resolve) => setTimeout(resolve, 100));
@@ -66,6 +63,6 @@ export class TestExecutor implements TaskExecutor {
 			}
 		} else {
 			return { id: 'service.tasks.test.error', values: { id: data.id } };
-		}
+		}*/
 	}
 }

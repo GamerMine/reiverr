@@ -1,8 +1,9 @@
-import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { FilteringProfilesEntity } from '$lib/entities/FilteringProfiles.server';
 import { CustomFormatsEntity } from '$lib/entities/CustomFormats.server';
 
 @Entity({ name: 'qualityProfiles' })
+@Unique(['filteringProfile', 'customFormat'])
 export class QualityProfilesEntity extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	id: number;

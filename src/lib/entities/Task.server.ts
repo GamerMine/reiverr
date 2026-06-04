@@ -31,13 +31,13 @@ export class TaskEntity extends BaseEntity {
 	@CreateDateColumn()
 	created: Date;
 
-	@CreateDateColumn({ nullable: true })
+	@Column('date', { nullable: true })
 	canceled: Date | null;
 
-	@CreateDateColumn({ nullable: true })
+	@Column('date', { nullable: true })
 	scheduled: Date | null;
 
-	@CreateDateColumn({ nullable: true })
+	@Column('date', { nullable: true })
 	executed: Date | null;
 
 	@OneToMany(() => TaskExecutionEntity, (execution) => execution.task)

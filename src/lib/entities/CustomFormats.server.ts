@@ -9,7 +9,7 @@ export class CustomFormatsEntity extends BaseEntity {
 	@ManyToOne(() => GlobalSettingsEntity, (entity) => entity.downloadLanguages)
 	globalSettings: GlobalSettingsEntity;
 
-	@Column('text')
+	@Column('text', { unique: true })
 	lang: string;
 
 	@Column('integer', { nullable: true, default: undefined })
