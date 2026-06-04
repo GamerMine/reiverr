@@ -1,10 +1,19 @@
-import * as v from "valibot";
+import * as v from 'valibot';
+
+export type DbConfig = {
+	DB_TYPE: string;
+	DB_HOST: string;
+	DB_PORT: number;
+	DB_USERNAME: string;
+	DB_PASSWORD: string;
+	DB_DATABASE: string;
+};
 
 export type GlobalSettings = {
 	initialised: boolean;
 	general: {
 		downloadLanguages: string[];
-	},
+	};
 	sonarr: {
 		baseUrl: string | undefined;
 		apiKey: string | undefined;
@@ -43,7 +52,7 @@ export const FilteringProfileSchema = v.object({
 	id: v.number(),
 	name: v.string(),
 	qualities: v.array(v.string()),
-	isDefault: v.boolean(),
+	isDefault: v.boolean()
 });
 
 export type FilteringProfile = v.InferOutput<typeof FilteringProfileSchema>;
@@ -51,18 +60,18 @@ export type FilteringProfile = v.InferOutput<typeof FilteringProfileSchema>;
 export const defaultGlobalSettings: GlobalSettings = {
 	initialised: false,
 
-	general : {
-		downloadLanguages: [],
+	general: {
+		downloadLanguages: []
 	},
 	sonarr: {
 		apiKey: undefined,
 		baseUrl: undefined,
-		rootFolderPath: undefined,
+		rootFolderPath: undefined
 	},
 	radarr: {
 		apiKey: undefined,
 		baseUrl: undefined,
-		rootFolderPath: undefined,
+		rootFolderPath: undefined
 	},
 	jellyfin: {
 		apiKey: undefined,
@@ -80,5 +89,5 @@ export const defaultUserSettings: UserSettings = {
 		region: '',
 		excludeLibraryItems: false,
 		includedLanguages: 'en'
-	},
+	}
 };

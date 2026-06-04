@@ -1,8 +1,8 @@
 import { type RequestHandler } from '@sveltejs/kit';
 import { isJellyfinUserConnected } from '$lib/apis/jellyfin/server/jellyfin.server';
 import type { JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
-import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
-import { defaultGlobalSettings } from '$lib/entities/Types';
+import { GlobalSettingsEntity } from '@reiverr/db/entities';
+import { defaultGlobalSettings } from '@reiverr/db/types';
 
 export const DELETE: RequestHandler = async ({ cookies, url }) => {
 	const userReq = await isJellyfinUserConnected(cookies);

@@ -6,7 +6,7 @@
 	import { ISO_REGIONS } from '$lib/utils/iso-regions';
 	import { _, dictionary } from 'svelte-i18n';
 	import classNames from 'classnames';
-	import type { UserSettings } from '$lib/entities/Types';
+	import type { UserSettings } from '@reiverr/db/types';
 	import Option from '$lib/components/common/inputs/forms/Option.svelte';
 	import { saveSettings } from '$lib/remote/settings.remote';
 

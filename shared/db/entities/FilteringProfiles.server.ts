@@ -1,5 +1,5 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import type { FilteringProfile } from '$lib/entities/Types';
+import type { FilteringProfile } from '@reiverr/db/types';
 
 @Entity({ name: 'filteringProfiles' })
 export class FilteringProfilesEntity extends BaseEntity {

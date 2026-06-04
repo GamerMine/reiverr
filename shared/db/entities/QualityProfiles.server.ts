@@ -1,6 +1,6 @@
 import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
-import { FilteringProfilesEntity } from '$lib/entities/FilteringProfiles.server';
-import { CustomFormatsEntity } from '$lib/entities/CustomFormats.server';
+import { FilteringProfilesEntity } from '@reiverr/db/entities';
+import { CustomFormatsEntity } from '@reiverr/db/entities';
 
 @Entity({ name: 'qualityProfiles' })
 @Unique(['filteringProfile', 'customFormat'])

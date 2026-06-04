@@ -1,6 +1,6 @@
 import createClient from 'openapi-fetch';
 import type { components, paths } from '$lib/apis/jellyfin/jellyfin.generated';
-import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
+import { GlobalSettingsEntity } from '@reiverr/db/entities';
 import { getBrowserName } from '$lib/utils/browser-detection';
 import { version } from '$app/environment';
 import * as crypto from 'node:crypto';

@@ -1,8 +1,8 @@
 import type { components as RadarrComponents } from '$lib/apis/radarr/radarr.generated';
 import type { components as SonarrComponents } from '$lib/apis/sonarr/sonarr.generated';
 import { RadarrConnector } from '$lib/server/connectors/radarrConnector.server';
-import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import { SonarrConnector } from '$lib/server/connectors/sonarrConnector.server';
+import { GlobalSettingsEntity } from '@reiverr/db/entities';
 
 export type RadarrQualityDefinitionResource =
 	RadarrComponents['schemas']['QualityDefinitionResource'];

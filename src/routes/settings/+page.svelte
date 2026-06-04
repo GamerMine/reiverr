@@ -8,7 +8,7 @@
 	import { fade } from 'svelte/transition';
 	import { _ } from 'svelte-i18n';
 	import { createErrorNotification } from '$lib/stores/notification.store';
-	import type { Settings } from '$lib/entities/Types';
+	import type { Settings } from '@reiverr/db/types';
 	import { settings } from '$lib/stores/settings.svelte';
 	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
 	import type { PageProps } from '../../../.svelte-kit/types/src/routes/settings/$types';

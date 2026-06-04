@@ -1,9 +1,8 @@
-import { TaskEntity } from '$lib/entities/Task.server';
 import type { MessageObject } from '$lib/types';
 import { TestExecutor } from '$lib/service/tasks/test.server';
 import { CronExpressionParser } from 'cron-parser';
-import { TaskExecutionEntity } from '$lib/entities/TaskExecution.server';
 import { SyncCustomFormats } from '$lib/server/tasks/syncCustomFormats.server';
+import { TaskEntity, TaskExecutionEntity } from '@reiverr/db/entities';
 
 export interface TaskProgressCallback {
 	(current: number, total: number): Promise<void>;

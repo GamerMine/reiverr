@@ -3,7 +3,7 @@ import type {
 	components as RadarrComponents,
 	paths as RadarrPaths
 } from '$lib/apis/radarr/radarr.generated';
-import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
+import { GlobalSettingsEntity } from '@reiverr/db/entities';
 
 // TODO: Remove this file when all is moved to Connector
 export namespace Radarr {

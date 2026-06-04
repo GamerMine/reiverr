@@ -11,11 +11,11 @@ import {
 	type SonarrLanguageResource
 } from '$lib/server/tasks/baseSync.server';
 import { RadarrMapper } from '$lib/server/mappers/radarrMapper.server';
-import { CustomFormatsEntity } from '$lib/entities/CustomFormats.server';
 import { arrayDifference } from '$lib/server/utils.server';
 import { SonarrMapper } from '$lib/server/mappers/sonarrMapper.server';
 import type { RadarrConnector } from '$lib/server/connectors/radarrConnector.server';
 import type { SonarrConnector } from '$lib/server/connectors/sonarrConnector.server';
+import { CustomFormatsEntity } from '@reiverr/db/entities';
 
 // FIXME: Move this to another place to be reused... maybe...
 const ExecutionPlatformSchema = v.picklist(['radarr', 'sonarr']);

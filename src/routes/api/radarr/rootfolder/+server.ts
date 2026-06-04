@@ -1,6 +1,6 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import createClient from 'openapi-fetch';
-import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
+import { GlobalSettingsEntity } from '@reiverr/db/entities';
 import type { paths } from '$lib/apis/radarr/radarr.generated';
 import { assertAdminAuth } from '$lib/server/utils.server';
 

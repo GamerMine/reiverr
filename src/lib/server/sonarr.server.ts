@@ -1,9 +1,9 @@
-import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
 import createClient from 'openapi-fetch';
 import type {
 	components as SonarrComponents,
 	paths as SonarrPaths
 } from '$lib/apis/sonarr/sonarr.generated';
+import { GlobalSettingsEntity } from '@reiverr/db/entities';
 
 // TODO: Remove this file when all is moved to Connector
 export namespace Sonarr {

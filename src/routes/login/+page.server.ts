@@ -1,5 +1,5 @@
 import { type Actions, fail, redirect } from '@sveltejs/kit';
-import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
+import { GlobalSettingsEntity } from '@reiverr/db/entities';
 import createClient from 'openapi-fetch';
 import type { paths } from '$lib/apis/jellyfin/jellyfin.generated';
 import {

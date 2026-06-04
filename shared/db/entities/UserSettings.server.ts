@@ -1,5 +1,5 @@
 import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
-import { defaultUserSettings, type UserSettings } from '$lib/entities/Types';
+import { defaultUserSettings, type UserSettings } from '@reiverr/db/types';
 
 @Entity({ name: 'userSettings' })
 export class UserSettingsEntity extends BaseEntity {

@@ -14,7 +14,7 @@
 	} from '$lib/stores/notification.store';
 	import { invalidateAll } from '$app/navigation';
 	import Option from '$lib/components/common/inputs/forms/Option.svelte';
-	import type { FilteringProfile } from '$lib/entities/Types';
+	import type { FilteringProfile } from '@reiverr/db/types';
 	import Toggle from '$lib/components/common/inputs/forms/Toggle.svelte';
 	import { createUpdateFilteringProfile } from '$lib/remote/settings.remote';
 

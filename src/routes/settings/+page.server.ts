@@ -1,7 +1,7 @@
 import { isJellyfinUserConnected } from '$lib/apis/jellyfin/server/jellyfin.server';
 import type { JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
 import type { PageServerLoad } from './$types';
-import { FilteringProfilesEntity } from '$lib/entities/FilteringProfiles.server';
+import { FilteringProfilesEntity } from '@reiverr/db/entities';
 
 export const load: PageServerLoad = async ({ cookies }) => {
 	const userReq = await isJellyfinUserConnected(cookies);

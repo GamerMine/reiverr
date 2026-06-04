@@ -1,7 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import createClient from 'openapi-fetch';
 import type { paths } from '$lib/apis/jellyfin/jellyfin.generated';
-import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
+import { GlobalSettingsEntity } from '@reiverr/db/entities';
 
 export const GET: RequestHandler = async ({ url }) => {
 	return createClient<paths>({

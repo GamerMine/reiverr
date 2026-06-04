@@ -1,4 +1,4 @@
-import { defaultGlobalSettings, defaultUserSettings, type Settings } from '$lib/entities/Types';
+import { defaultGlobalSettings, defaultUserSettings, type Settings } from '@reiverr/db/types';
 
 export const settings: Settings = $state({
 	userSettings: defaultUserSettings,

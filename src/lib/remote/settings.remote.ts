@@ -1,26 +1,28 @@
 import { command, form, getRequestEvent } from '$app/server';
 import {
-	type FilteringProfile,
-	FilteringProfileSchema,
-	type UserSettings
-} from '$lib/entities/Types';
-import {
 	checkJellyfinConnection,
 	isJellyfinUserConnected
 } from '$lib/apis/jellyfin/server/jellyfin.server';
 import type { JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
-import { FilteringProfilesEntity } from '$lib/entities/FilteringProfiles.server';
 import * as v from 'valibot';
 import { assertAdminUserAuth } from '$lib/server/utils.server';
 import { QUALITY_DEFS } from '$lib/constants';
-import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
-import { UserSettingsEntity } from '$lib/entities/UserSettings.server';
 import { Radarr } from '$lib/server/radarr.server';
 import { Sonarr } from '$lib/server/sonarr.server';
-import { CustomFormatsEntity } from '$lib/entities/CustomFormats.server';
-import { QualityProfilesEntity } from '$lib/entities/QualityProfiles.server';
 import { In, Not } from 'typeorm';
 import { scheduleTask, TaskType } from '$lib/service/scheduler.server';
+import {
+	CustomFormatsEntity,
+	FilteringProfilesEntity,
+	GlobalSettingsEntity,
+	QualityProfilesEntity,
+	UserSettingsEntity
+} from '@reiverr/db/entities';
+import {
+	type FilteringProfile,
+	FilteringProfileSchema,
+	type UserSettings
+} from '@reiverr/db/types';
 
 // TODO: Add more error message when success: false
 

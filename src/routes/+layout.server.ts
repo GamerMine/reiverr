@@ -1,9 +1,9 @@
-import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
+import { GlobalSettingsEntity } from '@reiverr/db/entities';
 import type { LayoutServerLoad } from './$types';
 import { redirect } from '@sveltejs/kit';
 import { isJellyfinUserConnected } from '$lib/apis/jellyfin/server/jellyfin.server';
-import { UserSettingsEntity } from '$lib/entities/UserSettings.server';
-import { defaultGlobalSettings, defaultUserSettings, type Settings } from '$lib/entities/Types';
+import { UserSettingsEntity } from '@reiverr/db/entities';
+import { defaultGlobalSettings, defaultUserSettings, type Settings } from '@reiverr/db/types';
 
 export const load: LayoutServerLoad = async ({ cookies, url }) => {
 	const isConnected = await isJellyfinUserConnected(cookies);

@@ -8,7 +8,7 @@ import {
 	OneToMany,
 	PrimaryGeneratedColumn
 } from 'typeorm';
-import { TaskExecutionEntity } from '$lib/entities/TaskExecution.server';
+import { TaskExecutionEntity } from '@reiverr/db/entities';
 import type { MessageObject } from '$lib/types';
 import { TaskType } from '$lib/service/scheduler.server';
 

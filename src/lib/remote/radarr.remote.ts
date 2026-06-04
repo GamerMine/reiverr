@@ -1,9 +1,8 @@
 import { getRequestEvent, command } from '$app/server';
 import * as v from 'valibot';
 import { assertUserAuth } from '$lib/server/utils.server';
-import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
-import { FilteringProfilesEntity } from '$lib/entities/FilteringProfiles.server';
 import { Radarr } from '$lib/server/radarr.server';
+import { FilteringProfilesEntity, GlobalSettingsEntity } from '@reiverr/db/entities';
 
 export const addMovieToRadarr = command(v.number(), async (tmdbId: number) => {
 	const { cookies } = getRequestEvent();

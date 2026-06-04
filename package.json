@@ -47,13 +47,12 @@
     "classnames": "^2.5.1",
     "cron-parser": "^5.5.0",
     "hls.js": "^1.6.16",
-    "mysql": "^2.18.1",
     "openapi-fetch": "^0.17.0",
-    "pg": "^8.21.0",
-    "reflect-metadata": "^0.2.2",
     "svelte-i18n": "^4.0.1",
     "svelte-radix": "^3.0.2",
-    "typeorm": "0.3.29",
     "valibot": "^1.4.1"
-  }
+  },
+  "workspaces": [
+    "shared/db"
+  ]
 }

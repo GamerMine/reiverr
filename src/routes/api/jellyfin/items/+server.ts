@@ -1,7 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import createClient from 'openapi-fetch';
 import type { components, paths } from '$lib/apis/jellyfin/jellyfin.generated';
-import { GlobalSettingsEntity } from '$lib/entities/GlobalSettings.server';
+import { GlobalSettingsEntity } from '@reiverr/db/entities';
 import { getUserId } from '$lib/apis/jellyfin/server/jellyfin.server';
 import { assertParam, assertUserAuth } from '$lib/server/utils.server';
 

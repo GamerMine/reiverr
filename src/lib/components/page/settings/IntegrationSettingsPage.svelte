@@ -8,7 +8,7 @@
 	import IntegrationCard from './IntegrationCard.svelte';
 	import TestConnectionButton from './TestConnectionButton.svelte';
 	import { _ } from 'svelte-i18n';
-	import { defaultGlobalSettings, type GlobalSettings } from '$lib/entities/Types';
+	import { defaultGlobalSettings, type GlobalSettings } from '@reiverr/db/types';
 	import { jellyfinTestConnection } from '$lib/apis/jellyfin/jellyfinApi';
 	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
 	import { onMount } from 'svelte';
