@@ -63,14 +63,20 @@
 	$effect(() => {
 		if (saveSettings.result) {
 			if (saveSettings.result.success) {
-				if (saveSettings.result?.needLogin) {
+				if (saveSettings.result.data?.needLogin) {
 					showConfirmDialog($_('settings.misc.jellyfinConfirmChangesDialog'));
 				}
 				location.reload(); // FIXME: Language should change dynamically (without reloading the page)
 			} else {
-				createErrorNotification($_('general.error'), 'TODO'); // TODO
+				createErrorNotification(
+					$_('general.error'),
+					$_(saveSettings.result.error ?? 'general.unknownError')
+				);
 			}
 		}
+	});
+
+	$effect(() => {
 		if (currSettings.globalSettings.jellyfin.baseUrl?.length === 0) {
 			valuesChanged = false;
 			return;

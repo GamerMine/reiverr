@@ -23,6 +23,7 @@ import {
 	FilteringProfileSchema,
 	type UserSettings
 } from '@reiverr/db/types';
+import type { Result } from '$lib/types';
 
 // TODO: Add more error message when success: false
 
@@ -62,16 +63,16 @@ export const saveSettings = form(
 		adminSonarrApiKey,
 		adminSonarrRootFolderPath,
 		adminDownloadLanguages
-	}) => {
+	}): Promise<Result<{ needLogin: boolean }>> => {
 		const { cookies } = getRequestEvent();
 		const userReq = await isJellyfinUserConnected(cookies);
 		if (userReq.status !== 200) {
-			return { success: false };
+			return { success: false, error: 'general.connectionRequired' };
 		}
 		const user: JellyfinUser = await userReq.json();
 
 		if (!user.Id) {
-			return { success: false };
+			return { success: false, error: 'general.connectionRequired' };
 		}
 
 		const newUserSettings: UserSettings = {
@@ -108,7 +109,7 @@ export const saveSettings = form(
 					cookies.delete('access_token', { path: '/' });
 					needLogin = true;
 				} else {
-					return { success: false };
+					return { success: false, error: 'settings.misc.checkJellyfinCredentials' };
 				}
 			}
 
@@ -128,7 +129,7 @@ export const saveSettings = form(
 						adminRadarrApiKey
 					);
 				} else {
-					return { success: false };
+					return { success: false, error: 'settings.misc.checkRadarrCredentials' };
 				}
 			}
 
@@ -137,7 +138,7 @@ export const saveSettings = form(
 				if (adminRadarrRootFolderPath) {
 					await GlobalSettingsEntity.setRadarrApiConfiguration(adminRadarrRootFolderPath);
 				} else {
-					return { success: false };
+					return { success: false, error: 'settings.misc.radarrConfigurationInvalid' };
 				}
 			}
 
@@ -157,7 +158,7 @@ export const saveSettings = form(
 						adminSonarrApiKey
 					);
 				} else {
-					return { success: false };
+					return { success: false, error: 'settings.misc.checkSonarrCredentials' };
 				}
 			}
 
@@ -166,7 +167,7 @@ export const saveSettings = form(
 				if (adminSonarrRootFolderPath) {
 					await GlobalSettingsEntity.setSonarrApiConfiguration(adminSonarrRootFolderPath);
 				} else {
-					return { success: false };
+					return { success: false, error: 'settings.misc.sonarrConfigurationInvalid' };
 				}
 			}
 
@@ -175,10 +176,16 @@ export const saveSettings = form(
 			let customFormatModified =
 				(await CustomFormatsEntity.upsertFormats(adminDownloadLanguages)).identifiers
 					.length > 0;
+
 			let qualityProfileModified =
 				((
 					await QualityProfilesEntity.delete({
-						customFormat: { lang: Not(In(adminDownloadLanguages)) }
+						customFormat: In(
+							await QualityProfilesEntity.find({
+								relations: { customFormat: true },
+								where: { customFormat: { lang: Not(In(adminDownloadLanguages)) } }
+							})
+						)
 					})
 				).affected ?? 1) > 0;
 			customFormatModified =
@@ -214,11 +221,13 @@ export const saveSettings = form(
 
 			if (qualityProfileModified)
 				await scheduleTask(TaskType.SYNC_QUALITY_PROFILES, undefined);
+		} else {
+			return { success: false, error: 'general.unauthorizedAction' };
 		}
 
 		return {
 			success: true,
-			needLogin: needLogin
+			data: { needLogin }
 		};
 	}
 );
@@ -255,15 +264,19 @@ export const createUpdateFilteringProfile = form(
 			entity = await FilteringProfilesEntity.createFilteringProfile(profile);
 		}
 
-		await QualityProfilesEntity.upsert(
-			(await CustomFormatsEntity.find()).map((f) => ({
-				customFormat: f,
-				filteringProfile: entity
-			})),
-			{
-				conflictPaths: ['filteringProfile', 'customFormat'],
-				skipUpdateIfNoValuesChanged: true
-			}
+		console.log(
+			(
+				await QualityProfilesEntity.upsert(
+					(await CustomFormatsEntity.find()).map((f) => ({
+						customFormat: f,
+						filteringProfile: entity
+					})),
+					{
+						conflictPaths: ['filteringProfile', 'customFormat'],
+						skipUpdateIfNoValuesChanged: true
+					}
+				)
+			).identifiers
 		);
 
 		await scheduleTask(TaskType.SYNC_QUALITY_PROFILES, undefined);

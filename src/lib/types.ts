@@ -17,7 +17,7 @@ export const MessageObjectSchema = v.object({
 });
 export type MessageObject = InferOutput<typeof MessageObjectSchema>;
 
-export type Result<TResultData extends object> = {
+export type Result<TResultData extends object | undefined> = {
 	success: boolean;
 	error?: string;
 	data?: TResultData;

@@ -6,6 +6,10 @@ import type {
 import { ExecutionPlatformSchema, type MessageObject } from '$lib/types';
 import { BaseSync } from '$lib/server/tasks/baseSync.server';
 import * as v from 'valibot';
+import type { InferOutput } from 'valibot';
+
+const ModifiedProfilesIdsSchema = v.array(v.number());
+export type ModifiedProfilesIds = InferOutput<typeof ModifiedProfilesIdsSchema>;
 
 export class SyncQualityProfiles implements TaskExecutor {
 	async computeExecutionDescription(data: unknown): Promise<MessageObject> {

@@ -5,7 +5,10 @@
     "success": "Succès",
     "add": "Créer",
     "edit": "Modifier",
-    "jellyfinUnreachable": "L'hôte Jellyfin est injoignable ! Merci de contacter votre administrateur."
+    "jellyfinUnreachable": "L'hôte Jellyfin est injoignable ! Merci de contacter votre administrateur.",
+    "connectionRequired": "Vous devez être connectés pour effectuer cette action.",
+    "unknownError": "Erreur inconnue. Vérifiez les logs du serveur.",
+    "unauthorizedAction": "Vous devez être connecté en tant qu'administrateur pour effectuer cette action."
   },
   "appName": "Reiverr",
   "setup": {
