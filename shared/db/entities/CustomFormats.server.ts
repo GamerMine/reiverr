@@ -34,7 +34,7 @@ export class CustomFormatsEntity extends BaseEntity {
 	public static async upsertFormats(langs: string[]) {
 		const globalSettings = await GlobalSettingsEntity.getDefault();
 		if (!globalSettings) throw 'Global settings must exists before creating a format';
-		await this.upsert(
+		return await this.upsert(
 			langs.map((lang) => ({ lang, globalSettings })),
 			{
 				conflictPaths: ['lang'],

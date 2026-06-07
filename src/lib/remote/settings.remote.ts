@@ -172,14 +172,22 @@ export const saveSettings = form(
 
 			// Set other admin settings
 			if (!adminDownloadLanguages) adminDownloadLanguages = [];
-			await CustomFormatsEntity.upsertFormats(adminDownloadLanguages);
-			await QualityProfilesEntity.delete({
-				customFormat: { lang: Not(In(adminDownloadLanguages)) }
-			});
-			await CustomFormatsEntity.delete({
-				lang: Not(In(adminDownloadLanguages))
-			});
-			await scheduleTask(TaskType.SYNC_CUSTOM_FORMATS, undefined);
+			let customFormatModified =
+				(await CustomFormatsEntity.upsertFormats(adminDownloadLanguages)).identifiers
+					.length > 0;
+			let qualityProfileModified =
+				((
+					await QualityProfilesEntity.delete({
+						customFormat: { lang: Not(In(adminDownloadLanguages)) }
+					})
+				).affected ?? 1) > 0;
+			customFormatModified =
+				((
+					await CustomFormatsEntity.delete({
+						lang: Not(In(adminDownloadLanguages))
+					})
+				).affected ?? 1) > 0 || customFormatModified;
+			if (customFormatModified) await scheduleTask(TaskType.SYNC_CUSTOM_FORMATS, undefined);
 
 			const [filteringProfiles, formats] = await Promise.all([
 				FilteringProfilesEntity.find(),
@@ -189,14 +197,23 @@ export const saveSettings = form(
 			for (const filteringProfile of filteringProfiles) {
 				for (const format of formats) {
 					profiles.push(
-						QualityProfilesEntity.create({ customFormat: format, filteringProfile })
+						QualityProfilesEntity.create({
+							customFormat: format,
+							filteringProfile
+						})
 					);
 				}
 			}
-			await QualityProfilesEntity.upsert(profiles, {
-				conflictPaths: ['customFormat', 'filteringProfile'],
-				skipUpdateIfNoValuesChanged: true
-			});
+			qualityProfileModified =
+				(
+					await QualityProfilesEntity.upsert(profiles, {
+						conflictPaths: ['customFormat', 'filteringProfile'],
+						skipUpdateIfNoValuesChanged: true
+					})
+				).identifiers.length > 0 || qualityProfileModified;
+
+			if (qualityProfileModified)
+				await scheduleTask(TaskType.SYNC_QUALITY_PROFILES, undefined);
 		}
 
 		return {
@@ -229,7 +246,7 @@ export const createUpdateFilteringProfile = form(
 			isDefault: !!isDefault
 		};
 
-		let entity;
+		let entity: FilteringProfilesEntity;
 		if (action === 'update') {
 			if (!profileId || Number.isNaN(profileId)) return { success: false };
 			profile.id = Number(profileId);
@@ -238,26 +255,18 @@ export const createUpdateFilteringProfile = form(
 			entity = await FilteringProfilesEntity.createFilteringProfile(profile);
 		}
 
-		if (!entity) return { success: false };
-
-		const languages = await CustomFormatsEntity.getAll();
-		for (const [lang, format] of languages.entries()) {
-			let radarrId: number | undefined = undefined;
-			let sonarrId: number | undefined = undefined;
-
-			if (await Radarr.checkConnection()) {
-				const res = await Radarr.addQualityProfile(profileName, lang, qualities);
-				if (!res.success || !res.id) return { success: false };
-				radarrId = res.id;
+		await QualityProfilesEntity.upsert(
+			(await CustomFormatsEntity.find()).map((f) => ({
+				customFormat: f,
+				filteringProfile: entity
+			})),
+			{
+				conflictPaths: ['filteringProfile', 'customFormat'],
+				skipUpdateIfNoValuesChanged: true
 			}
-			if (await Sonarr.checkConnection()) {
-				const res = await Sonarr.addQualityProfile(profileName, lang, qualities);
-				if (!res.success || !res.id) return { success: false };
-				sonarrId = res.id;
-			}
+		);
 
-			await QualityProfilesEntity.createProfile(format, radarrId, sonarrId, entity);
-		}
+		await scheduleTask(TaskType.SYNC_QUALITY_PROFILES, undefined);
 
 		return { success: true };
 	}
@@ -275,7 +284,12 @@ export const deleteFilteringProfile = command(FilteringProfileSchema, async (pro
 		return { success: false };
 	}
 
+	await QualityProfilesEntity.delete({
+		customFormat: { id: profile.id }
+	});
+
 	await FilteringProfilesEntity.deleteFilteringProfile(profile.id);
+	await scheduleTask(TaskType.SYNC_QUALITY_PROFILES, undefined);
 
 	return { success: true };
 });

@@ -3,6 +3,7 @@ import { TestExecutor } from '$lib/service/tasks/test.server';
 import { CronExpressionParser } from 'cron-parser';
 import { SyncCustomFormats } from '$lib/server/tasks/syncCustomFormats.server';
 import { TaskEntity, TaskExecutionEntity } from '@reiverr/db/entities';
+import { SyncQualityProfiles } from '$lib/server/tasks/syncQualityProfiles.server';
 
 export interface TaskProgressCallback {
 	(current: number, total: number): Promise<void>;
@@ -42,12 +43,14 @@ export interface TaskExecutor {
 
 export enum TaskType {
 	TEST = 'test',
-	SYNC_CUSTOM_FORMATS = 'syncCustomFormat'
+	SYNC_CUSTOM_FORMATS = 'syncCustomFormat',
+	SYNC_QUALITY_PROFILES = 'syncQualityProfiles'
 }
 
 export const taskExecutors = {
 	[TaskType.TEST]: new TestExecutor(),
-	[TaskType.SYNC_CUSTOM_FORMATS]: new SyncCustomFormats()
+	[TaskType.SYNC_CUSTOM_FORMATS]: new SyncCustomFormats(),
+	[TaskType.SYNC_QUALITY_PROFILES]: new SyncQualityProfiles()
 } satisfies Record<TaskType, TaskExecutor>;
 
 const schedulings: Map<string, NodeJS.Timeout> = new Map();

@@ -19,25 +19,4 @@ export class QualityProfilesEntity extends BaseEntity {
 
 	@Column('integer', { nullable: true })
 	sonarrId: number | undefined;
-
-	public static async createProfile(
-		customFormat: CustomFormatsEntity,
-		radarrId: number | undefined,
-		sonarrId: number | undefined,
-		filteringProfile: FilteringProfilesEntity
-	) {
-		const profile = new QualityProfilesEntity();
-		profile.customFormat = customFormat;
-		profile.radarrId = radarrId;
-		profile.sonarrId = sonarrId;
-		profile.filteringProfile = filteringProfile;
-
-		await profile.save();
-	}
-
-	public static async profileExists(filteringProfileId: number, lang: string) {
-		return !!(await this.findOne({
-			where: { filteringProfile: { id: filteringProfileId }, customFormat: { lang: lang } }
-		}));
-	}
 }

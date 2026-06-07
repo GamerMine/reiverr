@@ -22,3 +22,5 @@ export type Result<TResultData extends object> = {
 	error?: string;
 	data?: TResultData;
 };
+
+export const ExecutionPlatformSchema = v.picklist(['radarr', 'sonarr']);

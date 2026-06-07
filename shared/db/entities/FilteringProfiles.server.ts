@@ -47,7 +47,7 @@ export class FilteringProfilesEntity extends BaseEntity {
 	public static async editFilteringProfile(newProfile: FilteringProfile) {
 		const profile = await this.findOne({ where: { id: newProfile.id } });
 
-		if (!profile) return;
+		if (!profile) throw 'Cannot edit an inexistent Filtering Profile';
 
 		return await this.setProfile(profile, newProfile);
 	}

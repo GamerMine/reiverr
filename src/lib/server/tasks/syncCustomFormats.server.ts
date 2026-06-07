@@ -3,7 +3,7 @@ import type {
 	TaskProgressCallback,
 	TaskQueueCallback
 } from '$lib/service/scheduler.server';
-import type { MessageObject } from '$lib/types';
+import { ExecutionPlatformSchema, type MessageObject } from '$lib/types';
 import * as v from 'valibot';
 import {
 	BaseSync,
@@ -16,9 +16,6 @@ import { SonarrMapper } from '$lib/server/mappers/sonarrMapper.server';
 import type { RadarrConnector } from '$lib/server/connectors/radarrConnector.server';
 import type { SonarrConnector } from '$lib/server/connectors/sonarrConnector.server';
 import { CustomFormatsEntity } from '@reiverr/db/entities';
-
-// FIXME: Move this to another place to be reused... maybe...
-const ExecutionPlatformSchema = v.picklist(['radarr', 'sonarr']);
 
 export class SyncCustomFormats implements TaskExecutor {
 	async computeDescription(data: unknown): Promise<MessageObject> {
