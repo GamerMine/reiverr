@@ -110,7 +110,9 @@ export class SyncQualityProfiles implements TaskExecutor {
 		const toCreate = profiles.filter(
 			(p) => p.radarrId === undefined || tmpCreate.includes(p.radarrId)
 		);
-		const toEdit = profiles.filter((p) => modifiedIds.includes(p.id) && !toCreate.includes(p));
+		const toEdit = profiles.filter(
+			(p) => modifiedIds.includes(p.filteringProfile.id) && !toCreate.includes(p)
+		);
 		const totalActions = toRemove.length + toCreate.length + toEdit.length;
 		let doneActions = 0;
 
@@ -144,12 +146,39 @@ export class SyncQualityProfiles implements TaskExecutor {
 				!createdQualityProfile.response.ok
 			) {
 				console.error(
-					`Could not create QualityProfile on Radarr:\n${JSON.stringify(createdQualityProfile.error, null, 2)}`
+					`Cannot create QualityProfile on Radarr:\n${JSON.stringify(createdQualityProfile.error, null, 2)}`
 				);
 				continue;
 			}
 			quality.radarrId = createdQualityProfile.data.id;
 			await quality.save();
+			await progress(++doneActions, totalActions);
+		}
+
+		for (const quality of toEdit) {
+			const radarrProfile = radarrData.find((p) => p.id === quality.radarrId);
+			if (!radarrProfile || !radarrProfile.items || !quality.radarrId) {
+				console.error(`Cannot update QualityProfile with id ${quality.radarrId} on Radarr`);
+				continue;
+			}
+			const resource = RadarrMapper.qualityProfileResource(
+				quality.filteringProfile.name,
+				quality.customFormat.lang,
+				quality.filteringProfile.qualities,
+				qualityDefs,
+				formats.data
+			);
+			radarrProfile.items = resource.items;
+			radarrProfile.cutoff = resource.cutoff;
+
+			const res = await conn.putQualityProfile(quality.radarrId, radarrProfile);
+			if (!res.response.ok) {
+				console.error(
+					`Cannot update QualityProfile with id ${quality.radarrId} on Radarr:`,
+					JSON.stringify(res.error, null, 2)
+				);
+				continue;
+			}
 			await progress(++doneActions, totalActions);
 		}
 	}
@@ -172,7 +201,9 @@ export class SyncQualityProfiles implements TaskExecutor {
 		const toCreate = profiles.filter(
 			(p) => p.sonarrId === undefined || tmpCreate.includes(p.sonarrId)
 		);
-		const toEdit = profiles.filter((p) => modifiedIds.includes(p.id) && !toCreate.includes(p));
+		const toEdit = profiles.filter(
+			(p) => modifiedIds.includes(p.filteringProfile.id) && !toCreate.includes(p)
+		);
 		const totalActions = toRemove.length + toCreate.length + toEdit.length;
 		let doneActions = 0;
 
@@ -206,12 +237,39 @@ export class SyncQualityProfiles implements TaskExecutor {
 				!createdQualityProfile.response.ok
 			) {
 				console.error(
-					`Could not create QualityProfile on Sonarr:\n${JSON.stringify(createdQualityProfile.error, null, 2)}`
+					`Cannot create QualityProfile on Sonarr:\n${JSON.stringify(createdQualityProfile.error, null, 2)}`
 				);
 				continue;
 			}
 			quality.sonarrId = createdQualityProfile.data.id;
 			await quality.save();
+			await progress(++doneActions, totalActions);
+		}
+
+		for (const quality of toEdit) {
+			const sonarrProfile = sonarrData.find((p) => p.id === quality.sonarrId);
+			if (!sonarrProfile || !sonarrProfile.items || !quality.sonarrId) {
+				console.error(`Cannot update QualityProfile with id ${quality.sonarrId} on Sonarr`);
+				continue;
+			}
+			const resource = SonarrMapper.qualityProfileResource(
+				quality.filteringProfile.name,
+				quality.customFormat.lang,
+				quality.filteringProfile.qualities,
+				qualityDefs,
+				formats.data
+			);
+			sonarrProfile.items = resource.items;
+			sonarrProfile.cutoff = resource.cutoff;
+
+			const res = await conn.putQualityProfile(quality.sonarrId, sonarrProfile);
+			if (!res.response.ok) {
+				console.error(
+					`Cannot update QualityProfile with id ${quality.sonarrId} on Sonarr:`,
+					JSON.stringify(res.error, null, 2)
+				);
+				continue;
+			}
 			await progress(++doneActions, totalActions);
 		}
 	}

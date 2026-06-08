@@ -62,6 +62,16 @@ export class SonarrConnector {
 		return { success: true, data: profiles.data };
 	}
 
+	public async putQualityProfile(
+		id: number,
+		profile: SonarrComponents['schemas']['QualityProfileResource']
+	) {
+		return await this.client.PUT('/api/v3/qualityprofile/{id}', {
+			params: { path: { id: id.toString() } },
+			body: profile
+		});
+	}
+
 	public async deleteCustomFormatBulk(ids: number[]) {
 		return await this.client.DELETE('/api/v3/customformat/bulk', {
 			body: {

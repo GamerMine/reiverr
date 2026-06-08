@@ -1,6 +1,11 @@
 import type { components as RadarrComponents } from '$lib/apis/radarr/radarr.generated';
 
 export class RadarrMapper {
+	private static QUALITY_REPLACEMENTS: Map<string, string> = new Map([
+		['Bluray-1080p Remux', 'Remux-1080p'],
+		['Bluray-2160p Remux', 'Remux-2160p']
+	]);
+
 	public static customFormatResource(
 		langId: number,
 		lang: string
@@ -35,10 +40,17 @@ export class RadarrMapper {
 		let cutoff: number | undefined;
 		const remaining = [...qualities];
 
+		for (let i = 0; i < remaining.length; i++) {
+			if (this.QUALITY_REPLACEMENTS.has(remaining[i])) {
+				remaining[i] = <string>this.QUALITY_REPLACEMENTS.get(remaining[i]);
+			}
+		}
+
 		for (const def of qualityDefs) {
 			const item: RadarrComponents['schemas']['QualityProfileQualityItemResource'] = {};
 			const matchIndex = remaining.findIndex((v) => v === def.quality?.name);
 
+			item.quality = def.quality;
 			item.allowed = false;
 			if (matchIndex !== -1) {
 				cutoff = def.quality?.id;
@@ -49,8 +61,8 @@ export class RadarrMapper {
 			items.push(item);
 		}
 
-		if (qualities.length > 0)
-			console.warn('The following qualities were not found: ', qualities);
+		if (remaining.length > 0)
+			console.warn('The following qualities were not found: ', remaining);
 
 		const formatItems: RadarrComponents['schemas']['ProfileFormatItemResource'][] =
 			customFormats.map((f) => ({

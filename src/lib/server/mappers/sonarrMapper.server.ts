@@ -39,6 +39,7 @@ export class SonarrMapper {
 			const item: SonarrComponents['schemas']['QualityProfileQualityItemResource'] = {};
 			const matchIndex = remaining.findIndex((v) => v === def.quality?.name);
 
+			item.quality = def.quality;
 			item.allowed = false;
 			if (matchIndex !== -1) {
 				cutoff = def.quality?.id;
@@ -49,8 +50,8 @@ export class SonarrMapper {
 			items.push(item);
 		}
 
-		if (qualities.length > 0)
-			console.warn('The following qualities were not found: ', qualities);
+		if (remaining.length > 0)
+			console.warn('The following qualities were not found: ', remaining);
 
 		const formatItems: SonarrComponents['schemas']['ProfileFormatItemResource'][] =
 			customFormats.map((f) => ({
