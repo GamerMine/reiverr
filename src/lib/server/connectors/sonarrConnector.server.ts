@@ -38,7 +38,7 @@ export class SonarrConnector {
 		});
 	}
 
-	public async getQualityDefintions() {
+	public async getQualityDefinitions() {
 		return await this.client.GET('/api/v3/qualitydefinition');
 	}
 
@@ -54,10 +54,28 @@ export class SonarrConnector {
 		return { success: true, data: formats.data };
 	}
 
+	public async getQualityProfile(): Promise<
+		Result<SonarrComponents['schemas']['QualityProfileResource'][]>
+	> {
+		const profiles = await this.client.GET('/api/v3/qualityprofile');
+
+		return { success: true, data: profiles.data };
+	}
+
 	public async deleteCustomFormatBulk(ids: number[]) {
 		return await this.client.DELETE('/api/v3/customformat/bulk', {
 			body: {
 				ids
+			}
+		});
+	}
+
+	public async deleteQualityProfile(id: number) {
+		return await this.client.DELETE('/api/v3/qualityprofile/{id}', {
+			params: {
+				path: {
+					id
+				}
 			}
 		});
 	}

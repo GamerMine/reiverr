@@ -181,10 +181,12 @@ export const saveSettings = form(
 				((
 					await QualityProfilesEntity.delete({
 						customFormat: In(
-							await QualityProfilesEntity.find({
-								relations: { customFormat: true },
-								where: { customFormat: { lang: Not(In(adminDownloadLanguages)) } }
-							})
+							(
+								await CustomFormatsEntity.find({
+									select: { id: true },
+									where: { lang: Not(In(adminDownloadLanguages)) }
+								})
+							).map((f) => f.id)
 						)
 					})
 				).affected ?? 1) > 0;
@@ -219,8 +221,7 @@ export const saveSettings = form(
 					})
 				).identifiers.length > 0 || qualityProfileModified;
 
-			if (qualityProfileModified)
-				await scheduleTask(TaskType.SYNC_QUALITY_PROFILES, undefined);
+			if (qualityProfileModified) await scheduleTask(TaskType.SYNC_QUALITY_PROFILES, []);
 		} else {
 			return { success: false, error: 'general.unauthorizedAction' };
 		}
@@ -255,31 +256,25 @@ export const createUpdateFilteringProfile = form(
 			isDefault: !!isDefault
 		};
 
-		let entity: FilteringProfilesEntity;
 		if (action === 'update') {
 			if (!profileId || Number.isNaN(profileId)) return { success: false };
 			profile.id = Number(profileId);
-			entity = await FilteringProfilesEntity.editFilteringProfile(profile);
+			await FilteringProfilesEntity.editFilteringProfile(profile);
 		} else {
-			entity = await FilteringProfilesEntity.createFilteringProfile(profile);
+			const entity = await FilteringProfilesEntity.createFilteringProfile(profile);
+			await QualityProfilesEntity.upsert(
+				(await CustomFormatsEntity.find()).map((f) => ({
+					customFormat: f,
+					filteringProfile: entity
+				})),
+				{
+					conflictPaths: ['filteringProfile', 'customFormat'],
+					skipUpdateIfNoValuesChanged: true
+				}
+			);
 		}
 
-		console.log(
-			(
-				await QualityProfilesEntity.upsert(
-					(await CustomFormatsEntity.find()).map((f) => ({
-						customFormat: f,
-						filteringProfile: entity
-					})),
-					{
-						conflictPaths: ['filteringProfile', 'customFormat'],
-						skipUpdateIfNoValuesChanged: true
-					}
-				)
-			).identifiers
-		);
-
-		await scheduleTask(TaskType.SYNC_QUALITY_PROFILES, undefined);
+		await scheduleTask(TaskType.SYNC_QUALITY_PROFILES, profileId ? [profileId] : []);
 
 		return { success: true };
 	}
@@ -298,11 +293,11 @@ export const deleteFilteringProfile = command(FilteringProfileSchema, async (pro
 	}
 
 	await QualityProfilesEntity.delete({
-		customFormat: { id: profile.id }
+		filteringProfile: { id: profile.id }
 	});
 
 	await FilteringProfilesEntity.deleteFilteringProfile(profile.id);
-	await scheduleTask(TaskType.SYNC_QUALITY_PROFILES, undefined);
+	await scheduleTask(TaskType.SYNC_QUALITY_PROFILES, []);
 
 	return { success: true };
 });

@@ -105,9 +105,14 @@ async function queueExecution(task: TaskEntity) {
 				execution.task = task;
 				execution.data = data;
 				await execution.save();
-				await taskExecutors[task.type].execute(data, async (current, total) => {
-					console.log(`Progress: ${current}/${total}`);
-				});
+				console.log(
+					`${task.type} execution result:`,
+					await taskExecutors[task.type].execute(data, async (current, total) => {
+						console.log(
+							`${task.type} with data: ${JSON.stringify(data)} progress: ${current}/${total}`
+						);
+					})
+				);
 			});
 
 			if (error) {

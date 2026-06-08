@@ -44,14 +44,14 @@ export class BaseSync {
 
 			if (await baseSync.radarrConnector?.isHealthy()) {
 				baseSync._radarrQualities =
-					(await baseSync.radarrConnector?.getQualityDefintions())?.data ?? [];
+					(await baseSync.radarrConnector?.getQualityDefinitions())?.data ?? [];
 				baseSync._radarrLanguages =
 					(await baseSync.radarrConnector?.getLanguage())?.data ?? [];
 			}
 
 			if (await baseSync._sonarrConnector?.isHealthy()) {
 				baseSync._sonarrQualities =
-					(await baseSync._sonarrConnector?.getQualityDefintions())?.data ?? [];
+					(await baseSync._sonarrConnector?.getQualityDefinitions())?.data ?? [];
 				baseSync._sonarrLanguages =
 					(await baseSync._sonarrConnector?.getLanguage())?.data ?? [];
 			}

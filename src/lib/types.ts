@@ -1,5 +1,5 @@
 import * as v from 'valibot';
-import type { InferOutput } from 'valibot';
+import type { GenericSchema, InferOutput } from 'valibot';
 
 export type TitleType = 'movie' | 'tv' | 'person';
 export type TitleId = {
@@ -24,3 +24,11 @@ export type Result<TResultData extends object | undefined> = {
 };
 
 export const ExecutionPlatformSchema = v.picklist(['radarr', 'sonarr']);
+export function ExecutionPlatformWithDataSchema<TDataSchema extends GenericSchema>(
+	dataSchema: TDataSchema
+) {
+	return v.object({
+		platform: ExecutionPlatformSchema,
+		data: dataSchema
+	});
+}
