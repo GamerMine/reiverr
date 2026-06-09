@@ -14,6 +14,9 @@
 		name = undefined,
 		multiple = false,
 		selectedValues = $bindable(),
+		placeholder = $_('general.select'),
+		showOnlyPlaceholder = false,
+		variant = 'secondary',
 
 		children = undefined,
 
@@ -25,10 +28,13 @@
 		name?: string;
 		multiple?: boolean;
 		selectedValues?: string[] | string;
+		placeholder?: string;
+		showOnlyPlaceholder?: boolean;
+		variant?: 'primary' | 'secondary';
 
 		children?: Snippet;
 
-		onchange?: () => void;
+		onchange?: (newVal: string) => void;
 	} = $props();
 
 	let options = new SvelteSet<SelectOption>();
@@ -78,7 +84,7 @@
 	}
 
 	function addValue(option: SelectOption) {
-		onchange();
+		onchange(option.value);
 		if (multiple && typeof selectedValues === 'object') {
 			if (!selectedValues.includes(option.value)) {
 				selectedValues = selectedValues.concat(option.value);
@@ -93,7 +99,7 @@
 
 	function removeValue(val: string) {
 		if (typeof selectedValues === 'object') {
-			onchange();
+			onchange(val);
 			selectedValues = selectedValues.filter((e) => e !== val);
 			value = val;
 		}
@@ -151,7 +157,9 @@
 	<div bind:this={selectElt}>
 		<button
 			bind:this={triggerElt}
-			class={classNames('relative bg-zinc-800 rounded-lg py-1.5 cursor-pointer text-nowrap', {
+			class={classNames('relative rounded-lg py-1.5 cursor-pointer text-nowrap', {
+				'bg-zinc-800': variant === 'secondary',
+				'bg-white text-black': variant === 'primary',
 				'opacity-50 cursor-default': disabled,
 				'animate-pulse pointer-events-none': loading
 			})}
@@ -163,8 +171,8 @@
 			}}
 			type="button"
 		>
-			{#if multiple}
-				<h2 class="pl-2 pr-8">{$_('general.select')}</h2>
+			{#if multiple || showOnlyPlaceholder}
+				<h2 class="pl-2 pr-8">{placeholder}</h2>
 			{:else}
 				<h2 class="pl-2 pr-8">{getLabel(selectedOptionLabel)}</h2>
 			{/if}

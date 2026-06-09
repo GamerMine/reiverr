@@ -7,8 +7,6 @@ import type { JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
 import * as v from 'valibot';
 import { assertAdminUserAuth } from '$lib/server/utils.server';
 import { QUALITY_DEFS } from '$lib/constants';
-import { Radarr } from '$lib/server/radarr.server';
-import { Sonarr } from '$lib/server/sonarr.server';
 import { In, Not } from 'typeorm';
 import { scheduleTask, TaskType } from '$lib/service/scheduler.server';
 import {
@@ -23,9 +21,9 @@ import {
 	FilteringProfileSchema,
 	type UserSettings
 } from '@reiverr/db/types';
-import type { Result } from '$lib/types';
-
-// TODO: Add more error message when success: false
+import { PlatformSchema, OptionalStringSchema, type Result } from '$lib/types';
+import { RadarrConnector } from '$lib/server/connectors/radarrConnector.server';
+import { SonarrConnector } from '$lib/server/connectors/sonarrConnector.server';
 
 export const saveSettings = form(
 	v.object({
@@ -36,14 +34,14 @@ export const saveSettings = form(
 		userDiscoverExcludeLibraryItems: v.optional(v.boolean(), false),
 		userDiscoverIncludedLanguages: v.string(),
 
-		adminJellyfinBaseUrl: v.optional(v.string()),
-		adminJellyfinApiKey: v.optional(v.string()),
-		adminRadarrBaseUrl: v.optional(v.string()),
-		adminRadarrApiKey: v.optional(v.string()),
-		adminRadarrRootFolderPath: v.optional(v.string()),
-		adminSonarrBaseUrl: v.optional(v.string()),
-		adminSonarrApiKey: v.optional(v.string()),
-		adminSonarrRootFolderPath: v.optional(v.string()),
+		adminJellyfinBaseUrl: OptionalStringSchema,
+		adminJellyfinApiKey: OptionalStringSchema,
+		adminRadarrBaseUrl: OptionalStringSchema,
+		adminRadarrApiKey: OptionalStringSchema,
+		adminRadarrRootFolderPath: OptionalStringSchema,
+		adminSonarrBaseUrl: OptionalStringSchema,
+		adminSonarrApiKey: OptionalStringSchema,
+		adminSonarrRootFolderPath: OptionalStringSchema,
 		adminDownloadLanguages: v.optional(v.array(v.string()))
 	}),
 	async ({
@@ -92,20 +90,19 @@ export const saveSettings = form(
 
 		let needLogin = false;
 		if (user.Policy && user.Policy.IsAdministrator) {
+			const globalSettings = await GlobalSettingsEntity.getDefault();
 			if (
 				adminJellyfinBaseUrl &&
 				adminJellyfinApiKey &&
-				adminJellyfinBaseUrl !== (await GlobalSettingsEntity.getJellyfinBaseUrl())
+				adminJellyfinBaseUrl !== globalSettings.jellyfinBaseUrl
 			) {
 				const connection = await checkJellyfinConnection(
 					adminJellyfinBaseUrl,
 					adminJellyfinApiKey
 				);
 				if (connection.ok) {
-					await GlobalSettingsEntity.setJellyfinApiEndpoint(
-						adminJellyfinBaseUrl,
-						adminJellyfinApiKey
-					);
+					globalSettings.jellyfinBaseUrl = adminJellyfinBaseUrl;
+					globalSettings.jellyfinApiKey = adminJellyfinApiKey;
 					cookies.delete('access_token', { path: '/' });
 					needLogin = true;
 				} else {
@@ -114,62 +111,72 @@ export const saveSettings = form(
 			}
 
 			// New Radarr BaseUrl & ApiKey
+			let radarrHealthy: boolean;
 			if (
 				adminRadarrBaseUrl &&
 				adminRadarrApiKey &&
-				adminRadarrBaseUrl !== (await GlobalSettingsEntity.getRadarrBaseUrl())
+				adminRadarrBaseUrl !== globalSettings.radarrBaseUrl
 			) {
-				const connection = await Radarr.checkConnection(
+				radarrHealthy = await new RadarrConnector(
 					adminRadarrBaseUrl,
 					adminRadarrApiKey
-				);
-				if (connection) {
-					await GlobalSettingsEntity.setRadarrApiEndpoint(
-						adminRadarrBaseUrl,
-						adminRadarrApiKey
-					);
+				).isHealthy();
+				if (radarrHealthy) {
+					globalSettings.radarrBaseUrl = adminRadarrBaseUrl;
+					globalSettings.radarrApiKey = adminRadarrApiKey;
 				} else {
 					return { success: false, error: 'settings.misc.checkRadarrCredentials' };
 				}
+			} else {
+				radarrHealthy = await new RadarrConnector(
+					globalSettings.radarrBaseUrl ?? '',
+					globalSettings.radarrApiKey ?? ''
+				).isHealthy();
 			}
 
 			// If Radarr connection is possible, checks for the configuration
-			if (await Radarr.checkConnection()) {
+			if (radarrHealthy) {
 				if (adminRadarrRootFolderPath) {
-					await GlobalSettingsEntity.setRadarrApiConfiguration(adminRadarrRootFolderPath);
+					globalSettings.radarrRootFolderPath = adminRadarrRootFolderPath;
 				} else {
 					return { success: false, error: 'settings.misc.radarrConfigurationInvalid' };
 				}
 			}
 
 			// New Sonarr BaseUrl & ApiKey
+			let sonarrHealthy: boolean;
 			if (
 				adminSonarrBaseUrl &&
 				adminSonarrApiKey &&
-				adminSonarrBaseUrl !== (await GlobalSettingsEntity.getSonarrBaseUrl())
+				adminSonarrBaseUrl !== globalSettings.sonarrBaseUrl
 			) {
-				const connection = await Sonarr.checkConnection(
+				sonarrHealthy = await new SonarrConnector(
 					adminSonarrBaseUrl,
 					adminSonarrApiKey
-				);
-				if (connection) {
-					await GlobalSettingsEntity.setSonarrApiEndpoint(
-						adminSonarrBaseUrl,
-						adminSonarrApiKey
-					);
+				).isHealthy();
+				if (sonarrHealthy) {
+					globalSettings.sonarrBaseUrl = adminSonarrBaseUrl;
+					globalSettings.sonarrApiKey = adminSonarrApiKey;
 				} else {
 					return { success: false, error: 'settings.misc.checkSonarrCredentials' };
 				}
+			} else {
+				sonarrHealthy = await new SonarrConnector(
+					globalSettings.sonarrBaseUrl ?? '',
+					globalSettings.sonarrApiKey ?? ''
+				).isHealthy();
 			}
 
 			// If Sonarr connection is possible, checks for the configuration
-			if (await Sonarr.checkConnection()) {
+			if (sonarrHealthy) {
 				if (adminSonarrRootFolderPath) {
-					await GlobalSettingsEntity.setSonarrApiConfiguration(adminSonarrRootFolderPath);
+					globalSettings.sonarrRootFolderPath = adminSonarrRootFolderPath;
 				} else {
 					return { success: false, error: 'settings.misc.sonarrConfigurationInvalid' };
 				}
 			}
+
+			await globalSettings.save();
 
 			// Set other admin settings
 			if (!adminDownloadLanguages) adminDownloadLanguages = [];
@@ -241,12 +248,19 @@ export const createUpdateFilteringProfile = form(
 		action: v.picklist(['create', 'update']),
 		profileId: v.optional(v.number())
 	}),
-	async ({ profileName, isDefault, qualities, action, profileId }) => {
+	async ({
+		profileName,
+		isDefault,
+		qualities,
+		action,
+		profileId
+	}): Promise<Result<undefined>> => {
 		const { cookies } = getRequestEvent();
 		await assertAdminUserAuth(cookies);
 
 		for (const quality of qualities) {
-			if (!QUALITY_DEFS.includes(quality)) return { success: false };
+			if (!QUALITY_DEFS.includes(quality))
+				return { success: false, error: 'general.invalidInputs' };
 		}
 
 		const profile: FilteringProfile = {
@@ -257,7 +271,8 @@ export const createUpdateFilteringProfile = form(
 		};
 
 		if (action === 'update') {
-			if (!profileId || Number.isNaN(profileId)) return { success: false };
+			if (!profileId || Number.isNaN(profileId))
+				return { success: false, error: 'general.invalidInputs' };
 			profile.id = Number(profileId);
 			await FilteringProfilesEntity.editFilteringProfile(profile);
 		} else {
@@ -284,12 +299,12 @@ export const deleteFilteringProfile = command(FilteringProfileSchema, async (pro
 	const { cookies } = getRequestEvent();
 	const userReq = await isJellyfinUserConnected(cookies);
 	if (userReq.status !== 200) {
-		return { success: false };
+		return { success: false, error: 'general.connectionRequired' };
 	}
 	const user: JellyfinUser = await userReq.json();
 
 	if (!user.Id || !user.Policy || !user.Policy.IsAdministrator) {
-		return { success: false };
+		return { success: false, error: 'general.unauthorizedAction' };
 	}
 
 	await QualityProfilesEntity.delete({
@@ -299,5 +314,35 @@ export const deleteFilteringProfile = command(FilteringProfileSchema, async (pro
 	await FilteringProfilesEntity.deleteFilteringProfile(profile.id);
 	await scheduleTask(TaskType.SYNC_QUALITY_PROFILES, []);
 
+	return { success: true };
+});
+
+export const deleteIntegration = command(PlatformSchema, async (platform) => {
+	const { cookies } = getRequestEvent();
+	const userReq = await isJellyfinUserConnected(cookies);
+	if (userReq.status !== 200) {
+		return { success: false, error: 'general.connectionRequired' };
+	}
+	const user: JellyfinUser = await userReq.json();
+
+	if (!user.Id || !user.Policy || !user.Policy.IsAdministrator) {
+		return { success: false, error: 'general.unauthorizedAction' };
+	}
+
+	const globalSettings = await GlobalSettingsEntity.getDefault();
+	switch (platform) {
+		case 'radarr':
+			globalSettings.radarrBaseUrl = null;
+			globalSettings.radarrApiKey = null;
+			globalSettings.radarrRootFolderPath = null;
+			break;
+		case 'sonarr':
+			globalSettings.sonarrBaseUrl = null;
+			globalSettings.sonarrApiKey = null;
+			globalSettings.sonarrRootFolderPath = null;
+			break;
+	}
+
+	await globalSettings.save();
 	return { success: true };
 });

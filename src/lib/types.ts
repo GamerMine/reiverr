@@ -23,12 +23,15 @@ export type Result<TResultData extends object | undefined> = {
 	data?: TResultData;
 };
 
-export const ExecutionPlatformSchema = v.picklist(['radarr', 'sonarr']);
-export function ExecutionPlatformWithDataSchema<TDataSchema extends GenericSchema>(
-	dataSchema: TDataSchema
-) {
+export const PlatformSchema = v.picklist(['radarr', 'sonarr']);
+export type Platform = InferOutput<typeof PlatformSchema>;
+export function PlatformWithDataSchema<TDataSchema extends GenericSchema>(dataSchema: TDataSchema) {
 	return v.object({
-		platform: ExecutionPlatformSchema,
+		platform: PlatformSchema,
 		data: dataSchema
 	});
 }
+
+export const OptionalStringSchema = v.optional(v.string());
+export const ApiSchema = v.object({ url: OptionalStringSchema, key: OptionalStringSchema });
+export type Api = InferOutput<typeof ApiSchema>;

@@ -22,11 +22,13 @@
 	} from '$lib/stores/data.store';
 	import { formatMinutesToTime, formatSize } from '$lib/utils';
 	import classNames from 'classnames';
-	import { ActivityLog, Archive, ChevronRight, DotFilled, Plus, Trash } from 'svelte-radix';
-	import type { ComponentProps } from 'svelte';
+	import { ActivityLog, Archive, ChevronRight, DotFilled, Trash } from 'svelte-radix';
+	import { type ComponentProps } from 'svelte';
 	import { _ } from 'svelte-i18n';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { addMovieToRadarr } from '$lib/remote/radarr.remote';
+	import Select from '$lib/components/common/inputs/forms/Select.svelte';
+	import Option from '$lib/components/common/inputs/forms/Option.svelte';
 
 	let {
 		tmdbId,
@@ -77,10 +79,12 @@
 	}
 
 	let addToRadarrLoading = $state(false);
-	function addToRadarr() {
+	function addToRadarr(language: string) {
 		addToRadarrLoading = true;
 
-		addMovieToRadarr(tmdbId).then(() => {
+		// FIXME: Because adding a movie to Radarr is done in a task, refreshing the store directly is useless: the task
+		//  might take time to complete.
+		addMovieToRadarr({ tmdbId, language }).then(() => {
 			refreshRadarr().then(() => {
 				addToRadarrLoading = false;
 			});
@@ -149,13 +153,24 @@
 							<span>{$_('library.content.play')}</span><ChevronRight size="20" />
 						</Button>
 					{:else if !radarrMovie && settings.globalSettings.radarr.baseUrl}
-						<Button
+						<Select
+							disabled={addToRadarrLoading}
+							onchange={addToRadarr}
+							placeholder={$_('library.content.get')}
+							variant="primary"
+							showOnlyPlaceholder
+						>
+							{#each settings.globalSettings.general.downloadLanguages as language}
+								<Option value={language} label={$_('languages.' + language)} />
+							{/each}
+						</Select>
+						<!--<Button
 							variant="primary"
 							disabled={addToRadarrLoading}
 							onclick={addToRadarr}
 						>
 							<Plus size="20" /><span>{$_('library.content.get')}</span>
-						</Button>
+						</Button>-->
 					{:else if radarrMovie}
 						<Button variant="secondary" disabled>
 							<ActivityLog size="20" /><span class="ml-2"

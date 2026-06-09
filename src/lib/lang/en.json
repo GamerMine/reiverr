@@ -8,7 +8,8 @@
     "jellyfinUnreachable": "Jellyfin host is unreachable! Please contact your server administrator.",
     "connectionRequired": "You must be logged in, in order to do this.",
     "unknownError": "Unknown error. Check the server logs.",
-    "unauthorizedAction": "You must be logged in as an administrator in order to do this."
+    "unauthorizedAction": "You must be logged in as an administrator in order to do this.",
+    "invalidInputs": "Fields validation failed."
   },
   "appName": "Reiverr",
   "setup": {

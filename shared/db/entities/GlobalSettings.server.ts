@@ -39,7 +39,18 @@ export class GlobalSettingsEntity extends BaseEntity {
 	jellyfinApiKey: string | null;
 
 	public static async getDefault(name = 'default') {
-		return await this.findOne({ where: { name }, relations: { downloadLanguages: true } });
+		const settings = await this.findOne({
+			where: { name },
+			relations: { downloadLanguages: true }
+		});
+
+		if (!settings) {
+			const defaultSettings = new GlobalSettingsEntity();
+			defaultSettings.name = 'default';
+			return await defaultSettings.save();
+		}
+
+		return settings;
 	}
 
 	public static async getClient(name = 'default'): Promise<GlobalSettings> {
@@ -213,62 +224,6 @@ export class GlobalSettingsEntity extends BaseEntity {
 
 		settings.jellyfinBaseUrl = baseURL;
 		settings.jellyfinApiKey = apiKey;
-
-		await settings.save();
-	}
-
-	public static async setRadarrApiEndpoint(
-		baseURL: string | undefined,
-		apiKey: string | undefined,
-		name = 'default'
-	) {
-		const settings = await this.findOne({ where: { name } });
-
-		if (!settings) return;
-
-		settings.radarrBaseUrl = baseURL ?? null;
-		settings.radarrApiKey = apiKey ?? null;
-
-		await settings.save();
-	}
-
-	public static async setRadarrApiConfiguration(
-		rootFolderPath: string | undefined,
-		name = 'default'
-	) {
-		const settings = await this.findOne({ where: { name } });
-
-		if (!settings) return;
-
-		settings.radarrRootFolderPath = rootFolderPath ?? null;
-
-		await settings.save();
-	}
-
-	public static async setSonarrApiEndpoint(
-		baseURL: string | undefined,
-		apiKey: string | undefined,
-		name = 'default'
-	) {
-		const settings = await this.findOne({ where: { name } });
-
-		if (!settings) return;
-
-		settings.sonarrBaseUrl = baseURL ?? null;
-		settings.sonarrApiKey = apiKey ?? null;
-
-		await settings.save();
-	}
-
-	public static async setSonarrApiConfiguration(
-		rootFolderPath: string | undefined,
-		name = 'default'
-	) {
-		const settings = await this.findOne({ where: { name } });
-
-		if (!settings) return;
-
-		settings.sonarrRootFolderPath = rootFolderPath ?? null;
 
 		await settings.save();
 	}

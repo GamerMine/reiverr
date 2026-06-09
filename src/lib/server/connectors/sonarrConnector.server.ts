@@ -62,6 +62,10 @@ export class SonarrConnector {
 		return { success: true, data: profiles.data };
 	}
 
+	public async getRootFolder() {
+		return await this.client.GET('/api/v3/rootfolder');
+	}
+
 	public async putQualityProfile(
 		id: number,
 		profile: SonarrComponents['schemas']['QualityProfileResource']

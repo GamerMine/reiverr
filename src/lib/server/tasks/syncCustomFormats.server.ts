@@ -3,7 +3,7 @@ import type {
 	TaskProgressCallback,
 	TaskQueueCallback
 } from '$lib/service/scheduler.server';
-import { ExecutionPlatformSchema, type MessageObject } from '$lib/types';
+import { PlatformSchema, type MessageObject } from '$lib/types';
 import * as v from 'valibot';
 import {
 	BaseSync,
@@ -24,7 +24,7 @@ export class SyncCustomFormats implements TaskExecutor {
 	}
 
 	async computeExecutionDescription(data: unknown): Promise<MessageObject> {
-		const platform = v.parse(ExecutionPlatformSchema, data);
+		const platform = v.parse(PlatformSchema, data);
 		return { id: 'service.tasks.sync.languagesSyncOn', values: { platform } };
 	}
 
@@ -42,7 +42,7 @@ export class SyncCustomFormats implements TaskExecutor {
 	}
 
 	async execute(data: unknown, progress: TaskProgressCallback): Promise<void | MessageObject> {
-		const platform = v.parse(ExecutionPlatformSchema, data);
+		const platform = v.parse(PlatformSchema, data);
 		const baseSync = await BaseSync.getInstance();
 		const formats = await CustomFormatsEntity.getAll();
 

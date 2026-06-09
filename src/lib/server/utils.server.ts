@@ -14,9 +14,7 @@ export function assertParam(url: URL, name: string): string {
 export async function assertUserAuth(cookies: Cookies) {
 	const auth = await isJellyfinUserConnected(cookies);
 
-	if (!auth.ok) {
-		throw error(403, 'Unauthorized');
-	}
+	return auth.ok;
 }
 
 export async function assertAdminUserAuth(cookies: Cookies) {

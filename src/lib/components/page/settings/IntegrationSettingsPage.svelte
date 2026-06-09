@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { getSonarrHealth, getSonarrRootFolders } from '$lib/apis/sonarr/sonarrApi';
-	import { getRadarrHealth, getRadarrRootFolders } from '$lib/apis/radarr/radarrApi';
 	import Input from '$lib/components/common/inputs/forms/Input.svelte';
 	import Select from '$lib/components/common/inputs/forms/Select.svelte';
 	import classNames from 'classnames';
@@ -14,7 +12,11 @@
 	import { onMount } from 'svelte';
 	import ConfirmDialog from '$lib/components/common/inputs/forms/ConfirmDialog.svelte';
 	import Option from '$lib/components/common/inputs/forms/Option.svelte';
-	import { saveSettings } from '$lib/remote/settings.remote';
+	import { deleteIntegration, saveSettings } from '$lib/remote/settings.remote';
+	import type { Platform } from '$lib/types';
+	import { createErrorNotification } from '$lib/stores/notification.store';
+	import { radarrGetRootFolders, radarrIsHealthy } from '$lib/remote/radarr.remote';
+	import { sonarrGetRootFolders, sonarrIsHealthy } from '$lib/remote/sonarr.remote';
 
 	let {
 		visible,
@@ -66,10 +68,10 @@
 
 	async function updateRadarrHealth(): Promise<boolean> {
 		if (globalSettings.radarr.baseUrl) {
-			return getRadarrHealth(
-				globalSettings.radarr.baseUrl,
-				globalSettings.radarr.apiKey
-			).then((ok) => {
+			return radarrIsHealthy({
+				url: globalSettings.radarr.baseUrl,
+				key: globalSettings.radarr.apiKey
+			}).then((ok) => {
 				radarrConnected = ok;
 				return ok;
 			});
@@ -81,10 +83,10 @@
 
 	async function updateSonarrHealth(): Promise<boolean> {
 		if (globalSettings.sonarr.baseUrl) {
-			return getSonarrHealth(
-				globalSettings.sonarr.baseUrl,
-				globalSettings.sonarr.apiKey
-			).then((ok) => {
+			return sonarrIsHealthy({
+				url: globalSettings.sonarr.baseUrl,
+				key: globalSettings.sonarr.apiKey
+			}).then((ok) => {
 				sonarrConnected = ok;
 				return ok;
 			});
@@ -100,7 +102,7 @@
 		sonarrConnected = await updateSonarrHealth();
 	});
 
-	async function removeIntegration(service: 'sonarr' | 'radarr') {
+	async function removeIntegration(service: Platform) {
 		let message: string;
 
 		switch (service) {
@@ -119,9 +121,11 @@
 
 		let isConfirmed = await showConfirmDialog(message);
 		if (isConfirmed) {
-			await fetch(`/api/settings?integration=${service}`, {
-				method: 'DELETE'
-			});
+			const { error } = await deleteIntegration(service);
+			if (error) {
+				createErrorNotification($_('general.error'), $_(error));
+				return;
+			}
 
 			if (service === 'radarr') {
 				globalSettings.radarr = defaultGlobalSettings.radarr;
@@ -135,22 +139,24 @@
 
 	$effect(() => {
 		if (sonarrConnected) {
-			getSonarrRootFolders(globalSettings.sonarr.baseUrl, globalSettings.sonarr.apiKey).then(
-				(folders) => {
-					sonarrRootFolders = folders.map((f) => ({ id: f.id || 0, path: f.path || '' }));
-				}
-			);
+			sonarrGetRootFolders({
+				url: globalSettings.sonarr.baseUrl,
+				key: globalSettings.sonarr.apiKey
+			}).then((folders) => {
+				sonarrRootFolders = folders?.map((f) => ({ id: f.id || 0, path: f.path || '' }));
+			});
 		}
 
 		if (radarrConnected) {
-			getRadarrRootFolders(globalSettings.radarr.baseUrl, globalSettings.radarr.apiKey).then(
-				(folders) => {
-					radarrRootFolders = folders.map((f) => ({
-						id: String(f.id) || '0',
-						path: f.path || ''
-					}));
-				}
-			);
+			radarrGetRootFolders({
+				url: globalSettings.radarr.baseUrl,
+				key: globalSettings.radarr.apiKey
+			}).then((formats) => {
+				radarrRootFolders = formats?.map((f) => ({
+					id: String(f.id) || '0',
+					path: f.path || ''
+				}));
+			});
 		}
 	});
 </script>

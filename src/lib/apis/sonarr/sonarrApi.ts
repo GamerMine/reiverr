@@ -5,8 +5,6 @@ import { settings } from '$lib/stores/settings.svelte.js';
 export type SonarrSeries = components['schemas']['SeriesResource'];
 export type SonarrReleaseResource = components['schemas']['ReleaseResource'];
 export type SonarrDownload = components['schemas']['QueueResource'] & { series: SonarrSeries };
-export type SonarrRootFolderResource = components['schemas']['RootFolderResource'];
-export type SonarrQualityProfileResource = components['schemas']['QualityProfileResource'];
 export type DiskSpaceInfo = components['schemas']['DiskSpaceResource'];
 export type SonarrEpisode = components['schemas']['EpisodeResource'];
 
@@ -132,61 +130,6 @@ export const fetchSonarrEpisodes = async (seriesId: number): Promise<SonarrEpiso
 		}).then(async (res) => (await res.json()) || [])) || Promise.resolve([])
 	);
 };
-
-export const getSonarrHealth = async (
-	baseUrl: string | undefined = undefined,
-	apiKey: string | undefined = undefined
-) => {
-	let request = `/api/sonarr/health`;
-	if (baseUrl) {
-		request += `?baseUrl=${baseUrl}`;
-		if (apiKey) {
-			request += `&apiKey=${apiKey}`;
-		}
-	}
-
-	return await fetch(request, {
-		method: 'GET'
-	})
-		.then((res) => res.status === 200)
-		.catch(() => false);
-};
-
-export const getSonarrRootFolders = async (
-	baseUrl: string | undefined = undefined,
-	apiKey: string | undefined = undefined
-) => {
-	let request = `/api/sonarr/rootfolder?baseUrl=${baseUrl}`;
-	if (apiKey) {
-		request += `&apiKey=${apiKey}`;
-	}
-
-	return await fetch(request, {
-		method: 'GET'
-	}).then(async (res): Promise<SonarrRootFolderResource[]> => (await res.json()) || []);
-};
-
-export const getSonarrQualityProfiles = async () => {
-	return await fetch('/api/sonarr/qualityprofile', {
-		method: 'GET'
-	}).then(async (res): Promise<SonarrQualityProfileResource[]> => (await res.json()) || []);
-};
-
-export function getSonarrMonitors() {
-	return [
-		'unknown',
-		'all',
-		'future',
-		'missing',
-		'existing',
-		'firstSeason',
-		'latestSeason',
-		'pilot',
-		'monitorSpecials',
-		'unmonitorSpecials',
-		'none'
-	];
-}
 
 export function getSonarrPosterUrl(item: SonarrSeries, original = false) {
 	const url =

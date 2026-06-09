@@ -3,11 +3,7 @@ import type {
 	TaskProgressCallback,
 	TaskQueueCallback
 } from '$lib/service/scheduler.server';
-import {
-	ExecutionPlatformSchema,
-	ExecutionPlatformWithDataSchema,
-	type MessageObject
-} from '$lib/types';
+import { PlatformSchema, PlatformWithDataSchema, type MessageObject } from '$lib/types';
 import {
 	BaseSync,
 	type RadarrQualityDefinitionResource,
@@ -32,7 +28,7 @@ export class SyncQualityProfiles implements TaskExecutor {
 	}
 
 	async computeDescription(data: unknown): Promise<MessageObject> {
-		const platform = v.parse(ExecutionPlatformSchema, data);
+		const platform = v.parse(PlatformSchema, data);
 		return { id: 'service.tasks.sync.qualitySyncOn', values: { platform } };
 	}
 
@@ -50,10 +46,7 @@ export class SyncQualityProfiles implements TaskExecutor {
 	}
 
 	async execute(data: unknown, progress: TaskProgressCallback): Promise<void | MessageObject> {
-		const parsedData = v.parse(
-			ExecutionPlatformWithDataSchema(ModifiedProfilesIdsSchema),
-			data
-		);
+		const parsedData = v.parse(PlatformWithDataSchema(ModifiedProfilesIdsSchema), data);
 		const baseSync = await BaseSync.getInstance();
 		const qualityProfiles = await QualityProfilesEntity.find({
 			relations: { customFormat: true, filteringProfile: true }

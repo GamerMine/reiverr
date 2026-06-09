@@ -8,7 +8,8 @@
     "jellyfinUnreachable": "L'hôte Jellyfin est injoignable ! Merci de contacter votre administrateur.",
     "connectionRequired": "Vous devez être connectés pour effectuer cette action.",
     "unknownError": "Erreur inconnue. Vérifiez les logs du serveur.",
-    "unauthorizedAction": "Vous devez être connecté en tant qu'administrateur pour effectuer cette action."
+    "unauthorizedAction": "Vous devez être connecté en tant qu'administrateur pour effectuer cette action.",
+    "invalidInputs": "Échec de validation des champs."
   },
   "appName": "Reiverr",
   "setup": {
@@ -212,6 +213,7 @@
       "jellyfinConfirmChangesDialog": "En modifiant la configuration de Jellyfin, vous allez être redirigé vers la page de connexion.",
       "radarrRemoveConfirmDialog": "Vous êtes sur le point de supprimer l'intégration Radarr. Voulez-vous continuer ?",
       "sonarrRemoveConfirmDialog": "Vous êtes sur le point de supprimer l'intégration Sonarr. Voulez-vous continuer ?",
+      "noDefaultFilteringProfile": "Aucun profil de filtrage par défaut n'as été créé.",
       "changesSavedSuccess": "Paramètres modifiés avec succès.",
       "saveChanges": "Sauvegarder les modifications",
       "resetToDefaults": "Réinitialiser aux paramètres par défaut",
