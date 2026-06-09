@@ -10,7 +10,6 @@ import {
 	type SonarrQualityDefinitionResource
 } from '$lib/server/tasks/baseSync.server';
 import * as v from 'valibot';
-import type { InferOutput } from 'valibot';
 import type { RadarrConnector } from '$lib/server/connectors/radarrConnector.server';
 import { QualityProfilesEntity } from '@reiverr/db/entities';
 import { arrayDifference } from '$lib/server/utils.server';
@@ -19,7 +18,6 @@ import type { SonarrConnector } from '$lib/server/connectors/sonarrConnector.ser
 import { SonarrMapper } from '$lib/server/mappers/sonarrMapper.server';
 
 const ModifiedProfilesIdsSchema = v.array(v.number());
-export type ModifiedProfilesIds = InferOutput<typeof ModifiedProfilesIdsSchema>;
 
 export class SyncQualityProfiles implements TaskExecutor {
 	async computeExecutionDescription(data: unknown): Promise<MessageObject> {
@@ -124,7 +122,7 @@ export class SyncQualityProfiles implements TaskExecutor {
 		const formats = await conn.getCustomFormats();
 		if (!formats.success || !formats.data) return { id: 'service.messages.radarrFetchError' };
 		for (const quality of toCreate) {
-			const createdQualityProfile = await conn.addQualityProfile(
+			const createdQualityProfile = await conn.postQualityProfile(
 				RadarrMapper.qualityProfileResource(
 					quality.filteringProfile.name,
 					quality.customFormat.lang,

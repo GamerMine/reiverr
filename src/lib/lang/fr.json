@@ -74,6 +74,7 @@
   "library": {
     "missingConfiguration": "Configurez Radarr, Sonarr et Jellyfin pour surveiller et gérer votre bibliothèque",
     "available": "Disponible",
+    "downloading": "En téléchargement",
     "watched": "Regardé",
     "unavailable": "Indisponible",
     "loadMore": "Voir plus",

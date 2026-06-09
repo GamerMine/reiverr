@@ -12,6 +12,8 @@ services:
       - POSTGRES_DB=postgres
     volumes:
       - ./cache/postgres:/var/lib/postgresql/data
+    networks:
+      - non-isolated
     restart: unless-stopped
 
   jellyfin:
@@ -24,6 +26,8 @@ services:
       - ./cache/jellyfin/config:/config
       - ./cache/jellyfin/cache:/cache
       - ./cache/jellyfin/media:/media
+    networks:
+      - non-isolated
     restart: unless-stopped
 
   radarr:
@@ -39,6 +43,10 @@ services:
       - ./cache/radarr/config:/config
       - ./cache/jellyfin/media:/movies
       - ./cache/radarr/downloads:/downloads
+    networks:
+      non-isolated:
+      isolated:
+        ipv4_address: 173.19.0.6
     restart: unless-stopped
 
   sonarr:
@@ -54,6 +62,11 @@ services:
       - ./cache/sonarr/config:/config
       - ./cache/jellyfin/media:/tv
       - ./cache/sonarr/downloads:/downloads
+    networks:
+      non-isolated:
+      isolated:
+        ipv4_address: 173.19.0.5
+
     restart: unless-stopped
 
   prowlarr:
@@ -67,6 +80,8 @@ services:
       - "9696:9696"
     volumes:
       - ./cache/prowlarr/config:/config
+    networks:
+      - non-isolated
     restart: unless-stopped
 
   flaresolverr:
@@ -76,17 +91,51 @@ services:
       - LOG_LEVEL=info
     ports:
       - "8191:8191"
+    networks:
+      - non-isolated
+    restart: unless-stopped
+
+  transmission:
+    image: ghcr.io/linuxserver/transmission:latest
+    container_name: transmission
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+    volumes:
+      - ./cache/transmission:/config
+      - ./cache/transmission/downloads:/downloads #optional
+    ports:
+      - "9091:9091"
+    networks:
+      isolated:
+        ipv4_address: 173.19.0.4
+    restart: unless-stopped
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+      - WEBUI_PORT=8080
+      - TORRENTING_PORT=6881
+    volumes:
+      - ./cache/qbittorrent/config:/config
+      - ./cache/qbittorrent/downloads:/downloads
+    ports:
+      - "8080:8080"
+    networks:
+      isolated:
+        ipv4_address: 173.19.0.2
     restart: unless-stopped
 
   bitmagnet:
     image: ghcr.io/bitmagnet-io/bitmagnet:latest
     container_name: bitmagnet
     ports:
-      # API and WebUI port:
       - "3333:3333"
-      # BitTorrent ports:
-      - "3334:3334/tcp"
-      - "3334:3334/udp"
     restart: unless-stopped
     environment:
       - POSTGRES_HOST=postgres
@@ -99,3 +148,22 @@ services:
       - run
       - --keys=http_server
       - --keys=queue_server
+    networks:
+      - non-isolated
+
+  opentracker:
+    image: lednerb/opentracker-docker:latest
+    container_name: opentracker
+    restart: unless-stopped
+    networks:
+      isolated:
+        ipv4_address: 173.19.0.3
+
+networks:
+  isolated:
+    internal: true
+    ipam:
+      config:
+        - subnet: 173.19.0.0/16
+  non-isolated:
+    driver: bridge

@@ -27,7 +27,7 @@ export class RadarrConnector {
 		}
 	}
 
-	public async addCustomFormat(
+	public async postCustomFormat(
 		customFormat: RadarrComponents['schemas']['CustomFormatResource']
 	) {
 		return await this.client.POST('/api/v3/customformat', {
@@ -35,11 +35,17 @@ export class RadarrConnector {
 		});
 	}
 
-	public async addQualityProfile(
+	public async postQualityProfile(
 		qualityProfile: RadarrComponents['schemas']['QualityProfileResource']
 	) {
 		return await this.client.POST('/api/v3/qualityprofile', {
 			body: qualityProfile
+		});
+	}
+
+	public async postMovie(movieResource: RadarrComponents['schemas']['MovieResource']) {
+		return await this.client.POST('/api/v3/movie', {
+			body: movieResource
 		});
 	}
 
@@ -82,20 +88,16 @@ export class RadarrConnector {
 	}
 
 	public async deleteCustomFormatBulk(ids: number[]) {
-		return await this.client.DELETE('/api/v3/customformat/bulk', {
-			body: {
-				ids
-			}
-		});
+		return await this.client.DELETE('/api/v3/customformat/bulk', { body: { ids } });
 	}
 
 	public async deleteQualityProfile(id: number) {
 		return await this.client.DELETE('/api/v3/qualityprofile/{id}', {
-			params: {
-				path: {
-					id
-				}
-			}
+			params: { path: { id } }
 		});
+	}
+
+	public async deleteMovie(id: number) {
+		return await this.client.DELETE('/api/v3/movie/{id}', { params: { path: { id } } });
 	}
 }

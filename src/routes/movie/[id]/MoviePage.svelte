@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { removeMovieFromRadarr } from '$lib/apis/radarr/radarrApi';
 	import {
 		getTmdbMovie,
 		getTmdbMovieRecommendations,
@@ -26,7 +25,7 @@
 	import { type ComponentProps } from 'svelte';
 	import { _ } from 'svelte-i18n';
 	import { settings } from '$lib/stores/settings.svelte';
-	import { addMovieToRadarr } from '$lib/remote/radarr.remote';
+	import { radarrAddMovie, radarrRemoveMovie } from '$lib/remote/radarr.remote';
 	import Select from '$lib/components/common/inputs/forms/Select.svelte';
 	import Option from '$lib/components/common/inputs/forms/Option.svelte';
 
@@ -83,8 +82,8 @@
 		addToRadarrLoading = true;
 
 		// FIXME: Because adding a movie to Radarr is done in a task, refreshing the store directly is useless: the task
-		//  might take time to complete.
-		addMovieToRadarr({ tmdbId, language }).then(() => {
+		//  might take more time to complete than the Promise might take to resolve.
+		radarrAddMovie({ tmdbId, language }).then(() => {
 			refreshRadarr().then(() => {
 				addToRadarrLoading = false;
 			});
@@ -92,7 +91,7 @@
 	}
 
 	function removeMovie() {
-		if ($radarrMovieStore.item?.id) removeMovieFromRadarr($radarrMovieStore.item?.id, true);
+		if ($radarrMovieStore.item?.id) radarrRemoveMovie($radarrMovieStore.item?.id);
 		refreshRadarr();
 	}
 </script>
@@ -164,13 +163,6 @@
 								<Option value={language} label={$_('languages.' + language)} />
 							{/each}
 						</Select>
-						<!--<Button
-							variant="primary"
-							disabled={addToRadarrLoading}
-							onclick={addToRadarr}
-						>
-							<Plus size="20" /><span>{$_('library.content.get')}</span>
-						</Button>-->
 					{:else if radarrMovie}
 						<Button variant="secondary" disabled>
 							<ActivityLog size="20" /><span class="ml-2"

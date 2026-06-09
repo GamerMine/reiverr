@@ -74,6 +74,7 @@
   "library": {
     "missingConfiguration": "Configure Radarr, Sonarr and Jellyfin to watch and manage your library",
     "available": "Available",
+    "downloading": "Downloading",
     "watched": "Watched",
     "unavailable": "Unavailable",
     "loadMore": "Load More",

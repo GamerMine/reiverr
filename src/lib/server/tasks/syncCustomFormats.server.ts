@@ -108,7 +108,7 @@ export class SyncCustomFormats implements TaskExecutor {
 				console.error(`Could not find language ${format.lang} on Radarr.`);
 				continue; // FIXME: Continue and reschedule a sync task
 			}
-			const createdFormat = await conn.addCustomFormat(
+			const createdFormat = await conn.postCustomFormat(
 				RadarrMapper.customFormatResource(langId, format.lang)
 			);
 			if (!createdFormat.data || !createdFormat.data.id || !createdFormat.response.ok) {

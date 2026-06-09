@@ -70,7 +70,7 @@
 		'relative flex rounded-xl selectable group hover:text-inherit shrink-0 overflow-hidden text-left',
 		{
 			'aspect-video': orientation === 'landscape',
-			'aspect-[2/3]': orientation === 'portrait',
+			'aspect-2/3': orientation === 'portrait',
 			'w-32': size === 'sm' && orientation === 'portrait',
 			'h-32': size === 'sm' && orientation === 'landscape',
 			'w-44': size === 'md' && orientation === 'portrait',
@@ -82,20 +82,23 @@
 		}
 	)}
 >
-	<LazyImg src={backdropUrl} klass="absolute inset-0 group-hover:scale-105 transition-transform" />
-	<div
+	<LazyImg
+		src={backdropUrl}
+		klass="absolute inset-0 group-hover:scale-105 transition-transform"
+	/>
+	<!--<div
 		class="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity bg-black"
 		style="filter: blur(50px); transform: scale(3);"
 	>
 		<LazyImg src={backdropUrl} />
-	</div>
+	</div>-->
 	<!-- <div
 		style={`background-image: url(${backdropUrl}); background-size: cover; background-position: center; filter: blur(50px); transform: scale(3);`}
 		class="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity bg-black"
 	/> -->
 	<div
 		class={classNames(
-			'flex-1 flex flex-col justify-between bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity z-[1]',
+			'flex-1 flex flex-col justify-between bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity z-1',
 			{
 				'py-2 px-3': true
 			}
@@ -137,7 +140,7 @@
 		class="absolute inset-0 bg-gradient-to-t from-darken group-hover:opacity-0 transition-opacity z-[1]"
 	/> -->
 	{#if jellyfinId}
-		<div class="absolute inset-0 flex items-center justify-center z-[1]">
+		<div class="absolute inset-0 flex items-center justify-center z-1">
 			<PlayButton
 				onclick={(e) => {
 					e.preventDefault();
@@ -149,7 +152,7 @@
 	{/if}
 	{#if progress}
 		<div
-			class="absolute bottom-2 lg:bottom-3 inset-x-2 lg:inset-x-3 bg-gradient-to-t ease-in-out z-[1]"
+			class="absolute bottom-2 lg:bottom-3 inset-x-2 lg:inset-x-3 bg-linear-to-t ease-in-out z-1"
 		>
 			<ProgressBar {progress} />
 		</div>

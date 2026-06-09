@@ -76,7 +76,26 @@ export class RadarrMapper {
 			cutoff,
 			items,
 			formatItems,
+			language: { id: -1 },
 			minUpgradeFormatScore: 1
+		};
+	}
+
+	public static movieResource(
+		tmdbId: number,
+		qualityProfileId: number,
+		rootFolderPath: string
+	): RadarrComponents['schemas']['MovieResource'] {
+		return {
+			qualityProfileId,
+			monitored: true,
+			tmdbId,
+			rootFolderPath,
+			addOptions: {
+				monitor: 'movieOnly',
+				searchForMovie: true,
+				addMethod: 'manual'
+			}
 		};
 	}
 }

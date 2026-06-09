@@ -45,7 +45,8 @@
 					capitalize(item.status || ''),
 				type: 'series',
 				progress: 100 * (((item.size || 0) - (item.sizeleft || 0)) / (item.size || 1)),
-				backdropUrl: item.series.images?.find((i) => i.coverType === 'poster')?.url || '',
+				backdropUrl:
+					item.series.images?.find((i) => i.coverType === 'poster')?.remoteUrl || '',
 				orientation: 'portrait'
 			})) || [];
 
@@ -55,7 +56,8 @@
 				title: item.movie.title || '',
 				subtitle: capitalize(item.status || ''),
 				type: 'movie',
-				backdropUrl: item.movie.images?.find((i) => i.coverType === 'poster')?.url || '',
+				backdropUrl:
+					item.movie.images?.find((i) => i.coverType === 'poster')?.remoteUrl || '',
 				progress: 100 * (((item.size || 0) - (item.sizeleft || 0)) / (item.size || 1)),
 				orientation: 'portrait'
 			})) || [];
@@ -92,9 +94,9 @@
 					klass="absolute inset-0"
 				/>
 			{/await}
-			<div class="absolute inset-0 bg-gradient-to-t from-stone-950 to-80% to-darken"></div>
+			<div class="absolute inset-0 bg-linear-to-t from-stone-950 to-80% to-darken"></div>
 			<div
-				class="max-w-screen-2xl mx-auto relative z-[1] px-2 md:px-8 pt-32 xl:pt-56 pb-12 overflow-hidden"
+				class="max-w-screen-2xl mx-auto relative z-1 px-2 md:px-8 pt-32 xl:pt-56 pb-12 overflow-hidden"
 			>
 				<h1
 					class="absolute font-bold uppercase text-amber-200 opacity-10 bottom-12 right-8 text-9xl hidden xl:block z-[-1]"
@@ -103,7 +105,7 @@
 				</h1>
 				<div class="flex gap-4 items-end">
 					{#await showcasePromise}
-						<div class="w-32 aspect-[2/3] placeholder rounded-lg shadow-lg"></div>
+						<div class="w-32 aspect-2/3 placeholder rounded-lg shadow-lg"></div>
 						<div class="flex flex-col gap-2">
 							<div class="placeholder-text w-20">Placeholder</div>
 							<div class="placeholder-text w-[50vw] text-3xl sm:text-4xl md:text-5xl">
@@ -119,7 +121,7 @@
 							style={"background-image: url('" +
 								(showcase ? getJellyfinPosterUrl(showcase) : '') +
 								"');"}
-							class="w-32 aspect-[2/3] rounded-lg bg-center bg-cover shrink-0 shadow-lg"
+							class="w-32 aspect-2/3 rounded-lg bg-center bg-cover shrink-0 shadow-lg"
 						></div>
 						<div>
 							<p class="text-zinc-400 font-medium">{$_('discover.LatestAddition')}</p>
@@ -162,7 +164,7 @@
 		<div class="max-w-screen-2xl m-auto flex flex-col gap-12">
 			{#if downloadProps?.length}
 				<div>
-					<Carousel heading="Downloading">
+					<Carousel heading={$_('library.downloading')}>
 						{#each downloadProps as props}
 							<Poster {...props} />
 						{/each}
