@@ -289,7 +289,7 @@
 					{:else if $sonarrSeriesStore.item}
 						<Button variant="primary" disabled>
 							<ActivityLog size="20" /><span class="ml-2"
-								>{$_('library.content.inqueue')}</span
+								>{$_('library.content.queued')}</span
 							>
 						</Button>
 					{/if}

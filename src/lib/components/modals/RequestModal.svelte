@@ -1,10 +1,5 @@
 <script lang="ts">
 	import {
-		downloadRadarrMovie,
-		fetchRadarrReleases,
-		removeMovieFromRadarr
-	} from '$lib/apis/radarr/radarrApi';
-	import {
 		downloadSonarrEpisode,
 		fetchSonarrReleases,
 		fetchSonarrSeasonReleases
@@ -16,8 +11,6 @@
 	import { modalStack } from '$lib/stores/modal.store';
 	import ModalContainer from '$lib/components/common/modal/ModalContainer.svelte';
 	import ModalHeader from '$lib/components/common/modal/ModalHeader.svelte';
-	import { createSuccessNotification } from '$lib/stores/notification.store';
-	import { radarrMoviesStore } from '$lib/stores/data.store';
 	import Select from '$lib/components/common/inputs/forms/Select.svelte';
 	import Option from '$lib/components/common/inputs/forms/Option.svelte';
 
@@ -59,9 +52,7 @@
 			};
 		}
 
-		const releases = radarrId
-			? await fetchRadarrReleases(radarrId)
-			: sonarrEpisodeId
+		const releases = sonarrEpisodeId
 				? await fetchSonarrReleases(sonarrEpisodeId as number)
 				: await fetchSonarrSeasonReleases(
 						seasonPack?.sonarrId as number,
@@ -83,27 +74,14 @@
 
 	function handleDownload(guid: string, indexerId: number) {
 		downloadFetchingGuid = guid;
-		if (radarrId) {
-			downloadRadarrMovie(guid, indexerId).then((ok) => {
-				ondownload();
-				downloadFetchingGuid = undefined;
-				if (ok) {
-					downloadingGuid = guid;
-					createSuccessNotification(
-						'Movie added to queue',
-						'The movie will be added to the library once available.'
-					); //FIXME: Add translation
-				}
-			});
-		} else {
-			downloadSonarrEpisode(guid, indexerId).then((ok) => {
-				ondownload();
-				downloadFetchingGuid = undefined;
-				if (ok) {
-					downloadingGuid = guid;
-				}
-			});
-		}
+
+		downloadSonarrEpisode(guid, indexerId).then((ok) => {
+			ondownload();
+			downloadFetchingGuid = undefined;
+			if (ok) {
+				downloadingGuid = guid;
+			}
+		});
 	}
 
 	function toggleShowAll() {
@@ -119,11 +97,6 @@
 	}
 
 	function userClose() {
-		if (radarrId) removeMovieFromRadarr(radarrId);
-		else console.error('NOT IMPLEMENTED: Removing Sonarr episodes.'); // FIXME
-
-		radarrMoviesStore.refreshIn();
-
 		groupId ? modalStack.closeGroup(groupId) : modalStack.close(modalId);
 	}
 </script>

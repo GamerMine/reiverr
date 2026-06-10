@@ -74,7 +74,6 @@
   "library": {
     "missingConfiguration": "Configure Radarr, Sonarr and Jellyfin to watch and manage your library",
     "available": "Available",
-    "downloading": "Downloading",
     "watched": "Watched",
     "unavailable": "Unavailable",
     "loadMore": "Load More",
@@ -108,7 +107,9 @@
       "minLeft": "min left",
       "get": "Obtenir",
       "addSonarr": "Add to Sonarr",
-      "inqueue": "In Queue",
+      "downloading": "Downloading",
+      "queued": "In Queue",
+      "downloadClientUnavailable": "Download client unavailable",
       "requestSeries": "Request series",
       "sizeDisk": "Size on disk",
       "downloadedIn": "Downloaded In",

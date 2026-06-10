@@ -49,6 +49,10 @@ export class RadarrConnector {
 		});
 	}
 
+	public async postCommand(command: 'RefreshMonitoredDownloads') {
+		return await this.client.POST('/api/v3/command', { body: { name: command } });
+	}
+
 	public async getQualityDefinitions() {
 		return await this.client.GET('/api/v3/qualitydefinition');
 	}
@@ -77,6 +81,12 @@ export class RadarrConnector {
 		return await this.client.GET('/api/v3/rootfolder');
 	}
 
+	public async getQueue() {
+		return await this.client.GET('/api/v3/queue', {
+			params: { query: { includeMovie: true, pageSize: 20 } }
+		});
+	}
+
 	public async putQualityProfile(
 		id: number,
 		profile: RadarrComponents['schemas']['QualityProfileResource']
@@ -98,6 +108,8 @@ export class RadarrConnector {
 	}
 
 	public async deleteMovie(id: number) {
-		return await this.client.DELETE('/api/v3/movie/{id}', { params: { path: { id } } });
+		return await this.client.DELETE('/api/v3/movie/{id}', {
+			params: { path: { id }, query: { deleteFiles: true } }
+		});
 	}
 }

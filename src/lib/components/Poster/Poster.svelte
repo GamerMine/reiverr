@@ -86,16 +86,6 @@
 		src={backdropUrl}
 		klass="absolute inset-0 group-hover:scale-105 transition-transform"
 	/>
-	<!--<div
-		class="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity bg-black"
-		style="filter: blur(50px); transform: scale(3);"
-	>
-		<LazyImg src={backdropUrl} />
-	</div>-->
-	<!-- <div
-		style={`background-image: url(${backdropUrl}); background-size: cover; background-position: center; filter: blur(50px); transform: scale(3);`}
-		class="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity bg-black"
-	/> -->
 	<div
 		class={classNames(
 			'flex-1 flex flex-col justify-between bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity z-1',
@@ -136,9 +126,6 @@
 			{/if}
 		</div>
 	</div>
-	<!-- <div
-		class="absolute inset-0 bg-gradient-to-t from-darken group-hover:opacity-0 transition-opacity z-[1]"
-	/> -->
 	{#if jellyfinId}
 		<div class="absolute inset-0 flex items-center justify-center z-1">
 			<PlayButton
@@ -154,6 +141,7 @@
 		<div
 			class="absolute bottom-2 lg:bottom-3 inset-x-2 lg:inset-x-3 bg-linear-to-t ease-in-out z-1"
 		>
+			<p>{progress.toFixed(1)}%</p>
 			<ProgressBar {progress} />
 		</div>
 	{/if}

@@ -1,9 +1,5 @@
 import { getJellyfinItems, type JellyfinItem } from '$lib/apis/jellyfin/jellyfinApi';
-import {
-	getRadarrDownloads,
-	getRadarrMovies,
-	type RadarrDownload
-} from '$lib/apis/radarr/radarrApi';
+import { getRadarrMovies } from '$lib/apis/radarr/radarrApi';
 import {
 	getSonarrDownloads,
 	getSonarrSeries,
@@ -13,7 +9,7 @@ import {
 import { derived, writable } from 'svelte/store';
 import { settings } from '$lib/stores/settings.svelte';
 
-// TODO: These stores could be "converted" to global state variables for easier use.
+// TODO: These stores could be "converted" to global state variables for easier use or remote functions.
 
 async function waitForSettings() {
 	return new Promise((resolve) => {
@@ -137,51 +133,6 @@ export function createSonarrSeriesStore(name: Promise<string> | string) {
 }
 
 export const sonarrDownloadsStore = _createDataFetchStore(getSonarrDownloads);
-export const radarrDownloadsStore = _createDataFetchStore(getRadarrDownloads);
-export const servarrDownloadsStore = (() => {
-	const store = derived([sonarrDownloadsStore, radarrDownloadsStore], ([sonarr, radarr]) => {
-		return {
-			loading: sonarr.loading || radarr.loading,
-			radarrDownloads: radarr.data,
-			sonarrDownloads: sonarr.data
-		};
-	});
-
-	return {
-		subscribe: store.subscribe
-	};
-})();
-
-export function createRadarrDownloadStore(
-	radarrMovieStore: ReturnType<typeof createRadarrMovieStore>
-) {
-	const store = writable<{ loading: boolean; downloads?: RadarrDownload[] }>({
-		loading: true,
-		downloads: undefined
-	});
-
-	const combinedStore = derived(
-		[radarrMovieStore, radarrDownloadsStore],
-		([movieStore, downloadsStore]) => ({ movieStore, downloadsStore })
-	);
-
-	combinedStore.subscribe(async (data) => {
-		const movie = data.movieStore.item;
-		const downloads = data.downloadsStore.data;
-
-		if (!movie || !downloads) return;
-
-		store.set({
-			loading: false,
-			downloads: downloads?.filter((d) => d.movie.tmdbId === movie?.tmdbId)
-		});
-	});
-
-	return {
-		subscribe: store.subscribe,
-		refresh: async () => radarrDownloadsStore.refresh()
-	};
-}
 
 export function createSonarrDownloadStore(
 	sonarrItemStore: ReturnType<typeof createSonarrSeriesStore>

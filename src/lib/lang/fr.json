@@ -74,7 +74,6 @@
   "library": {
     "missingConfiguration": "Configurez Radarr, Sonarr et Jellyfin pour surveiller et gérer votre bibliothèque",
     "available": "Disponible",
-    "downloading": "En téléchargement",
     "watched": "Regardé",
     "unavailable": "Indisponible",
     "loadMore": "Voir plus",
@@ -106,7 +105,9 @@
       "similarSeries": "Séries similaires",
       "similarMovies": "Films similaires",
       "get": "Obtenir",
+      "downloading": "En téléchargement",
       "inqueue": "En file d'attente",
+      "downloadClientUnavailable": "Client de téléchargement indisponible",
       "viewLess": "Moins",
       "viewAll": "Plus",
       "networks": "Plateformes",

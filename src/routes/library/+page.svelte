@@ -9,17 +9,16 @@
 	import Poster from '$lib/components/Poster/Poster.svelte';
 	import { playerState } from '$lib/components/VideoPlayer/VideoPlayer';
 	import { PLACEHOLDER_BACKDROP } from '$lib/constants';
-	import { jellyfinItemsStore, servarrDownloadsStore } from '$lib/stores/data.store';
+	import { jellyfinItemsStore } from '$lib/stores/data.store';
 	import { ChevronRight } from 'svelte-radix';
-	import { type ComponentProps } from 'svelte';
 	import { _ } from 'svelte-i18n';
 	import { fade } from 'svelte/transition';
 	import LibraryItems from './LibraryItems.svelte';
-	import { capitalize } from '$lib/utils';
 	import LazyImg from '$lib/components/common/images/LazyImg.svelte';
 	import { settings } from '$lib/stores/settings.svelte';
+	import { radarrGetQueue } from '$lib/remote/radarr.remote';
+	import type { components as RadarrComponents } from '$lib/apis/radarr/radarr.generated';
 
-	let openNextUpTab: 'downloading' | 'nextUp' = 'downloading';
 	let noItems = false;
 
 	let showcasePromise: Promise<JellyfinItem | undefined> = jellyfinItemsStore.promise.then(
@@ -34,8 +33,26 @@
 				)?.[3]
 	);
 
-	let downloadProps: ComponentProps<typeof Poster>[] = $state([]);
-	$effect(() => {
+	function getStatusText(status?: RadarrComponents['schemas']['QueueStatus']) {
+		switch (status) {
+			case 'failed':
+			// TODO
+			case 'warning':
+			// TODO
+			case null:
+			case undefined:
+			case 'unknown':
+				return 'data.unknown';
+			default:
+				return 'library.content.' + status;
+		}
+	}
+
+	const downloadQueue = radarrGetQueue();
+	const downloadQueueData = $derived(await downloadQueue);
+	/*$effect(() => {
+		// FIXME: sizeleft is deprecated on QueueResource and will eventually be renamed sizeLeft.
+		//  See: https://github.com/Radarr/Radarr/commit/114d260f42612117dad4f8219d1dac6b56136e14
 		const sonarrProps: ComponentProps<typeof Poster>[] =
 			$servarrDownloadsStore.sonarrDownloads?.map((item) => ({
 				tvdbId: item.series.tvdbId,
@@ -49,21 +66,7 @@
 					item.series.images?.find((i) => i.coverType === 'poster')?.remoteUrl || '',
 				orientation: 'portrait'
 			})) || [];
-
-		const radarrProps: ComponentProps<typeof Poster>[] =
-			$servarrDownloadsStore.radarrDownloads?.map((item) => ({
-				tmdbId: item.movie.tmdbId,
-				title: item.movie.title || '',
-				subtitle: capitalize(item.status || ''),
-				type: 'movie',
-				backdropUrl:
-					item.movie.images?.find((i) => i.coverType === 'poster')?.remoteUrl || '',
-				progress: 100 * (((item.size || 0) - (item.sizeleft || 0)) / (item.size || 1)),
-				orientation: 'portrait'
-			})) || [];
-
-		downloadProps = [...(sonarrProps || []), ...(radarrProps || [])];
-	});
+	});*/
 </script>
 
 {#if noItems}
@@ -162,14 +165,22 @@
 		out:fade|global={{ duration: settings.userSettings.interface.animationDuration }}
 	>
 		<div class="max-w-screen-2xl m-auto flex flex-col gap-12">
-			{#if downloadProps?.length}
-				<div>
-					<Carousel heading={$_('library.downloading')}>
-						{#each downloadProps as props}
-							<Poster {...props} />
-						{/each}
-					</Carousel>
-				</div>
+			{#if downloadQueueData.success && downloadQueueData.data && downloadQueueData.data.length > 0}
+				<Carousel heading={$_('library.content.downloading')}>
+					{#each downloadQueueData.data as item (item.id)}
+						<Poster
+							tmdbId={item.movie?.tmdbId}
+							title={item.movie?.title || ''}
+							subtitle={$_(getStatusText(item.status))}
+							type="movie"
+							backdropUrl={item.movie?.images?.find((i) => i.coverType === 'poster')
+								?.remoteUrl || ''}
+							progress={100 *
+								(((item.size || 0) - (item.sizeleft || 0)) / (item.size || 1))}
+							orientation="portrait"
+						/>
+					{/each}
+				</Carousel>
 			{/if}
 
 			<LibraryItems />

@@ -14,12 +14,8 @@
 	import OpenInButton from '$lib/components/TitlePageLayout/OpenInButton.svelte';
 	import TitlePageLayout from '$lib/components/TitlePageLayout/TitlePageLayout.svelte';
 	import { playerState } from '$lib/components/VideoPlayer/VideoPlayer';
-	import {
-		createJellyfinItemStore,
-		createRadarrDownloadStore,
-		createRadarrMovieStore
-	} from '$lib/stores/data.store';
-	import { formatMinutesToTime, formatSize } from '$lib/utils';
+	import { createJellyfinItemStore, createRadarrMovieStore } from '$lib/stores/data.store';
+	import { formatSize } from '$lib/utils';
 	import classNames from 'classnames';
 	import { ActivityLog, Archive, ChevronRight, DotFilled, Trash } from 'svelte-radix';
 	import { type ComponentProps } from 'svelte';
@@ -41,7 +37,6 @@
 
 	const jellyfinItemStore = createJellyfinItemStore(tmdbId);
 	const radarrMovieStore = createRadarrMovieStore(tmdbId);
-	const radarrDownloadStore = createRadarrDownloadStore(radarrMovieStore);
 
 	async function preloadRecommendationData() {
 		const tmdbRecommendationProps = getTmdbMovieRecommendations(tmdbId)
@@ -166,7 +161,7 @@
 					{:else if radarrMovie}
 						<Button variant="secondary" disabled>
 							<ActivityLog size="20" /><span class="ml-2"
-								>{$_('library.content.inqueue')}</span
+								>{$_('library.content.queued')}</span
 							>
 						</Button>
 						<Button variant="error" klass="!px-2" onclick={removeMovie}>
@@ -252,22 +247,6 @@
 						<p class="text-zinc-400 text-sm">{$_('library.content.sizeDisk')}</p>
 						<h2 class="font-medium">
 							{formatSize(radarrMovie?.movieFile?.size || 0)}
-						</h2>
-					</div>
-				{/if}
-				{#if $radarrDownloadStore.downloads?.length}
-					{@const download = $radarrDownloadStore.downloads[0]}
-					<div class="col-span-2 lg:col-span-1">
-						<p class="text-zinc-400 text-sm">{$_('library.content.downloadedIn')}</p>
-						<h2 class="font-medium">
-							{download?.estimatedCompletionTime
-								? formatMinutesToTime(
-										(new Date(download.estimatedCompletionTime).getTime() -
-											Date.now()) /
-											1000 /
-											60
-									)
-								: 'Stalled'}
 						</h2>
 					</div>
 				{/if}
