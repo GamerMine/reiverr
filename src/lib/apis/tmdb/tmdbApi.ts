@@ -6,9 +6,6 @@ import type { TitleType } from '$lib/types';
 import { settings } from '$lib/stores/settings.svelte.js';
 
 const CACHE_ONE_DAY = 'max-age=86400';
-const CACHE_FOUR_DAYS = 'max-age=345600';
-
-export type DiscoverTvQuery = operations['discover-tv']['parameters']['query'];
 
 export type TmdbMovie2 =
 	operations['movie-details']['responses']['200']['content']['application/json'];
@@ -41,7 +38,6 @@ export interface TmdbSeriesFull2 extends TmdbSeries2 {
 }
 
 const backdropCache = browser ? window?.caches?.open('backdrops') : undefined;
-const posterCache = browser ? window?.caches?.open('posters') : undefined;
 
 const getTmdbCache = async (
 	cachePromise: typeof backdropCache,
@@ -88,28 +84,6 @@ export const getTmdbMovie = async (tmdbId: number) =>
 		}
 	}).then((res) => res.data as TmdbMovieFull2 | undefined);
 
-export const getTmdbSeriesFromTvdbId = async (tvdbId: string) =>
-	TmdbApiOpen.GET('/3/find/{external_id}', {
-		params: {
-			path: {
-				external_id: tvdbId
-			},
-			query: {
-				external_source: 'tvdb_id'
-			}
-		},
-		headers: {
-			'Cache-Control': CACHE_ONE_DAY
-		}
-	}).then((res) => res.data?.tv_results?.[0] as TmdbSeries2 | undefined);
-
-export const getTmdbIdFromTvdbId = async (tvdbId: number) =>
-	getTmdbSeriesFromTvdbId(String(tvdbId)).then((res: any) => {
-		const id = res?.id as number | undefined;
-		if (!id) return Promise.reject();
-		return id;
-	});
-
 export const getTmdbSeries = async (tmdbId: number): Promise<TmdbSeriesFull2 | undefined> =>
 	await TmdbApiOpen.GET('/3/tv/{series_id}', {
 		params: {
@@ -145,30 +119,6 @@ export const getTmdbSeriesSeason = async (
 export const getTmdbSeriesSeasons = (tmdbId: number, seasons: number) =>
 	[...Array(seasons).keys()].map((i) => getTmdbSeriesSeason(tmdbId, i + 1));
 
-export const getTmdbSeriesImages = async (tmdbId: number) =>
-	TmdbApiOpen.GET('/3/tv/{series_id}/images', {
-		params: {
-			path: {
-				series_id: tmdbId
-			}
-		},
-		headers: {
-			'Cache-Control': CACHE_FOUR_DAYS // 4 days
-		}
-	}).then((res) => res.data);
-
-export const getTmdbMovieImages = async (tmdbId: number) =>
-	await TmdbApiOpen.GET('/3/movie/{movie_id}/images', {
-		params: {
-			path: {
-				movie_id: tmdbId
-			}
-		},
-		headers: {
-			'Cache-Control': CACHE_FOUR_DAYS // 4 days
-		}
-	}).then((res) => res.data);
-
 export const getTmdbSeriesBackdrop = async (tmdbId: number) =>
 	getTmdbCache(backdropCache, tmdbId, () =>
 		getTmdbSeries(tmdbId)
@@ -203,12 +153,6 @@ export const getTmdbMovieBackdrop = async (tmdbId: number) =>
 			)
 	);
 
-export const getTmdbSeriesPoster = async (tmdbId: number) =>
-	getTmdbCache(posterCache, tmdbId, () => getTmdbSeries(tmdbId).then((s) => s?.poster_path));
-
-export const getTmdbMoviePoster = async (tmdbId: number) =>
-	getTmdbCache(posterCache, tmdbId, () => getTmdbMovie(tmdbId).then((m) => m?.poster_path));
-
 /** Discover */
 
 export const getTmdbPopularMovies = () =>
@@ -217,40 +161,6 @@ export const getTmdbPopularMovies = () =>
 			query: {
 				language: settings.userSettings.interface.language,
 				region: settings.userSettings.discover.region
-			}
-		}
-	}).then((res) => res.data?.results || []);
-
-export const getTmdbPopularSeries = () =>
-	TmdbApiOpen.GET('/3/tv/popular', {
-		params: {
-			query: {
-				language: settings.userSettings.interface.language
-			}
-		}
-	}).then((res) => res.data?.results || []);
-
-export const getTmdbNetworkSeries = (networkId: number) =>
-	TmdbApiOpen.GET('/3/discover/tv', {
-		params: {
-			query: {
-				with_networks: networkId
-			}
-		}
-	}).then((res) => res.data?.results || []);
-
-export const getTmdbNetworkSeriesQuery = (query: DiscoverTvQuery) =>
-	TmdbApiOpen.GET('/3/discover/tv', {
-		params: {
-			query
-		}
-	}).then((res) => res.data);
-
-export const getTmdbGenreMovies = (genreId: number) =>
-	TmdbApiOpen.GET('/3/discover/movie', {
-		params: {
-			query: {
-				with_genres: String(genreId)
 			}
 		}
 	}).then((res) => res.data?.results || []);
@@ -272,15 +182,6 @@ export const getTmdbSeriesSimilar = (tmdbId: number) =>
 			}
 		}
 	}).then((res) => res.data?.results || []);
-
-export const getTmdbSeriesCredits = (tmdbId: number) =>
-	TmdbApiOpen.GET('/3/tv/{series_id}/credits', {
-		params: {
-			path: {
-				series_id: tmdbId
-			}
-		}
-	}).then((res) => res.data?.cast || []);
 
 export const getTmdbMovieRecommendations = (tmdbId: number) =>
 	TmdbApiOpen.GET('/3/movie/{movie_id}/recommendations', {
@@ -309,18 +210,6 @@ export const searchTmdbTitles = (query: string) =>
 		}
 	}).then((res) => res.data?.results || []);
 
-export const getTmdbItemBackdrop = (item: {
-	images: { backdrops: { file_path: string; iso_639_1: string }[] };
-}) =>
-	(
-		item?.images?.backdrops?.find(
-			(b) => b.iso_639_1 === settings.userSettings.interface.language
-		) ||
-		item?.images?.backdrops?.find((b) => b.iso_639_1 === 'en') ||
-		item?.images?.backdrops?.find((b) => b.iso_639_1) ||
-		item?.images?.backdrops?.[0]
-	)?.file_path;
-
 export const getPosterProps = async (
 	item: {
 		name?: string;
@@ -338,7 +227,7 @@ export const getPosterProps = async (
 		type ||
 		(item?.number_of_seasons === undefined && item?.first_air_date === undefined
 			? 'movie'
-			: 'series');
+			: 'tv');
 	return {
 		tmdbId: item.id || 0,
 		title: item.title || item.name || '',

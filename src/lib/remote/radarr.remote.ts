@@ -9,20 +9,12 @@ import { BaseSync } from '$lib/server/tasks/baseSync.server';
 import type { components as RadarrComponents } from '$lib/apis/radarr/radarr.generated';
 
 export const radarrIsHealthy = query(v.optional(ApiSchema), async (api) => {
-	const { cookies } = getRequestEvent();
-	if (!(await assertUserAuth(cookies)))
-		return { success: false, error: 'general.connectionRequired' };
-
 	if (api && api.url && api.key) return await new RadarrConnector(api.url, api.key).isHealthy();
 	const creds = await GlobalSettingsEntity.getRadarrApi();
 	return await new RadarrConnector(creds?.apiUrl ?? '', creds?.apiKey ?? '').isHealthy();
 });
 
 export const radarrGetRootFolders = query(v.optional(ApiSchema), async (api) => {
-	const { cookies } = getRequestEvent();
-	if (!(await assertUserAuth(cookies)))
-		return { success: false, error: 'general.connectionRequired' };
-
 	if (api && api.url && api.key)
 		return (await new RadarrConnector(api.url, api.key).getRootFolder()).data;
 	const creds = await GlobalSettingsEntity.getRadarrApi();
@@ -62,6 +54,20 @@ export const radarrGetQueue = query.live(async function* () {
 		yield await getCachedQueue();
 		await new Promise((f) => setTimeout(f, 2000));
 	}
+});
+
+export const radarrGetMovies = query(async () => {
+	const { cookies } = getRequestEvent();
+	if (!(await assertUserAuth(cookies)))
+		return { success: false, error: 'general.connectionRequired' };
+
+	const { radarrConnector: conn } = await BaseSync.getInstance();
+	if (!conn) return { success: false };
+
+	const movies = await conn.getMovie();
+	if (!movies || !movies.data) return { success: false };
+
+	return { success: true, data: movies.data };
 });
 
 export const radarrAddMovie = command(

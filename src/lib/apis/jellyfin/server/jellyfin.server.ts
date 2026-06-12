@@ -70,34 +70,18 @@ export async function getDeviceIdFromUsername(username: string) {
 
 export async function isJellyfinUserConnected(cookies: Cookies) {
 	const baseUrl = await GlobalSettingsEntity.getJellyfinBaseUrl();
+	if (!baseUrl) throw 'Jellyfin API is not defined';
 
-	if (baseUrl) {
-		return createClient<paths>({
-			baseUrl: baseUrl,
-			headers: {
-				Authorization: `MediaBrowser Token="${cookies.get('access_token')}"`
-			}
-		})
-			.GET('/Users/Me')
-			.then((res) => {
-				return new Response(JSON.stringify(res.data), {
-					status: res.response.status,
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				});
-			})
-			.catch((err) => {
-				return new Response(JSON.stringify({}), {
-					status: 404,
-					statusText: err.cause.code
-				});
-			});
-	} else {
-		return new Response(null, {
-			status: 404
+	return createClient<paths>({
+		baseUrl: baseUrl,
+		headers: {
+			Authorization: `MediaBrowser Token="${cookies.get('access_token')}"`
+		}
+	})
+		.GET('/Users/Me')
+		.then((res) => {
+			return res;
 		});
-	}
 }
 
 export async function checkJellyfinConnection(baseURL: string, apiKey: string) {

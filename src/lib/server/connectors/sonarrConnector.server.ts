@@ -22,7 +22,7 @@ export class SonarrConnector {
 		return health.response.ok;
 	}
 
-	public async addCustomFormat(
+	public async postCustomFormat(
 		customFormat: SonarrComponents['schemas']['CustomFormatResource']
 	) {
 		return await this.client.POST('/api/v3/customformat', {
@@ -30,7 +30,7 @@ export class SonarrConnector {
 		});
 	}
 
-	public async addQualityProfile(
+	public async postQualityProfile(
 		qualityProfile: SonarrComponents['schemas']['QualityProfileResource']
 	) {
 		return await this.client.POST('/api/v3/qualityprofile', {
@@ -64,6 +64,10 @@ export class SonarrConnector {
 
 	public async getRootFolder() {
 		return await this.client.GET('/api/v3/rootfolder');
+	}
+
+	public async getSeries() {
+		return await this.client.GET('/api/v3/series');
 	}
 
 	public async putQualityProfile(

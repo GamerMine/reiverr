@@ -1,6 +1,5 @@
 import { type Cookies, error } from '@sveltejs/kit';
 import { isJellyfinUserConnected } from '$lib/apis/jellyfin/server/jellyfin.server';
-import type { JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
 
 export function assertParam(url: URL, name: string): string {
 	const param = url.searchParams.get(name);
@@ -14,37 +13,24 @@ export function assertParam(url: URL, name: string): string {
 export async function assertUserAuth(cookies: Cookies) {
 	const auth = await isJellyfinUserConnected(cookies);
 
-	return auth.ok;
+	return auth.response.ok ? auth.data?.Id : undefined;
 }
 
 export async function assertAdminUserAuth(cookies: Cookies) {
 	const auth = await isJellyfinUserConnected(cookies);
 
-	if (!auth.ok) {
+	if (!auth.response.ok) {
 		throw error(403, 'Unauthorized');
 	}
 
-	const user: JellyfinUser = await auth.json();
+	const user = auth.data;
 
-	if (!user.Id) {
+	if (!user?.Id) {
 		throw error(401);
 	}
 
 	if (!user.Policy || !user.Policy.IsAdministrator) {
 		throw error(403);
-	}
-}
-
-export async function assertAdminAuth(cookies: Cookies) {
-	const auth = await isJellyfinUserConnected(cookies);
-
-	if (!auth.ok) {
-		throw error(403, 'Unauthorized');
-	} else {
-		const user: JellyfinUser = await auth.json();
-		if (!user.Policy?.IsAdministrator) {
-			throw error(403, 'Unauthorized');
-		}
 	}
 }
 

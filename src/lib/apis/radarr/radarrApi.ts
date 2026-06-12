@@ -4,15 +4,6 @@ import { settings } from '$lib/stores/settings.svelte.js';
 export type DiskSpaceInfo = components['schemas']['DiskSpaceResource'];
 export type RadarrMovie = components['schemas']['MovieResource'];
 
-export const getRadarrMovies = async (): Promise<RadarrMovie[]> => {
-	return (
-		(await fetch('/api/radarr/movie', {
-			method: 'GET'
-		}).then(async (res): Promise<RadarrMovie[]> => (await res.json()) || [])) ||
-		Promise.resolve([])
-	);
-};
-
 export const getDiskSpace = async (): Promise<DiskSpaceInfo[]> => {
 	return (
 		(await fetch('/api/radarr/diskspace', {

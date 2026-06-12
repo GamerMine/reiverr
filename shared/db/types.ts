@@ -25,7 +25,7 @@ export type GlobalSettings = {
 		rootFolderPath: string | undefined;
 	};
 	jellyfin: {
-		baseUrl: string | undefined;
+		baseUrl: string;
 		apiKey: string | undefined;
 	};
 };
@@ -75,7 +75,7 @@ export const defaultGlobalSettings: GlobalSettings = {
 	},
 	jellyfin: {
 		apiKey: undefined,
-		baseUrl: undefined
+		baseUrl: ''
 	}
 };
 

@@ -4,9 +4,9 @@ import { GlobalSettingsEntity } from '@reiverr/db/entities';
 import type { PageServerLoad } from '../../../.svelte-kit/types/src/routes/setup/$types';
 
 export const load: PageServerLoad = async ({ url }) => {
-	const jellyfinAPIKey = await GlobalSettingsEntity.getJellyfinApiKey();
+	const jellyfinAPIKey = await GlobalSettingsEntity.find();
 
-	if (url.pathname === '/setup' && jellyfinAPIKey) {
+	if (url.pathname === '/setup' && jellyfinAPIKey.length > 0) {
 		throw redirect(301, '/login');
 	}
 };

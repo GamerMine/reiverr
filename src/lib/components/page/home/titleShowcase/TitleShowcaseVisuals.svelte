@@ -54,7 +54,7 @@
 	});
 
 	function handleOpenTitle() {
-		openTitleModal({ type, id: tmdbId, provider: 'tmdb' });
+		openTitleModal(tmdbId, type);
 	}
 </script>
 

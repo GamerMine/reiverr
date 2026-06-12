@@ -2,6 +2,7 @@ import type { components as RadarrComponents } from '$lib/apis/radarr/radarr.gen
 import type { components as SonarrComponents } from '$lib/apis/sonarr/sonarr.generated';
 import { RadarrConnector } from '$lib/server/connectors/radarrConnector.server';
 import { SonarrConnector } from '$lib/server/connectors/sonarrConnector.server';
+import { JellyfinConnector } from '$lib/server/connectors/jellyfinConnector.server';
 import { GlobalSettingsEntity } from '@reiverr/db/entities';
 
 export type RadarrQualityDefinitionResource =
@@ -23,11 +24,14 @@ export class BaseSync {
 	private _sonarrQualities: SonarrQualityDefinitionResource[] = [];
 	private _sonarrLanguages: SonarrLanguageResource[] = [];
 
+	private _jellyfinConnector: JellyfinConnector;
+
 	public static async getInstance(): Promise<BaseSync> {
 		if (!BaseSync._instance) {
 			const baseSync = new BaseSync();
 			const radarrSync = await GlobalSettingsEntity.getRadarrApi();
 			const sonarrSync = await GlobalSettingsEntity.getSonarrApi();
+			const jellyfinSync = await GlobalSettingsEntity.getJellyfinApi();
 
 			if (radarrSync && radarrSync.apiUrl && radarrSync.apiKey) {
 				baseSync._radarrConnector = new RadarrConnector(
@@ -41,6 +45,10 @@ export class BaseSync {
 					sonarrSync.apiKey
 				);
 			}
+			baseSync._jellyfinConnector = new JellyfinConnector(
+				jellyfinSync.apiUrl,
+				jellyfinSync.apiKey
+			);
 
 			if (await baseSync.radarrConnector?.isHealthy()) {
 				baseSync._radarrQualities =
@@ -83,5 +91,9 @@ export class BaseSync {
 
 	public get sonarrLanguages() {
 		return this._sonarrLanguages;
+	}
+
+	public get jellyfinConnector() {
+		return this._jellyfinConnector;
 	}
 }

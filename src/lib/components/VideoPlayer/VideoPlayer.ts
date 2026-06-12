@@ -1,7 +1,7 @@
-import { jellyfinItemsStore } from '$lib/stores/data.store';
 import { writable } from 'svelte/store';
 import { modalStack } from '$lib/stores/modal.store';
 import VideoPlayer from './VideoPlayer.svelte';
+import { jellyfinGetItems } from '$lib/remote/jellyfin.remote';
 
 const initialValue = { visible: false, jellyfinId: '' };
 export type PlayerStateValue = typeof initialValue;
@@ -17,7 +17,7 @@ function createPlayerState() {
 		},
 		close: () => {
 			store.set({ visible: false, jellyfinId: '' });
-			jellyfinItemsStore.refresh();
+			jellyfinGetItems().refresh();
 		}
 	};
 }

@@ -2,8 +2,7 @@
  * @deprecated - Check @/utils/playback-profiles/index
  */
 
-import { DlnaProfileType, EncodingContext } from '@jellyfin/sdk/lib/generated-client';
-import type { TranscodingProfile } from '@jellyfin/sdk/lib/generated-client';
+import type { components as JellyfinComponents } from '$lib/apis/jellyfin/jellyfin.generated';
 import { getSupportedAudioCodecs } from './helpers/audio-formats';
 import { getSupportedMP4AudioCodecs } from './helpers/mp4-audio-formats';
 import { getSupportedMP4VideoCodecs, hasVp8Support } from './helpers/mp4-video-formats';
@@ -27,15 +26,12 @@ import {
  */
 export function getTranscodingProfiles(
 	videoTestElement: HTMLVideoElement
-): Array<TranscodingProfile> {
-	const TranscodingProfiles: TranscodingProfile[] = [];
+): Array<JellyfinComponents['schemas']['TranscodingProfile']> {
+	const TranscodingProfiles: JellyfinComponents['schemas']['TranscodingProfile'][] = [];
 	const physicalAudioChannels = isTv() ? 6 : 2;
 
-	const hlsBreakOnNonKeyFrames = !!(
-		isApple() ||
-		(isEdge() && !isChromiumBased()) ||
-		!canPlayNativeHls(videoTestElement)
-	);
+	const hlsBreakOnNonKeyFrames =
+		isApple() || (isEdge() && !isChromiumBased()) || !canPlayNativeHls(videoTestElement);
 
 	const mp4AudioCodecs = getSupportedMP4AudioCodecs(videoTestElement);
 	const mp4VideoCodecs = getSupportedMP4VideoCodecs(videoTestElement);
@@ -44,13 +40,22 @@ export function getTranscodingProfiles(
 	if (canPlayHls) {
 		TranscodingProfiles.push({
 			// hlsjs, edge, and android all seem to require ts container
+			CopyTimestamps: false,
+			EnableAudioVbrEncoding: false,
+			EnableMpegtsM2TsMode: false,
+			EnableSubtitlesInManifest: false,
+			EstimateContentLength: false,
+			SegmentLength: 0,
+			TranscodeSeekInfo: 'Auto',
 			Container:
-				!canPlayNativeHls(videoTestElement) || (isEdge() && !isChromiumBased()) || isAndroid()
+				!canPlayNativeHls(videoTestElement) ||
+				(isEdge() && !isChromiumBased()) ||
+				isAndroid()
 					? 'ts'
 					: 'aac',
-			Type: DlnaProfileType.Audio,
+			Type: 'Audio',
 			AudioCodec: 'aac',
-			Context: EncodingContext.Streaming,
+			Context: 'Streaming',
 			Protocol: 'hls',
 			MaxAudioChannels: physicalAudioChannels.toString(),
 			MinSegments: isApple() ? 2 : 1,
@@ -62,10 +67,19 @@ export function getTranscodingProfiles(
 		getSupportedAudioCodecs(format)
 	)) {
 		TranscodingProfiles.push({
+			BreakOnNonKeyFrames: false,
+			CopyTimestamps: false,
+			EnableAudioVbrEncoding: false,
+			EnableMpegtsM2TsMode: false,
+			EnableSubtitlesInManifest: false,
+			EstimateContentLength: false,
+			MinSegments: 0,
+			SegmentLength: 0,
+			TranscodeSeekInfo: 'Auto',
 			Container: audioFormat,
-			Type: DlnaProfileType.Audio,
+			Type: 'Audio',
 			AudioCodec: audioFormat,
-			Context: EncodingContext.Streaming,
+			Context: 'Streaming',
 			Protocol: 'http',
 			MaxAudioChannels: physicalAudioChannels.toString()
 		});
@@ -76,11 +90,18 @@ export function getTranscodingProfiles(
 
 	if (canPlayHls && hlsInTsVideoCodecs.length > 0 && hlsInTsAudioCodecs.length > 0) {
 		TranscodingProfiles.push({
+			CopyTimestamps: false,
+			EnableAudioVbrEncoding: false,
+			EnableMpegtsM2TsMode: false,
+			EnableSubtitlesInManifest: false,
+			EstimateContentLength: false,
+			SegmentLength: 0,
+			TranscodeSeekInfo: 'Auto',
 			Container: 'ts',
-			Type: DlnaProfileType.Video,
+			Type: 'Video',
 			AudioCodec: hlsInTsAudioCodecs.join(','),
 			VideoCodec: hlsInTsVideoCodecs.join(','),
-			Context: EncodingContext.Streaming,
+			Context: 'Streaming',
 			Protocol: 'hls',
 			MaxAudioChannels: physicalAudioChannels.toString(),
 			MinSegments: isApple() ? 2 : 1,
@@ -90,11 +111,19 @@ export function getTranscodingProfiles(
 
 	if (hasMkvSupport(videoTestElement) && !isTizen()) {
 		TranscodingProfiles.push({
+			BreakOnNonKeyFrames: false,
+			EnableAudioVbrEncoding: false,
+			EnableMpegtsM2TsMode: false,
+			EnableSubtitlesInManifest: false,
+			EstimateContentLength: false,
+			MinSegments: 0,
+			SegmentLength: 0,
+			TranscodeSeekInfo: 'Auto',
 			Container: 'mkv',
-			Type: DlnaProfileType.Video,
+			Type: 'Video',
 			AudioCodec: mp4AudioCodecs.join(','),
 			VideoCodec: mp4VideoCodecs.join(','),
-			Context: EncodingContext.Streaming,
+			Context: 'Streaming',
 			MaxAudioChannels: physicalAudioChannels.toString(),
 			CopyTimestamps: true
 		});
@@ -102,11 +131,20 @@ export function getTranscodingProfiles(
 
 	if (hasVp8Support(videoTestElement)) {
 		TranscodingProfiles.push({
+			BreakOnNonKeyFrames: false,
+			CopyTimestamps: false,
+			EnableAudioVbrEncoding: false,
+			EnableMpegtsM2TsMode: false,
+			EnableSubtitlesInManifest: false,
+			EstimateContentLength: false,
+			MinSegments: 0,
+			SegmentLength: 0,
+			TranscodeSeekInfo: 'Auto',
 			Container: 'webm',
-			Type: DlnaProfileType.Video,
+			Type: 'Video',
 			AudioCodec: 'vorbis',
 			VideoCodec: 'vpx',
-			Context: EncodingContext.Streaming,
+			Context: 'Streaming',
 			Protocol: 'http',
 			// If audio transcoding is needed, limit channels to number of physical audio channels
 			// Trying to transcode to 5 channels when there are only 2 speakers generally does not sound good

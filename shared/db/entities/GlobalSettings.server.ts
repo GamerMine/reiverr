@@ -32,11 +32,11 @@ export class GlobalSettingsEntity extends BaseEntity {
 	radarrRootFolderPath: string | null;
 
 	// Jellyfin
-	@Column('text', { nullable: true, default: defaultGlobalSettings.jellyfin.baseUrl })
-	jellyfinBaseUrl: string | null;
+	@Column('text')
+	jellyfinBaseUrl: string;
 
-	@Column('text', { nullable: true, default: defaultGlobalSettings.jellyfin.apiKey })
-	jellyfinApiKey: string | null;
+	@Column('text')
+	jellyfinApiKey: string;
 
 	public static async getDefault(name = 'default') {
 		const settings = await this.findOne({
@@ -67,6 +67,16 @@ export class GlobalSettingsEntity extends BaseEntity {
 		}
 
 		return this.get(settings);
+	}
+
+	public static async getJellyfinApi(name = 'default') {
+		const settings = await this.findOne({ where: { name } });
+		if (!settings) throw 'Jellyfin API not found';
+
+		return {
+			apiUrl: settings.jellyfinBaseUrl,
+			apiKey: settings.jellyfinApiKey
+		};
 	}
 
 	public static async getJellyfinBaseUrl(name = 'default') {
@@ -207,10 +217,10 @@ export class GlobalSettingsEntity extends BaseEntity {
 
 		if (values.jellyfin.apiKey) {
 			settings.jellyfinApiKey = values.jellyfin.apiKey;
-		} else if (!values.jellyfin.baseUrl) {
-			settings.jellyfinApiKey = values.jellyfin.apiKey ?? null;
+		} else if (!values.jellyfin.baseUrl && values.jellyfin.apiKey) {
+			settings.jellyfinApiKey = values.jellyfin.apiKey;
 		}
-		settings.jellyfinBaseUrl = values.jellyfin.baseUrl ?? null;
+		settings.jellyfinBaseUrl = values.jellyfin.baseUrl;
 
 		await settings.save();
 
@@ -218,9 +228,12 @@ export class GlobalSettingsEntity extends BaseEntity {
 	}
 
 	public static async setJellyfinApiEndpoint(baseURL: string, apiKey: string, name = 'default') {
-		const settings = await this.findOne({ where: { name } });
+		let settings = await this.findOne({ where: { name } });
 
-		if (!settings) return;
+		if (!settings) {
+			settings = new GlobalSettingsEntity();
+			settings.name = 'default';
+		}
 
 		settings.jellyfinBaseUrl = baseURL;
 		settings.jellyfinApiKey = apiKey;

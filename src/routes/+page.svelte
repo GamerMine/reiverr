@@ -109,7 +109,7 @@
 			}
 		})
 			.then((res) => res.data?.results || [])
-			.then((i) => fetchCardProps(i, 'series'));
+			.then((i) => fetchCardProps(i, 'tv'));
 
 	const fetchDigitalReleases = () =>
 		TmdbApiOpen.GET('/3/discover/movie', {
@@ -144,7 +144,7 @@
 			}
 		})
 			.then((res) => res.data?.results || [])
-			.then((i) => fetchCardProps(i, 'series'));
+			.then((i) => fetchCardProps(i, 'tv'));
 
 	function parseIncludedLanguages(includedLanguages: string) {
 		return includedLanguages.replace(' ', '').split(',').join('|');

@@ -2,7 +2,8 @@
 	import {
 		getTmdbMovie,
 		getTmdbMovieRecommendations,
-		getTmdbMovieSimilar
+		getTmdbMovieSimilar,
+		type TmdbMovieFull2
 	} from '$lib/apis/tmdb/tmdbApi';
 	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
 	import Card from '$lib/components/common/misc/cards/Card.svelte';
@@ -14,16 +15,23 @@
 	import OpenInButton from '$lib/components/TitlePageLayout/OpenInButton.svelte';
 	import TitlePageLayout from '$lib/components/TitlePageLayout/TitlePageLayout.svelte';
 	import { playerState } from '$lib/components/VideoPlayer/VideoPlayer';
-	import { createJellyfinItemStore, createRadarrMovieStore } from '$lib/stores/data.store';
 	import { formatSize } from '$lib/utils';
 	import classNames from 'classnames';
 	import { ActivityLog, Archive, ChevronRight, DotFilled, Trash } from 'svelte-radix';
-	import { type ComponentProps } from 'svelte';
+	import { type ComponentProps, onMount } from 'svelte';
 	import { _ } from 'svelte-i18n';
 	import { settings } from '$lib/stores/settings.svelte';
-	import { radarrAddMovie, radarrRemoveMovie } from '$lib/remote/radarr.remote';
+	import { radarrAddMovie, radarrGetMovies, radarrRemoveMovie } from '$lib/remote/radarr.remote';
 	import Select from '$lib/components/common/inputs/forms/Select.svelte';
 	import Option from '$lib/components/common/inputs/forms/Option.svelte';
+	import type { components as RadarrComponents } from '$lib/apis/radarr/radarr.generated';
+	import type { components as JellyfinComponents } from '$lib/apis/jellyfin/jellyfin.generated';
+	import { TMDB_BASE_MOVIE_URL } from '$lib/constants';
+	import { jellyfinGetItems } from '$lib/remote/jellyfin.remote';
+	import {
+		createErrorNotification,
+		createSuccessNotification
+	} from '$lib/stores/notification.store';
 
 	let {
 		tmdbId,
@@ -31,12 +39,10 @@
 		handleCloseModal = () => {}
 	}: { tmdbId: number; isModal?: boolean; handleCloseModal?: () => void } = $props();
 
-	const tmdbUrl = 'https://www.themoviedb.org/movie/' + tmdbId;
-	const data = getTmdbMovie(tmdbId);
-	const recommendationData = preloadRecommendationData();
-
-	const jellyfinItemStore = createJellyfinItemStore(tmdbId);
-	const radarrMovieStore = createRadarrMovieStore(tmdbId);
+	let loading = $state(true);
+	let tmdbMovie: TmdbMovieFull2 | undefined = $state();
+	let jellyfinItem: JellyfinComponents['schemas']['BaseItemDto'] | undefined = $state();
+	let radarrMovie: RadarrComponents['schemas']['MovieResource'] | undefined = $state();
 
 	async function preloadRecommendationData() {
 		const tmdbRecommendationProps = getTmdbMovieRecommendations(tmdbId)
@@ -46,30 +52,23 @@
 			.then((r) => Promise.all(r.map(fetchCardTmdbProps)))
 			.then((r) => r.filter((p) => p.backdropUrl));
 
-		const castPropsPromise = data.then((m) =>
-			Promise.all(
-				m?.credits?.cast?.slice(0, 20).map((m) => ({
-					tmdbId: m.id || 0,
-					backdropUri: m.profile_path || '',
-					name: m.name || '',
-					subtitle: m.character || m.known_for_department || ''
-				})) || []
-			)
-		);
+		const castPropsPromise =
+			tmdbMovie?.credits?.cast?.slice(0, 20).map((m) => ({
+				tmdbId: m.id || 0,
+				backdropUri: m.profile_path || '',
+				name: m.name || '',
+				subtitle: m.character || m.known_for_department || ''
+			})) || [];
 
 		return {
 			tmdbRecommendationProps: await tmdbRecommendationProps,
 			tmdbSimilarProps: await tmdbSimilarProps,
-			castProps: await castPropsPromise
+			castProps: castPropsPromise
 		};
 	}
 
 	function play() {
-		if ($jellyfinItemStore.item?.Id) playerState.streamJellyfinId($jellyfinItemStore.item?.Id);
-	}
-
-	async function refreshRadarr() {
-		await radarrMovieStore.refreshIn();
+		if (jellyfinItem?.Id) playerState.streamJellyfinId(jellyfinItem.Id);
 	}
 
 	let addToRadarrLoading = $state(false);
@@ -78,49 +77,71 @@
 
 		// FIXME: Because adding a movie to Radarr is done in a task, refreshing the store directly is useless: the task
 		//  might take more time to complete than the Promise might take to resolve.
-		radarrAddMovie({ tmdbId, language }).then(() => {
-			refreshRadarr().then(() => {
-				addToRadarrLoading = false;
-			});
+		radarrAddMovie({ tmdbId, language }).then((res) => {
+			if (res.success)
+				createSuccessNotification($_('general.success'), 'TODO'); //TODO: Add translation
+			else createErrorNotification($_('general.error'), $_(res.error ?? 'TODO'));
+			radarrGetMovies()
+				.refresh()
+				.then(() => {
+					addToRadarrLoading = false;
+				});
 		});
 	}
 
-	function removeMovie() {
-		if ($radarrMovieStore.item?.id) radarrRemoveMovie($radarrMovieStore.item?.id);
-		refreshRadarr();
+	async function removeMovie() {
+		if (radarrMovie?.id) radarrRemoveMovie(radarrMovie.id);
+		await radarrGetMovies().refresh();
 	}
+
+	onMount(async () => {
+		const resolved = await Promise.all([
+			radarrGetMovies(),
+			jellyfinGetItems(),
+			getTmdbMovie(tmdbId)
+		]);
+		tmdbMovie = resolved[2];
+		radarrMovie = radarrGetMovies().current?.data?.find((m) => m.tmdbId === tmdbId);
+		jellyfinItem = jellyfinGetItems().current?.data?.find(
+			(i) => i.ProviderIds?.Tmdb === tmdbId.toString()
+		);
+		loading = false;
+	});
 </script>
 
-{#await data}
+{#if loading}
 	<TitlePageLayout {isModal} {handleCloseModal} />
-{:then movie}
+{:else}
 	<TitlePageLayout
 		titleInformation={{
 			tmdbId,
 			type: 'movie',
-			title: movie?.title || 'Movie',
-			backdropUriCandidates: movie?.images?.backdrops?.map((b) => b.file_path || '') || [],
-			posterPath: movie?.poster_path || '',
-			tagline: movie?.tagline || movie?.title || '',
-			overview: movie?.overview || ''
+			title: tmdbMovie?.title || 'Movie',
+			backdropUriCandidates:
+				tmdbMovie?.images?.backdrops?.map((b) => b.file_path || '') || [],
+			posterPath: tmdbMovie?.poster_path || '',
+			tagline: tmdbMovie?.tagline || tmdbMovie?.title || '',
+			overview: tmdbMovie?.overview || ''
 		}}
 		{isModal}
 		{handleCloseModal}
 	>
 		{#snippet title_info()}
-			{new Date(movie?.release_date || Date.now()).getFullYear()}
+			{new Date(tmdbMovie?.release_date || Date.now()).getFullYear()}
 			<DotFilled />
-			{@const progress = $jellyfinItemStore.item?.UserData?.PlayedPercentage}
+			{@const progress = jellyfinItem?.UserData?.PlayedPercentage}
 			{#if progress}
 				{progress.toFixed()} {$_('library.content.minLeft')}
 			{:else}
-				{movie?.runtime} min
+				{tmdbMovie?.runtime} min
 			{/if}
 			<DotFilled />
-			<a href={tmdbUrl} target="_blank">{movie?.vote_average?.toFixed(1)} TMDB</a>
+			<a href={TMDB_BASE_MOVIE_URL + tmdbId} target="_blank"
+				>{tmdbMovie?.vote_average?.toFixed(1)} TMDB</a
+			>
 		{/snippet}
 		{#snippet episodes_carousel()}
-			{@const progress = $jellyfinItemStore.item?.UserData?.PlayedPercentage}
+			{@const progress = jellyfinItem?.UserData?.PlayedPercentage}
 			{#if progress}
 				<div
 					class={classNames('px-2 sm:px-4 lg:px-8', {
@@ -136,12 +157,10 @@
 			<div
 				class="flex gap-2 items-center flex-row-reverse justify-end lg:flex-row lg:justify-start"
 			>
-				{#if $jellyfinItemStore.loading || $radarrMovieStore.loading}
+				{#if jellyfinGetItems().loading || radarrGetMovies().loading}
 					<div class="placeholder h-10 w-48 rounded-xl"></div>
 				{:else}
-					{@const jellyfinItem = $jellyfinItemStore.item}
-					{@const radarrMovie = $radarrMovieStore.item}
-					<OpenInButton title={movie?.title} {jellyfinItem} type="movie" {tmdbId} />
+					<OpenInButton title={tmdbMovie?.title} {jellyfinItem} type="movie" {tmdbId} />
 					{#if jellyfinItem}
 						<Button variant="primary" onclick={play}>
 							<span>{$_('library.content.play')}</span><ChevronRight size="20" />
@@ -164,7 +183,11 @@
 								>{$_('library.content.queued')}</span
 							>
 						</Button>
-						<Button variant="error" klass="!px-2" onclick={removeMovie}>
+						<Button
+							variant="error"
+							klass="!px-2"
+							onclick={async () => await removeMovie()}
+						>
 							<Trash size="20" />
 						</Button>
 					{/if}
@@ -176,7 +199,7 @@
 			<div class="col-span-2 lg:col-span-1">
 				<p class="text-zinc-400 text-sm">{$_('library.content.directedBy')}</p>
 				<h2 class="font-medium">
-					{movie?.credits.crew
+					{tmdbMovie?.credits.crew
 						?.filter((c) => c.job === 'Director')
 						.map((p) => p.name)
 						.join(', ')}
@@ -185,7 +208,7 @@
 			<div class="col-span-2 lg:col-span-1">
 				<p class="text-zinc-400 text-sm">{$_('library.content.releaseDate')}</p>
 				<h2 class="font-medium">
-					{new Date(movie?.release_date || Date.now()).toLocaleDateString(
+					{new Date(tmdbMovie?.release_date || Date.now()).toLocaleDateString(
 						settings.userSettings.interface.language,
 						{
 							year: 'numeric',
@@ -195,22 +218,22 @@
 					)}
 				</h2>
 			</div>
-			{#if movie?.budget}
+			{#if tmdbMovie?.budget}
 				<div class="col-span-2 lg:col-span-1">
 					<p class="text-zinc-400 text-sm">{$_('library.content.budget')}</p>
 					<h2 class="font-medium">
-						{movie?.budget?.toLocaleString('en-US', {
+						{tmdbMovie?.budget?.toLocaleString('en-US', {
 							style: 'currency',
 							currency: 'USD'
 						})}
 					</h2>
 				</div>
 			{/if}
-			{#if movie?.revenue}
+			{#if tmdbMovie?.revenue}
 				<div class="col-span-2 lg:col-span-1">
 					<p class="text-zinc-400 text-sm">{$_('library.content.revenue')}</p>
 					<h2 class="font-medium">
-						{movie?.revenue?.toLocaleString('en-US', {
+						{tmdbMovie?.revenue?.toLocaleString('en-US', {
 							style: 'currency',
 							currency: 'USD'
 						})}
@@ -220,19 +243,18 @@
 			<div class="col-span-2 lg:col-span-1">
 				<p class="text-zinc-400 text-sm">{$_('library.content.status')}</p>
 				<h2 class="font-medium">
-					{movie?.status}
+					{tmdbMovie?.status}
 				</h2>
 			</div>
 			<div class="col-span-2 lg:col-span-1">
 				<p class="text-zinc-400 text-sm">{$_('library.content.runtime')}</p>
 				<h2 class="font-medium">
-					{movie?.runtime} Minutes
+					{tmdbMovie?.runtime} Minutes
 				</h2>
 			</div>
 		{/snippet}
 
 		{#snippet servarr_components()}
-			{@const radarrMovie = $radarrMovieStore.item}
 			{#if radarrMovie}
 				{#if radarrMovie?.movieFile?.quality}
 					<div class="col-span-2 lg:col-span-1">
@@ -258,7 +280,7 @@
 						/>
 					</Button>
 				</div>
-			{:else if $radarrMovieStore.loading}
+			{:else if radarrGetMovies().loading}
 				<div class="flex gap-4 flex-wrap col-span-4 sm:col-span-6 mt-4">
 					<div class="placeholder h-10 w-40 rounded-xl"></div>
 					<div class="placeholder h-10 w-40 rounded-xl"></div>
@@ -267,7 +289,7 @@
 		{/snippet}
 
 		{#snippet carousels()}
-			{#await recommendationData}
+			{#await preloadRecommendationData()}
 				<Carousel gradientFromColor="from-stone-950">
 					{#snippet title()}
 						<div class="font-medium text-lg">{$_('library.content.castAndCrew')}</div>
@@ -332,4 +354,4 @@
 			{/await}
 		{/snippet}
 	</TitlePageLayout>
-{/await}
+{/if}

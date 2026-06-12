@@ -1,18 +1,19 @@
 <script lang="ts">
-	import type { TitleId } from '$lib/types';
 	import type { PageData } from './$types';
 	import SeriesPage from './SeriesPage.svelte';
+	import { onMount } from 'svelte';
 
 	let { data }: { data: PageData } = $props();
 
-	let titleId: TitleId | undefined = $state();
-	$effect(() => {
-		titleId = { provider: 'tmdb', id: data.tmdbId, type: 'series' };
+	let tmdbId: number | undefined = $state();
+
+	onMount(() => {
+		tmdbId = data.tmdbId;
 	});
 </script>
 
-{#key titleId}
-	{#if titleId}
-		<SeriesPage {titleId} />
+{#key tmdbId}
+	{#if tmdbId}
+		<SeriesPage {tmdbId} />
 	{/if}
 {/key}

@@ -143,6 +143,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/Backup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Gets a list of all currently present backups in the backup directory. */
+        get: operations["ListBackups"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/Backup/Create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Creates a new Backup. */
+        post: operations["CreateBackup"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/Backup/Manifest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Gets the descriptor from an existing archive is present. */
+        get: operations["GetBackup"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/Backup/Restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Restores to a backup by restarting the server and applying the backup. */
+        post: operations["StartRestoreBackup"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/Branding/Configuration": {
         parameters: {
             query?: never;
@@ -361,6 +429,23 @@ export interface paths {
         put?: never;
         /** Updates named configuration. */
         post: operations["UpdateNamedConfiguration"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/System/Configuration/Branding": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Updates branding configuration. */
+        post: operations["UpdateBrandingConfiguration"];
         delete?: never;
         options?: never;
         head?: never;
@@ -896,8 +981,10 @@ export interface paths {
         /** Generates or gets the splashscreen. */
         get: operations["GetSplashscreen"];
         put?: never;
-        /** Uploads a custom splashscreen.
-         *     The body is expected to the image contents base64 encoded. */
+        /**
+         * Uploads a custom splashscreen.
+         *     The body is expected to the image contents base64 encoded.
+         */
         post: operations["UploadCustomSplashscreen"];
         /** Delete a custom splashscreen. */
         delete: operations["DeleteCustomSplashscreen"];
@@ -2168,7 +2255,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get guid info. */
+        /** Get guide info. */
         get: operations["GetGuideInfo"];
         put?: never;
         post?: never;
@@ -3161,9 +3248,15 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Reports that a session has begun playing an item. */
+        /**
+         * Reports that a session has begun playing an item.
+         * @deprecated
+         */
         post: operations["OnPlaybackStart"];
-        /** Reports that a session has stopped playing an item. */
+        /**
+         * Reports that a session has stopped playing an item.
+         * @deprecated
+         */
         delete: operations["OnPlaybackStopped"];
         options?: never;
         head?: never;
@@ -3179,7 +3272,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Reports a session's playback progress. */
+        /**
+         * Reports a session's playback progress.
+         * @deprecated
+         */
         post: operations["OnPlaybackProgress"];
         delete?: never;
         options?: never;
@@ -4185,6 +4281,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/SyncPlay/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Gets a SyncPlay group by id. */
+        get: operations["SyncPlayGetGroup"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/SyncPlay/Buffering": {
         parameters: {
             query?: never;
@@ -4593,6 +4706,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/System/Info/Storage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Gets information about the server. */
+        get: operations["GetSystemStorage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/System/Logs": {
         parameters: {
             query?: never;
@@ -4673,26 +4803,6 @@ export interface paths {
         put?: never;
         /** Shuts down the application. */
         post: operations["ShutdownApplication"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/System/WakeOnLanInfo": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Gets wake on lan information.
-         * @deprecated
-         */
-        get: operations["GetWakeOnLanInfo"];
-        put?: never;
-        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -5469,8 +5579,10 @@ export interface components {
              */
             StartIndex?: number;
         };
-        /** @description Activity log entry start message.
-         *     Data is the timing data encoded as "$initialDelay,$interval" in ms. */
+        /**
+         * @description Activity log entry start message.
+         *     Data is the timing data encoded as "$initialDelay,$interval" in ms.
+         */
         ActivityLogEntryStartMessage: {
             /** @description Gets or sets the data. */
             Data?: string | null;
@@ -5649,17 +5761,51 @@ export interface components {
         };
         /** @description A class representing an authentication result. */
         AuthenticationResult: {
-            /** @description Gets or sets the user. */
+            /** @description Class UserDto. */
             User?: components["schemas"]["UserDto"] | null;
-            /** @description Gets or sets the session info. */
+            /** @description Session info DTO. */
             SessionInfo?: components["schemas"]["SessionInfoDto"] | null;
             /** @description Gets or sets the access token. */
             AccessToken?: string | null;
             /** @description Gets or sets the server id. */
             ServerId?: string | null;
         };
-        /** @description This is strictly used as a data transfer object from the api layer.
-         *     This holds information about a BaseItem in a format that is convenient for the client. */
+        /** @description Manifest type for backups internal structure. */
+        BackupManifestDto: {
+            /** @description Gets or sets the jellyfin version this backup was created with. */
+            ServerVersion?: string;
+            /** @description Gets or sets the backup engine version this backup was created with. */
+            BackupEngineVersion?: string;
+            /**
+             * Format: date-time
+             * @description Gets or sets the date this backup was created with.
+             */
+            DateCreated?: string;
+            /** @description Gets or sets the path to the backup on the system. */
+            Path?: string;
+            /** @description Gets or sets the contents of the backup archive. */
+            Options?: components["schemas"]["BackupOptionsDto"];
+        };
+        /** @description Defines the optional contents of the backup archive. */
+        BackupOptionsDto: {
+            /** @description Gets or sets a value indicating whether the archive contains the Metadata contents. */
+            Metadata?: boolean;
+            /** @description Gets or sets a value indicating whether the archive contains the Trickplay contents. */
+            Trickplay?: boolean;
+            /** @description Gets or sets a value indicating whether the archive contains the Subtitle contents. */
+            Subtitles?: boolean;
+            /** @description Gets or sets a value indicating whether the archive contains the Database contents. */
+            Database?: boolean;
+        };
+        /** @description Defines properties used to start a restore process. */
+        BackupRestoreRequestDto: {
+            /** @description Gets or Sets the name of the backup archive to restore from. Must be present in MediaBrowser.Common.Configuration.IApplicationPaths.BackupPath. */
+            ArchiveFileName?: string;
+        };
+        /**
+         * @description This is strictly used as a data transfer object from the api layer.
+         *     This holds information about a BaseItem in a format that is convenient for the client.
+         */
         BaseItemDto: {
             /** @description Gets or sets the name. */
             Name?: string | null;
@@ -5804,7 +5950,7 @@ export interface components {
              */
             ParentId?: string | null;
             /**
-             * @description Gets or sets the type.
+             * @description The base item kind.
              * @enum {unknown}
              */
             Type?: "AggregateFolder" | "Audio" | "AudioBook" | "BasePluginFolder" | "Book" | "BoxSet" | "Channel" | "ChannelFolderItem" | "CollectionFolder" | "Episode" | "Folder" | "Genre" | "ManualPlaylistsFolder" | "Movie" | "LiveTvChannel" | "LiveTvProgram" | "MusicAlbum" | "MusicArtist" | "MusicGenre" | "MusicVideo" | "Person" | "Photo" | "PhotoAlbum" | "Playlist" | "PlaylistsFolder" | "Program" | "Recording" | "Season" | "Series" | "Studio" | "Trailer" | "TvChannel" | "TvProgram" | "UserRootFolder" | "UserView" | "Video" | "Year";
@@ -5935,8 +6081,10 @@ export interface components {
             ParentArtImageTag?: string | null;
             /** @description Gets or sets the series thumb image tag. */
             SeriesThumbImageTag?: string | null;
-            /** @description Gets or sets the blurhashes for the image tags.
-             *     Maps image type to dictionary mapping image tag to blurhash value. */
+            /**
+             * @description Gets or sets the blurhashes for the image tags.
+             *     Maps image type to dictionary mapping image tag to blurhash value.
+             */
             ImageBlurHashes?: {
                 Primary?: {
                     [key: string]: string;
@@ -5987,7 +6135,10 @@ export interface components {
             ParentThumbItemId?: string | null;
             /** @description Gets or sets the parent thumb image tag. */
             ParentThumbImageTag?: string | null;
-            /** @description Gets or sets the parent primary image item identifier. */
+            /**
+             * Format: uuid
+             * @description Gets or sets the parent primary image item identifier.
+             */
             ParentPrimaryImageItemId?: string | null;
             /** @description Gets or sets the parent primary image tag. */
             ParentPrimaryImageTag?: string | null;
@@ -5996,7 +6147,7 @@ export interface components {
             /** @description Gets or sets the trickplay manifest. */
             Trickplay?: {
                 [key: string]: {
-                    [key: string]: components["schemas"]["TrickplayInfo"];
+                    [key: string]: components["schemas"]["TrickplayInfoDto"];
                 };
             } | null;
             /**
@@ -6010,7 +6161,7 @@ export interface components {
              */
             IsoType?: "Dvd" | "BluRay" | null;
             /**
-             * @description Gets or sets the type of the media.
+             * @description Media types.
              * @default Unknown
              * @enum {unknown}
              */
@@ -6174,7 +6325,7 @@ export interface components {
             /** @description Gets or sets the role. */
             Role?: string | null;
             /**
-             * @description Gets or sets the type.
+             * @description The person kind.
              * @default Unknown
              * @enum {unknown}
              */
@@ -6301,8 +6452,11 @@ export interface components {
             /** @description Gets or sets a value indicating whether disabled providers should be included. */
             IncludeDisabledProviders?: boolean;
         };
-        /** @description The branding options. */
-        BrandingOptions: {
+        /**
+         * @description The branding options DTO for API use.
+         *     This DTO excludes SplashscreenLocation to prevent it from being updated via API.
+         */
+        BrandingOptionsDto: {
             /** @description Gets or sets the login disclaimer. */
             LoginDisclaimer?: string | null;
             /** @description Gets or sets the custom CSS. */
@@ -6557,6 +6711,42 @@ export interface components {
             readonly ThreeLetterISOLanguageName?: string | null;
             ThreeLetterISOLanguageNames?: string[];
         };
+        /** @description The custom value option for custom database providers. */
+        CustomDatabaseOption: {
+            /** @description Gets or sets the key of the value. */
+            Key?: string;
+            /** @description Gets or sets the value. */
+            Value?: string;
+        };
+        /** @description Defines the options for a custom database connector. */
+        CustomDatabaseOptions: {
+            /** @description Gets or sets the Plugin name to search for database providers. */
+            PluginName?: string;
+            /** @description Gets or sets the plugin assembly to search for providers. */
+            PluginAssembly?: string;
+            /** @description Gets or sets the connection string for the custom database provider. */
+            ConnectionString?: string;
+            /** @description Gets or sets the list of extra options for the custom provider. */
+            Options?: components["schemas"]["CustomDatabaseOption"][];
+        };
+        /** @description Options to configure jellyfins managed database. */
+        DatabaseConfigurationOptions: {
+            /** @description Gets or Sets the type of database jellyfin should use. */
+            DatabaseType?: string;
+            /** @description Gets or sets the options required to use a custom database provider. */
+            CustomProviderOptions?: components["schemas"]["CustomDatabaseOptions"] | null;
+            /**
+             * @description Gets or Sets the kind of locking behavior jellyfin should perform. Possible options are "NoLock", "Pessimistic", "Optimistic".
+             *     Defaults to "NoLock".
+             * @enum {unknown}
+             */
+            LockingBehavior?: "NoLock" | "Pessimistic" | "Optimistic";
+        };
+        /**
+         * @description Defines all possible methods for locking database access for concurrent queries.
+         * @enum {string}
+         */
+        DatabaseLockingBehaviorTypes: "NoLock" | "Pessimistic" | "Optimistic";
         /** @enum {string} */
         DayOfWeek: "Sunday" | "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday";
         /** @enum {string} */
@@ -6629,12 +6819,14 @@ export interface components {
             /** @description Gets or sets the custom name. */
             CustomName?: string | null;
         };
-        /** @description A MediaBrowser.Model.Dlna.DeviceProfile represents a set of metadata which determines which content a certain device is able to play.
+        /**
+         * @description A MediaBrowser.Model.Dlna.DeviceProfile represents a set of metadata which determines which content a certain device is able to play.
          *     <br />
          *     Specifically, it defines the supported <see cref="P:MediaBrowser.Model.Dlna.DeviceProfile.ContainerProfiles">containers</see> and
          *     <see cref="P:MediaBrowser.Model.Dlna.DeviceProfile.CodecProfiles">codecs</see> (video and/or audio, including codec profiles and levels)
          *     the device is able to direct play (without transcoding or remuxing),
-         *     as well as which <see cref="P:MediaBrowser.Model.Dlna.DeviceProfile.TranscodingProfiles">containers/codecs to transcode to</see> in case it isn't. */
+         *     as well as which <see cref="P:MediaBrowser.Model.Dlna.DeviceProfile.TranscodingProfiles">containers/codecs to transcode to</see> in case it isn't.
+         */
         DeviceProfile: {
             /** @description Gets or sets the name of this device profile. User profiles must have a unique name. */
             Name?: string | null;
@@ -6715,7 +6907,7 @@ export interface components {
                 [key: string]: string | null;
             };
             /**
-             * @description Gets or sets the scroll direction.
+             * @description An enum representing the axis that should be scrolled.
              * @enum {unknown}
              */
             ScrollDirection?: "Horizontal" | "Vertical";
@@ -6724,7 +6916,7 @@ export interface components {
             /** @description Gets or sets a value indicating whether [remember sorting]. */
             RememberSorting?: boolean;
             /**
-             * @description Gets or sets the sort order.
+             * @description An enum representing the sorting order.
              * @enum {unknown}
              */
             SortOrder?: "Ascending" | "Descending";
@@ -6928,18 +7120,13 @@ export interface components {
              *     default id for the external provider so there is no need to specify a type.
              * @enum {unknown|null}
              */
-            Type?: "Album" | "AlbumArtist" | "Artist" | "BoxSet" | "Episode" | "Movie" | "OtherArtist" | "Person" | "ReleaseGroup" | "Season" | "Series" | "Track" | "Book" | null;
-            /**
-             * @deprecated
-             * @description Gets or sets the URL format string.
-             */
-            UrlFormatString?: string | null;
+            Type?: "Album" | "AlbumArtist" | "Artist" | "BoxSet" | "Episode" | "Movie" | "OtherArtist" | "Person" | "ReleaseGroup" | "Season" | "Series" | "Track" | "Book" | "Recording" | null;
         };
         /**
          * @description The specific media type of an MediaBrowser.Model.Providers.ExternalIdInfo.
          * @enum {string}
          */
-        ExternalIdMediaType: "Album" | "AlbumArtist" | "Artist" | "BoxSet" | "Episode" | "Movie" | "OtherArtist" | "Person" | "ReleaseGroup" | "Season" | "Series" | "Track" | "Book";
+        ExternalIdMediaType: "Album" | "AlbumArtist" | "Artist" | "BoxSet" | "Episode" | "Movie" | "OtherArtist" | "Person" | "ReleaseGroup" | "Season" | "Series" | "Track" | "Book" | "Recording";
         ExternalUrl: {
             /** @description Gets or sets the name. */
             Name?: string | null;
@@ -6965,6 +7152,25 @@ export interface components {
          * @enum {string}
          */
         FileSystemEntryType: "File" | "Directory" | "NetworkComputer" | "NetworkShare";
+        /** @description Contains information about a specific folder. */
+        FolderStorageDto: {
+            /** @description Gets the path of the folder in question. */
+            Path?: string;
+            /**
+             * Format: int64
+             * @description Gets the free space of the underlying storage device of the Jellyfin.Api.Models.SystemInfoDtos.FolderStorageDto.Path.
+             */
+            FreeSpace?: number;
+            /**
+             * Format: int64
+             * @description Gets the used space of the underlying storage device of the Jellyfin.Api.Models.SystemInfoDtos.FolderStorageDto.Path.
+             */
+            UsedSpace?: number;
+            /** @description Gets the kind of storage device of the Jellyfin.Api.Models.SystemInfoDtos.FolderStorageDto.Path. */
+            StorageType?: string | null;
+            /** @description Gets the Device Identifier. */
+            DeviceId?: string | null;
+        };
         /** @description Class FontFile. */
         FontFile: {
             /** @description Gets or sets the name. */
@@ -7170,21 +7376,6 @@ export interface components {
              */
             LastUpdatedAt?: string;
         };
-        /** @description Class GroupUpdate. */
-        GroupInfoDtoGroupUpdate: {
-            /**
-             * Format: uuid
-             * @description Gets the group identifier.
-             */
-            readonly GroupId?: string;
-            /**
-             * @description Gets the update type. (enum property replaced by openapi-typescript)
-             * @enum {string}
-             */
-            Type: "GroupJoined";
-            /** @description Gets the update data. */
-            Data?: components["schemas"]["GroupInfoDto"];
-        };
         /**
          * @description Enum GroupQueueMode.
          * @enum {string}
@@ -7218,39 +7409,13 @@ export interface components {
              */
             Reason?: "Play" | "SetPlaylistItem" | "RemoveFromPlaylist" | "MovePlaylistItem" | "Queue" | "Unpause" | "Pause" | "Stop" | "Seek" | "Buffer" | "Ready" | "NextItem" | "PreviousItem" | "SetRepeatMode" | "SetShuffleMode" | "Ping" | "IgnoreWait";
         };
-        /** @description Class GroupUpdate. */
-        GroupStateUpdateGroupUpdate: {
-            /**
-             * Format: uuid
-             * @description Gets the group identifier.
-             */
-            readonly GroupId?: string;
-            /**
-             * @description Gets the update type. (enum property replaced by openapi-typescript)
-             * @enum {string}
-             */
-            Type: "StateUpdate";
-            /** @description Gets the update data. */
-            Data?: components["schemas"]["GroupStateUpdate"];
-        };
-        /** @description Group update without data. */
-        GroupUpdate: {
-            /**
-             * Format: uuid
-             * @description Gets the group identifier.
-             */
-            readonly GroupId?: string;
-            /**
-             * @description Gets the update type.
-             * @enum {unknown}
-             */
-            Type?: "UserJoined" | "UserLeft" | "GroupJoined" | "GroupLeft" | "StateUpdate" | "PlayQueue" | "NotInGroup" | "GroupDoesNotExist" | "CreateGroupDenied" | "JoinGroupDenied" | "LibraryAccessDenied";
-        } & (components["schemas"]["GroupInfoDtoGroupUpdate"] | components["schemas"]["GroupStateUpdateGroupUpdate"] | components["schemas"]["StringGroupUpdate"] | components["schemas"]["PlayQueueUpdateGroupUpdate"]);
+        /** @description Represents the list of possible group update types */
+        GroupUpdate: components["schemas"]["SyncPlayGroupDoesNotExistUpdate"] | components["schemas"]["SyncPlayGroupJoinedUpdate"] | components["schemas"]["SyncPlayGroupLeftUpdate"] | components["schemas"]["SyncPlayLibraryAccessDeniedUpdate"] | components["schemas"]["SyncPlayNotInGroupUpdate"] | components["schemas"]["SyncPlayPlayQueueUpdate"] | components["schemas"]["SyncPlayStateUpdate"] | components["schemas"]["SyncPlayUserJoinedUpdate"] | components["schemas"]["SyncPlayUserLeftUpdate"];
         /**
          * @description Enum GroupUpdateType.
          * @enum {string}
          */
-        GroupUpdateType: "UserJoined" | "UserLeft" | "GroupJoined" | "GroupLeft" | "StateUpdate" | "PlayQueue" | "NotInGroup" | "GroupDoesNotExist" | "CreateGroupDenied" | "JoinGroupDenied" | "LibraryAccessDenied";
+        GroupUpdateType: "UserJoined" | "UserLeft" | "GroupJoined" | "GroupLeft" | "StateUpdate" | "PlayQueue" | "NotInGroup" | "GroupDoesNotExist" | "LibraryAccessDenied";
         GuideInfo: {
             /**
              * Format: date-time
@@ -7472,7 +7637,7 @@ export interface components {
          * @description Used to control the data that gets attached to DtoBaseItems.
          * @enum {string}
          */
-        ItemFields: "AirTime" | "CanDelete" | "CanDownload" | "ChannelInfo" | "Chapters" | "Trickplay" | "ChildCount" | "CumulativeRunTimeTicks" | "CustomRating" | "DateCreated" | "DateLastMediaAdded" | "DisplayPreferencesId" | "Etag" | "ExternalUrls" | "Genres" | "HomePageUrl" | "ItemCounts" | "MediaSourceCount" | "MediaSources" | "OriginalTitle" | "Overview" | "ParentId" | "Path" | "People" | "PlayAccess" | "ProductionLocations" | "ProviderIds" | "PrimaryImageAspectRatio" | "RecursiveItemCount" | "Settings" | "ScreenshotImageTags" | "SeriesPrimaryImage" | "SeriesStudio" | "SortName" | "SpecialEpisodeNumbers" | "Studios" | "Taglines" | "Tags" | "RemoteTrailers" | "MediaStreams" | "SeasonUserData" | "ServiceName" | "ThemeSongIds" | "ThemeVideoIds" | "ExternalEtag" | "PresentationUniqueKey" | "InheritedParentalRatingValue" | "ExternalSeriesId" | "SeriesPresentationUniqueKey" | "DateLastRefreshed" | "DateLastSaved" | "RefreshState" | "ChannelImage" | "EnableMediaSourceDisplay" | "Width" | "Height" | "ExtraIds" | "LocalTrailerCount" | "IsHD" | "SpecialFeatureCount";
+        ItemFields: "AirTime" | "CanDelete" | "CanDownload" | "ChannelInfo" | "Chapters" | "Trickplay" | "ChildCount" | "CumulativeRunTimeTicks" | "CustomRating" | "DateCreated" | "DateLastMediaAdded" | "DisplayPreferencesId" | "Etag" | "ExternalUrls" | "Genres" | "ItemCounts" | "MediaSourceCount" | "MediaSources" | "OriginalTitle" | "Overview" | "ParentId" | "Path" | "People" | "PlayAccess" | "ProductionLocations" | "ProviderIds" | "PrimaryImageAspectRatio" | "RecursiveItemCount" | "Settings" | "SeriesStudio" | "SortName" | "SpecialEpisodeNumbers" | "Studios" | "Taglines" | "Tags" | "RemoteTrailers" | "MediaStreams" | "SeasonUserData" | "DateLastRefreshed" | "DateLastSaved" | "RefreshState" | "ChannelImage" | "EnableMediaSourceDisplay" | "Width" | "Height" | "ExtraIds" | "LocalTrailerCount" | "IsHD" | "SpecialFeatureCount";
         /**
          * @description Enum ItemFilter.
          * @enum {string}
@@ -7482,7 +7647,7 @@ export interface components {
          * @description These represent sort orders.
          * @enum {string}
          */
-        ItemSortBy: "Default" | "AiredEpisodeOrder" | "Album" | "AlbumArtist" | "Artist" | "DateCreated" | "OfficialRating" | "DatePlayed" | "PremiereDate" | "StartDate" | "SortName" | "Name" | "Random" | "Runtime" | "CommunityRating" | "ProductionYear" | "PlayCount" | "CriticRating" | "IsFolder" | "IsUnplayed" | "IsPlayed" | "SeriesSortName" | "VideoBitRate" | "AirTime" | "Studio" | "IsFavoriteOrLiked" | "DateLastContentAdded" | "SeriesDatePlayed" | "ParentIndexNumber" | "IndexNumber" | "SimilarityScore" | "SearchScore";
+        ItemSortBy: "Default" | "AiredEpisodeOrder" | "Album" | "AlbumArtist" | "Artist" | "DateCreated" | "OfficialRating" | "DatePlayed" | "PremiereDate" | "StartDate" | "SortName" | "Name" | "Random" | "Runtime" | "CommunityRating" | "ProductionYear" | "PlayCount" | "CriticRating" | "IsFolder" | "IsUnplayed" | "IsPlayed" | "SeriesSortName" | "VideoBitRate" | "AirTime" | "Studio" | "IsFavoriteOrLiked" | "DateLastContentAdded" | "SeriesDatePlayed" | "ParentIndexNumber" | "IndexNumber";
         /** @description Class JoinGroupRequestDto. */
         JoinGroupRequestDto: {
             /**
@@ -7495,7 +7660,7 @@ export interface components {
         KeepUntil: "UntilDeleted" | "UntilSpaceNeeded" | "UntilWatched" | "UntilDate";
         /** @description Library changed message. */
         LibraryChangedMessage: {
-            /** @description Gets or sets the data. */
+            /** @description Class LibraryUpdateInfo. */
             Data?: components["schemas"]["LibraryUpdateInfo"] | null;
             /**
              * Format: uuid
@@ -7545,7 +7710,7 @@ export interface components {
             DisabledSubtitleFetchers?: string[];
             SubtitleFetcherOrder?: string[];
             DisabledMediaSegmentProviders?: string[];
-            MediaSegmentProvideOrder?: string[];
+            MediaSegmentProviderOrder?: string[];
             SkipSubtitlesIfEmbeddedSubtitlesPresent?: boolean;
             SkipSubtitlesIfAudioTrackMatches?: boolean;
             SubtitleDownloadLanguages?: string[] | null;
@@ -7581,8 +7746,22 @@ export interface components {
             SubtitleFetchers?: components["schemas"]["LibraryOptionInfoDto"][];
             /** @description Gets or sets the list of lyric fetchers. */
             LyricFetchers?: components["schemas"]["LibraryOptionInfoDto"][];
+            /** @description Gets or sets the list of MediaSegment Providers. */
+            MediaSegmentProviders?: components["schemas"]["LibraryOptionInfoDto"][];
             /** @description Gets or sets the type options. */
             TypeOptions?: components["schemas"]["LibraryTypeOptionsDto"][];
+        };
+        /** @description Contains informations about a libraries storage informations. */
+        LibraryStorageDto: {
+            /**
+             * Format: uuid
+             * @description Gets or sets the Library Id.
+             */
+            Id?: string;
+            /** @description Gets or sets the name of the library. */
+            Name?: string;
+            /** @description Gets or sets the storage informations about the folders used in a library. */
+            Folders?: components["schemas"]["FolderStorageDto"][];
         };
         /** @description Library type options dto. */
         LibraryTypeOptionsDto: {
@@ -7732,6 +7911,31 @@ export interface components {
              * @description Gets the start time in ticks.
              */
             Start?: number | null;
+            /** @description Gets the time-aligned cues for the song's lyrics. */
+            Cues?: components["schemas"]["LyricLineCue"][] | null;
+        };
+        /** @description LyricLineCue model, holds information about the timing of words within a LyricLine. */
+        LyricLineCue: {
+            /**
+             * Format: int32
+             * @description Gets the start character index of the cue.
+             */
+            Position?: number;
+            /**
+             * Format: int32
+             * @description Gets the end character index of the cue.
+             */
+            EndPosition?: number;
+            /**
+             * Format: int64
+             * @description Gets the timestamp the lyric is synced to in ticks.
+             */
+            Start?: number;
+            /**
+             * Format: int64
+             * @description Gets the end timestamp the lyric is synced to in ticks.
+             */
+            End?: number | null;
         };
         /** @description LyricMetadata model. */
         LyricMetadata: {
@@ -7809,7 +8013,7 @@ export interface components {
              */
             ItemId?: string;
             /**
-             * @description Gets or sets the type of content this segment defines.
+             * @description Defines the types of content an individual Jellyfin.Database.Implementations.Entities.MediaSegment represents.
              * @default Unknown
              * @enum {unknown}
              */
@@ -7841,7 +8045,7 @@ export interface components {
             StartIndex?: number;
         };
         /**
-         * @description Defines the types of content an individual Jellyfin.Data.Entities.MediaSegment represents.
+         * @description Defines the types of content an individual Jellyfin.Database.Implementations.Entities.MediaSegment represents.
          * @enum {string}
          */
         MediaSegmentType: "Unknown" | "Commercial" | "Preview" | "Recap" | "Outro" | "Intro";
@@ -7859,8 +8063,10 @@ export interface components {
             /** Format: int64 */
             Size?: number | null;
             Name?: string | null;
-            /** @description Gets or sets a value indicating whether the media is remote.
-             *     Differentiate internet url vs local network. */
+            /**
+             * @description Gets or sets a value indicating whether the media is remote.
+             *     Differentiate internet url vs local network.
+             */
             IsRemote?: boolean;
             ETag?: string | null;
             /** Format: int64 */
@@ -7988,22 +8194,23 @@ export interface components {
             CodecTimeBase?: string | null;
             /** @description Gets or sets the title. */
             Title?: string | null;
+            Hdr10PlusPresentFlag?: boolean | null;
             /**
-             * @description Gets the video range.
+             * @description An enum representing video ranges.
              * @default Unknown
              * @enum {unknown}
              */
             readonly VideoRange: "Unknown" | "SDR" | "HDR";
             /**
-             * @description Gets the video range type.
+             * @description An enum representing types of video ranges.
              * @default Unknown
              * @enum {unknown}
              */
-            readonly VideoRangeType: "Unknown" | "SDR" | "HDR10" | "HLG" | "DOVI" | "DOVIWithHDR10" | "DOVIWithHLG" | "DOVIWithSDR" | "HDR10Plus";
+            readonly VideoRangeType: "Unknown" | "SDR" | "HDR10" | "HLG" | "DOVI" | "DOVIWithHDR10" | "DOVIWithHLG" | "DOVIWithSDR" | "DOVIWithEL" | "DOVIWithHDR10Plus" | "DOVIWithELHDR10Plus" | "DOVIInvalid" | "HDR10Plus";
             /** @description Gets the video dovi title. */
             readonly VideoDoViTitle?: string | null;
             /**
-             * @description Gets the audio spatial format.
+             * @description An enum representing formats of spatial audio.
              * @default None
              * @enum {unknown}
              */
@@ -8153,8 +8360,10 @@ export interface components {
         MediaUpdateInfoPathDto: {
             /** @description Gets or sets media path. */
             Path?: string | null;
-            /** @description Gets or sets media update type.
-             *     Created, Modified, Deleted. */
+            /**
+             * @description Gets or sets media update type.
+             *     Created, Modified, Deleted.
+             */
             UpdateType?: string | null;
         };
         MediaUrl: {
@@ -8170,13 +8379,22 @@ export interface components {
         MetadataConfiguration: {
             UseFileCreationTimeForDateAdded?: boolean;
         };
+        /** @description A class representing metadata editor information. */
         MetadataEditorInfo: {
+            /** @description Gets or sets the parental rating options. */
             ParentalRatingOptions?: components["schemas"]["ParentalRating"][];
+            /** @description Gets or sets the countries. */
             Countries?: components["schemas"]["CountryInfo"][];
+            /** @description Gets or sets the cultures. */
             Cultures?: components["schemas"]["CultureDto"][];
+            /** @description Gets or sets the external id infos. */
             ExternalIdInfos?: components["schemas"]["ExternalIdInfo"][];
-            /** @enum {unknown|null} */
+            /**
+             * @description Gets or sets the content type.
+             * @enum {unknown|null}
+             */
             ContentType?: "unknown" | "movies" | "tvshows" | "music" | "musicvideos" | "trailers" | "homevideos" | "boxsets" | "books" | "photos" | "livetv" | "playlists" | "folders" | null;
+            /** @description Gets or sets the content type options. */
             ContentTypeOptions?: components["schemas"]["NameValuePair"][];
         };
         /**
@@ -8335,7 +8553,10 @@ export interface components {
             PublicHttpsPort?: number;
             /** @description Gets or sets a value indicating whether Autodiscovery is enabled. */
             AutoDiscovery?: boolean;
-            /** @description Gets or sets a value indicating whether to enable automatic port forwarding. */
+            /**
+             * @deprecated
+             * @description Gets or sets a value indicating whether to enable automatic port forwarding.
+             */
             EnableUPnP?: boolean;
             /** @description Gets or sets a value indicating whether IPv6 is enabled. */
             EnableIPv4?: boolean;
@@ -8355,8 +8576,10 @@ export interface components {
             VirtualInterfaceNames?: string[];
             /** @description Gets or sets a value indicating whether the published server uri is based on information in HTTP requests. */
             EnablePublishedServerUriByRequest?: boolean;
-            /** @description Gets or sets the PublishedServerUriBySubnet
-             *     Gets or sets PublishedServerUri to advertise for specific subnets. */
+            /**
+             * @description Gets or sets the PublishedServerUriBySubnet
+             *     Gets or sets PublishedServerUri to advertise for specific subnets.
+             */
             PublishedServerUriBySubnet?: string[];
             /** @description Gets or sets the filter for remote IP connectivity. Used in conjunction with <seealso cref="P:MediaBrowser.Common.Net.NetworkConfiguration.IsRemoteIPFilterBlacklist" />. */
             RemoteIPFilter?: string[];
@@ -8419,16 +8642,18 @@ export interface components {
             ItemId?: string | null;
             /** @description Gets or sets a value indicating whether to enable direct play. */
             EnableDirectPlay?: boolean | null;
-            /** @description Gets or sets a value indicating whether to enale direct stream. */
+            /** @description Gets or sets a value indicating whether to enable direct stream. */
             EnableDirectStream?: boolean | null;
             /** @description Gets or sets a value indicating whether always burn in subtitles when transcoding. */
             AlwaysBurnInSubtitleWhenTranscoding?: boolean | null;
-            /** @description A MediaBrowser.Model.Dlna.DeviceProfile represents a set of metadata which determines which content a certain device is able to play.
+            /**
+             * @description A MediaBrowser.Model.Dlna.DeviceProfile represents a set of metadata which determines which content a certain device is able to play.
              *     <br />
              *     Specifically, it defines the supported <see cref="P:MediaBrowser.Model.Dlna.DeviceProfile.ContainerProfiles">containers</see> and
              *     <see cref="P:MediaBrowser.Model.Dlna.DeviceProfile.CodecProfiles">codecs</see> (video and/or audio, including codec profiles and levels)
              *     the device is able to direct play (without transcoding or remuxing),
-             *     as well as which <see cref="P:MediaBrowser.Model.Dlna.DeviceProfile.TranscodingProfiles">containers/codecs to transcode to</see> in case it isn't. */
+             *     as well as which <see cref="P:MediaBrowser.Model.Dlna.DeviceProfile.TranscodingProfiles">containers/codecs to transcode to</see> in case it isn't.
+             */
             DeviceProfile?: components["schemas"]["DeviceProfile"] | null;
             /** @description Gets or sets the device play protocols. */
             DirectPlayProtocols?: components["schemas"]["MediaProtocol"][];
@@ -8447,7 +8672,7 @@ export interface components {
             MessageType: "KeepAlive";
         };
         /** @description Represents the list of possible outbound websocket types */
-        OutboundWebSocketMessage: components["schemas"]["ActivityLogEntryMessage"] | components["schemas"]["ForceKeepAliveMessage"] | components["schemas"]["GeneralCommandMessage"] | components["schemas"]["LibraryChangedMessage"] | components["schemas"]["OutboundKeepAliveMessage"] | components["schemas"]["PlayMessage"] | components["schemas"]["PlaystateMessage"] | components["schemas"]["PluginInstallationCancelledMessage"] | components["schemas"]["PluginInstallationCompletedMessage"] | components["schemas"]["PluginInstallationFailedMessage"] | components["schemas"]["PluginInstallingMessage"] | components["schemas"]["PluginUninstalledMessage"] | components["schemas"]["RefreshProgressMessage"] | components["schemas"]["RestartRequiredMessage"] | components["schemas"]["ScheduledTaskEndedMessage"] | components["schemas"]["ScheduledTasksInfoMessage"] | components["schemas"]["SeriesTimerCancelledMessage"] | components["schemas"]["SeriesTimerCreatedMessage"] | components["schemas"]["ServerRestartingMessage"] | components["schemas"]["ServerShuttingDownMessage"] | components["schemas"]["SessionsMessage"] | components["schemas"]["SyncPlayCommandMessage"] | components["schemas"]["SyncPlayGroupUpdateCommandMessage"] | components["schemas"]["TimerCancelledMessage"] | components["schemas"]["TimerCreatedMessage"] | components["schemas"]["UserDataChangedMessage"] | components["schemas"]["UserDeletedMessage"] | components["schemas"]["UserUpdatedMessage"];
+        OutboundWebSocketMessage: components["schemas"]["ActivityLogEntryMessage"] | components["schemas"]["ForceKeepAliveMessage"] | components["schemas"]["GeneralCommandMessage"] | components["schemas"]["LibraryChangedMessage"] | components["schemas"]["OutboundKeepAliveMessage"] | components["schemas"]["PlayMessage"] | components["schemas"]["PlaystateMessage"] | components["schemas"]["PluginInstallationCancelledMessage"] | components["schemas"]["PluginInstallationCompletedMessage"] | components["schemas"]["PluginInstallationFailedMessage"] | components["schemas"]["PluginInstallingMessage"] | components["schemas"]["PluginUninstalledMessage"] | components["schemas"]["RefreshProgressMessage"] | components["schemas"]["RestartRequiredMessage"] | components["schemas"]["ScheduledTaskEndedMessage"] | components["schemas"]["ScheduledTasksInfoMessage"] | components["schemas"]["SeriesTimerCancelledMessage"] | components["schemas"]["SeriesTimerCreatedMessage"] | components["schemas"]["ServerRestartingMessage"] | components["schemas"]["ServerShuttingDownMessage"] | components["schemas"]["SessionsMessage"] | components["schemas"]["SyncPlayCommandMessage"] | components["schemas"]["TimerCancelledMessage"] | components["schemas"]["TimerCreatedMessage"] | components["schemas"]["UserDataChangedMessage"] | components["schemas"]["UserDeletedMessage"] | components["schemas"]["UserUpdatedMessage"] | components["schemas"]["SyncPlayGroupUpdateMessage"];
         /** @description Class PackageInfo. */
         PackageInfo: {
             /** @description Gets or sets the name. */
@@ -8474,12 +8699,27 @@ export interface components {
         /** @description Class ParentalRating. */
         ParentalRating: {
             /** @description Gets or sets the name. */
-            Name?: string | null;
+            Name?: string;
             /**
              * Format: int32
              * @description Gets or sets the value.
              */
             Value?: number | null;
+            /** @description Gets or sets the rating score. */
+            RatingScore?: components["schemas"]["ParentalRatingScore"] | null;
+        };
+        /** @description A class representing an parental rating score. */
+        ParentalRatingScore: {
+            /**
+             * Format: int32
+             * @description Gets or sets the score.
+             */
+            score?: number;
+            /**
+             * Format: int32
+             * @description Gets or sets the sub score.
+             */
+            subScore?: number | null;
         };
         /** @description Defines the MediaBrowser.Model.Configuration.PathSubstitution. */
         PathSubstitution: {
@@ -8548,7 +8788,7 @@ export interface components {
         PlayAccess: "Full" | "None";
         /** @enum {string} */
         PlaybackErrorCode: "NotAllowed" | "NoCompatibleStream" | "RateLimitExceeded";
-        /** @description Plabyback info dto. */
+        /** @description Playback info dto. */
         PlaybackInfoDto: {
             /**
              * Format: uuid
@@ -8584,12 +8824,14 @@ export interface components {
             MediaSourceId?: string | null;
             /** @description Gets or sets the live stream id. */
             LiveStreamId?: string | null;
-            /** @description A MediaBrowser.Model.Dlna.DeviceProfile represents a set of metadata which determines which content a certain device is able to play.
+            /**
+             * @description A MediaBrowser.Model.Dlna.DeviceProfile represents a set of metadata which determines which content a certain device is able to play.
              *     <br />
              *     Specifically, it defines the supported <see cref="P:MediaBrowser.Model.Dlna.DeviceProfile.ContainerProfiles">containers</see> and
              *     <see cref="P:MediaBrowser.Model.Dlna.DeviceProfile.CodecProfiles">codecs</see> (video and/or audio, including codec profiles and levels)
              *     the device is able to direct play (without transcoding or remuxing),
-             *     as well as which <see cref="P:MediaBrowser.Model.Dlna.DeviceProfile.TranscodingProfiles">containers/codecs to transcode to</see> in case it isn't. */
+             *     as well as which <see cref="P:MediaBrowser.Model.Dlna.DeviceProfile.TranscodingProfiles">containers/codecs to transcode to</see> in case it isn't.
+             */
             DeviceProfile?: components["schemas"]["DeviceProfile"] | null;
             /** @description Gets or sets a value indicating whether to enable direct play. */
             EnableDirectPlay?: boolean | null;
@@ -8864,7 +9106,7 @@ export interface components {
         };
         /** @description Play command websocket message. */
         PlayMessage: {
-            /** @description Gets or sets the data. */
+            /** @description Class PlayRequest. */
             Data?: components["schemas"]["PlayRequest"] | null;
             /**
              * Format: uuid
@@ -8915,21 +9157,6 @@ export interface components {
              * @enum {unknown}
              */
             RepeatMode?: "RepeatOne" | "RepeatAll" | "RepeatNone";
-        };
-        /** @description Class GroupUpdate. */
-        PlayQueueUpdateGroupUpdate: {
-            /**
-             * Format: uuid
-             * @description Gets the group identifier.
-             */
-            readonly GroupId?: string;
-            /**
-             * @description Gets the update type. (enum property replaced by openapi-typescript)
-             * @enum {string}
-             */
-            Type: "PlayQueue";
-            /** @description Gets the update data. */
-            Data?: components["schemas"]["PlayQueueUpdate"];
         };
         /**
          * @description Enum PlayQueueUpdateReason.
@@ -9032,11 +9259,11 @@ export interface components {
              * @description Gets or sets a value indicating the status of the plugin.
              * @enum {unknown}
              */
-            Status?: "Active" | "Restart" | "Deleted" | "Superceded" | "Malfunctioned" | "NotSupported" | "Disabled";
+            Status?: "Active" | "Restart" | "Deleted" | "Superseded" | "Superceded" | "Malfunctioned" | "NotSupported" | "Disabled";
         };
         /** @description Plugin installation cancelled message. */
         PluginInstallationCancelledMessage: {
-            /** @description Gets or sets the data. */
+            /** @description Class InstallationInfo. */
             Data?: components["schemas"]["InstallationInfo"] | null;
             /**
              * Format: uuid
@@ -9051,7 +9278,7 @@ export interface components {
         };
         /** @description Plugin installation completed message. */
         PluginInstallationCompletedMessage: {
-            /** @description Gets or sets the data. */
+            /** @description Class InstallationInfo. */
             Data?: components["schemas"]["InstallationInfo"] | null;
             /**
              * Format: uuid
@@ -9066,7 +9293,7 @@ export interface components {
         };
         /** @description Plugin installation failed message. */
         PluginInstallationFailedMessage: {
-            /** @description Gets or sets the data. */
+            /** @description Class InstallationInfo. */
             Data?: components["schemas"]["InstallationInfo"] | null;
             /**
              * Format: uuid
@@ -9081,7 +9308,7 @@ export interface components {
         };
         /** @description Package installing message. */
         PluginInstallingMessage: {
-            /** @description Gets or sets the data. */
+            /** @description Class InstallationInfo. */
             Data?: components["schemas"]["InstallationInfo"] | null;
             /**
              * Format: uuid
@@ -9098,10 +9325,10 @@ export interface components {
          * @description Plugin load status.
          * @enum {string}
          */
-        PluginStatus: "Active" | "Restart" | "Deleted" | "Superceded" | "Malfunctioned" | "NotSupported" | "Disabled";
+        PluginStatus: "Active" | "Restart" | "Deleted" | "Superseded" | "Superceded" | "Malfunctioned" | "NotSupported" | "Disabled";
         /** @description Plugin uninstalled message. */
         PluginUninstalledMessage: {
-            /** @description Gets or sets the data. */
+            /** @description This is a serializable stub class that is used by the api to provide information about installed plugins. */
             Data?: components["schemas"]["PluginInfo"] | null;
             /**
              * Format: uuid
@@ -9138,14 +9365,14 @@ export interface components {
             /** @enum {unknown} */
             Condition?: "Equals" | "NotEquals" | "LessThanEqual" | "GreaterThanEqual" | "EqualsAny";
             /** @enum {unknown} */
-            Property?: "AudioChannels" | "AudioBitrate" | "AudioProfile" | "Width" | "Height" | "Has64BitOffsets" | "PacketLength" | "VideoBitDepth" | "VideoBitrate" | "VideoFramerate" | "VideoLevel" | "VideoProfile" | "VideoTimestamp" | "IsAnamorphic" | "RefFrames" | "NumAudioStreams" | "NumVideoStreams" | "IsSecondaryAudio" | "VideoCodecTag" | "IsAvc" | "IsInterlaced" | "AudioSampleRate" | "AudioBitDepth" | "VideoRangeType";
+            Property?: "AudioChannels" | "AudioBitrate" | "AudioProfile" | "Width" | "Height" | "Has64BitOffsets" | "PacketLength" | "VideoBitDepth" | "VideoBitrate" | "VideoFramerate" | "VideoLevel" | "VideoProfile" | "VideoTimestamp" | "IsAnamorphic" | "RefFrames" | "NumAudioStreams" | "NumVideoStreams" | "IsSecondaryAudio" | "VideoCodecTag" | "IsAvc" | "IsInterlaced" | "AudioSampleRate" | "AudioBitDepth" | "VideoRangeType" | "NumStreams";
             Value?: string | null;
             IsRequired?: boolean;
         };
         /** @enum {string} */
         ProfileConditionType: "Equals" | "NotEquals" | "LessThanEqual" | "GreaterThanEqual" | "EqualsAny";
         /** @enum {string} */
-        ProfileConditionValue: "AudioChannels" | "AudioBitrate" | "AudioProfile" | "Width" | "Height" | "Has64BitOffsets" | "PacketLength" | "VideoBitDepth" | "VideoBitrate" | "VideoFramerate" | "VideoLevel" | "VideoProfile" | "VideoTimestamp" | "IsAnamorphic" | "RefFrames" | "NumAudioStreams" | "NumVideoStreams" | "IsSecondaryAudio" | "VideoCodecTag" | "IsAvc" | "IsInterlaced" | "AudioSampleRate" | "AudioBitDepth" | "VideoRangeType";
+        ProfileConditionValue: "AudioChannels" | "AudioBitrate" | "AudioProfile" | "Width" | "Height" | "Has64BitOffsets" | "PacketLength" | "VideoBitDepth" | "VideoBitrate" | "VideoFramerate" | "VideoLevel" | "VideoProfile" | "VideoTimestamp" | "IsAnamorphic" | "RefFrames" | "NumAudioStreams" | "NumVideoStreams" | "IsSecondaryAudio" | "VideoCodecTag" | "IsAvc" | "IsInterlaced" | "AudioSampleRate" | "AudioBitDepth" | "VideoRangeType" | "NumStreams";
         /** @enum {string} */
         ProgramAudio: "Mono" | "Stereo" | "Dolby" | "DolbyDigital" | "Thx" | "Atmos";
         PublicSystemInfo: {
@@ -9415,7 +9642,7 @@ export interface components {
         };
         /** @description Scheduled task ended message. */
         ScheduledTaskEndedMessage: {
-            /** @description Gets or sets the data. */
+            /** @description Class TaskExecutionInfo. */
             Data?: components["schemas"]["TaskResult"] | null;
             /**
              * Format: uuid
@@ -9443,8 +9670,10 @@ export interface components {
              */
             MessageType: "ScheduledTasksInfo";
         };
-        /** @description Scheduled tasks info start message.
-         *     Data is the timing data encoded as "$initialDelay,$interval" in ms. */
+        /**
+         * @description Scheduled tasks info start message.
+         *     Data is the timing data encoded as "$initialDelay,$interval" in ms.
+         */
         ScheduledTasksInfoStartMessage: {
             /** @description Gets or sets the data. */
             Data?: string | null;
@@ -9510,7 +9739,7 @@ export interface components {
             /** @description Gets or sets the backdrop image item identifier. */
             BackdropImageItemId?: string | null;
             /**
-             * @description Gets or sets the type.
+             * @description The base item kind.
              * @enum {unknown}
              */
             Type?: "AggregateFolder" | "Audio" | "AudioBook" | "BasePluginFolder" | "Book" | "BoxSet" | "Channel" | "ChannelFolderItem" | "CollectionFolder" | "Episode" | "Folder" | "Genre" | "ManualPlaylistsFolder" | "Movie" | "LiveTvChannel" | "LiveTvProgram" | "MusicAlbum" | "MusicArtist" | "MusicGenre" | "MusicVideo" | "Person" | "Photo" | "PhotoAlbum" | "Playlist" | "PlaylistsFolder" | "Program" | "Recording" | "Season" | "Series" | "Studio" | "Trailer" | "TvChannel" | "TvProgram" | "UserRootFolder" | "UserView" | "Video" | "Year";
@@ -9522,7 +9751,7 @@ export interface components {
              */
             RunTimeTicks?: number | null;
             /**
-             * @description Gets or sets the type of the media.
+             * @description Media types.
              * @default Unknown
              * @enum {unknown}
              */
@@ -9791,7 +10020,10 @@ export interface components {
             ParentThumbItemId?: string | null;
             /** @description Gets or sets the parent thumb image tag. */
             ParentThumbImageTag?: string | null;
-            /** @description Gets or sets the parent primary image item identifier. */
+            /**
+             * Format: uuid
+             * @description Gets or sets the parent primary image item identifier.
+             */
             ParentPrimaryImageItemId?: string | null;
             /** @description Gets or sets the parent primary image tag. */
             ParentPrimaryImageTag?: string | null;
@@ -9824,8 +10056,10 @@ export interface components {
             CachePath?: string | null;
             /** @description Gets or sets the last known version that was ran using the configuration. */
             PreviousVersion?: string | null;
-            /** @description Gets or sets the stringified PreviousVersion to be stored/loaded,
-             *     because System.Version itself isn't xml-serializable. */
+            /**
+             * @description Gets or sets the stringified PreviousVersion to be stored/loaded,
+             *     because System.Version itself isn't xml-serializable.
+             */
             PreviousVersionStr?: string | null;
             /** @description Gets or sets a value indicating whether to enable prometheus metrics exporting. */
             EnableMetrics?: boolean;
@@ -9834,7 +10068,7 @@ export interface components {
             IsPortAuthorized?: boolean;
             /** @description Gets or sets a value indicating whether quick connect is available for use on this server. */
             QuickConnectAvailable?: boolean;
-            /** @description Gets or sets a value indicating whether [enable case sensitive item ids]. */
+            /** @description Gets or sets a value indicating whether [enable case-sensitive item ids]. */
             EnableCaseSensitiveItemIds?: boolean;
             DisableLiveTvChannelUserDataName?: boolean;
             /** @description Gets or sets the metadata path. */
@@ -9893,6 +10127,11 @@ export interface components {
              */
             LibraryUpdateDuration?: number;
             /**
+             * Format: int32
+             * @description Gets or sets the maximum amount of items to cache.
+             */
+            CacheSize?: number;
+            /**
              * @description Gets or sets the image saving convention.
              * @enum {unknown}
              */
@@ -9906,7 +10145,8 @@ export interface components {
             /** Format: int32 */
             RemoteClientBitrateLimit?: number;
             EnableFolderView?: boolean;
-            EnableGroupingIntoCollections?: boolean;
+            EnableGroupingMoviesIntoCollections?: boolean;
+            EnableGroupingShowsIntoCollections?: boolean;
             DisplaySpecialsWithinSeasons?: boolean;
             CodecsUsed?: string[];
             PluginRepositories?: components["schemas"]["RepositoryInfo"][];
@@ -9938,13 +10178,11 @@ export interface components {
              * @description Gets or sets the how many metadata refreshes can run concurrently.
              */
             LibraryMetadataRefreshConcurrency?: number;
-            /** @description Gets or sets a value indicating whether older plugins should automatically be deleted from the plugin folder. */
-            RemoveOldPlugins?: boolean;
             /** @description Gets or sets a value indicating whether clients should be allowed to upload logs. */
             AllowClientLogUpload?: boolean;
             /**
              * Format: int32
-             * @description Gets or sets the dummy chapter duration in seconds, use 0 (zero) or less to disable generation alltogether.
+             * @description Gets or sets the dummy chapter duration in seconds, use 0 (zero) or less to disable generation altogether.
              */
             DummyChapterDuration?: number;
             /**
@@ -9961,6 +10199,8 @@ export interface components {
             CastReceiverApplications?: components["schemas"]["CastReceiverApplication"][];
             /** @description Gets or sets the trickplay options. */
             TrickplayOptions?: components["schemas"]["TrickplayOptions"];
+            /** @description Gets or sets a value indicating whether old authorization methods are allowed. */
+            EnableLegacyAuthorization?: boolean;
         };
         /** @description The server discovery info model. */
         ServerDiscoveryInfo: {
@@ -10092,8 +10332,10 @@ export interface components {
              */
             MessageType: "Sessions";
         };
-        /** @description Sessions start message.
-         *     Data is the timing data encoded as "$initialDelay,$interval" in ms. */
+        /**
+         * @description Sessions start message.
+         *     Data is the timing data encoded as "$initialDelay,$interval" in ms.
+         */
         SessionsStartMessage: {
             /** @description Gets or sets the data. */
             Data?: string | null;
@@ -10199,6 +10441,8 @@ export interface components {
         };
         /** @description The startup configuration DTO. */
         StartupConfigurationDto: {
+            /** @description Gets or sets the server name. */
+            ServerName?: string | null;
             /** @description Gets or sets UI language culture. */
             UICulture?: string | null;
             /** @description Gets or sets the metadata country code. */
@@ -10210,7 +10454,10 @@ export interface components {
         StartupRemoteAccessDto: {
             /** @description Gets or sets a value indicating whether enable remote access. */
             EnableRemoteAccess: boolean;
-            /** @description Gets or sets a value indicating whether enable automatic port mapping. */
+            /**
+             * @deprecated
+             * @description Gets or sets a value indicating whether enable automatic port mapping.
+             */
             EnableAutomaticPortMapping: boolean;
         };
         /** @description The startup user DTO. */
@@ -10219,21 +10466,6 @@ export interface components {
             Name?: string | null;
             /** @description Gets or sets the user's password. */
             Password?: string | null;
-        };
-        /** @description Class GroupUpdate. */
-        StringGroupUpdate: {
-            /**
-             * Format: uuid
-             * @description Gets the group identifier.
-             */
-            readonly GroupId?: string;
-            /**
-             * @description Gets the update type. (enum property replaced by openapi-typescript)
-             * @enum {string}
-             */
-            Type: "UserJoined" | "UserLeft" | "GroupLeft" | "NotInGroup" | "GroupDoesNotExist" | "LibraryAccessDenied";
-            /** @description Gets the update data. */
-            Data?: string;
         };
         /**
          * @description Delivery method to use during playback of a specific subtitle format.
@@ -10274,7 +10506,7 @@ export interface components {
         };
         /** @description Sync play command. */
         SyncPlayCommandMessage: {
-            /** @description Gets or sets the data. */
+            /** @description Class SendCommand. */
             Data?: components["schemas"]["SendCommand"] | null;
             /**
              * Format: uuid
@@ -10287,10 +10519,52 @@ export interface components {
              */
             MessageType: "SyncPlayCommand";
         };
+        SyncPlayGroupDoesNotExistUpdate: {
+            /**
+             * Format: uuid
+             * @description Gets the group identifier.
+             */
+            readonly GroupId?: string;
+            /** @description Gets the update data. */
+            readonly Data?: string;
+            /**
+             * @description Enum GroupUpdateType. (enum property replaced by openapi-typescript)
+             * @enum {string}
+             */
+            Type: "GroupDoesNotExist";
+        };
+        SyncPlayGroupJoinedUpdate: {
+            /**
+             * Format: uuid
+             * @description Gets the group identifier.
+             */
+            readonly GroupId?: string;
+            /** @description Gets the update data. */
+            readonly Data?: components["schemas"]["GroupInfoDto"];
+            /**
+             * @description Enum GroupUpdateType. (enum property replaced by openapi-typescript)
+             * @enum {string}
+             */
+            Type: "GroupJoined";
+        };
+        SyncPlayGroupLeftUpdate: {
+            /**
+             * Format: uuid
+             * @description Gets the group identifier.
+             */
+            readonly GroupId?: string;
+            /** @description Gets the update data. */
+            readonly Data?: string;
+            /**
+             * @description Enum GroupUpdateType. (enum property replaced by openapi-typescript)
+             * @enum {string}
+             */
+            Type: "GroupLeft";
+        };
         /** @description Untyped sync play command. */
-        SyncPlayGroupUpdateCommandMessage: {
-            /** @description Gets or sets the data. */
-            Data?: Omit<components["schemas"]["GroupUpdate"], "Type"> | null;
+        SyncPlayGroupUpdateMessage: {
+            /** @description Group update data */
+            Data?: Omit<components["schemas"]["GroupUpdate"], "Type">;
             /**
              * Format: uuid
              * @description Gets or sets the message id.
@@ -10301,6 +10575,48 @@ export interface components {
              * @enum {string}
              */
             MessageType: "SyncPlayGroupUpdate";
+        };
+        SyncPlayLibraryAccessDeniedUpdate: {
+            /**
+             * Format: uuid
+             * @description Gets the group identifier.
+             */
+            readonly GroupId?: string;
+            /** @description Gets the update data. */
+            readonly Data?: string;
+            /**
+             * @description Enum GroupUpdateType. (enum property replaced by openapi-typescript)
+             * @enum {string}
+             */
+            Type: "LibraryAccessDenied";
+        };
+        SyncPlayNotInGroupUpdate: {
+            /**
+             * Format: uuid
+             * @description Gets the group identifier.
+             */
+            readonly GroupId?: string;
+            /** @description Gets the update data. */
+            readonly Data?: string;
+            /**
+             * @description Enum GroupUpdateType. (enum property replaced by openapi-typescript)
+             * @enum {string}
+             */
+            Type: "NotInGroup";
+        };
+        SyncPlayPlayQueueUpdate: {
+            /**
+             * Format: uuid
+             * @description Gets the group identifier.
+             */
+            readonly GroupId?: string;
+            /** @description Gets the update data. */
+            readonly Data?: components["schemas"]["PlayQueueUpdate"];
+            /**
+             * @description Enum GroupUpdateType. (enum property replaced by openapi-typescript)
+             * @enum {string}
+             */
+            Type: "PlayQueue";
         };
         /** @description Class QueueItem. */
         SyncPlayQueueItem: {
@@ -10315,11 +10631,53 @@ export interface components {
              */
             readonly PlaylistItemId?: string;
         };
+        SyncPlayStateUpdate: {
+            /**
+             * Format: uuid
+             * @description Gets the group identifier.
+             */
+            readonly GroupId?: string;
+            /** @description Gets the update data. */
+            readonly Data?: components["schemas"]["GroupStateUpdate"];
+            /**
+             * @description Enum GroupUpdateType. (enum property replaced by openapi-typescript)
+             * @enum {string}
+             */
+            Type: "StateUpdate";
+        };
         /**
          * @description Enum SyncPlayUserAccessType.
          * @enum {string}
          */
         SyncPlayUserAccessType: "CreateAndJoinGroups" | "JoinGroups" | "None";
+        SyncPlayUserJoinedUpdate: {
+            /**
+             * Format: uuid
+             * @description Gets the group identifier.
+             */
+            readonly GroupId?: string;
+            /** @description Gets the update data. */
+            readonly Data?: string;
+            /**
+             * @description Enum GroupUpdateType. (enum property replaced by openapi-typescript)
+             * @enum {string}
+             */
+            Type: "UserJoined";
+        };
+        SyncPlayUserLeftUpdate: {
+            /**
+             * Format: uuid
+             * @description Gets the group identifier.
+             */
+            readonly GroupId?: string;
+            /** @description Gets the update data. */
+            readonly Data?: string;
+            /**
+             * @description Enum GroupUpdateType. (enum property replaced by openapi-typescript)
+             * @enum {string}
+             */
+            Type: "UserLeft";
+        };
         /** @description Class SystemInfo. */
         SystemInfo: {
             /** @description Gets or sets the local address. */
@@ -10369,19 +10727,40 @@ export interface components {
              * @default false
              */
             CanLaunchWebBrowser: boolean;
-            /** @description Gets or sets the program data path. */
+            /**
+             * @deprecated
+             * @description Gets or sets the program data path.
+             */
             ProgramDataPath?: string | null;
-            /** @description Gets or sets the web UI resources path. */
+            /**
+             * @deprecated
+             * @description Gets or sets the web UI resources path.
+             */
             WebPath?: string | null;
-            /** @description Gets or sets the items by name path. */
+            /**
+             * @deprecated
+             * @description Gets or sets the items by name path.
+             */
             ItemsByNamePath?: string | null;
-            /** @description Gets or sets the cache path. */
+            /**
+             * @deprecated
+             * @description Gets or sets the cache path.
+             */
             CachePath?: string | null;
-            /** @description Gets or sets the log path. */
+            /**
+             * @deprecated
+             * @description Gets or sets the log path.
+             */
             LogPath?: string | null;
-            /** @description Gets or sets the internal metadata path. */
+            /**
+             * @deprecated
+             * @description Gets or sets the internal metadata path.
+             */
             InternalMetadataPath?: string | null;
-            /** @description Gets or sets the transcode path. */
+            /**
+             * @deprecated
+             * @description Gets or sets the transcode path.
+             */
             TranscodingTempPath?: string | null;
             /** @description Gets or sets the list of cast receiver applications. */
             CastReceiverApplications?: components["schemas"]["CastReceiverApplication"][] | null;
@@ -10401,6 +10780,25 @@ export interface components {
              * @default X64
              */
             SystemArchitecture: string | null;
+        };
+        /** @description Contains informations about the systems storage. */
+        SystemStorageDto: {
+            /** @description Gets or sets the Storage information of the program data folder. */
+            ProgramDataFolder?: components["schemas"]["FolderStorageDto"];
+            /** @description Gets or sets the Storage information of the web UI resources folder. */
+            WebFolder?: components["schemas"]["FolderStorageDto"];
+            /** @description Gets or sets the Storage information of the folder where images are cached. */
+            ImageCacheFolder?: components["schemas"]["FolderStorageDto"];
+            /** @description Gets or sets the Storage information of the cache folder. */
+            CacheFolder?: components["schemas"]["FolderStorageDto"];
+            /** @description Gets or sets the Storage information of the folder where logfiles are saved to. */
+            LogFolder?: components["schemas"]["FolderStorageDto"];
+            /** @description Gets or sets the Storage information of the folder where metadata is stored. */
+            InternalMetadataFolder?: components["schemas"]["FolderStorageDto"];
+            /** @description Gets or sets the Storage information of the transcoding cache. */
+            TranscodingTempFolder?: components["schemas"]["FolderStorageDto"];
+            /** @description Gets or sets the storage informations of all libraries. */
+            Libraries?: components["schemas"]["LibraryStorageDto"][];
         };
         /**
          * @description Enum TaskCompletionStatus.
@@ -10471,8 +10869,11 @@ export interface components {
         TaskState: "Idle" | "Cancelling" | "Running";
         /** @description Class TaskTriggerInfo. */
         TaskTriggerInfo: {
-            /** @description Gets or sets the type. */
-            Type?: string | null;
+            /**
+             * @description Gets or sets the type.
+             * @enum {unknown}
+             */
+            Type?: "DailyTrigger" | "WeeklyTrigger" | "IntervalTrigger" | "StartupTrigger";
             /**
              * Format: int64
              * @description Gets or sets the time of day.
@@ -10494,6 +10895,11 @@ export interface components {
              */
             MaxRuntimeTicks?: number | null;
         };
+        /**
+         * @description Enum TaskTriggerInfoType.
+         * @enum {string}
+         */
+        TaskTriggerInfoType: "DailyTrigger" | "WeeklyTrigger" | "IntervalTrigger" | "StartupTrigger";
         /** @description Class ThemeMediaResult. */
         ThemeMediaResult: {
             /** @description Gets or sets the items. */
@@ -10697,10 +11103,10 @@ export interface components {
             IncludeDisabledProviders?: boolean;
         };
         /** @enum {string} */
-        TranscodeReason: "ContainerNotSupported" | "VideoCodecNotSupported" | "AudioCodecNotSupported" | "SubtitleCodecNotSupported" | "AudioIsExternal" | "SecondaryAudioNotSupported" | "VideoProfileNotSupported" | "VideoLevelNotSupported" | "VideoResolutionNotSupported" | "VideoBitDepthNotSupported" | "VideoFramerateNotSupported" | "RefFramesNotSupported" | "AnamorphicVideoNotSupported" | "InterlacedVideoNotSupported" | "AudioChannelsNotSupported" | "AudioProfileNotSupported" | "AudioSampleRateNotSupported" | "AudioBitDepthNotSupported" | "ContainerBitrateExceedsLimit" | "VideoBitrateNotSupported" | "AudioBitrateNotSupported" | "UnknownVideoStreamInfo" | "UnknownAudioStreamInfo" | "DirectPlayError" | "VideoRangeTypeNotSupported" | "VideoCodecTagNotSupported";
+        TranscodeReason: "ContainerNotSupported" | "VideoCodecNotSupported" | "AudioCodecNotSupported" | "SubtitleCodecNotSupported" | "AudioIsExternal" | "SecondaryAudioNotSupported" | "VideoProfileNotSupported" | "VideoLevelNotSupported" | "VideoResolutionNotSupported" | "VideoBitDepthNotSupported" | "VideoFramerateNotSupported" | "RefFramesNotSupported" | "AnamorphicVideoNotSupported" | "InterlacedVideoNotSupported" | "AudioChannelsNotSupported" | "AudioProfileNotSupported" | "AudioSampleRateNotSupported" | "AudioBitDepthNotSupported" | "ContainerBitrateExceedsLimit" | "VideoBitrateNotSupported" | "AudioBitrateNotSupported" | "UnknownVideoStreamInfo" | "UnknownAudioStreamInfo" | "DirectPlayError" | "VideoRangeTypeNotSupported" | "VideoCodecTagNotSupported" | "StreamCountExceedsLimit";
         /** @enum {string} */
         TranscodeSeekInfo: "Auto" | "Bytes";
-        /** @description Class holding information on a runnning transcode. */
+        /** @description Class holding information on a running transcode. */
         TranscodingInfo: {
             /** @description Gets or sets the thread count used for encoding. */
             AudioCodec?: string | null;
@@ -10751,10 +11157,12 @@ export interface components {
              * @description Gets or sets the transcode reasons.
              * @enum {array}
              */
-            TranscodeReasons?: "ContainerNotSupported" | "VideoCodecNotSupported" | "AudioCodecNotSupported" | "SubtitleCodecNotSupported" | "AudioIsExternal" | "SecondaryAudioNotSupported" | "VideoProfileNotSupported" | "VideoLevelNotSupported" | "VideoResolutionNotSupported" | "VideoBitDepthNotSupported" | "VideoFramerateNotSupported" | "RefFramesNotSupported" | "AnamorphicVideoNotSupported" | "InterlacedVideoNotSupported" | "AudioChannelsNotSupported" | "AudioProfileNotSupported" | "AudioSampleRateNotSupported" | "AudioBitDepthNotSupported" | "ContainerBitrateExceedsLimit" | "VideoBitrateNotSupported" | "AudioBitrateNotSupported" | "UnknownVideoStreamInfo" | "UnknownAudioStreamInfo" | "DirectPlayError" | "VideoRangeTypeNotSupported" | "VideoCodecTagNotSupported";
+            TranscodeReasons?: "ContainerNotSupported" | "VideoCodecNotSupported" | "AudioCodecNotSupported" | "SubtitleCodecNotSupported" | "AudioIsExternal" | "SecondaryAudioNotSupported" | "VideoProfileNotSupported" | "VideoLevelNotSupported" | "VideoResolutionNotSupported" | "VideoBitDepthNotSupported" | "VideoFramerateNotSupported" | "RefFramesNotSupported" | "AnamorphicVideoNotSupported" | "InterlacedVideoNotSupported" | "AudioChannelsNotSupported" | "AudioProfileNotSupported" | "AudioSampleRateNotSupported" | "AudioBitDepthNotSupported" | "ContainerBitrateExceedsLimit" | "VideoBitrateNotSupported" | "AudioBitrateNotSupported" | "UnknownVideoStreamInfo" | "UnknownAudioStreamInfo" | "DirectPlayError" | "VideoRangeTypeNotSupported" | "VideoCodecTagNotSupported" | "StreamCountExceedsLimit";
         };
-        /** @description A class for transcoding profile information.
-         *     Note for client developers: Conditions defined in MediaBrowser.Model.Dlna.CodecProfile has higher priority and can override values defined here. */
+        /**
+         * @description A class for transcoding profile information.
+         *     Note for client developers: Conditions defined in MediaBrowser.Model.Dlna.CodecProfile has higher priority and can override values defined here.
+         */
         TranscodingProfile: {
             /** @description Gets or sets the container. */
             Container?: string;
@@ -10768,7 +11176,8 @@ export interface components {
             /** @description Gets or sets the audio codec. */
             AudioCodec?: string;
             /**
-             * @description Gets or sets the protocol.
+             * @description Media streaming protocol.
+             *     Lowercase for backwards compatibility.
              * @enum {unknown}
              */
             Protocol?: "http" | "hls";
@@ -10833,41 +11242,41 @@ export interface components {
         };
         /** @enum {string} */
         TransportStreamTimestamp: "None" | "Zero" | "Valid";
-        /** @description An entity representing the metadata for a group of trickplay tiles. */
-        TrickplayInfo: {
+        /** @description The trickplay api model. */
+        TrickplayInfoDto: {
             /**
              * Format: int32
-             * @description Gets or sets width of an individual thumbnail.
+             * @description Gets the width of an individual thumbnail.
              */
             Width?: number;
             /**
              * Format: int32
-             * @description Gets or sets height of an individual thumbnail.
+             * @description Gets the height of an individual thumbnail.
              */
             Height?: number;
             /**
              * Format: int32
-             * @description Gets or sets amount of thumbnails per row.
+             * @description Gets the amount of thumbnails per row.
              */
             TileWidth?: number;
             /**
              * Format: int32
-             * @description Gets or sets amount of thumbnails per column.
+             * @description Gets the amount of thumbnails per column.
              */
             TileHeight?: number;
             /**
              * Format: int32
-             * @description Gets or sets total amount of non-black thumbnails.
+             * @description Gets the total amount of non-black thumbnails.
              */
             ThumbnailCount?: number;
             /**
              * Format: int32
-             * @description Gets or sets interval in milliseconds between each trickplay thumbnail.
+             * @description Gets the interval in milliseconds between each trickplay thumbnail.
              */
             Interval?: number;
             /**
              * Format: int32
-             * @description Gets or sets peak bandwith usage in bits per second.
+             * @description Gets the peak bandwidth usage in bits per second.
              */
             Bandwidth?: number;
         };
@@ -10877,8 +11286,10 @@ export interface components {
             EnableHwAcceleration?: boolean;
             /** @description Gets or sets a value indicating whether or not to use HW accelerated MJPEG encoding. */
             EnableHwEncoding?: boolean;
-            /** @description Gets or sets a value indicating whether to only extract key frames.
-             *     Significantly faster, but is not compatible with all decoders and/or video files. */
+            /**
+             * @description Gets or sets a value indicating whether to only extract key frames.
+             *     Significantly faster, but is not compatible with all decoders and/or video files.
+             */
             EnableKeyFrameOnlyExtraction?: boolean;
             /**
              * @description Gets or sets the behavior used by trickplay provider on library scan/update.
@@ -10952,6 +11363,7 @@ export interface components {
             TunerCount?: number;
             UserAgent?: string | null;
             IgnoreDts?: boolean;
+            ReadAtNativeFramerate?: boolean;
         };
         TypeOptions: {
             Type?: string | null;
@@ -11095,7 +11507,7 @@ export interface components {
         };
         /** @description User data changed message. */
         UserDataChangedMessage: {
-            /** @description Gets or sets the data. */
+            /** @description Class UserDataChangeInfo. */
             Data?: components["schemas"]["UserDataChangeInfo"] | null;
             /**
              * Format: uuid
@@ -11142,8 +11554,10 @@ export interface components {
             Name?: string | null;
             /** @description Gets or sets the server identifier. */
             ServerId?: string | null;
-            /** @description Gets or sets the name of the server.
-             *     This is not used by the server and is for client-side usage only. */
+            /**
+             * @description Gets or sets the name of the server.
+             *     This is not used by the server and is for client-side usage only.
+             */
             ServerName?: string | null;
             /**
              * Format: uuid
@@ -11256,6 +11670,8 @@ export interface components {
              * @description Gets or sets the max parental rating.
              */
             MaxParentalRating?: number | null;
+            /** Format: int32 */
+            MaxParentalSubRating?: number | null;
             BlockedTags?: string[] | null;
             AllowedTags?: string[] | null;
             EnableUserPreferenceAccess?: boolean;
@@ -11297,14 +11713,14 @@ export interface components {
             AuthenticationProviderId: string;
             PasswordResetProviderId: string;
             /**
-             * @description Gets or sets a value indicating what SyncPlay features the user can access.
+             * @description Enum SyncPlayUserAccessType.
              * @enum {unknown}
              */
             SyncPlayAccess?: "CreateAndJoinGroups" | "JoinGroups" | "None";
         };
         /** @description User updated message. */
         UserUpdatedMessage: {
-            /** @description Gets or sets the data. */
+            /** @description Class UserDto. */
             Data?: components["schemas"]["UserDto"] | null;
             /**
              * Format: uuid
@@ -11371,7 +11787,7 @@ export interface components {
          * @description An enum representing types of video ranges.
          * @enum {string}
          */
-        VideoRangeType: "Unknown" | "SDR" | "HDR10" | "HLG" | "DOVI" | "DOVIWithHDR10" | "DOVIWithHLG" | "DOVIWithSDR" | "HDR10Plus";
+        VideoRangeType: "Unknown" | "SDR" | "HDR10" | "HLG" | "DOVI" | "DOVIWithHDR10" | "DOVIWithHLG" | "DOVIWithSDR" | "DOVIWithEL" | "DOVIWithHDR10Plus" | "DOVIWithELHDR10Plus" | "DOVIInvalid" | "HDR10Plus";
         /**
          * @description Enum VideoType.
          * @enum {string}
@@ -11396,16 +11812,6 @@ export interface components {
             /** Format: double */
             RefreshProgress?: number | null;
             RefreshStatus?: string | null;
-        };
-        /** @description Provides the MAC address and port for wake-on-LAN functionality. */
-        WakeOnLanInfo: {
-            /** @description Gets the MAC address of the device. */
-            MacAddress?: string | null;
-            /**
-             * Format: int32
-             * @description Gets or sets the wake-on-LAN port.
-             */
-            Port?: number;
         };
         /** @description Represents the possible websocket types */
         WebSocketMessage: components["schemas"]["InboundWebSocketMessage"] | components["schemas"]["OutboundWebSocketMessage"];
@@ -11468,6 +11874,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetKeys: {
@@ -11504,6 +11923,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     CreateKey: {
@@ -11539,6 +11971,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     RevokeKey: {
@@ -11573,6 +12018,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -11675,6 +12133,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetArtistByName: {
@@ -11716,6 +12187,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -11817,6 +12301,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -11943,6 +12440,19 @@ export interface operations {
                 };
                 content: {
                     "audio/*": string;
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -12072,6 +12582,19 @@ export interface operations {
                     "audio/*": string;
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetAudioStreamByContainer: {
@@ -12150,7 +12673,7 @@ export interface operations {
                 requireAvc?: boolean;
                 /** @description Optional. Whether to deinterlace the video. */
                 deInterlace?: boolean;
-                /** @description Optional. Whether to require a non anamporphic stream. */
+                /** @description Optional. Whether to require a non anamorphic stream. */
                 requireNonAnamorphic?: boolean;
                 /** @description Optional. The maximum number of audio channels to transcode. */
                 transcodingMaxAudioChannels?: number;
@@ -12197,6 +12720,19 @@ export interface operations {
                 };
                 content: {
                     "audio/*": string;
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -12277,7 +12813,7 @@ export interface operations {
                 requireAvc?: boolean;
                 /** @description Optional. Whether to deinterlace the video. */
                 deInterlace?: boolean;
-                /** @description Optional. Whether to require a non anamporphic stream. */
+                /** @description Optional. Whether to require a non anamorphic stream. */
                 requireNonAnamorphic?: boolean;
                 /** @description Optional. The maximum number of audio channels to transcode. */
                 transcodingMaxAudioChannels?: number;
@@ -12326,6 +12862,273 @@ export interface operations {
                     "audio/*": string;
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
+        };
+    };
+    ListBackups: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Backups available. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BackupManifestDto"][];
+                    "application/json; profile=\"CamelCase\"": components["schemas"]["BackupManifestDto"][];
+                    "application/json; profile=\"PascalCase\"": components["schemas"]["BackupManifestDto"][];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description User does not have permission to retrieve information. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProblemDetails"];
+                    "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
+                    "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
+        };
+    };
+    CreateBackup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The backup options. */
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["BackupOptionsDto"];
+                "text/json": components["schemas"]["BackupOptionsDto"];
+                "application/*+json": components["schemas"]["BackupOptionsDto"];
+            };
+        };
+        responses: {
+            /** @description Backup created. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BackupManifestDto"];
+                    "application/json; profile=\"CamelCase\"": components["schemas"]["BackupManifestDto"];
+                    "application/json; profile=\"PascalCase\"": components["schemas"]["BackupManifestDto"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description User does not have permission to retrieve information. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProblemDetails"];
+                    "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
+                    "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
+        };
+    };
+    GetBackup: {
+        parameters: {
+            query: {
+                /** @description The data to start a restore process. */
+                path: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Backup archive manifest. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BackupManifestDto"];
+                    "application/json; profile=\"CamelCase\"": components["schemas"]["BackupManifestDto"];
+                    "application/json; profile=\"PascalCase\"": components["schemas"]["BackupManifestDto"];
+                };
+            };
+            /** @description Not a valid jellyfin Archive. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description User does not have permission to retrieve information. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProblemDetails"];
+                    "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
+                    "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not a valid path. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProblemDetails"];
+                    "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
+                    "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
+        };
+    };
+    StartRestoreBackup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The data to start a restore process. */
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BackupRestoreRequestDto"];
+                "text/json": components["schemas"]["BackupRestoreRequestDto"];
+                "application/*+json": components["schemas"]["BackupRestoreRequestDto"];
+            };
+        };
+        responses: {
+            /** @description Backup restore started. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description User does not have permission to retrieve information. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProblemDetails"];
+                    "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
+                    "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProblemDetails"];
+                    "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
+                    "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetBrandingOptions: {
@@ -12343,9 +13146,22 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["BrandingOptions"];
-                    "application/json; profile=\"CamelCase\"": components["schemas"]["BrandingOptions"];
-                    "application/json; profile=\"PascalCase\"": components["schemas"]["BrandingOptions"];
+                    "application/json": components["schemas"]["BrandingOptionsDto"];
+                    "application/json; profile=\"CamelCase\"": components["schemas"]["BrandingOptionsDto"];
+                    "application/json; profile=\"PascalCase\"": components["schemas"]["BrandingOptionsDto"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -12378,6 +13194,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetBrandingCss_2: {
@@ -12407,6 +13236,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -12457,6 +13299,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetChannelFeatures: {
@@ -12495,6 +13350,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -12552,6 +13420,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetAllChannelFeatures: {
@@ -12587,6 +13468,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -12636,6 +13530,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -12692,6 +13599,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     CreateCollection: {
@@ -12737,6 +13657,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     AddToCollection: {
@@ -12774,6 +13707,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -12813,6 +13759,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetConfiguration: {
@@ -12848,6 +13807,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -12888,6 +13860,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetNamedConfiguration: {
@@ -12924,6 +13909,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -12967,6 +13965,71 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
+        };
+    };
+    UpdateBrandingConfiguration: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Branding configuration. */
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BrandingOptionsDto"];
+                "text/json": components["schemas"]["BrandingOptionsDto"];
+                "application/*+json": components["schemas"]["BrandingOptionsDto"];
+            };
+        };
+        responses: {
+            /** @description Branding configuration updated. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetDefaultMetadataOptions: {
@@ -13003,6 +14066,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetDashboardConfigurationPage: {
@@ -13036,6 +14112,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -13088,6 +14177,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetDevices: {
@@ -13126,6 +14228,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -13171,6 +14286,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -13223,6 +14351,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetDeviceOptions: {
@@ -13273,6 +14414,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     UpdateDeviceOptions: {
@@ -13314,6 +14468,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -13358,6 +14525,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -13405,6 +14585,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -13557,6 +14750,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetVariantHlsAudioPlaylist: {
@@ -13697,6 +14903,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -13841,6 +15060,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     HeadMasterHlsAudioPlaylist: {
@@ -13983,6 +15215,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -14139,6 +15384,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetLiveHlsStream: {
@@ -14288,6 +15546,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetVariantHlsVideoPlaylist: {
@@ -14432,6 +15703,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -14582,6 +15866,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     HeadMasterHlsVideoPlaylist: {
@@ -14731,6 +16028,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetDefaultDirectoryBrowser: {
@@ -14766,6 +16076,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -14810,6 +16133,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetDrives: {
@@ -14846,6 +16182,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetNetworkShares: {
@@ -14881,6 +16230,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -14920,6 +16282,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -14971,6 +16346,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetQueryFiltersLegacy: {
@@ -15015,6 +16403,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -15072,6 +16473,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -15146,6 +16560,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetGenre: {
@@ -15188,6 +16615,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetHlsAudioSegmentLegacyAac: {
@@ -15213,6 +16653,19 @@ export interface operations {
                     "audio/*": string;
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetHlsAudioSegmentLegacyMp3: {
@@ -15236,6 +16689,19 @@ export interface operations {
                 };
                 content: {
                     "audio/*": string;
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -15278,6 +16744,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetHlsPlaylistLegacy: {
@@ -15317,6 +16796,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     StopEncodingProcess: {
@@ -15353,6 +16845,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -15419,6 +16924,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -15488,6 +17006,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetSplashscreen: {
@@ -15497,26 +17028,6 @@ export interface operations {
                 tag?: string;
                 /** @description Determines the output format of the image - original,gif,jpg,png. */
                 format?: "Bmp" | "Gif" | "Jpg" | "Png" | "Webp" | "Svg";
-                /** @description The maximum image width to return. */
-                maxWidth?: number;
-                /** @description The maximum image height to return. */
-                maxHeight?: number;
-                /** @description The fixed image width to return. */
-                width?: number;
-                /** @description The fixed image height to return. */
-                height?: number;
-                /** @description Width of box to fill. */
-                fillWidth?: number;
-                /** @description Height of box to fill. */
-                fillHeight?: number;
-                /** @description Blur image. */
-                blur?: number;
-                /** @description Apply a background color for transparent images. */
-                backgroundColor?: string;
-                /** @description Apply a foreground layer on top of the image. */
-                foregroundLayer?: string;
-                /** @description Quality setting, from 0-100. */
-                quality?: number;
             };
             header?: never;
             path?: never;
@@ -15531,6 +17042,19 @@ export interface operations {
                 };
                 content: {
                     "image/*": string;
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -15584,6 +17108,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     DeleteCustomSplashscreen: {
@@ -15615,6 +17152,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -15681,6 +17231,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -15750,6 +17313,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetGenreImageByIndex: {
@@ -15815,6 +17391,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -15884,6 +17473,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetItemImageInfos: {
@@ -15932,6 +17534,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -16001,6 +17616,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     SetItemImage: {
@@ -16064,6 +17692,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     DeleteItemImage: {
@@ -16113,6 +17754,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -16182,6 +17836,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetItemImageByIndex: {
@@ -16249,6 +17916,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     SetItemImageByIndex: {
@@ -16314,6 +17994,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     DeleteItemImageByIndex: {
@@ -16362,6 +18055,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -16431,6 +18137,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetItemImage2: {
@@ -16496,6 +18215,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -16565,6 +18297,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     UpdateItemImageIndex: {
@@ -16616,6 +18361,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -16685,6 +18443,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     HeadMusicGenreImage: {
@@ -16750,6 +18521,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -16819,6 +18603,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     HeadMusicGenreImageByIndex: {
@@ -16884,6 +18681,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -16953,6 +18763,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     HeadPersonImage: {
@@ -17018,6 +18841,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -17087,6 +18923,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     HeadPersonImageByIndex: {
@@ -17152,6 +19001,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -17221,6 +19083,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     HeadStudioImage: {
@@ -17286,6 +19161,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -17355,6 +19243,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     HeadStudioImageByIndex: {
@@ -17422,6 +19323,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetUserImage: {
@@ -17433,32 +19347,6 @@ export interface operations {
                 tag?: string;
                 /** @description Determines the output format of the image - original,gif,jpg,png. */
                 format?: "Bmp" | "Gif" | "Jpg" | "Png" | "Webp" | "Svg";
-                /** @description The maximum image width to return. */
-                maxWidth?: number;
-                /** @description The maximum image height to return. */
-                maxHeight?: number;
-                /** @description Optional. Percent to render for the percent played overlay. */
-                percentPlayed?: number;
-                /** @description Optional. Unplayed count overlay to render. */
-                unplayedCount?: number;
-                /** @description The fixed image width to return. */
-                width?: number;
-                /** @description The fixed image height to return. */
-                height?: number;
-                /** @description Optional. Quality setting, from 0-100. Defaults to 90 and should suffice in most cases. */
-                quality?: number;
-                /** @description Width of box to fill. */
-                fillWidth?: number;
-                /** @description Height of box to fill. */
-                fillHeight?: number;
-                /** @description Optional. Blur image. */
-                blur?: number;
-                /** @description Optional. Apply a background color for transparent images. */
-                backgroundColor?: string;
-                /** @description Optional. Apply a foreground layer on top of the image. */
-                foregroundLayer?: string;
-                /** @description Image index. */
-                imageIndex?: number;
             };
             header?: never;
             path?: never;
@@ -17495,6 +19383,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -17562,6 +19463,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     DeleteUserImage: {
@@ -17601,6 +19515,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     HeadUserImage: {
@@ -17612,32 +19539,6 @@ export interface operations {
                 tag?: string;
                 /** @description Determines the output format of the image - original,gif,jpg,png. */
                 format?: "Bmp" | "Gif" | "Jpg" | "Png" | "Webp" | "Svg";
-                /** @description The maximum image width to return. */
-                maxWidth?: number;
-                /** @description The maximum image height to return. */
-                maxHeight?: number;
-                /** @description Optional. Percent to render for the percent played overlay. */
-                percentPlayed?: number;
-                /** @description Optional. Unplayed count overlay to render. */
-                unplayedCount?: number;
-                /** @description The fixed image width to return. */
-                width?: number;
-                /** @description The fixed image height to return. */
-                height?: number;
-                /** @description Optional. Quality setting, from 0-100. Defaults to 90 and should suffice in most cases. */
-                quality?: number;
-                /** @description Width of box to fill. */
-                fillWidth?: number;
-                /** @description Height of box to fill. */
-                fillHeight?: number;
-                /** @description Optional. Blur image. */
-                blur?: number;
-                /** @description Optional. Apply a background color for transparent images. */
-                backgroundColor?: string;
-                /** @description Optional. Apply a foreground layer on top of the image. */
-                foregroundLayer?: string;
-                /** @description Image index. */
-                imageIndex?: number;
             };
             header?: never;
             path?: never;
@@ -17674,6 +19575,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -17741,6 +19655,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetInstantMixFromArtists: {
@@ -17806,6 +19733,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetInstantMixFromArtists2: {
@@ -17868,6 +19808,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -17935,6 +19888,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetInstantMixFromMusicGenreByName: {
@@ -17988,6 +19954,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -18051,6 +20030,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -18118,6 +20110,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetInstantMixFromSong: {
@@ -18183,6 +20188,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetExternalIdInfos: {
@@ -18231,6 +20249,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -18289,6 +20320,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetBookRemoteSearchResults: {
@@ -18331,6 +20375,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -18375,6 +20432,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetMovieRemoteSearchResults: {
@@ -18417,6 +20487,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -18461,6 +20544,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetMusicArtistRemoteSearchResults: {
@@ -18503,6 +20599,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -18547,6 +20656,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetPersonRemoteSearchResults: {
@@ -18589,6 +20711,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -18633,6 +20768,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetTrailerRemoteSearchResults: {
@@ -18675,6 +20823,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -18731,6 +20892,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -18942,6 +21116,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     DeleteItems: {
@@ -18990,6 +21177,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -19043,6 +21243,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -19103,6 +21316,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -19172,6 +21398,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetItem: {
@@ -19213,6 +21452,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -19267,6 +21519,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     DeleteItem: {
@@ -19317,6 +21582,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     UpdateItemContentType: {
@@ -19364,6 +21642,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -19416,6 +21707,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetSimilarAlbums: {
@@ -19464,6 +21768,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetSimilarArtists: {
@@ -19511,6 +21828,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -19565,6 +21895,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetCriticReviews: {
@@ -19602,6 +21945,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -19650,6 +22006,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -19701,6 +22070,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetSimilarItems: {
@@ -19748,6 +22130,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -19803,6 +22198,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -19861,6 +22269,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -19922,6 +22343,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetItemCounts: {
@@ -19962,6 +22396,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -20004,6 +22451,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     PostUpdatedMedia: {
@@ -20042,6 +22502,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -20082,6 +22555,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     PostAddedMovies: {
@@ -20118,6 +22604,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -20156,6 +22655,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetPhysicalPaths: {
@@ -20192,6 +22704,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     RefreshLibrary: {
@@ -20223,6 +22748,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -20259,6 +22797,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     PostUpdatedSeries: {
@@ -20293,6 +22844,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -20342,6 +22906,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetSimilarShows: {
@@ -20389,6 +22966,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -20438,6 +23028,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetVirtualFolders: {
@@ -20473,6 +23076,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -20522,6 +23138,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     RemoveVirtualFolder: {
@@ -20558,6 +23187,26 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Folder not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -20607,6 +23256,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -20670,6 +23332,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     AddMediaPath: {
@@ -20712,6 +23387,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     RemoveMediaPath: {
@@ -20750,6 +23438,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -20790,6 +23491,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetChannelMappingOptions: {
@@ -20828,6 +23542,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -20871,6 +23598,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -20951,6 +23691,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetChannel: {
@@ -21004,6 +23757,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetGuideInfo: {
@@ -21015,7 +23781,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Guid info returned. */
+            /** @description Guide info returned. */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -21039,6 +23805,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -21075,6 +23854,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -21126,6 +23918,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     DeleteListingProvider: {
@@ -21160,6 +23965,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -21196,6 +24014,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -21242,6 +24073,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetSchedulesDirectCountries: {
@@ -21276,6 +24120,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetLiveRecordingFile: {
@@ -21308,6 +24165,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -21344,6 +24214,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -21437,6 +24320,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetPrograms: {
@@ -21480,6 +24376,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetProgram: {
@@ -21522,6 +24431,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetRecommendedPrograms: {
@@ -21529,6 +24451,8 @@ export interface operations {
             query?: {
                 /** @description Optional. filter by user id. */
                 userId?: string;
+                /** @description Optional. The record index to start at. All items with a lower index will be dropped from the results. */
+                startIndex?: number;
                 /** @description Optional. The maximum number of records to return. */
                 limit?: number;
                 /** @description Optional. Filter by programs that are currently airing, or not. */
@@ -21590,6 +24514,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -21666,6 +24603,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetRecording: {
@@ -21719,6 +24669,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     DeleteRecording: {
@@ -21765,6 +24728,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetRecordingFolders: {
@@ -21803,6 +24779,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -21843,6 +24832,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetRecordingGroup: {
@@ -21880,6 +24882,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -21947,6 +24962,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetSeriesTimers: {
@@ -21988,6 +25016,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     CreateSeriesTimer: {
@@ -22026,6 +25067,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -22077,6 +25131,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     UpdateSeriesTimer: {
@@ -22119,6 +25186,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     CancelSeriesTimer: {
@@ -22153,6 +25233,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -22199,6 +25292,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     CreateTimer: {
@@ -22238,6 +25344,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetTimer: {
@@ -22276,6 +25395,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -22319,6 +25451,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     CancelTimer: {
@@ -22353,6 +25498,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -22392,6 +25550,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -22436,6 +25607,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     DeleteTunerHost: {
@@ -22470,6 +25654,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -22507,6 +25704,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     ResetTuner: {
@@ -22541,6 +25751,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -22581,6 +25804,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     DiscvoverTuners: {
@@ -22620,6 +25856,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetCountries: {
@@ -22655,6 +25904,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -22692,6 +25954,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetLocalizationOptions: {
@@ -22728,6 +26003,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetParentalRatings: {
@@ -22763,6 +26051,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -22812,6 +26113,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -22882,6 +26196,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     DeleteLyrics: {
@@ -22926,6 +26253,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -22976,6 +26316,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -23030,6 +26383,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetRemoteLyrics: {
@@ -23078,6 +26444,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -23131,6 +26510,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -23261,6 +26653,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     CloseLiveStream: {
@@ -23295,6 +26700,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -23364,6 +26782,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetBitrateTestBytes: {
@@ -23400,6 +26831,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -23454,6 +26898,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetMovieRecommendations: {
@@ -23500,6 +26957,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -23574,6 +27044,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetMusicGenre: {
@@ -23616,6 +27099,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetPackages: {
@@ -23651,6 +27147,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -23693,6 +27202,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -23747,6 +27269,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     CancelPackageInstallation: {
@@ -23781,6 +27316,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -23817,6 +27365,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -23856,6 +27417,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -23920,6 +27494,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetPerson: {
@@ -23971,6 +27558,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -24037,6 +27637,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetPlaylist: {
@@ -24085,6 +27698,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -24142,6 +27768,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -24215,6 +27854,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     AddItemToPlaylist: {
@@ -24270,6 +27922,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     RemoveItemFromPlaylist: {
@@ -24321,6 +27986,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -24377,6 +28055,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetPlaylistUsers: {
@@ -24429,6 +28120,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -24485,6 +28189,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -24546,6 +28263,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     RemoveUserFromPlaylist: {
@@ -24598,6 +28328,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     OnPlaybackStart: {
@@ -24648,6 +28391,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     OnPlaybackStopped: {
@@ -24693,6 +28449,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -24752,6 +28521,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     ReportPlaybackStart: {
@@ -24791,6 +28573,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     PingPlaybackSession: {
@@ -24825,6 +28620,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -24865,6 +28673,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     ReportPlaybackStopped: {
@@ -24903,6 +28724,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -24959,6 +28793,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     MarkUnplayedItem: {
@@ -25012,6 +28859,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetPlugins: {
@@ -25047,6 +28907,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -25092,6 +28965,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -25142,6 +29028,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     DisablePlugin: {
@@ -25190,6 +29089,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     EnablePlugin: {
@@ -25236,6 +29148,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -25288,6 +29213,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetPluginConfiguration: {
@@ -25338,6 +29276,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     UpdatePluginConfiguration: {
@@ -25382,6 +29333,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -25430,6 +29394,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     AuthorizeQuickConnect: {
@@ -25475,6 +29452,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetQuickConnectState: {
@@ -25511,6 +29501,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetQuickConnectEnabled: {
@@ -25531,6 +29534,19 @@ export interface operations {
                     "application/json": boolean;
                     "application/json; profile=\"CamelCase\"": boolean;
                     "application/json; profile=\"PascalCase\"": boolean;
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -25561,6 +29577,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -25623,6 +29652,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     DownloadRemoteImage: {
@@ -25672,6 +29714,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -25724,6 +29779,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetTasks: {
@@ -25764,6 +29832,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -25813,6 +29894,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -25868,6 +29962,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     StartTask: {
@@ -25914,6 +30021,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     StopTask: {
@@ -25958,6 +30078,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -26033,6 +30166,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetPasswordResetProviders: {
@@ -26069,6 +30215,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetAuthProviders: {
@@ -26104,6 +30263,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -26148,6 +30320,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     SendFullGeneralCommand: {
@@ -26190,6 +30375,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     SendGeneralCommand: {
@@ -26226,6 +30424,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -26268,6 +30479,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -26319,6 +30543,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     SendPlaystateCommand: {
@@ -26361,6 +30598,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     SendSystemCommand: {
@@ -26397,6 +30647,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -26435,6 +30698,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     RemoveUserFromSession: {
@@ -26471,6 +30747,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -26513,6 +30802,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -26557,6 +30859,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     PostFullCapabilities: {
@@ -26599,6 +30914,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     ReportSessionEnded: {
@@ -26630,6 +30958,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -26668,6 +31009,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     CompleteWizard: {
@@ -26699,6 +31053,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -26735,6 +31102,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -26775,6 +31155,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetFirstUser_2: {
@@ -26810,6 +31203,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -26850,6 +31256,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetFirstUser: {
@@ -26885,6 +31304,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -26924,6 +31356,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -26996,6 +31441,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetStudio: {
@@ -27038,6 +31496,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetFallbackFontList: {
@@ -27073,6 +31544,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -27110,6 +31594,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -27166,6 +31663,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     DownloadRemoteSubtitles: {
@@ -27214,6 +31724,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetRemoteSubtitles: {
@@ -27250,6 +31773,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -27306,6 +31842,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     UploadSubtitle: {
@@ -27359,6 +31908,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     DeleteSubtitle: {
@@ -27405,6 +31967,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -27470,6 +32045,19 @@ export interface operations {
                     "text/*": string;
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetSubtitle: {
@@ -27528,6 +32116,19 @@ export interface operations {
                     "text/*": string;
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetSuggestions: {
@@ -27577,6 +32178,82 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
+        };
+    };
+    SyncPlayGetGroup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The id of the group. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Group returned. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GroupInfoDto"];
+                    "application/json; profile=\"CamelCase\"": components["schemas"]["GroupInfoDto"];
+                    "application/json; profile=\"PascalCase\"": components["schemas"]["GroupInfoDto"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProblemDetails"];
+                    "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
+                    "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     SyncPlayBuffering: {
@@ -27615,6 +32292,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -27655,6 +32345,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     SyncPlayLeaveGroup: {
@@ -27686,6 +32389,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -27722,6 +32438,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -27762,6 +32491,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     SyncPlayCreateGroup: {
@@ -27780,6 +32522,17 @@ export interface operations {
             };
         };
         responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GroupInfoDto"];
+                    "application/json; profile=\"CamelCase\"": components["schemas"]["GroupInfoDto"];
+                    "application/json; profile=\"PascalCase\"": components["schemas"]["GroupInfoDto"];
+                };
+            };
             /** @description New group created. */
             204: {
                 headers: {
@@ -27800,6 +32553,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -27840,6 +32606,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     SyncPlayPause: {
@@ -27871,6 +32650,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -27911,6 +32703,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     SyncPlayPreviousItem: {
@@ -27949,6 +32754,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -27989,6 +32807,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     SyncPlayReady: {
@@ -28027,6 +32858,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -28067,6 +32911,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     SyncPlaySeek: {
@@ -28105,6 +32962,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -28145,6 +33015,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     SyncPlaySetNewQueue: {
@@ -28183,6 +33066,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -28223,6 +33119,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     SyncPlaySetRepeatMode: {
@@ -28261,6 +33170,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -28301,6 +33223,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     SyncPlayStop: {
@@ -28333,6 +33268,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     SyncPlayUnpause: {
@@ -28364,6 +33312,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -28403,6 +33364,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -28445,6 +33419,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetPublicSystemInfo: {
@@ -28465,6 +33452,72 @@ export interface operations {
                     "application/json": components["schemas"]["PublicSystemInfo"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["PublicSystemInfo"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["PublicSystemInfo"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
+        };
+    };
+    GetSystemStorage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Information retrieved. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SystemStorageDto"];
+                    "application/json; profile=\"CamelCase\"": components["schemas"]["SystemStorageDto"];
+                    "application/json; profile=\"PascalCase\"": components["schemas"]["SystemStorageDto"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description User does not have permission to retrieve information. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProblemDetails"];
+                    "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
+                    "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -28505,6 +33558,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -28559,6 +33625,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetPingSystem: {
@@ -28581,6 +33660,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": string;
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     PostPingSystem: {
@@ -28601,6 +33693,19 @@ export interface operations {
                     "application/json": string;
                     "application/json; profile=\"CamelCase\"": string;
                     "application/json; profile=\"PascalCase\"": string;
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -28639,6 +33744,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     ShutdownApplication: {
@@ -28675,41 +33793,18 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
-        };
-    };
-    GetWakeOnLanInfo: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Information retrieved. */
-            200: {
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
                 headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["WakeOnLanInfo"][];
-                    "application/json; profile=\"CamelCase\"": components["schemas"]["WakeOnLanInfo"][];
-                    "application/json; profile=\"PascalCase\"": components["schemas"]["WakeOnLanInfo"][];
+                    "text/html": unknown;
                 };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
             };
         };
     };
@@ -28731,6 +33826,19 @@ export interface operations {
                     "application/json": components["schemas"]["UtcTimeResponse"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["UtcTimeResponse"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["UtcTimeResponse"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -28766,6 +33874,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -28972,6 +34093,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetTrickplayTileImage: {
@@ -29027,6 +34161,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetTrickplayHlsPlaylist: {
@@ -29080,6 +34227,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetEpisodes: {
@@ -29112,7 +34272,7 @@ export interface operations {
                 /** @description Optional. Include user data. */
                 enableUserData?: boolean;
                 /** @description Optional. Specify one or more sort orders, comma delimited. Options: Album, AlbumArtist, Artist, Budget, CommunityRating, CriticRating, DateCreated, DatePlayed, PlayCount, PremiereDate, ProductionYear, SortName, Random, Revenue, Runtime. */
-                sortBy?: "Default" | "AiredEpisodeOrder" | "Album" | "AlbumArtist" | "Artist" | "DateCreated" | "OfficialRating" | "DatePlayed" | "PremiereDate" | "StartDate" | "SortName" | "Name" | "Random" | "Runtime" | "CommunityRating" | "ProductionYear" | "PlayCount" | "CriticRating" | "IsFolder" | "IsUnplayed" | "IsPlayed" | "SeriesSortName" | "VideoBitRate" | "AirTime" | "Studio" | "IsFavoriteOrLiked" | "DateLastContentAdded" | "SeriesDatePlayed" | "ParentIndexNumber" | "IndexNumber" | "SimilarityScore" | "SearchScore";
+                sortBy?: "Default" | "AiredEpisodeOrder" | "Album" | "AlbumArtist" | "Artist" | "DateCreated" | "OfficialRating" | "DatePlayed" | "PremiereDate" | "StartDate" | "SortName" | "Name" | "Random" | "Runtime" | "CommunityRating" | "ProductionYear" | "PlayCount" | "CriticRating" | "IsFolder" | "IsUnplayed" | "IsPlayed" | "SeriesSortName" | "VideoBitRate" | "AirTime" | "Studio" | "IsFavoriteOrLiked" | "DateLastContentAdded" | "SeriesDatePlayed" | "ParentIndexNumber" | "IndexNumber";
             };
             header?: never;
             path: {
@@ -29157,6 +34317,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -29228,6 +34401,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetNextUp: {
@@ -29257,7 +34443,10 @@ export interface operations {
                 nextUpDateCutoff?: string;
                 /** @description Whether to enable the total records count. Defaults to true. */
                 enableTotalRecordCount?: boolean;
-                /** @description Whether to disable sending the first episode in a series as next up. */
+                /**
+                 * @deprecated
+                 * @description Whether to disable sending the first episode in a series as next up.
+                 */
                 disableFirstEpisode?: boolean;
                 /** @description Whether to include resumable episodes in next up results. */
                 enableResumable?: boolean;
@@ -29294,6 +34483,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -29349,6 +34551,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -29440,6 +34655,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -29534,6 +34762,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetUsers: {
@@ -29574,6 +34815,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -29632,6 +34886,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetUserById: {
@@ -29682,6 +34949,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     DeleteUser: {
@@ -29726,6 +35006,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -29785,6 +35078,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     AuthenticateUserByName: {
@@ -29812,6 +35118,19 @@ export interface operations {
                     "application/json": components["schemas"]["AuthenticationResult"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["AuthenticationResult"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["AuthenticationResult"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -29849,6 +35168,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -29896,6 +35228,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     ForgotPassword: {
@@ -29925,6 +35270,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ForgotPasswordResult"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     ForgotPasswordPin: {
@@ -29952,6 +35310,19 @@ export interface operations {
                     "application/json": components["schemas"]["PinRedeemResult"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["PinRedeemResult"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["PinRedeemResult"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -30001,6 +35372,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     CreateUserByName: {
@@ -30043,6 +35427,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -30101,6 +35498,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetPublicUsers: {
@@ -30121,6 +35531,19 @@ export interface operations {
                     "application/json": components["schemas"]["UserDto"][];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["UserDto"][];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["UserDto"][];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -30165,6 +35588,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetLocalTrailers: {
@@ -30207,6 +35643,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetSpecialFeatures: {
@@ -30248,6 +35697,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -30308,6 +35770,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetRootFolder: {
@@ -30346,6 +35821,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -30389,6 +35877,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     UnmarkFavoriteItem: {
@@ -30430,6 +35931,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -30475,6 +35989,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     DeleteUserItemRating: {
@@ -30516,6 +36043,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -30561,6 +36101,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -30612,6 +36165,19 @@ export interface operations {
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetAttachment: {
@@ -30648,6 +36214,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -30691,6 +36270,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -30736,6 +36328,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -30869,6 +36474,19 @@ export interface operations {
                     "video/*": string;
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     HeadVideoStream: {
@@ -31000,6 +36618,19 @@ export interface operations {
                     "video/*": string;
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetVideoStreamByContainer: {
@@ -31126,6 +36757,19 @@ export interface operations {
                 };
                 content: {
                     "video/*": string;
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };
@@ -31256,6 +36900,19 @@ export interface operations {
                     "video/*": string;
                 };
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     MergeVersions: {
@@ -31301,6 +36958,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
             };
         };
     };
@@ -31369,6 +37039,19 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
+                };
+            };
         };
     };
     GetYear: {
@@ -31420,6 +37103,19 @@ export interface operations {
                     "application/json": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"CamelCase\"": components["schemas"]["ProblemDetails"];
                     "application/json; profile=\"PascalCase\"": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description The server is currently starting or is temporarily not available. */
+            503: {
+                headers: {
+                    /** @description A hint for when to retry the operation in full seconds. */
+                    "Retry-After"?: number;
+                    /** @description A short plain-text reason why the server is not available. */
+                    Message?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": unknown;
                 };
             };
         };

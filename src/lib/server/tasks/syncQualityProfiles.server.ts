@@ -213,7 +213,7 @@ export class SyncQualityProfiles implements TaskExecutor {
 		const formats = await conn.getCustomFormats();
 		if (!formats.success || !formats.data) return { id: 'service.messages.sonarrFetchError' };
 		for (const quality of toCreate) {
-			const createdQualityProfile = await conn.addQualityProfile(
+			const createdQualityProfile = await conn.postQualityProfile(
 				SonarrMapper.qualityProfileResource(
 					quality.filteringProfile.name,
 					quality.customFormat.lang,

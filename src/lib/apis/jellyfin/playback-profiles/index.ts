@@ -25,13 +25,13 @@
  * "superior" codec in this situation)
  */
 
-import type { DeviceProfile as DP } from '@jellyfin/sdk/lib/generated-client';
+import type { components as JellyfinComponents } from '$lib/apis/jellyfin/jellyfin.generated';
 import { getCodecProfiles } from './helpers/codec-profiles';
 import { getDirectPlayProfiles } from './directplay-profile';
 import { getTranscodingProfiles } from './transcoding-profile';
 import { getSubtitleProfiles } from './subtitle-profile';
 
-export type DeviceProfile = DP;
+export type DeviceProfile = JellyfinComponents['schemas']['DeviceProfile'];
 
 /**
  * Creates a device profile containing supported codecs for the active Cast device.
@@ -39,7 +39,7 @@ export type DeviceProfile = DP;
  * @param videoTestElement - Dummy video element for compatibility tests
  * @returns Device profile.
  */
-function getDeviceProfile(videoTestElement?: HTMLVideoElement): DP {
+function getDeviceProfile(videoTestElement?: HTMLVideoElement): DeviceProfile {
 	const element = videoTestElement || document.createElement('video');
 	return {
 		MaxStreamingBitrate: 120_000_000,

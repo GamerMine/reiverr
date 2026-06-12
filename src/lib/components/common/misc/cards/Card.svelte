@@ -1,9 +1,4 @@
 <script lang="ts">
-	import {
-		createJellyfinItemStore,
-		createRadarrMovieStore,
-		createSonarrSeriesStore
-	} from '$lib/stores/data.store';
 	import type { TitleType } from '$lib/types';
 	import { formatMinutesToTime } from '$lib/utils';
 	import classNames from 'classnames';
@@ -12,6 +7,9 @@
 	import ContextMenu from '$lib/components/common/inputs/contextMenu/ContextMenu.svelte';
 	import LibraryItemContextItems from '$lib/components/common/inputs/contextMenu/LibraryItemContextItems.svelte';
 	import ProgressBar from '../../ProgressBar.svelte';
+	import { onMount } from 'svelte';
+	import { jellyfinGetItems } from '$lib/remote/jellyfin.remote';
+	import type { components as JellyfinComponents } from '$lib/apis/jellyfin/jellyfin.generated';
 
 	let {
 		tmdbId,
@@ -45,20 +43,18 @@
 		openInModal?: boolean;
 	} = $props();
 
-	let jellyfinItemStore = createJellyfinItemStore(tmdbId);
-	let radarrMovieStore = createRadarrMovieStore(tmdbId);
-	let sonarrSeriesStore = createSonarrSeriesStore(title);
+	let jellyfinItem: JellyfinComponents['schemas']['BaseItemDto'] | undefined = $state();
+	onMount(async () => {
+		await jellyfinGetItems();
+		jellyfinItem = jellyfinGetItems().current?.data?.find(
+			(i) => i.ProviderIds?.Tmdb === tmdbId.toString()
+		);
+	});
 </script>
 
 <ContextMenu heading={title}>
 	{#snippet menu()}
-		<LibraryItemContextItems
-			jellyfinItem={$jellyfinItemStore.item}
-			radarrMovie={$radarrMovieStore.item}
-			sonarrSeries={$sonarrSeriesStore.item}
-			{type}
-			{tmdbId}
-		/>
+		<LibraryItemContextItems {jellyfinItem} {type} {tmdbId} />
 	{/snippet}
 	<button
 		class={classNames(
@@ -72,7 +68,7 @@
 		)}
 		onclick={() => {
 			if (openInModal) {
-				openTitleModal({ type, id: tmdbId, provider: 'tmdb' });
+				openTitleModal(tmdbId, type);
 			} else {
 				window.location.href = `/${type}/${tmdbId}`;
 			}
@@ -97,7 +93,9 @@
 			<div class="text-left">
 				<h1 class="font-bold tracking-wider text-lg">{title}</h1>
 				<div class="text-xs text-zinc-300 tracking-wider font-medium">
-					{genres.map((genre) => genre.charAt(0).toUpperCase() + genre.slice(1)).join(', ')}
+					{genres
+						.map((genre) => genre.charAt(0).toUpperCase() + genre.slice(1))
+						.join(', ')}
 				</div>
 			</div>
 			<div class="flex justify-between items-end">
@@ -115,8 +113,9 @@
 							<Clock />
 							<div class="text-sm text-zinc-200">
 								{progress
-									? formatMinutesToTime(runtimeMinutes - runtimeMinutes * (progress / 100)) +
-										' left'
+									? formatMinutesToTime(
+											runtimeMinutes - runtimeMinutes * (progress / 100)
+										) + ' left'
 									: formatMinutesToTime(runtimeMinutes)}
 							</div>
 						</div>

@@ -87,6 +87,10 @@ export class RadarrConnector {
 		});
 	}
 
+	public async getMovie() {
+		return await this.client.GET('/api/v3/movie');
+	}
+
 	public async putQualityProfile(
 		id: number,
 		profile: RadarrComponents['schemas']['QualityProfileResource']

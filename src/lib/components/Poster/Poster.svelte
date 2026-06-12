@@ -10,8 +10,7 @@
 	import type { Snippet } from 'svelte';
 
 	let {
-		tmdbId = undefined,
-		tvdbId = undefined,
+		tmdbId,
 		openInModal = true,
 		jellyfinId = '',
 		type = 'movie',
@@ -31,8 +30,7 @@
 		bottom_left = undefined,
 		bottom_right = undefined
 	}: {
-		tmdbId?: number;
-		tvdbId?: number;
+		tmdbId: number;
 		openInModal?: boolean;
 		jellyfinId?: string;
 		type?: TitleType;
@@ -57,13 +55,9 @@
 <button
 	onclick={() => {
 		if (openInModal) {
-			if (tmdbId) {
-				openTitleModal({ type, id: tmdbId, provider: 'tmdb' });
-			} else if (tvdbId) {
-				openTitleModal({ type, id: tvdbId, provider: 'tvdb' });
-			}
+			openTitleModal(tmdbId, type);
 		} else {
-			window.location.href = tmdbId || tvdbId ? `/${type}/${tmdbId || tvdbId}` : '#';
+			window.location.href = tmdbId ? `/${type}/${tmdbId}` : '#';
 		}
 	}}
 	class={classNames(

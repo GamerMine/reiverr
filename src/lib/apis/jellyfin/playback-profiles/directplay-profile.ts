@@ -2,8 +2,7 @@
  * @deprecated - Check @/utils/playback-profiles/index
  */
 
-import { DlnaProfileType } from '@jellyfin/sdk/lib/generated-client';
-import type { DirectPlayProfile } from '@jellyfin/sdk/lib/generated-client';
+import type { components as JellyfinComponents } from '$lib/apis/jellyfin/jellyfin.generated';
 import { getSupportedMP4VideoCodecs } from './helpers/mp4-video-formats';
 import { getSupportedMP4AudioCodecs } from './helpers/mp4-audio-formats';
 import { hasMkvSupport } from './helpers/transcoding-formats';
@@ -19,8 +18,8 @@ import { getSupportedAudioCodecs } from './helpers/audio-formats';
  */
 export function getDirectPlayProfiles(
 	videoTestElement: HTMLVideoElement
-): Array<DirectPlayProfile> {
-	const DirectPlayProfiles: DirectPlayProfile[] = [];
+): Array<JellyfinComponents['schemas']['DirectPlayProfile']> {
+	const DirectPlayProfiles: JellyfinComponents['schemas']['DirectPlayProfile'][] = [];
 
 	const webmVideoCodecs = getSupportedWebMVideoCodecs(videoTestElement);
 	const webmAudioCodecs = getSupportedWebMAudioCodecs(videoTestElement);
@@ -31,7 +30,7 @@ export function getDirectPlayProfiles(
 	if (webmVideoCodecs.length > 0) {
 		DirectPlayProfiles.push({
 			Container: 'webm',
-			Type: DlnaProfileType.Video,
+			Type: 'Video',
 			VideoCodec: webmVideoCodecs.join(','),
 			AudioCodec: webmAudioCodecs.join(',')
 		});
@@ -40,7 +39,7 @@ export function getDirectPlayProfiles(
 	if (mp4VideoCodecs.length > 0) {
 		DirectPlayProfiles.push({
 			Container: 'mp4,m4v',
-			Type: DlnaProfileType.Video,
+			Type: 'Video',
 			VideoCodec: mp4VideoCodecs.join(','),
 			AudioCodec: mp4AudioCodecs.join(',')
 		});
@@ -49,7 +48,7 @@ export function getDirectPlayProfiles(
 	if (hasMkvSupport(videoTestElement) && mp4VideoCodecs.length > 0) {
 		DirectPlayProfiles.push({
 			Container: 'mkv',
-			Type: DlnaProfileType.Video,
+			Type: 'Video',
 			VideoCodec: mp4VideoCodecs.join(','),
 			AudioCodec: mp4AudioCodecs.join(',')
 		});
@@ -72,13 +71,13 @@ export function getDirectPlayProfiles(
 	for (const audioFormat of supportedAudio.filter((format) => getSupportedAudioCodecs(format))) {
 		DirectPlayProfiles.push({
 			Container: audioFormat,
-			Type: DlnaProfileType.Audio
+			Type: 'Audio'
 		});
 
 		if (audioFormat === 'opus' || audioFormat === 'webma') {
 			DirectPlayProfiles.push({
 				Container: 'webm',
-				Type: DlnaProfileType.Audio,
+				Type: 'Audio',
 				AudioCodec: audioFormat
 			});
 		}
@@ -89,12 +88,12 @@ export function getDirectPlayProfiles(
 				{
 					Container: 'm4a',
 					AudioCodec: audioFormat,
-					Type: DlnaProfileType.Audio
+					Type: 'Audio'
 				},
 				{
 					Container: 'm4b',
 					AudioCodec: audioFormat,
-					Type: DlnaProfileType.Audio
+					Type: 'Audio'
 				}
 			);
 		}

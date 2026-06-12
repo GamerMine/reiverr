@@ -1,12 +1,13 @@
 <script lang="ts">
-	import type { TitleId } from '$lib/types';
+	import type { TitleType } from '$lib/types';
 	import { fly } from 'svelte/transition';
 	import MoviePage from '../../../routes/movie/[id]/MoviePage.svelte';
 	import SeriesPage from '../../../routes/series/[id]/SeriesPage.svelte';
 	import { modalStack } from '$lib/stores/modal.store';
 	import PersonPage from '../../../routes/person/[id]/PersonPage.svelte';
 
-	let { titleId, modalId }: { titleId: TitleId; modalId: symbol } = $props();
+	let { tmdbId, titleType, modalId }: { tmdbId: number; titleType: TitleType; modalId: symbol } =
+		$props();
 
 	function handleCloseModal() {
 		modalStack.close(modalId);
@@ -21,12 +22,12 @@
 		in:fly|global={{ y: 20, duration: 200, delay: 200 }}
 		out:fly|global={{ y: 20, duration: 200 }}
 	>
-		{#if titleId.type === 'movie'}
-			<MoviePage tmdbId={titleId.id} isModal={true} {handleCloseModal} />
-		{:else if titleId.type === 'series'}
-			<SeriesPage {titleId} isModal={true} {handleCloseModal} />
-		{:else if titleId.type === 'person'}
-			<PersonPage tmdbId={titleId.id} isModal={true} {handleCloseModal} />
+		{#if titleType === 'movie'}
+			<MoviePage {tmdbId} isModal={true} {handleCloseModal} />
+		{:else if titleType === 'tv'}
+			<SeriesPage {tmdbId} isModal={true} {handleCloseModal} />
+		{:else if titleType === 'person'}
+			<PersonPage {tmdbId} isModal={true} {handleCloseModal} />
 		{/if}
 	</div>
 </div>

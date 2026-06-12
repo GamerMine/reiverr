@@ -16,7 +16,7 @@ import type { JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
 export const load: PageServerLoad = async ({ cookies, url }) => {
 	const isConnected = await isJellyfinUserConnected(cookies);
 
-	if (url.pathname === '/login' && isConnected.status === 200) {
+	if (url.pathname === '/login' && isConnected.response.ok) {
 		throw redirect(301, '/');
 	}
 };
@@ -43,7 +43,8 @@ export const actions = {
 			maxAge: 60 * 60 * 24 * 30
 		});
 
-		const user: JellyfinUser = await (await isJellyfinUserConnected(cookies)).json();
+		const user: JellyfinUser | undefined = (await isJellyfinUserConnected(cookies)).data;
+		if (!user) return { success: false };
 
 		return { success: true, user };
 	}

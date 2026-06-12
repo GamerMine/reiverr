@@ -2,12 +2,7 @@
  * @deprecated - Check @/utils/playback-profiles/index
  */
 
-import {
-	CodecType,
-	ProfileConditionType,
-	ProfileConditionValue
-} from '@jellyfin/sdk/lib/generated-client';
-import type { ProfileCondition, CodecProfile } from '@jellyfin/sdk/lib/generated-client';
+import type { components as JellyfinComponents } from '$lib/apis/jellyfin/jellyfin.generated';
 import {
 	isApple,
 	isChromiumBased,
@@ -68,11 +63,11 @@ function getGlobalMaxVideoBitrate(): number | undefined {
  * @returns - Constructed ProfileCondition object
  */
 function createProfileCondition(
-	Property: ProfileConditionValue,
-	Condition: ProfileConditionType,
+	Property: JellyfinComponents['schemas']['ProfileConditionValue'],
+	Condition: JellyfinComponents['schemas']['ProfileConditionType'],
 	Value: string,
 	IsRequired = false
-): ProfileCondition {
+): JellyfinComponents['schemas']['ProfileCondition'] {
 	return {
 		Condition,
 		Property,
@@ -89,33 +84,23 @@ function createProfileCondition(
  */
 export function getAacCodecProfileConditions(
 	videoTestElement: HTMLVideoElement
-): ProfileCondition[] {
+): JellyfinComponents['schemas']['ProfileCondition'][] {
 	const supportsSecondaryAudio = isTizen();
 
-	const conditions: ProfileCondition[] = [];
+	const conditions: JellyfinComponents['schemas']['ProfileCondition'][] = [];
 
 	// Handle he-aac not supported
 	if (
-		!videoTestElement.canPlayType('video/mp4; codecs="avc1.640029, mp4a.40.5"').replace(/no/, '')
+		!videoTestElement
+			.canPlayType('video/mp4; codecs="avc1.640029, mp4a.40.5"')
+			.replace(/no/, '')
 	) {
 		// TODO: This needs to become part of the stream url in order to prevent stream copy
-		conditions.push(
-			createProfileCondition(
-				ProfileConditionValue.AudioProfile,
-				ProfileConditionType.NotEquals,
-				'HE-AAC'
-			)
-		);
+		conditions.push(createProfileCondition('AudioProfile', 'NotEquals', 'HE-AAC'));
 	}
 
 	if (!supportsSecondaryAudio) {
-		conditions.push(
-			createProfileCondition(
-				ProfileConditionValue.IsSecondaryAudio,
-				ProfileConditionType.Equals,
-				'false'
-			)
-		);
+		conditions.push(createProfileCondition('IsSecondaryAudio', 'Equals', 'false'));
 	}
 
 	return conditions;
@@ -127,8 +112,10 @@ export function getAacCodecProfileConditions(
  * @param videoTestElement - A HTML video element for testing codecs
  * @returns - Array containing the different profiles for the client
  */
-export function getCodecProfiles(videoTestElement: HTMLVideoElement): CodecProfile[] {
-	const CodecProfiles: CodecProfile[] = [];
+export function getCodecProfiles(
+	videoTestElement: HTMLVideoElement
+): JellyfinComponents['schemas']['CodecProfile'][] {
+	const CodecProfiles: JellyfinComponents['schemas']['CodecProfile'][] = [];
 
 	const aacProfileConditions = getAacCodecProfileConditions(videoTestElement);
 
@@ -136,7 +123,7 @@ export function getCodecProfiles(videoTestElement: HTMLVideoElement): CodecProfi
 
 	if (aacProfileConditions.length > 0) {
 		CodecProfiles.push({
-			Type: CodecType.VideoAudio,
+			Type: 'VideoAudio',
 			Codec: 'aac',
 			Conditions: aacProfileConditions
 		});
@@ -144,21 +131,18 @@ export function getCodecProfiles(videoTestElement: HTMLVideoElement): CodecProfi
 
 	if (!supportsSecondaryAudio) {
 		CodecProfiles.push({
-			Type: CodecType.VideoAudio,
-			Conditions: [
-				createProfileCondition(
-					ProfileConditionValue.IsSecondaryAudio,
-					ProfileConditionType.Equals,
-					'false'
-				)
-			]
+			Type: 'VideoAudio',
+			Conditions: [createProfileCondition('IsSecondaryAudio', 'Equals', 'false')]
 		});
 	}
 
 	let maxH264Level = 42;
 	let h264Profiles = 'high|main|baseline|constrained baseline';
 
-	if (isTv() || videoTestElement.canPlayType('video/mp4; codecs="avc1.640833"').replace(/no/, '')) {
+	if (
+		isTv() ||
+		videoTestElement.canPlayType('video/mp4; codecs="avc1.640833"').replace(/no/, '')
+	) {
 		maxH264Level = 51;
 	}
 
@@ -213,56 +197,24 @@ export function getCodecProfiles(videoTestElement: HTMLVideoElement): CodecProfi
 		hevcProfiles = hevcProfilesMain10;
 	}
 
-	const hevcCodecProfileConditions: ProfileCondition[] = [
-		createProfileCondition(
-			ProfileConditionValue.IsAnamorphic,
-			ProfileConditionType.NotEquals,
-			'true'
-		),
-		createProfileCondition(
-			ProfileConditionValue.VideoProfile,
-			ProfileConditionType.EqualsAny,
-			hevcProfiles
-		),
-		createProfileCondition(
-			ProfileConditionValue.VideoLevel,
-			ProfileConditionType.LessThanEqual,
-			maxHevcLevel.toString()
-		)
+	const hevcCodecProfileConditions: JellyfinComponents['schemas']['ProfileCondition'][] = [
+		createProfileCondition('IsAnamorphic', 'NotEquals', 'true'),
+		createProfileCondition('VideoProfile', 'EqualsAny', hevcProfiles),
+		createProfileCondition('VideoLevel', 'LessThanEqual', maxHevcLevel.toString())
 	];
 
-	const h264CodecProfileConditions: ProfileCondition[] = [
-		createProfileCondition(
-			ProfileConditionValue.IsAnamorphic,
-			ProfileConditionType.NotEquals,
-			'true'
-		),
-		createProfileCondition(
-			ProfileConditionValue.VideoProfile,
-			ProfileConditionType.EqualsAny,
-			h264Profiles
-		),
-		createProfileCondition(
-			ProfileConditionValue.VideoLevel,
-			ProfileConditionType.LessThanEqual,
-			maxH264Level.toString()
-		)
+	const h264CodecProfileConditions: JellyfinComponents['schemas']['ProfileCondition'][] = [
+		createProfileCondition('IsAnamorphic', 'NotEquals', 'true'),
+		createProfileCondition('VideoProfile', 'EqualsAny', h264Profiles),
+		createProfileCondition('VideoLevel', 'LessThanEqual', maxH264Level.toString())
 	];
 
 	if (!isTv()) {
 		h264CodecProfileConditions.push(
-			createProfileCondition(
-				ProfileConditionValue.IsInterlaced,
-				ProfileConditionType.NotEquals,
-				'true'
-			)
+			createProfileCondition('IsInterlaced', 'NotEquals', 'true')
 		);
 		hevcCodecProfileConditions.push(
-			createProfileCondition(
-				ProfileConditionValue.IsInterlaced,
-				ProfileConditionType.NotEquals,
-				'true'
-			)
+			createProfileCondition('IsInterlaced', 'NotEquals', 'true')
 		);
 	}
 
@@ -270,30 +222,20 @@ export function getCodecProfiles(videoTestElement: HTMLVideoElement): CodecProfi
 
 	if (globalMaxVideoBitrate) {
 		h264CodecProfileConditions.push(
-			createProfileCondition(
-				ProfileConditionValue.VideoBitrate,
-				ProfileConditionType.LessThanEqual,
-				globalMaxVideoBitrate,
-				true
-			)
+			createProfileCondition('VideoBitrate', 'LessThanEqual', globalMaxVideoBitrate, true)
 		);
 	}
 
 	if (globalMaxVideoBitrate) {
 		hevcCodecProfileConditions.push(
-			createProfileCondition(
-				ProfileConditionValue.VideoBitrate,
-				ProfileConditionType.LessThanEqual,
-				globalMaxVideoBitrate,
-				true
-			)
+			createProfileCondition('VideoBitrate', 'LessThanEqual', globalMaxVideoBitrate, true)
 		);
 	}
 
 	// On iOS 12.x, for TS container max h264 level is 4.2
 	if (isApple() && isMobile() && Number(safariVersion()) < 13) {
-		const codecProfile = {
-			Type: CodecType.Video,
+		const codecProfile: JellyfinComponents['schemas']['CodecProfile'] = {
+			Type: 'Video',
 			Codec: 'h264',
 			Container: 'ts',
 			Conditions: h264CodecProfileConditions.filter((condition) => {
@@ -301,25 +243,19 @@ export function getCodecProfiles(videoTestElement: HTMLVideoElement): CodecProfi
 			})
 		};
 
-		codecProfile.Conditions.push(
-			createProfileCondition(
-				ProfileConditionValue.VideoLevel,
-				ProfileConditionType.LessThanEqual,
-				'42'
-			)
-		);
+		codecProfile.Conditions?.push(createProfileCondition('VideoLevel', 'LessThanEqual', '42'));
 
 		CodecProfiles.push(codecProfile);
 	}
 
 	CodecProfiles.push(
 		{
-			Type: CodecType.Video,
+			Type: 'Video',
 			Codec: 'h264',
 			Conditions: h264CodecProfileConditions
 		},
 		{
-			Type: CodecType.Video,
+			Type: 'Video',
 			Codec: 'hevc',
 			Conditions: hevcCodecProfileConditions
 		}

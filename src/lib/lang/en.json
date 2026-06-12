@@ -1,4 +1,13 @@
 {
+  "ui": {
+    "modal": {
+      "seasonsChooser": {
+        "title": "Seasons chooser"
+      }
+    }
+  },
+
+
   "general": {
     "error": "Error",
     "select": "Select",

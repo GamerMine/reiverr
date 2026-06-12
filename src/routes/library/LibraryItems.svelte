@@ -11,16 +11,14 @@
 	import { getJellyfinPosterUrl, type JellyfinItem } from '$lib/apis/jellyfin/jellyfinApi';
 	import { getRadarrPosterUrl, type RadarrMovie } from '$lib/apis/radarr/radarrApi';
 	import { getSonarrPosterUrl, type SonarrSeries } from '$lib/apis/sonarr/sonarrApi';
-	import {
-		jellyfinItemsStore,
-		radarrMoviesStore,
-		sonarrSeriesStore
-	} from '$lib/stores/data.store';
+	import { sonarrSeriesStore } from '$lib/stores/data.store';
 	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
 	import ContextMenu from '$lib/components/common/inputs/contextMenu/ContextMenu.svelte';
 	import SelectableContextMenuItem from '$lib/components/common/inputs/contextMenu/SelectableContextMenuItem.svelte';
 	import Divider from '$lib/components/common/misc/Divider.svelte';
 	import { createLocalStorageStore } from '$lib/stores/localstorage.store';
+	import { radarrGetMovies } from '$lib/remote/radarr.remote';
+	import { jellyfinGetItems } from '$lib/remote/jellyfin.remote';
 
 	const SortBy = {
 		DateAdded: $_('library.sort.dateAdded'),
@@ -64,7 +62,7 @@
 			subtitle: item.Genres?.join(', ') || undefined,
 			backdropUrl: getJellyfinPosterUrl(item, 80),
 			size: 'dynamic',
-			...(item.Type === 'Movie' ? { type: 'movie' } : { type: 'series' }),
+			type: item.Type === 'Movie' ? 'movie' : 'tv',
 			orientation: 'portrait',
 			rating: item.CommunityRating || undefined
 		};
@@ -73,34 +71,18 @@
 	function getPropsfromServarrItem(
 		item: RadarrMovie | SonarrSeries
 	): ComponentProps<typeof Poster> {
-		if ((<any>item)?.tmdbId) {
-			const movie = item as RadarrMovie;
+		const movie = item as RadarrMovie;
 
-			return {
-				tmdbId: movie.tmdbId || 0,
-				title: movie.title || undefined,
-				subtitle: movie.genres?.join(', ') || undefined,
-				backdropUrl: getRadarrPosterUrl(movie),
-				size: 'dynamic',
-				type: 'movie',
-				orientation: 'portrait',
-				rating: movie.ratings?.tmdb?.value || undefined
-			};
-		} else {
-			const series = item as SonarrSeries;
-
-			return {
-				tvdbId: series.tvdbId || 0,
-				title: item.title || undefined,
-				subtitle: item.genres?.join(', ') || undefined,
-				backdropUrl: getSonarrPosterUrl(series),
-				size: 'dynamic',
-				type: 'series',
-				tmdbId: undefined,
-				orientation: 'portrait',
-				rating: series.ratings?.value || undefined
-			};
-		}
+		return {
+			tmdbId: movie.tmdbId || 0,
+			title: movie.title || undefined,
+			subtitle: movie.genres?.join(', ') || undefined,
+			backdropUrl: getRadarrPosterUrl(movie),
+			size: 'dynamic',
+			type: 'movie',
+			orientation: 'portrait',
+			rating: movie.ratings?.tmdb?.value || undefined
+		};
 	}
 
 	async function loadPosterProps(
@@ -112,10 +94,12 @@
 	) {
 		if (page === 0) posterProps = [];
 
-		const jellyfinItemsPromise = jellyfinItemsStore.promise
+		const jellyfinItemsPromise = jellyfinGetItems()
 			.then(
-				(i) =>
-					i.filter((i) => i.Name?.toLowerCase().includes(searchQuery.toLowerCase())) || []
+				({ data }) =>
+					data?.filter((i) =>
+						i.Name?.toLowerCase().includes(searchQuery.toLowerCase())
+					) || []
 			)
 			.then((i) => {
 				const sorted = i.sort((a, b) => {
@@ -163,12 +147,12 @@
 			);
 		} else if (tab === 'unavailable') {
 			props = await Promise.all([
-				radarrMoviesStore.promise,
+				radarrGetMovies(),
 				sonarrSeriesStore.promise,
 				jellyfinItemsPromise
 			])
 				.then(([radarr, sonarr, jellyfinItems]) => ({
-					items: [...radarr, ...sonarr],
+					items: [...(radarr?.data ?? []), ...sonarr],
 					jellyfinItems
 				}))
 				.then(({ items, jellyfinItems }) =>
@@ -178,12 +162,6 @@
 							(i) =>
 								!jellyfinItems.find(
 									(j) => j.ProviderIds?.Tmdb === String((<any>i).tmdbId || '-')
-								)
-						)
-						.filter(
-							(i) =>
-								!jellyfinItems.find(
-									(j) => j.ProviderIds?.Tvdb === String((<any>i).tvdbId || '-')
 								)
 						)
 						.map((i) => getPropsfromServarrItem(i))

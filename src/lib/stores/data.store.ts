@@ -1,12 +1,6 @@
 import { getJellyfinItems, type JellyfinItem } from '$lib/apis/jellyfin/jellyfinApi';
-import { getRadarrMovies } from '$lib/apis/radarr/radarrApi';
-import {
-	getSonarrDownloads,
-	getSonarrSeries,
-	type SonarrDownload,
-	type SonarrSeries
-} from '$lib/apis/sonarr/sonarrApi';
-import { derived, writable } from 'svelte/store';
+import { getSonarrSeries } from '$lib/apis/sonarr/sonarrApi';
+import { writable } from 'svelte/store';
 import { settings } from '$lib/stores/settings.svelte';
 
 // TODO: These stores could be "converted" to global state variables for easier use or remote functions.
@@ -85,82 +79,3 @@ export function createJellyfinItemStore(tmdbId: number | Promise<number>) {
 }
 
 export const sonarrSeriesStore = _createDataFetchStore(getSonarrSeries);
-export const radarrMoviesStore = _createDataFetchStore(getRadarrMovies);
-
-export function createRadarrMovieStore(tmdbId: number) {
-	const store = derived(radarrMoviesStore, (s) => {
-		return {
-			loading: s.loading,
-			item: s.data?.find((i) => i.tmdbId === tmdbId)
-		};
-	});
-
-	return {
-		subscribe: store.subscribe,
-		refresh: radarrMoviesStore.refresh,
-		refreshIn: radarrMoviesStore.refreshIn
-	};
-}
-
-export function createSonarrSeriesStore(name: Promise<string> | string) {
-	function shorten(str: string) {
-		return str.toLowerCase().replace(/[^a-zA-Z0-9]/g, '');
-	}
-
-	const store = writable<{ loading: boolean; item?: SonarrSeries }>({
-		loading: true,
-		item: undefined
-	});
-
-	sonarrSeriesStore.subscribe(async (s) => {
-		const awaited = await name;
-
-		store.set({
-			loading: s.loading,
-			item: s.data?.find(
-				(i) =>
-					shorten(i.titleSlug || '') === shorten(awaited) ||
-					i.alternateTitles?.find((t) => shorten(t.title || '') === shorten(awaited))
-			)
-		});
-	});
-
-	return {
-		subscribe: store.subscribe,
-		refresh: sonarrSeriesStore.refresh,
-		refreshIn: sonarrSeriesStore.refreshIn
-	};
-}
-
-export const sonarrDownloadsStore = _createDataFetchStore(getSonarrDownloads);
-
-export function createSonarrDownloadStore(
-	sonarrItemStore: ReturnType<typeof createSonarrSeriesStore>
-) {
-	const store = writable<{ loading: boolean; downloads?: SonarrDownload[] }>({
-		loading: true,
-		downloads: undefined
-	});
-
-	const combinedStore = derived(
-		[sonarrItemStore, sonarrDownloadsStore],
-		([itemStore, downloadsStore]) => ({ itemStore, downloadsStore })
-	);
-
-	combinedStore.subscribe(async (data) => {
-		const item = data.itemStore.item;
-		const downloads = data.downloadsStore.data;
-
-		if (!item || !downloads) return;
-
-		store.set({
-			loading: false,
-			downloads: downloads?.filter((d) => d.series.id === item?.id)
-		});
-	});
-
-	return {
-		subscribe: store.subscribe,
-		refresh: async () => sonarrDownloadsStore.refresh()
-	};
-}
