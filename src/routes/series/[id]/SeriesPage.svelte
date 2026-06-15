@@ -33,6 +33,7 @@
 	import { onMount } from 'svelte';
 	import type { components as SonarrComponents } from '$lib/apis/sonarr/sonarr.generated';
 	import { sonarrGetSeries } from '$lib/remote/sonarr.remote';
+	import type { SeasonData } from '$lib/types';
 
 	let {
 		tmdbId,
@@ -52,7 +53,7 @@
 	let visibleSeasonNumber: number = $state(1);
 	let nextJellyfinEpisode: JellyfinItem | undefined = $state();
 	let sonarrSeries: SonarrComponents['schemas']['SeriesResource'] | undefined = $state();
-	let seasonsData: any[] | undefined = $state();
+	let seasonsData: Promise<SeasonData>[] | undefined = $state();
 
 	const jellyfinEpisodeData: {
 		[key: string]: {
@@ -111,15 +112,18 @@
 		};
 	}
 
-	function preloadAndMapSeasonsData(tmdbSeries: TmdbSeriesFull2 | undefined) {
+	async function preloadSeries() {
+		tmdbSeries = await getTmdbSeries(tmdbId);
 		const tmdbSeasons = getTmdbSeriesSeasons(
 			tmdbSeries?.id || 0,
 			tmdbSeries?.number_of_seasons || 0
 		);
 
-		return tmdbSeasons.map((season) =>
-			season.then(
-				(s) =>
+		seasonsData = tmdbSeasons.map((season) =>
+			season.then((s) => ({
+				overview: s?.overview || '',
+				season_number: s?.season_number || 0,
+				episodes:
 					s?.episodes?.map((episode) => ({
 						title: episode?.name || '',
 						subtitle: `Episode ${episode?.episode_number}`,
@@ -129,7 +133,7 @@
 								? new Date(episode.air_date)
 								: undefined
 					})) || []
-			)
+			}))
 		);
 	}
 
@@ -141,7 +145,8 @@
 
 	function showSeasonsChooser(): Promise<boolean | undefined> {
 		modalStack.create(SeasonsChooserModal, {
-			endChoice: seasonsChooserClose
+			endChoice: seasonsChooserClose,
+			seasonsData
 		});
 
 		return new Promise((resolve) => {
@@ -154,6 +159,7 @@
 		addToSonarrLoading = true;
 
 		const res = await showSeasonsChooser();
+		console.log(res);
 		/*addSeriesToSonarr(tmdbId).then(() => {
 			refreshSonarr();
 			createSuccessNotification(
@@ -164,10 +170,8 @@
 	}
 
 	onMount(async () => {
-		const resolved = await Promise.all([getTmdbSeries(tmdbId), sonarrGetSeries()]);
-		tmdbSeries = resolved[0];
+		await Promise.all([sonarrGetSeries(), preloadSeries()]);
 		sonarrSeries = sonarrGetSeries().current?.data?.find((s) => s.tmdbId === tmdbId);
-		seasonsData = preloadAndMapSeasonsData(tmdbSeries);
 
 		loading = false;
 	});
@@ -344,8 +348,8 @@
 					{#if seasonsData}
 						{#await seasonsData[visibleSeasonNumber - 1]}
 							<CarouselPlaceholderItems />
-						{:then seasonEpisodes}
-							{#each seasonEpisodes || [] as props, i (props)}
+						{:then season}
+							{#each season.episodes || [] as props, i (props)}
 								{@const jellyfinData =
 									jellyfinEpisodeData[`S${visibleSeasonNumber}E${i + 1}`]}
 								<div bind:this={episodeComponents[i]}>

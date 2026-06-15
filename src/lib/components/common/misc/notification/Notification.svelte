@@ -46,7 +46,7 @@
 			style="animation-duration: {duration - 1000}ms;"
 			hidden={!duration}
 		></div>
-		<div class="relative z-[1] flex items-center justify-between bg-zinc-200/10 p-1 px-3">
+		<div class="relative z-1 flex items-center justify-between bg-zinc-200/10 p-1 px-3">
 			<div class="flex items-center gap-2">
 				{#if type !== 'info'}
 					<ExclamationTriangle size="12" />

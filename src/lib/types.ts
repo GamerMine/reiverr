@@ -6,6 +6,17 @@ export type SelectOption = {
 	value: string;
 	label: string;
 };
+export type SeasonData = {
+	overview: string;
+	season_number: number;
+	episodes: {
+		title: string;
+		subtitle: string;
+		backdropUrl: string;
+		airDate: Date | undefined;
+	}[];
+};
+
 export const MessageObjectSchema = v.object({
 	id: v.string(),
 	values: v.optional(v.record(v.string(), v.union([v.string(), v.number(), v.date()])))
