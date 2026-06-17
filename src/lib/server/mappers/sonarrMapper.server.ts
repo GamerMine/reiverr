@@ -68,4 +68,34 @@ export class SonarrMapper {
 			minUpgradeFormatScore: 1
 		};
 	}
+
+	public static seriesResource(
+		tvdbId: number,
+		qualityProfileId: number,
+		rootFolderPath: string,
+		seasonsToMonitor: { seasonNumber: number; monitored: boolean }[]
+	): SonarrComponents['schemas']['SeriesResource'] {
+		return {
+			title: 'NONE',
+			seasons: seasonsToMonitor,
+			qualityProfileId,
+			monitored: true,
+			tvdbId,
+			rootFolderPath,
+			addOptions: {
+				ignoreEpisodesWithFiles: true,
+				ignoreEpisodesWithoutFiles: false,
+				searchForMissingEpisodes: true
+			}
+		};
+	}
+
+	public static episodesMonitoredResource(
+		episodeIds: number[]
+	): SonarrComponents['schemas']['EpisodesMonitoredResource'] {
+		return {
+			episodeIds,
+			monitored: true
+		};
+	}
 }

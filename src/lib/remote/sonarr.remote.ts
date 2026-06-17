@@ -1,10 +1,11 @@
 import { command, getRequestEvent, query } from '$app/server';
 import * as v from 'valibot';
-import { ApiSchema } from '$lib/types';
+import { ApiSchema, SeriesAddSchema } from '$lib/types';
 import { FilteringProfilesEntity, GlobalSettingsEntity } from '@reiverr/db/entities';
 import { SonarrConnector } from '$lib/server/connectors/sonarrConnector.server';
 import { assertUserAuth } from '$lib/server/utils.server';
 import { BaseSync } from '$lib/server/tasks/baseSync.server';
+import { scheduleTask, TaskType } from '$lib/service/scheduler.server';
 
 export const sonarrIsHealthy = query(v.optional(ApiSchema), async (api) => {
 	if (api && api.url && api.key) return await new SonarrConnector(api.url, api.key).isHealthy();
@@ -34,19 +35,15 @@ export const sonarrGetSeries = query(async () => {
 	return { success: true, data: series.data };
 });
 
-export const sonarrAddSeries = command(
-	v.object({
-		tmdbId: v.number(),
-		language: v.string()
-	}),
-	async (series) => {
-		const { cookies } = getRequestEvent();
-		if (!(await assertUserAuth(cookies)))
-			return { success: false, error: 'general.connectionRequired' };
+export const sonarrAddSeries = command(SeriesAddSchema, async (series) => {
+	const { cookies } = getRequestEvent();
+	if (!(await assertUserAuth(cookies)))
+		return { success: false, error: 'general.connectionRequired' };
 
-		const defaultFp = await FilteringProfilesEntity.findOne({ where: { isDefault: true } });
-		if (!defaultFp) return { success: false, error: 'settings.misc.noDefaultFilteringProfile' };
+	const defaultFp = await FilteringProfilesEntity.findOne({ where: { isDefault: true } });
+	if (!defaultFp) return { success: false, error: 'settings.misc.noDefaultFilteringProfile' };
 
-		/*await scheduleTask(TaskType.SONARR_SERIES_ADD)*/
-	}
-);
+	await scheduleTask(TaskType.SONARR_SERIES_ADD, series);
+
+	return { success: true };
+});

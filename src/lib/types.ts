@@ -6,15 +6,25 @@ export type SelectOption = {
 	value: string;
 	label: string;
 };
-export type SeasonData = {
+type EpisodeData = {
+	title: string;
+	subtitle: string;
+	backdropUrl: string;
+	airDate: Date | undefined;
 	overview: string;
-	season_number: number;
-	episodes: {
-		title: string;
-		subtitle: string;
-		backdropUrl: string;
-		airDate: Date | undefined;
-	}[];
+	episodeNumber: number;
+};
+export type EpisodeDataWithCheck = EpisodeData & {
+	checked: boolean;
+};
+
+export type SeasonData = {
+	seasonNumber: number;
+	episodes: EpisodeData[];
+};
+export type SeasonDataWithCheck = SeasonData & {
+	checked: boolean;
+	episodes: EpisodeDataWithCheck[];
 };
 
 export const MessageObjectSchema = v.object({
@@ -41,3 +51,20 @@ export function PlatformWithDataSchema<TDataSchema extends GenericSchema>(dataSc
 export const OptionalStringSchema = v.optional(v.string());
 export const ApiSchema = v.object({ url: OptionalStringSchema, key: OptionalStringSchema });
 export type Api = InferOutput<typeof ApiSchema>;
+export const SeriesAddSchema = v.object({
+	tvdbId: v.number(),
+	language: v.string(),
+	seasons: v.array(
+		v.object({
+			seasonNumber: v.number(),
+			checked: v.boolean(),
+			episodes: v.array(
+				v.object({
+					episodeNumber: v.number(),
+					checked: v.boolean()
+				})
+			)
+		})
+	)
+});
+export type SeriesAdd = InferOutput<typeof SeriesAddSchema>;

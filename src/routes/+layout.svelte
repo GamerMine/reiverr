@@ -6,7 +6,7 @@
 	import UpdateChecker from '$lib/components/page/default/UpdateChecker.svelte';
 	import '../app.css';
 	import type { LayoutServerData } from './$types';
-	import Notifications from '$lib/components/common/misc/notification/Notifications.svelte';
+	import NotificationPane from '$lib/components/common/misc/notification/NotificationPane.svelte';
 	import { type Snippet } from 'svelte';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { CrossCircled } from 'svelte-radix';
@@ -44,7 +44,7 @@
 	{#key page.url.pathname}
 		<DynamicModal />
 	{/key}
-	<Notifications />
+	<NotificationPane />
 	<UpdateChecker />
 	{#if showCriticalError}
 		<div

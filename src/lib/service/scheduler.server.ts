@@ -6,6 +6,7 @@ import { TaskEntity, TaskExecutionEntity } from '@reiverr/db/entities';
 import { SyncQualityProfiles } from '$lib/server/tasks/syncQualityProfiles.server';
 import { RadarrMovieAdd } from '$lib/server/tasks/radarrMovieAdd.server';
 import { RadarrMovieRemove } from '$lib/server/tasks/radarrMovieRemove.server';
+import { SonarrSeriesAdd } from '$lib/server/tasks/sonarrSeriesAdd.server';
 
 export interface TaskProgressCallback {
 	(current: number, total: number): Promise<void>;
@@ -48,7 +49,8 @@ export enum TaskType {
 	SYNC_CUSTOM_FORMATS = 'syncCustomFormat',
 	SYNC_QUALITY_PROFILES = 'syncQualityProfiles',
 	RADARR_MOVIE_ADD = 'radarrMovieAdd',
-	RADARR_MOVIE_REMOVE = 'radarrMovieRemove'
+	RADARR_MOVIE_REMOVE = 'radarrMovieRemove',
+	SONARR_SERIES_ADD = 'sonarrSeriesAdd'
 }
 
 export const taskExecutors = {
@@ -56,7 +58,8 @@ export const taskExecutors = {
 	[TaskType.SYNC_CUSTOM_FORMATS]: new SyncCustomFormats(),
 	[TaskType.SYNC_QUALITY_PROFILES]: new SyncQualityProfiles(),
 	[TaskType.RADARR_MOVIE_ADD]: new RadarrMovieAdd(),
-	[TaskType.RADARR_MOVIE_REMOVE]: new RadarrMovieRemove()
+	[TaskType.RADARR_MOVIE_REMOVE]: new RadarrMovieRemove(),
+	[TaskType.SONARR_SERIES_ADD]: new SonarrSeriesAdd()
 } satisfies Record<TaskType, TaskExecutor>;
 
 const schedulings: Map<string, NodeJS.Timeout> = new Map();

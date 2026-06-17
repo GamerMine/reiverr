@@ -1,16 +1,18 @@
 <script lang="ts">
+	import type { ClassValue } from 'svelte/elements';
+
 	let {
 		text,
 		maxLength = 300,
-		klass = ''
-	}: { text: string; maxLength?: number; klass?: string } = $props();
+		class: className = ''
+	}: { text: string; maxLength?: number; class?: ClassValue } = $props();
 
 	import { _ } from 'svelte-i18n';
 
 	let viewAll = $state(false);
 </script>
 
-<p class={klass}>
+<p class={className}>
 	{#if text.length > maxLength}
 		{#if viewAll}
 			{text}

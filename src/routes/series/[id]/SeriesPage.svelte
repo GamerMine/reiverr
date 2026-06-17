@@ -32,8 +32,9 @@
 	import SeasonsChooserModal from '$lib/components/modals/SeasonsChooserModal.svelte';
 	import { onMount } from 'svelte';
 	import type { components as SonarrComponents } from '$lib/apis/sonarr/sonarr.generated';
-	import { sonarrGetSeries } from '$lib/remote/sonarr.remote';
-	import type { SeasonData } from '$lib/types';
+	import { sonarrAddSeries, sonarrGetSeries } from '$lib/remote/sonarr.remote';
+	import type { EpisodeDataWithCheck, SeasonData, SeasonDataWithCheck } from '$lib/types';
+	import { createSuccessNotification } from '$lib/stores/notification.store';
 
 	let {
 		tmdbId,
@@ -121,8 +122,7 @@
 
 		seasonsData = tmdbSeasons.map((season) =>
 			season.then((s) => ({
-				overview: s?.overview || '',
-				season_number: s?.season_number || 0,
+				seasonNumber: s?.season_number || 0,
 				episodes:
 					s?.episodes?.map((episode) => ({
 						title: episode?.name || '',
@@ -131,7 +131,9 @@
 						airDate:
 							episode.air_date && new Date(episode.air_date) > new Date()
 								? new Date(episode.air_date)
-								: undefined
+								: undefined,
+						overview: episode?.overview || '',
+						episodeNumber: episode?.episode_number || 0
 					})) || []
 			}))
 		);
@@ -141,12 +143,12 @@
 		if (nextJellyfinEpisode?.Id) playerState.streamJellyfinId(nextJellyfinEpisode?.Id || '');
 	}
 
-	let seasonsChooserClose: (coucou: boolean | undefined) => void;
+	let seasonsChooserClose: (coucou: SeasonDataWithCheck[] | undefined) => void;
 
-	function showSeasonsChooser(): Promise<boolean | undefined> {
+	function showSeasonsChooser(): Promise<SeasonDataWithCheck[] | undefined> {
 		modalStack.create(SeasonsChooserModal, {
-			endChoice: seasonsChooserClose,
-			seasonsData
+			endChoice: (val: SeasonDataWithCheck[] | undefined) => seasonsChooserClose(val),
+			seasonsDataPromise: seasonsData
 		});
 
 		return new Promise((resolve) => {
@@ -155,18 +157,36 @@
 	}
 
 	let addToSonarrLoading = $state(false);
-	async function addToSonarr() {
+	async function addToSonarr(language: string) {
 		addToSonarrLoading = true;
 
 		const res = await showSeasonsChooser();
-		console.log(res);
-		/*addSeriesToSonarr(tmdbId).then(() => {
-			refreshSonarr();
-			createSuccessNotification(
-				'Episode(s) added to queue',
-				'The episode(s) will be added to the library once available.'
-			);
-		});*/
+		if (res && tmdbSeries?.external_ids.tvdb_id) {
+			sonarrAddSeries({
+				tvdbId: tmdbSeries?.external_ids.tvdb_id,
+				language,
+				seasons: res.map((s) => ({
+					seasonNumber: s.seasonNumber,
+					checked: s.checked,
+					episodes: s.episodes.map((e: EpisodeDataWithCheck) => ({
+						episodeNumber: e.episodeNumber,
+						checked: e.checked
+					}))
+				}))
+			}).then((res) => {
+				if (res.success) {
+					createSuccessNotification(
+						'Episode(s) added to queue',
+						'The episode(s) will be added to the library once available.'
+					);
+					sonarrGetSeries()
+						.refresh()
+						.then(() => {
+							addToSonarrLoading = false;
+						});
+				}
+			});
+		}
 	}
 
 	onMount(async () => {

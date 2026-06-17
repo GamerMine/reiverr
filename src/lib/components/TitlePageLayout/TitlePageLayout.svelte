@@ -114,11 +114,16 @@
 					</a>
 				{/if}
 				<div class="absolute top-8 left-4 sm:left-8 z-10">
-					<button class="flex items-center sm:hidden font-medium" onclick={handleCloseModal}>
+					<button
+						class="flex items-center sm:hidden font-medium"
+						onclick={handleCloseModal}
+					>
 						<ChevronLeft size="20" />
 						Back
 					</button>
-					<div class="hidden sm:block hover:bg-white/15 hover:rounded-4xl ease-in-out duration-300">
+					<div
+						class="hidden sm:block hover:bg-white/15 hover:rounded-4xl ease-in-out duration-300"
+					>
 						<IconButton onclick={handleCloseModal}>
 							<Cross2 size="20" />
 						</IconButton>
@@ -142,7 +147,9 @@
 				{/if}
 				<div class="flex-1 flex gap-4 justify-between flex-col lg:flex-row lg:items-end">
 					<div>
-						<div class="text-zinc-300 text-sm uppercase font-semibold flex items-center gap-1">
+						<div
+							class="text-zinc-300 text-sm uppercase font-semibold flex items-center gap-1"
+						>
 							{@render title_info?.()}
 							{#if !title_info}
 								<div class="placeholder-text">Placeholder Long</div>
@@ -153,7 +160,9 @@
 								{titleInformation.title}
 							</h1>
 						{:else}
-							<h1 class="text-4xl sm:text-5xl md:text-6xl placeholder-text mt-2">Placeholder</h1>
+							<h1 class="text-4xl sm:text-5xl md:text-6xl placeholder-text mt-2">
+								Placeholder
+							</h1>
 						{/if}
 					</div>
 					<div class="shrink-0">
@@ -188,23 +197,28 @@
 					<!-- TODO: If there is no overview text available for a language, try getting it in another language -->
 					{#if titleInformation}
 						<div class="flex gap-4 justify-between">
-							<h1 class="font-semibold text-xl sm:text-2xl">{titleInformation.tagline}</h1>
+							<h1 class="font-semibold text-xl sm:text-2xl">
+								{titleInformation.tagline}
+							</h1>
 						</div>
 						<TruncatedText
-							klass="pl-4 border-l-2 text-sm sm:text-base text-zinc-300"
+							class="pl-4 border-l-2 text-sm sm:text-base text-zinc-300"
 							text={titleInformation.overview}
 						/>
 					{:else}
 						<div class="flex gap-4 justify-between">
-							<h1 class="font-semibold text-xl sm:text-2xl placeholder-text">Placeholder</h1>
+							<h1 class="font-semibold text-xl sm:text-2xl placeholder-text">
+								Placeholder
+							</h1>
 						</div>
 						<div class="flex">
 							<div class="mr-4 placeholder w-1 shrink-0 rounded-sm"></div>
 							<p class="text-sm sm:text-base placeholder-text">
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sit amet sem eget
-								dolor lobortis mollis. Aliquam semper imperdiet mi nec viverra. Praesent ac ligula
-								congue, aliquam diam nec, ullamcorper libero. Nunc mattis rhoncus justo, ac pretium
-								urna vehicula et.
+								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur
+								sit amet sem eget dolor lobortis mollis. Aliquam semper imperdiet mi
+								nec viverra. Praesent ac ligula congue, aliquam diam nec,
+								ullamcorper libero. Nunc mattis rhoncus justo, ac pretium urna
+								vehicula et.
 							</p>
 						</div>
 					{/if}

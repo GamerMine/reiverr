@@ -38,6 +38,12 @@ export class SonarrConnector {
 		});
 	}
 
+	public async postSeries(seriesResource: SonarrComponents['schemas']['SeriesResource']) {
+		return await this.client.POST('/api/v3/series', {
+			body: seriesResource
+		});
+	}
+
 	public async getQualityDefinitions() {
 		return await this.client.GET('/api/v3/qualitydefinition');
 	}
@@ -70,6 +76,18 @@ export class SonarrConnector {
 		return await this.client.GET('/api/v3/series');
 	}
 
+	public async getSeriesId(id: number) {
+		return await this.client.GET('/api/v3/series/{id}', {
+			params: { path: { id } }
+		});
+	}
+
+	public async getEpisode(seriesId: number) {
+		return await this.client.GET('/api/v3/episode', {
+			params: { query: { seriesId } }
+		});
+	}
+
 	public async putQualityProfile(
 		id: number,
 		profile: SonarrComponents['schemas']['QualityProfileResource']
@@ -77,6 +95,14 @@ export class SonarrConnector {
 		return await this.client.PUT('/api/v3/qualityprofile/{id}', {
 			params: { path: { id: id.toString() } },
 			body: profile
+		});
+	}
+
+	public async putEpisodeMonitor(
+		episodesMonitoredResource: SonarrComponents['schemas']['EpisodesMonitoredResource']
+	) {
+		return await this.client.PUT('/api/v3/episode/monitor', {
+			body: episodesMonitoredResource
 		});
 	}
 
