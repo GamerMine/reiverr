@@ -52,7 +52,7 @@ export const fetchCardTmdbSeriesProps = async (
 		runtimeMinutes: series.episode_run_time?.[0],
 		backdropUrl: backdropUri ? TMDB_BACKDROP_SMALL + backdropUri : '',
 		rating: series.vote_average || 0,
-		type: 'series'
+		type: 'tv'
 	};
 };
 

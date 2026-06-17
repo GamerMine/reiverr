@@ -5,6 +5,7 @@
       <w>jellyfin</w>
       <w>radarr</w>
       <w>sonarr</w>
+      <w>tmdb</w>
     </words>
   </dictionary>
 </component>

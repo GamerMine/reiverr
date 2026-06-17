@@ -3,7 +3,6 @@ import {
 	checkJellyfinConnection,
 	isJellyfinUserConnected
 } from '$lib/apis/jellyfin/server/jellyfin.server';
-import type { JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
 import * as v from 'valibot';
 import { assertAdminUserAuth } from '$lib/server/utils.server';
 import { QUALITY_DEFS } from '$lib/constants';
@@ -64,12 +63,11 @@ export const saveSettings = form(
 	}): Promise<Result<{ needLogin: boolean }>> => {
 		const { cookies } = getRequestEvent();
 		const userReq = await isJellyfinUserConnected(cookies);
-		if (userReq.status !== 200) {
+		if (!userReq.response.ok) {
 			return { success: false, error: 'general.connectionRequired' };
 		}
-		const user: JellyfinUser = await userReq.json();
 
-		if (!user.Id) {
+		if (!userReq.data?.Id) {
 			return { success: false, error: 'general.connectionRequired' };
 		}
 
@@ -86,10 +84,10 @@ export const saveSettings = form(
 			}
 		};
 
-		await UserSettingsEntity.setUserSettings(user.Id, newUserSettings);
+		await UserSettingsEntity.setUserSettings(userReq.data.Id, newUserSettings);
 
 		let needLogin = false;
-		if (user.Policy && user.Policy.IsAdministrator) {
+		if (userReq.data.Policy?.IsAdministrator) {
 			const globalSettings = await GlobalSettingsEntity.getDefault();
 			if (
 				adminJellyfinBaseUrl &&
@@ -298,12 +296,11 @@ export const createUpdateFilteringProfile = form(
 export const deleteFilteringProfile = command(FilteringProfileSchema, async (profile) => {
 	const { cookies } = getRequestEvent();
 	const userReq = await isJellyfinUserConnected(cookies);
-	if (userReq.status !== 200) {
+	if (!userReq.response.ok) {
 		return { success: false, error: 'general.connectionRequired' };
 	}
-	const user: JellyfinUser = await userReq.json();
 
-	if (!user.Id || !user.Policy || !user.Policy.IsAdministrator) {
+	if (!userReq.data?.Id || !userReq.data.Policy?.IsAdministrator) {
 		return { success: false, error: 'general.unauthorizedAction' };
 	}
 
@@ -320,12 +317,11 @@ export const deleteFilteringProfile = command(FilteringProfileSchema, async (pro
 export const deleteIntegration = command(PlatformSchema, async (platform) => {
 	const { cookies } = getRequestEvent();
 	const userReq = await isJellyfinUserConnected(cookies);
-	if (userReq.status !== 200) {
+	if (!userReq.response.ok) {
 		return { success: false, error: 'general.connectionRequired' };
 	}
-	const user: JellyfinUser = await userReq.json();
 
-	if (!user.Id || !user.Policy || !user.Policy.IsAdministrator) {
+	if (!userReq.data?.Id || !userReq.data.Policy?.IsAdministrator) {
 		return { success: false, error: 'general.unauthorizedAction' };
 	}
 
