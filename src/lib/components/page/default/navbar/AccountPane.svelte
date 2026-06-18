@@ -27,7 +27,7 @@
 		<div class="mx-2 my-2">
 			<Button
 				variant="tertiary"
-				klass="w-full"
+				class="w-full"
 				onclick={() => (window.location.href = '/settings')}
 			>
 				<Gear size="20"></Gear><span class="flex ml-2"
@@ -39,7 +39,7 @@
 		<div class="mx-2 my-2">
 			<Button
 				variant="tertiary"
-				klass="w-full"
+				class="w-full"
 				onclick={() => {
 					jellyfinDisconnectUser();
 					window.location.href = '/login';

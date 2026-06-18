@@ -5,7 +5,6 @@
 		getJellyfinNextUp
 	} from '$lib/apis/jellyfin/jellyfinApi';
 	import { getTmdbMovie, getTmdbPopularMovies } from '$lib/apis/tmdb/tmdbApi';
-	import { jellyfinItemsStore } from '$lib/stores/data.store';
 	import classNames from 'classnames';
 	import Carousel from '$lib/components/common/misc/carousel/Carousel.svelte';
 	import CarouselPlaceholderItems from '$lib/components/common/misc/carousel/CarouselPlaceholderItems.svelte';
@@ -15,6 +14,7 @@
 	import PageDots from '../../../common/misc/PageDots.svelte';
 	import IconButton from '$lib/components/common/inputs/buttons/IconButton.svelte';
 	import { ChevronLeft, ChevronRight } from 'svelte-radix';
+	import { jellyfinGetItems } from '$lib/remote/jellyfin.remote';
 
 	let hideUI = false;
 
@@ -32,8 +32,8 @@
 		.then((items) =>
 			Promise.all(
 				items?.map(async (item) => {
-					const parentSeries = await jellyfinItemsStore.promise.then((items) =>
-						items.find((i) => i.Id === item.SeriesId)
+					const parentSeries = await jellyfinGetItems().then((items) =>
+						items.data?.find((i) => i.Id === item.SeriesId)
 					);
 
 					return {
@@ -190,7 +190,7 @@
 		{/if}
 	</div>
 	<div
-		class={classNames('z-[1] transition-opacity', {
+		class={classNames('z-1 transition-opacity', {
 			'opacity-0': hideUI
 		})}
 	>

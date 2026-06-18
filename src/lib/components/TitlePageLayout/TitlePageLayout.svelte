@@ -91,7 +91,7 @@
 
 <div class="flex flex-col min-h-screen">
 	<div
-		class={classNames('flex flex-col relative z-[1]', {
+		class={classNames('flex flex-col relative z-1', {
 			'h-[85vh] sm:h-screen': !isModal,
 			'': isModal
 		})}
@@ -130,11 +130,11 @@
 					</div>
 				</div>
 			{/if}
-			<div class="absolute inset-0 bg-gradient-to-t from-stone-950 to-30%"></div>
-			<div class="z-[1] flex-1 flex justify-end gap-8 items-end max-w-screen-2xl mx-auto">
+			<div class="absolute inset-0 bg-linear-to-t from-stone-950 to-30%"></div>
+			<div class="z-1 flex-1 flex justify-end gap-8 items-end max-w-screen-2xl mx-auto">
 				{#if titleInformation}
 					<div
-						class="aspect-[2/3] w-52 bg-center bg-cover rounded-md hidden sm:block"
+						class="aspect-2/3 w-52 bg-center bg-cover rounded-md hidden sm:block"
 						style={"background-image: url('" +
 							TMDB_POSTER_SMALL +
 							titleInformation.posterPath +
@@ -142,7 +142,7 @@
 					></div>
 				{:else}
 					<div
-						class="aspect-[2/3] w-52 bg-center bg-cover rounded-md hidden sm:block placeholder"
+						class="aspect-2/3 w-52 bg-center bg-cover rounded-md hidden sm:block placeholder"
 					></div>
 				{/if}
 				<div class="flex-1 flex gap-4 justify-between flex-col lg:flex-row lg:items-end">

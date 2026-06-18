@@ -44,6 +44,10 @@ export class SonarrConnector {
 		});
 	}
 
+	public async postCommand(command: 'RefreshMonitoredDownloads') {
+		return await this.client.POST('/api/v3/command', { body: { name: command } });
+	}
+
 	public async getQualityDefinitions() {
 		return await this.client.GET('/api/v3/qualitydefinition');
 	}
@@ -88,6 +92,16 @@ export class SonarrConnector {
 		});
 	}
 
+	public async getQueue() {
+		return await this.client.GET('/api/v3/queue', {
+			params: { query: { pageSize: 20, includeEpisode: true, includeSeries: true } }
+		});
+	}
+
+	public async getDiskSpace() {
+		return await this.client.GET('/api/v3/diskspace');
+	}
+
 	public async putQualityProfile(
 		id: number,
 		profile: SonarrComponents['schemas']['QualityProfileResource']
@@ -121,6 +135,13 @@ export class SonarrConnector {
 					id
 				}
 			}
+		});
+	}
+
+	public async deleteSeries(id: number) {
+		return await this.client.DELETE('/api/v3/series/{id}', {
+			params: { path: { id } },
+			query: { deleteFiles: true }
 		});
 	}
 }

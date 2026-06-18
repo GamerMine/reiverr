@@ -13,17 +13,33 @@ export class JellyfinConnector {
 		});
 	}
 
-	public async getItems(userId: string) {
+	public async getItems(
+		userId: string,
+		hasTmdbId: boolean | undefined,
+		includeItemTypes: ('Movie' | 'Series' | 'Episode')[]
+	) {
 		return await this.client.GET('/Items', {
 			params: {
 				query: {
 					userId,
-					hasTmdbId: true,
+					hasTmdbId,
 					recursive: true,
-					includeItemTypes: ['Movie', 'Series'],
+					includeItemTypes,
 					fields: ['ProviderIds', 'Genres', 'DateLastMediaAdded', 'DateCreated']
 				}
 			}
+		});
+	}
+
+	public async postUserPlayedItems(userId: string, itemId: string) {
+		return await this.client.POST('/UserPlayedItems/{itemId}', {
+			params: { path: { itemId }, query: { userId, datePlayed: new Date().toISOString() } }
+		});
+	}
+
+	public async deleteUserPlayedItems(userId: string, itemId: string) {
+		return await this.client.DELETE('/UserPlayedItems/{itemId}', {
+			params: { path: { itemId }, query: { userId } }
 		});
 	}
 }

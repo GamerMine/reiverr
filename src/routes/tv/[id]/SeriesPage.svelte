@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getJellyfinEpisodes, type JellyfinItem } from '$lib/apis/jellyfin/jellyfinApi';
+	import { type JellyfinItem } from '$lib/apis/jellyfin/jellyfinApi';
 	import {
 		getTmdbSeries,
 		getTmdbSeriesRecommendations,
@@ -19,10 +19,16 @@
 	import TitlePageLayout from '$lib/components/TitlePageLayout/TitlePageLayout.svelte';
 	import { playerState } from '$lib/components/VideoPlayer/VideoPlayer';
 	import { TMDB_BACKDROP_SMALL, TMDB_BASE_TV_URL } from '$lib/constants';
-	import { createJellyfinItemStore } from '$lib/stores/data.store';
 	import { capitalize, formatSize } from '$lib/utils';
 	import classNames from 'classnames';
-	import { ActivityLog, Archive, ChevronLeft, ChevronRight, DotFilled } from 'svelte-radix';
+	import {
+		ActivityLog,
+		Archive,
+		ChevronLeft,
+		ChevronRight,
+		DotFilled,
+		Trash
+	} from 'svelte-radix';
 	import { _ } from 'svelte-i18n';
 	import { tmdbDataFormat } from '$lib/utils.js';
 	import { settings } from '$lib/stores/settings.svelte';
@@ -32,9 +38,15 @@
 	import SeasonsChooserModal from '$lib/components/modals/SeasonsChooserModal.svelte';
 	import { onMount } from 'svelte';
 	import type { components as SonarrComponents } from '$lib/apis/sonarr/sonarr.generated';
-	import { sonarrAddSeries, sonarrGetSeries } from '$lib/remote/sonarr.remote';
+	import {
+		sonarrAddSeries,
+		sonarrGetSeries,
+		sonarrRemoveSeries
+	} from '$lib/remote/sonarr.remote';
 	import type { EpisodeDataWithCheck, SeasonData, SeasonDataWithCheck } from '$lib/types';
 	import { createSuccessNotification } from '$lib/stores/notification.store';
+	import { jellyfinGetEpisodes } from '$lib/remote/jellyfin.remote';
+	import type { components as JellyfinComponents } from '$lib/apis/jellyfin/jellyfin.generated';
 
 	let {
 		tmdbId,
@@ -46,8 +58,6 @@
 		handleCloseModal?: () => void;
 	} = $props();
 
-	const jellyfinItemStore = createJellyfinItemStore(tmdbId);
-
 	let loading = $state(true);
 	let tmdbSeries: TmdbSeriesFull2 | undefined = $state();
 	let seasonSelectVisible = $state(false);
@@ -55,6 +65,7 @@
 	let nextJellyfinEpisode: JellyfinItem | undefined = $state();
 	let sonarrSeries: SonarrComponents['schemas']['SeriesResource'] | undefined = $state();
 	let seasonsData: Promise<SeasonData>[] | undefined = $state();
+	let jellyfinItem: JellyfinComponents['schemas']['BaseItemDto'] | undefined = $state();
 
 	const jellyfinEpisodeData: {
 		[key: string]: {
@@ -66,10 +77,12 @@
 	const episodeComponents: HTMLDivElement[] = [];
 
 	// Refresh jellyfin episode data
-	jellyfinItemStore.subscribe(async (value) => {
-		const item = value.item;
-		if (!item?.Id) return;
-		const episodes = await getJellyfinEpisodes(item.Id);
+	function loadJellyfinEpisodeData() {
+		const jellyfinSeriesId = jellyfinItem?.Id;
+		if (!jellyfinSeriesId) return;
+		const episodes = jellyfinGetEpisodes().current?.data?.filter(
+			(i) => i.SeriesId === jellyfinSeriesId
+		);
 
 		episodes?.forEach((episode) => {
 			const key = `S${episode?.ParentIndexNumber}E${episode?.IndexNumber}`;
@@ -87,7 +100,7 @@
 
 		if (!nextJellyfinEpisode) nextJellyfinEpisode = episodes?.[0];
 		visibleSeasonNumber = nextJellyfinEpisode?.ParentIndexNumber || visibleSeasonNumber;
-	});
+	}
 
 	async function preloadRecommendationData() {
 		const tmdbRecommendationProps = getTmdbSeriesRecommendations(tmdbId).then((r) =>
@@ -143,8 +156,7 @@
 		if (nextJellyfinEpisode?.Id) playerState.streamJellyfinId(nextJellyfinEpisode?.Id || '');
 	}
 
-	let seasonsChooserClose: (coucou: SeasonDataWithCheck[] | undefined) => void;
-
+	let seasonsChooserClose: (data: SeasonDataWithCheck[] | undefined) => void;
 	function showSeasonsChooser(): Promise<SeasonDataWithCheck[] | undefined> {
 		modalStack.create(SeasonsChooserModal, {
 			endChoice: (val: SeasonDataWithCheck[] | undefined) => seasonsChooserClose(val),
@@ -189,9 +201,19 @@
 		}
 	}
 
+	async function removeSeries() {
+		if (sonarrSeries?.id) sonarrRemoveSeries(sonarrSeries.id);
+		await sonarrGetSeries().refresh();
+	}
+
 	onMount(async () => {
-		await Promise.all([sonarrGetSeries(), preloadSeries()]);
+		await Promise.all([sonarrGetSeries(), preloadSeries(), jellyfinGetEpisodes()]);
 		sonarrSeries = sonarrGetSeries().current?.data?.find((s) => s.tmdbId === tmdbId);
+		jellyfinItem = jellyfinGetEpisodes().current?.data?.find(
+			(i) => i.Type === 'Series' && i.ProviderIds?.Tmdb === tmdbId.toString()
+		);
+
+		loadJellyfinEpisodeData();
 
 		loading = false;
 	});
@@ -231,7 +253,7 @@
 		{#snippet episodes_carousel()}
 			<Carousel
 				gradientFromColor="from-red-950"
-				klass={classNames('px-2 sm:px-4 lg:px-8', {
+				class={classNames('px-2 sm:px-4 lg:px-8', {
 					'2xl:px-0': !isModal
 				})}
 				heading="Episodes"
@@ -271,15 +293,10 @@
 			<div
 				class="flex gap-2 items-center flex-row-reverse justify-end lg:flex-row lg:justify-start"
 			>
-				{#if $jellyfinItemStore.loading || sonarrGetSeries().loading}
+				{#if jellyfinGetEpisodes().loading || sonarrGetSeries().loading}
 					<div class="placeholder h-10 w-48 rounded-xl"></div>
 				{:else}
-					<OpenInButton
-						title={tmdbSeries?.name}
-						jellyfinItem={$jellyfinItemStore.item}
-						type="tv"
-						{tmdbId}
-					/>
+					<OpenInButton title={tmdbSeries?.name} {jellyfinItem} type="tv" {tmdbId} />
 					{#if !!nextJellyfinEpisode}
 						<Button variant="primary" onclick={playNextEpisode}>
 							<span>
@@ -287,6 +304,13 @@
 								{`S${nextJellyfinEpisode?.ParentIndexNumber}E${nextJellyfinEpisode?.IndexNumber}`}
 							</span>
 							<ChevronRight size="20" />
+						</Button>
+						<Button
+							variant="error"
+							class="px-2!"
+							onclick={async () => await removeSeries()}
+						>
+							<Trash size="20" />
 						</Button>
 					{:else if !sonarrSeries && settings.globalSettings.sonarr.baseUrl}
 						<Select
@@ -306,6 +330,13 @@
 								>{$_('library.content.queued')}</span
 							>
 						</Button>
+						<Button
+							variant="error"
+							class="px-2!"
+							onclick={async () => await removeSeries()}
+						>
+							<Trash size="20" />
+						</Button>
 					{/if}
 				{/if}
 			</div>
@@ -314,12 +345,12 @@
 		{#snippet episodes_carousel()}
 			<Carousel
 				gradientFromColor="from-stone-950"
-				klass={classNames('px-2 sm:px-4 lg:px-8', {
+				class={classNames('px-2 sm:px-4 lg:px-8', {
 					'2xl:px-0': !isModal
 				})}
 			>
 				{#snippet title()}
-					<UiCarousel klass="flex gap-6">
+					<UiCarousel class="flex gap-6">
 						{#each [...Array(tmdbSeries?.number_of_seasons || 0).keys()].map((i) => i + 1) as seasonNumber (seasonNumber)}
 							{@const season = tmdbSeries?.seasons?.find(
 								(s) => s.season_number === seasonNumber
@@ -374,7 +405,10 @@
 									jellyfinEpisodeData[`S${visibleSeasonNumber}E${i + 1}`]}
 								<div bind:this={episodeComponents[i]}>
 									<EpisodeCard
-										{...props}
+										title={props.title}
+										subtitle={props.subtitle}
+										backdropUrl={props.backdropUrl}
+										airDate={props.airDate}
 										{...jellyfinData
 											? {
 													watched: jellyfinData.watched,

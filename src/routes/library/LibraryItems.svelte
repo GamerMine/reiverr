@@ -6,12 +6,11 @@
 	import { _ } from 'svelte-i18n';
 	import { ChevronDown, Cross2, MagnifyingGlass } from 'svelte-radix';
 	import CardPlaceholder from '$lib/components/common/misc/cards/CardPlaceholder.svelte';
-	import { tick, type ComponentProps } from 'svelte';
+	import { tick, type ComponentProps, onMount } from 'svelte';
 	import Poster from '$lib/components/Poster/Poster.svelte';
 	import { getJellyfinPosterUrl, type JellyfinItem } from '$lib/apis/jellyfin/jellyfinApi';
 	import { getRadarrPosterUrl, type RadarrMovie } from '$lib/apis/radarr/radarrApi';
-	import { getSonarrPosterUrl, type SonarrSeries } from '$lib/apis/sonarr/sonarrApi';
-	import { sonarrSeriesStore } from '$lib/stores/data.store';
+	import { type SonarrSeries } from '$lib/apis/sonarr/sonarrApi';
 	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
 	import ContextMenu from '$lib/components/common/inputs/contextMenu/ContextMenu.svelte';
 	import SelectableContextMenuItem from '$lib/components/common/inputs/contextMenu/SelectableContextMenuItem.svelte';
@@ -19,6 +18,7 @@
 	import { createLocalStorageStore } from '$lib/stores/localstorage.store';
 	import { radarrGetMovies } from '$lib/remote/radarr.remote';
 	import { jellyfinGetItems } from '$lib/remote/jellyfin.remote';
+	import { sonarrGetSeries } from '$lib/remote/sonarr.remote';
 
 	const SortBy = {
 		DateAdded: $_('library.sort.dateAdded'),
@@ -50,9 +50,6 @@
 	let libraryLoading = $state(true);
 	let posterProps: ComponentProps<typeof Poster>[] = $state([]);
 	let hasMore = $state(true);
-	$effect(() => {
-		loadPosterProps(openTab, page, $sortBy, $sortOrder, searchQuery);
-	});
 
 	function getPropsFromJellyfinItem(item: JellyfinItem): ComponentProps<typeof Poster> {
 		return {
@@ -146,13 +143,9 @@
 					.map((item) => getPropsFromJellyfinItem(item))
 			);
 		} else if (tab === 'unavailable') {
-			props = await Promise.all([
-				radarrGetMovies(),
-				sonarrSeriesStore.promise,
-				jellyfinItemsPromise
-			])
+			props = await Promise.all([radarrGetMovies(), sonarrGetSeries(), jellyfinItemsPromise])
 				.then(([radarr, sonarr, jellyfinItems]) => ({
-					items: [...(radarr?.data ?? []), ...sonarr],
+					items: [...(radarr?.data ?? []), ...(sonarr.data ?? [])],
 					jellyfinItems
 				}))
 				.then(({ items, jellyfinItems }) =>
@@ -199,6 +192,10 @@
 			await handleCloseSearch();
 		}
 	}
+
+	onMount(() => {
+		loadPosterProps(openTab, page, $sortBy, $sortOrder, searchQuery);
+	});
 </script>
 
 <svelte:window on:keydown={handleShortcuts} />

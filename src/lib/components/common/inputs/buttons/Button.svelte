@@ -1,6 +1,7 @@
 <script lang="ts">
 	import classNames from 'classnames';
 	import { type Snippet } from 'svelte';
+	import type { ClassValue } from 'svelte/elements';
 
 	let {
 		size = 'md',
@@ -13,7 +14,7 @@
 
 		href = undefined,
 		target = '_self',
-		klass = '',
+		class: className = '',
 
 		children,
 
@@ -33,7 +34,7 @@
 
 		href?: string;
 		target?: string;
-		klass?: string;
+		class?: ClassValue;
 
 		children: Snippet;
 
@@ -49,7 +50,8 @@
 		buttonStyle = classNames(
 			'flex items-center gap-1 font-medium select-none selectable transition-all shrink-0',
 			{
-				'bg-white text-zinc-900 font-extrabold backdrop-blur-lg rounded-lg': variant === 'primary',
+				'bg-white text-zinc-900 font-extrabold backdrop-blur-lg rounded-lg':
+					variant === 'primary',
 				'hover:bg-amber-400 focus-within:bg-amber-400 hover:border-amber-400 focus-within:border-amber-400':
 					variant === 'primary' && !disabled,
 				'text-zinc-200 bg-zinc-600/20 backdrop-blur-lg rounded-lg': variant === 'secondary',
@@ -75,7 +77,7 @@
 				'cursor-pointer': !disabled,
 				'opacity-60 cursor-default': disabled
 			},
-			klass
+			className
 		);
 	});
 

@@ -1,24 +1,21 @@
 <script lang="ts">
-	import { getDiskSpace } from '$lib/apis/radarr/radarrApi';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { formatSize } from '$lib/utils.js';
 	import RadarrIcon from '../common/icons/RadarrIcon.svelte';
 	import StatsContainer from './StatsContainer.svelte';
 	import StatsPlaceholder from './StatsPlaceholder.svelte';
-	import { radarrGetMovies } from '$lib/remote/radarr.remote';
+	import { radarrGetDiskspace, radarrGetMovies } from '$lib/remote/radarr.remote';
 
 	let { large = false }: { large?: boolean } = $props();
 
 	async function fetchStats() {
-		const discSpacePromise = getDiskSpace();
+		const diskSpace = await radarrGetDiskspace();
 		const radarrMovies = await radarrGetMovies();
 		const availableMovies =
 			radarrMovies.data?.filter((item) => item.isAvailable && item.movieFile) ?? [];
 
 		const diskSpaceInfo =
-			(await discSpacePromise).find((disk) => disk.path === '/') ||
-			(await discSpacePromise)[0] ||
-			undefined;
+			diskSpace.data?.find((disk) => disk.path === '/') || diskSpace.data?.[0] || undefined;
 
 		const spaceOccupied = availableMovies.reduce(
 			(acc, movie) => acc + (movie?.sizeOnDisk || 0),

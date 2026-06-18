@@ -1,23 +1,21 @@
 <script lang="ts">
-	import { getDiskSpace } from '$lib/apis/sonarr/sonarrApi';
-	import { sonarrSeriesStore } from '$lib/stores/data.store';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { formatSize } from '$lib/utils.js';
 	import SonarrIcon from '../common/icons/SonarrIcon.svelte';
 	import StatsContainer from './StatsContainer.svelte';
 	import StatsPlaceholder from './StatsPlaceholder.svelte';
+	import { sonarrGetDiskspace, sonarrGetSeries } from '$lib/remote/sonarr.remote';
 
 	let { large = false }: { large?: boolean } = $props();
 
 	async function fetchStats() {
-		const discSpacePromise = getDiskSpace();
-		const sonarrSeries = await sonarrSeriesStore.promise;
-		const availableSeries = sonarrSeries.filter((item) => item.statistics?.episodeFileCount);
+		const diskSpace = await sonarrGetDiskspace();
+		const sonarrSeries = await sonarrGetSeries();
+		const availableSeries =
+			sonarrSeries.data?.filter((item) => item.statistics?.episodeFileCount) || [];
 
 		const diskSpaceInfo =
-			(await discSpacePromise).find((disk) => disk.path === '/') ||
-			(await discSpacePromise)[0] ||
-			undefined;
+			diskSpace.data?.find((disk) => disk.path === '/') || diskSpace.data?.[0] || undefined;
 
 		const spaceOccupied = availableSeries.reduce(
 			(acc, series) => acc + (series?.statistics?.sizeOnDisk || 0),

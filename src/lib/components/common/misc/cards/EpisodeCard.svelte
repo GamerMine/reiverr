@@ -1,9 +1,4 @@
 <script lang="ts">
-	import {
-		setJellyfinItemUnwatched,
-		setJellyfinItemWatched
-	} from '$lib/apis/jellyfin/jellyfinApi';
-	import { jellyfinItemsStore } from '$lib/stores/data.store';
 	import classNames from 'classnames';
 	import { Check } from 'svelte-radix';
 	import { fade } from 'svelte/transition';
@@ -13,6 +8,8 @@
 	import ProgressBar from '../../ProgressBar.svelte';
 	import { playerState } from '../../../VideoPlayer/VideoPlayer';
 	import type { Snippet } from 'svelte';
+	import { _ } from 'svelte-i18n';
+	import { jellyfinSetItemWatched } from '$lib/remote/jellyfin.remote';
 
 	let {
 		backdropUrl,
@@ -61,14 +58,14 @@
 
 		watched = true;
 		progress = 0;
-		setJellyfinItemWatched(jellyfinId).finally(() => jellyfinItemsStore.refreshIn(5000));
+		jellyfinSetItemWatched({ id: jellyfinId, watched: true });
 	}
 
 	function handleSetUnwatched() {
 		if (!jellyfinId) return;
 
 		watched = false;
-		setJellyfinItemUnwatched(jellyfinId).finally(() => jellyfinItemsStore.refreshIn(5000));
+		jellyfinSetItemWatched({ id: jellyfinId, watched: false });
 	}
 
 	function handlePlay(e: MouseEvent) {
@@ -96,17 +93,17 @@
 			Mark as unwatched
 		</ContextMenuItem>
 	{/snippet}
-	<button
+	<a
 		{onclick}
 		class={classNames(
-			'aspect-video bg-center bg-cover rounded-lg overflow-hidden transition-opacity shadow-lg selectable shrink-0 placeholder-image relative',
-			'flex flex-col px-2 lg:px-3 py-2 gap-2 text-left',
+			'aspect-video bg-center bg-cover rounded-lg overflow-hidden transition-opacity shadow-lg selectable shrink-0 placeholder-image relative block',
+			'flex flex-col px-2 lg:px-3 py-2 gap-2 text-left cursor-pointer',
 			{
 				'h-44': size === 'md',
 				'h-36 lg:h-44': size === 'sm',
 				'h-full': size === 'dynamic',
 				group: !!jellyfinId,
-				'cursor-default': !jellyfinId
+				'cursor-default!': !jellyfinId
 			}
 		)}
 		style={"background-image: url('" + backdropUrl + "');"}
@@ -115,19 +112,10 @@
 	>
 		<div
 			class={classNames(
-				'absolute inset-0 transition-opacity group-hover:opacity-0 group-focus-visible:opacity-0 bg-gradient-to-t',
-				{
-					'bg-darken': !jellyfinId || watched,
-					'bg-gradient-to-t from-darken': !!jellyfinId
-				}
-			)}
-		></div>
-		<div
-			class={classNames(
 				'flex-1 flex flex-col justify-between relative group-hover:opacity-0 group-focus-visible:opacity-0 transition-all',
 				'text-xs lg:text-sm font-medium text-zinc-300',
 				{
-					'opacity-15': !jellyfinId || watched
+					'opacity-15': !jellyfinId
 				}
 			)}
 		>
@@ -152,6 +140,14 @@
 				<div>
 					{@render right_top?.()}
 					{#if !right_top}
+						{#if watched}
+							<div
+								class="flex backdrop-blur-md bg-black/40 px-2 rounded-md font-bold items-center"
+							>
+								<Check size="25" />
+								<p>{$_('library.watched')}</p>
+							</div>
+						{/if}
 						{#if runtime && !progress}
 							<p>
 								{runtime.toFixed(0)} min
@@ -179,13 +175,6 @@
 					</div>
 				{/if}
 				{@render right_bottom?.()}
-				{#if !right_bottom}
-					{#if watched}
-						<div class="shrink-0">
-							<Check size="20" class="opacity-80" />
-						</div>
-					{/if}
-				{/if}
 			</div>
 		</div>
 		{#if progress}
@@ -201,5 +190,5 @@
 				/>
 			{/if}
 		</div>
-	</button>
+	</a>
 </ContextMenu>

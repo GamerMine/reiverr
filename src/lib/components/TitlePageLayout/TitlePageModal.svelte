@@ -2,7 +2,7 @@
 	import type { TitleType } from '$lib/types';
 	import { fly } from 'svelte/transition';
 	import MoviePage from '../../../routes/movie/[id]/MoviePage.svelte';
-	import SeriesPage from '../../../routes/series/[id]/SeriesPage.svelte';
+	import SeriesPage from '../../../routes/tv/[id]/SeriesPage.svelte';
 	import { modalStack } from '$lib/stores/modal.store';
 	import PersonPage from '../../../routes/person/[id]/PersonPage.svelte';
 

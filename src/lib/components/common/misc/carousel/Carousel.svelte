@@ -4,12 +4,13 @@
 	import { ChevronLeft, ChevronRight } from 'svelte-radix';
 	import classNames from 'classnames';
 	import { type Snippet, tick } from 'svelte';
+	import type { ClassValue } from 'svelte/elements';
 
 	let {
 		gradientFromColor = 'from-stone-950',
 		scrollClass = '',
 		heading = '',
-		klass = '',
+		class: className = '',
 
 		children,
 		title = undefined
@@ -17,7 +18,7 @@
 		gradientFromColor?: string;
 		scrollClass?: string;
 		heading?: string;
-		klass?: string;
+		class?: ClassValue;
 
 		children: Snippet;
 		title?: Snippet;
@@ -42,7 +43,7 @@
 	});
 </script>
 
-<div class={classNames('flex flex-col gap-4 group/carousel', klass)}>
+<div class={classNames('flex flex-col gap-4 group/carousel', className)}>
 	<div class={'flex justify-between items-center gap-4 ' + scrollClass}>
 		{@render title?.()}
 		{#if !title}
@@ -58,14 +59,20 @@
 		>
 			<IconButton
 				onclick={() => {
-					carousel?.scrollTo({ left: scrollX - carousel?.clientWidth * 0.8, behavior: 'smooth' });
+					carousel?.scrollTo({
+						left: scrollX - carousel?.clientWidth * 0.8,
+						behavior: 'smooth'
+					});
 				}}
 			>
 				<ChevronLeft size="20" />
 			</IconButton>
 			<IconButton
 				onclick={() => {
-					carousel?.scrollTo({ left: scrollX + carousel?.clientWidth * 0.8, behavior: 'smooth' });
+					carousel?.scrollTo({
+						left: scrollX + carousel?.clientWidth * 0.8,
+						behavior: 'smooth'
+					});
 				}}
 			>
 				<ChevronRight size="20" />
@@ -90,14 +97,14 @@
 		{#if scrollX > 50}
 			<div
 				transition:fade={{ duration: 200 }}
-				class={'absolute inset-y-0 left-0 w-0 sm:w-16 md:w-24 bg-gradient-to-r ' +
+				class={'absolute inset-y-0 left-0 w-0 sm:w-16 md:w-24 bg-linear-to-r ' +
 					gradientFromColor}
 			></div>
 		{/if}
 		{#if carousel && scrollX < carousel?.scrollWidth - carousel?.clientWidth - 50}
 			<div
 				transition:fade={{ duration: 200 }}
-				class={'absolute inset-y-0 right-0 w-0 sm:w-16 md:w-24 bg-gradient-to-l ' +
+				class={'absolute inset-y-0 right-0 w-0 sm:w-16 md:w-24 bg-linear-to-l ' +
 					gradientFromColor}
 			></div>
 		{/if}

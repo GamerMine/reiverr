@@ -95,3 +95,17 @@ export const radarrRemoveMovie = command(v.number(), async (id: number) => {
 
 	return { success: true };
 });
+
+export const radarrGetDiskspace = query(async () => {
+	const { cookies } = getRequestEvent();
+	if (!(await assertUserAuth(cookies)))
+		return { success: false, error: 'general.connectionRequired' };
+
+	const { radarrConnector: conn } = await BaseSync.getInstance();
+	if (!conn) return { success: false };
+
+	const diskspace = await conn.getDiskSpace();
+	if (!diskspace || !diskspace.data) return { success: false };
+
+	return { success: true, data: diskspace.data };
+});

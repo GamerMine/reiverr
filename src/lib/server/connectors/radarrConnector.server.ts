@@ -91,6 +91,10 @@ export class RadarrConnector {
 		return await this.client.GET('/api/v3/movie');
 	}
 
+	public async getDiskSpace() {
+		return await this.client.GET('/api/v3/diskspace');
+	}
+
 	public async putQualityProfile(
 		id: number,
 		profile: RadarrComponents['schemas']['QualityProfileResource']

@@ -25,14 +25,6 @@ export const getJellyfinItems = async () =>
 	).then(async (res): Promise<JellyfinItem[]> => (await res.json()).Items || [])) ||
 	Promise.resolve([]);
 
-export const getJellyfinEpisodes = async (parentId = '') =>
-	await fetch(
-		`/api/jellyfin/items?${arrayToQuery('includeItemTypes', ['Episode'])}&parentId=${parentId}`,
-		{
-			method: 'GET'
-		}
-	).then(async (res): Promise<JellyfinItem[]> => (await res.json())?.Items || []);
-
 export const getJellyfinItem = async (itemId: string) =>
 	await fetch(`/api/jellyfin/items/item?itemId=${itemId}`, {
 		method: 'GET'
@@ -73,9 +65,7 @@ export const getJellyfinPlaybackInfo = async (
 export const reportJellyfinPlaybackStarted = async (
 	itemId: string,
 	sessionId: string,
-	mediaSourceId: string,
-	audioStreamIndex?: number,
-	subtitleStreamIndex?: number
+	mediaSourceId: string
 ) =>
 	await fetch('/api/jellyfin/sessions/playing', {
 		method: 'POST',
@@ -128,16 +118,6 @@ export const reportJellyfinPlaybackStopped = async (
 
 export const deleteActiveEncoding = async (playSessionId: string) =>
 	await fetch(`/api/jellyfin/videos/activeEncodings?playSessionId=${playSessionId}`, {
-		method: 'DELETE'
-	});
-
-export const setJellyfinItemWatched = async (jellyfinId: string) =>
-	await fetch(`/api/jellyfin/userPlayedItems?itemId=${jellyfinId}`, {
-		method: 'POST'
-	});
-
-export const setJellyfinItemUnwatched = async (jellyfinId: string) =>
-	await fetch(`/api/jellyfin/userPlayedItems?itemId=${jellyfinId}`, {
 		method: 'DELETE'
 	});
 

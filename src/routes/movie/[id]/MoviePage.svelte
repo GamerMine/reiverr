@@ -165,6 +165,13 @@
 						<Button variant="primary" onclick={play}>
 							<span>{$_('library.content.play')}</span><ChevronRight size="20" />
 						</Button>
+						<Button
+							variant="error"
+							class="px-2!"
+							onclick={async () => await removeMovie()}
+						>
+							<Trash size="20" />
+						</Button>
 					{:else if !radarrMovie && settings.globalSettings.radarr.baseUrl}
 						<Select
 							disabled={addToRadarrLoading}
@@ -185,7 +192,7 @@
 						</Button>
 						<Button
 							variant="error"
-							klass="!px-2"
+							class="px-2!"
 							onclick={async () => await removeMovie()}
 						>
 							<Trash size="20" />

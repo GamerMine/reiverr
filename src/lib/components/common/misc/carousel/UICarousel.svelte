@@ -1,8 +1,9 @@
 <script lang="ts">
 	import classNames from 'classnames';
 	import { onMount, type Snippet } from 'svelte';
+	import type { ClassValue } from 'svelte/elements';
 
-	let { children, klass = '' }: { children: Snippet; klass?: string } = $props();
+	let { children, class: className = '' }: { children: Snippet; class?: ClassValue } = $props();
 
 	let element: HTMLDivElement;
 	let scrollX = 0;
@@ -26,7 +27,7 @@
 </script>
 
 <div
-	class={classNames(klass, 'overflow-x-scroll scrollbar-hide relative p-1')}
+	class={classNames(className, 'overflow-x-scroll scrollbar-hide relative p-1')}
 	style={`mask-image: linear-gradient(to right, transparent 0%, ${
 		fadeLeft ? '' : 'black 0%, '
 	}black 5%, black 95%, ${fadeRight ? '' : 'black 100%, '}transparent 100%);`}

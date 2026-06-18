@@ -30,7 +30,7 @@
 		bottom_left = undefined,
 		bottom_right = undefined
 	}: {
-		tmdbId: number;
+		tmdbId: number | undefined;
 		openInModal?: boolean;
 		jellyfinId?: string;
 		type?: TitleType;
@@ -52,16 +52,16 @@
 	} = $props();
 </script>
 
-<button
+<a
 	onclick={() => {
-		if (openInModal) {
+		if (openInModal && tmdbId) {
 			openTitleModal(tmdbId, type);
 		} else {
 			window.location.href = tmdbId ? `/${type}/${tmdbId}` : '#';
 		}
 	}}
 	class={classNames(
-		'relative flex rounded-xl selectable group hover:text-inherit shrink-0 overflow-hidden text-left',
+		'relative flex rounded-xl selectable group hover:text-inherit shrink-0 overflow-hidden text-left cursor-pointer',
 		{
 			'aspect-video': orientation === 'landscape',
 			'aspect-2/3': orientation === 'portrait',
@@ -139,4 +139,4 @@
 			<ProgressBar {progress} />
 		</div>
 	{/if}
-</button>
+</a>

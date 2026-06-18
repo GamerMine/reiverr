@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { type JellyfinItem } from '$lib/apis/jellyfin/jellyfinApi';
 	import { getPosterProps, TmdbApiOpen } from '$lib/apis/tmdb/tmdbApi';
 	import Carousel from '$lib/components/common/misc/carousel/Carousel.svelte';
 	import GenreCard from '$lib/components/common/misc/cards/GenreCard.svelte';
@@ -8,7 +7,6 @@
 	import Poster from '$lib/components/Poster/Poster.svelte';
 	import TitleShowcases from '$lib/components/page/home/titleShowcase/TitleShowcasesContainer.svelte';
 	import { genres, networks } from '$lib/discover';
-	import { jellyfinItemsStore } from '$lib/stores/data.store';
 	import type { TitleType } from '$lib/types';
 	import { formatDateToYearMonthDay } from '$lib/utils';
 	import type { ComponentProps } from 'svelte';
@@ -16,13 +14,7 @@
 	import { fade } from 'svelte/transition';
 	import { tmdbDataFormat } from '$lib/utils.js';
 	import { settings } from '$lib/stores/settings.svelte';
-
-	const jellyfinItemsPromise = new Promise<JellyfinItem[]>((resolve) => {
-		jellyfinItemsStore.subscribe((data) => {
-			if (data.loading) return;
-			resolve(data.data || []);
-		});
-	});
+	import { jellyfinGetItems } from '$lib/remote/jellyfin.remote';
 
 	const fetchCardProps = async (
 		items: {
@@ -39,7 +31,7 @@
 		const filtered = settings.userSettings.discover.excludeLibraryItems
 			? items.filter(
 					async (item) =>
-						!(await jellyfinItemsPromise).find(
+						!(await jellyfinGetItems()).data?.find(
 							(i) => i.ProviderIds?.Tmdb === String(item.id)
 						)
 				)

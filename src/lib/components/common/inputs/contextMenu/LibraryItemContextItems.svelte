@@ -1,15 +1,11 @@
 <script lang="ts">
-	import {
-		setJellyfinItemUnwatched,
-		setJellyfinItemWatched,
-		type JellyfinItem
-	} from '$lib/apis/jellyfin/jellyfinApi';
-	import { jellyfinItemsStore } from '$lib/stores/data.store';
+	import { type JellyfinItem } from '$lib/apis/jellyfin/jellyfinApi';
 	import type { TitleType } from '$lib/types';
 	import Divider from '../../misc/Divider.svelte';
 	import ContextMenuItem from './ContextMenuItem.svelte';
 	import { _ } from 'svelte-i18n';
 	import { settings } from '$lib/stores/settings.svelte.js';
+	import { jellyfinSetItemWatched } from '$lib/remote/jellyfin.remote';
 
 	let {
 		jellyfinItem = undefined,
@@ -30,18 +26,14 @@
 	function handleSetWatched() {
 		if (jellyfinItem?.Id) {
 			watched = true;
-			setJellyfinItemWatched(jellyfinItem.Id).finally(() =>
-				jellyfinItemsStore.refreshIn(3000)
-			);
+			jellyfinSetItemWatched({ id: jellyfinItem.Id, watched: true });
 		}
 	}
 
 	function handleSetUnwatched() {
 		if (jellyfinItem?.Id) {
 			watched = false;
-			setJellyfinItemUnwatched(jellyfinItem.Id).finally(() =>
-				jellyfinItemsStore.refreshIn(3000)
-			);
+			jellyfinSetItemWatched({ id: jellyfinItem.Id, watched: false });
 		}
 	}
 
