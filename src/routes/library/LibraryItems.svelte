@@ -9,8 +9,8 @@
 	import { tick, type ComponentProps, onMount } from 'svelte';
 	import Poster from '$lib/components/Poster/Poster.svelte';
 	import { getJellyfinPosterUrl, type JellyfinItem } from '$lib/apis/jellyfin/jellyfinApi';
-	import { getRadarrPosterUrl, type RadarrMovie } from '$lib/apis/radarr/radarrApi';
-	import { type SonarrSeries } from '$lib/apis/sonarr/sonarrApi';
+	import type { RadarrMovieResource } from '@reiverr/connectors/types/radarr';
+	import type { SonarrSeriesResource } from '@reiverr/connectors/types/sonarr';
 	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
 	import ContextMenu from '$lib/components/common/inputs/contextMenu/ContextMenu.svelte';
 	import SelectableContextMenuItem from '$lib/components/common/inputs/contextMenu/SelectableContextMenuItem.svelte';
@@ -19,6 +19,7 @@
 	import { radarrGetMovies } from '$lib/remote/radarr.remote';
 	import { jellyfinGetItems } from '$lib/remote/jellyfin.remote';
 	import { sonarrGetSeries } from '$lib/remote/sonarr.remote';
+	import { settings } from '$lib/stores/settings.svelte';
 
 	const SortBy = {
 		DateAdded: $_('library.sort.dateAdded'),
@@ -66,19 +67,26 @@
 	}
 
 	function getPropsfromServarrItem(
-		item: RadarrMovie | SonarrSeries
+		item: RadarrMovieResource | SonarrSeriesResource
 	): ComponentProps<typeof Poster> {
-		const movie = item as RadarrMovie;
+		let isSeries = false;
+		if ((item as SonarrSeriesResource).tvdbId) isSeries = true;
 
 		return {
-			tmdbId: movie.tmdbId || 0,
-			title: movie.title || undefined,
-			subtitle: movie.genres?.join(', ') || undefined,
-			backdropUrl: getRadarrPosterUrl(movie),
+			tmdbId: item.tmdbId || 0,
+			title: item.title || undefined,
+			subtitle: item.genres?.join(', ') || undefined,
+			backdropUrl: isSeries
+				? settings.globalSettings.sonarr.baseUrl +
+					(item.images?.find((i) => i.coverType === 'poster')?.url || '')
+				: settings.globalSettings.radarr.baseUrl +
+					(item.images?.find((i) => i.coverType === 'poster')?.url || ''),
 			size: 'dynamic',
-			type: 'movie',
+			type: isSeries ? 'tv' : 'movie',
 			orientation: 'portrait',
-			rating: movie.ratings?.tmdb?.value || undefined
+			rating: isSeries
+				? (item as SonarrSeriesResource).ratings?.value
+				: (item as RadarrMovieResource).ratings?.tmdb?.value
 		};
 	}
 

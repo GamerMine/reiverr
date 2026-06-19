@@ -47,7 +47,7 @@
 	let reportProgress: () => void;
 	let progressInterval: NodeJS.Timeout;
 
-	// These functions are different in every browser
+	// These functions are different in some browser
 	let reqFullscreenFunc: ((elem: HTMLElement) => void) | undefined = undefined;
 	let exitFullscreen: (() => void) | undefined = $state();
 	let fullscreenChangeEvent: string | undefined = undefined;
@@ -69,13 +69,6 @@
 		fullscreenChangeEvent = 'webkitfullscreenchange';
 		getFullscreenElement = () => <HTMLElement>document.webkitFullscreenElement;
 		if (document.webkitExitFullscreen) exitFullscreen = () => document.webkitExitFullscreen();
-	} else if (elem.msRequestFullscreen) {
-		reqFullscreenFunc = (elem) => {
-			elem.msRequestFullscreen();
-		};
-		fullscreenChangeEvent = 'MSFullscreenChange';
-		getFullscreenElement = () => <HTMLElement>document.msFullscreenElement;
-		if (document.msExitFullscreen) exitFullscreen = () => document.msExitFullscreen();
 	} else if (elem.mozRequestFullScreen) {
 		reqFullscreenFunc = (elem) => {
 			elem.mozRequestFullScreen();
@@ -354,7 +347,6 @@
 
 <svelte:window on:keydown={handleShortcuts} />
 
-<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	class={classNames(
 		'bg-black w-screen h-[100dvh] sm:h-screen relative flex items-center justify-center',
@@ -403,7 +395,7 @@
 		{#if uiVisible}
 			<!-- Video controls -->
 			<div
-				class="absolute bottom-0 w-screen bg-gradient-to-t from-black/[.8] via-60% via-black-opacity-80 to-transparent"
+				class="absolute bottom-0 w-screen bg-linear-to-t from-black/80 via-60% via-black-opacity-80 to-transparent"
 				ontouchend={(e) => e.stopPropagation()}
 				transition:fade={{ duration: 100 }}
 			>

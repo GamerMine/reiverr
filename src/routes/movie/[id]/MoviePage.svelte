@@ -24,7 +24,6 @@
 	import { radarrAddMovie, radarrGetMovies, radarrRemoveMovie } from '$lib/remote/radarr.remote';
 	import Select from '$lib/components/common/inputs/forms/Select.svelte';
 	import Option from '$lib/components/common/inputs/forms/Option.svelte';
-	import type { components as RadarrComponents } from '$lib/apis/radarr/radarr.generated';
 	import type { components as JellyfinComponents } from '$lib/apis/jellyfin/jellyfin.generated';
 	import { TMDB_BASE_MOVIE_URL } from '$lib/constants';
 	import { jellyfinGetItems } from '$lib/remote/jellyfin.remote';
@@ -32,6 +31,7 @@
 		createErrorNotification,
 		createSuccessNotification
 	} from '$lib/stores/notification.store';
+	import type { RadarrMovieResource } from '@reiverr/connectors/types/radarr';
 
 	let {
 		tmdbId,
@@ -42,7 +42,7 @@
 	let loading = $state(true);
 	let tmdbMovie: TmdbMovieFull2 | undefined = $state();
 	let jellyfinItem: JellyfinComponents['schemas']['BaseItemDto'] | undefined = $state();
-	let radarrMovie: RadarrComponents['schemas']['MovieResource'] | undefined = $state();
+	let radarrMovie: RadarrMovieResource | undefined = $state();
 
 	async function preloadRecommendationData() {
 		const tmdbRecommendationProps = getTmdbMovieRecommendations(tmdbId)

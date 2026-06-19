@@ -1,13 +1,12 @@
 import type { MessageObject } from '$lib/types';
-import { TestExecutor } from '$lib/service/tasks/test.server';
 import { CronExpressionParser } from 'cron-parser';
-import { SyncCustomFormats } from '$lib/server/tasks/syncCustomFormats.server';
+import { SyncCustomFormats } from '$lib/service/tasks/syncCustomFormats.server';
 import { TaskEntity, TaskExecutionEntity } from '@reiverr/db/entities';
-import { SyncQualityProfiles } from '$lib/server/tasks/syncQualityProfiles.server';
-import { RadarrMovieAdd } from '$lib/server/tasks/radarrMovieAdd.server';
-import { RadarrMovieRemove } from '$lib/server/tasks/radarrMovieRemove.server';
-import { SonarrSeriesAdd } from '$lib/server/tasks/sonarrSeriesAdd.server';
-import { SonarrSeriesRemove } from '$lib/server/tasks/sonarrSeriesRemove.server';
+import { SyncQualityProfiles } from '$lib/service/tasks/syncQualityProfiles.server';
+import { RadarrMovieAdd } from '$lib/service/tasks/radarrMovieAdd.server';
+import { RadarrMovieRemove } from '$lib/service/tasks/radarrMovieRemove.server';
+import { SonarrSeriesAdd } from '$lib/service/tasks/sonarrSeriesAdd.server';
+import { SonarrSeriesRemove } from '$lib/service/tasks/sonarrSeriesRemove.server';
 
 export interface TaskProgressCallback {
 	(current: number, total: number): Promise<void>;
@@ -46,7 +45,6 @@ export interface TaskExecutor {
 }
 
 export enum TaskType {
-	TEST = 'test',
 	SYNC_CUSTOM_FORMATS = 'syncCustomFormat',
 	SYNC_QUALITY_PROFILES = 'syncQualityProfiles',
 
@@ -58,7 +56,6 @@ export enum TaskType {
 }
 
 export const taskExecutors = {
-	[TaskType.TEST]: new TestExecutor(),
 	[TaskType.SYNC_CUSTOM_FORMATS]: new SyncCustomFormats(),
 	[TaskType.SYNC_QUALITY_PROFILES]: new SyncQualityProfiles(),
 
@@ -121,14 +118,14 @@ async function queueExecution(task: TaskEntity) {
 				execution.task = task;
 				execution.data = data;
 				await execution.save();
-				console.log(
+				/*console.log(
 					`${task.type} execution result:`,
 					await taskExecutors[task.type].execute(data, async (current, total) => {
 						console.log(
 							`${task.type} with data: ${JSON.stringify(data)} progress: ${current}/${total}`
 						);
 					})
-				);
+				);*/
 			});
 
 			if (error) {

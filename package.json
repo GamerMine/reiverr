@@ -8,14 +8,7 @@
   },
   "scripts": {
     "dev": "vite dev --host",
-    "build": "vite build",
-    "preview": "vite preview",
-    "test": "playwright test",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "test:unit": "vitest",
-    "lint": "prettier --check . && eslint .",
-    "format": "prettier --write ."
+    "build": "vite build"
   },
   "devDependencies": {
     "@eslint/compat": "^2.1.0",
@@ -51,6 +44,7 @@
     "valibot": "^1.4.1"
   },
   "workspaces": [
-    "shared/db"
+    "src/shared/db",
+    "src/shared/connectors"
   ]
 }

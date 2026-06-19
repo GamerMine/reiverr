@@ -10,7 +10,7 @@ If you need something that will work well on TVs, I encourage you to check out t
 
 This project is not ready for production uses. Many features are still missing / being tested and changed.
 
-![Demo Video](images/reiverr-demo.gif)
+![Demo Video](.github/images/reiverr-demo.gif)
 
 # List of major features
 
@@ -69,10 +69,10 @@ Useful resources:
 
 # Additional Screenshots
 
-![Library Page](images/screenshot-1.png)
+![Library Page](.github/images/screenshot-1.png)
 
-![Discover Genre Page](images/screenshot-2.png)
+![Discover Genre Page](.github/images/screenshot-2.png)
 
-![Discover Page](images/screenshot-3.png)
+![Discover Page](.github/images/screenshot-3.png)
 
-![Settings Page](images/screenshot-4.png)
+![Settings Page](.github/images/screenshot-4.png)

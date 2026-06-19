@@ -21,8 +21,7 @@ import {
 	type UserSettings
 } from '@reiverr/db/types';
 import { PlatformSchema, OptionalStringSchema, type Result } from '$lib/types';
-import { RadarrConnector } from '$lib/server/connectors/radarrConnector.server';
-import { SonarrConnector } from '$lib/server/connectors/sonarrConnector.server';
+import { RadarrConnector, SonarrConnector } from '@reiverr/connectors';
 
 export const saveSettings = form(
 	v.object({

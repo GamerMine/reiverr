@@ -112,6 +112,9 @@ export const getTmdbSeriesSeason = async (
 			path: {
 				series_id: tmdbId,
 				season_number: season
+			},
+			query: {
+				language: settings.userSettings.interface.language
 			}
 		}
 	}).then((res) => res.data);

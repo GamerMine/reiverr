@@ -16,9 +16,9 @@
 	import LazyImg from '$lib/components/common/images/LazyImg.svelte';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { radarrGetQueue } from '$lib/remote/radarr.remote';
-	import type { components as RadarrComponents } from '$lib/apis/radarr/radarr.generated';
 	import { sonarrGetQueue } from '$lib/remote/sonarr.remote';
 	import { jellyfinGetItems } from '$lib/remote/jellyfin.remote';
+	import type { RadarrQueueStatus } from '@reiverr/connectors/types/radarr';
 
 	let noItems = false;
 
@@ -34,7 +34,7 @@
 				)?.[3]
 	);
 
-	function getStatusText(status?: RadarrComponents['schemas']['QueueStatus']) {
+	function getStatusText(status?: RadarrQueueStatus) {
 		switch (status) {
 			case 'failed':
 			// TODO

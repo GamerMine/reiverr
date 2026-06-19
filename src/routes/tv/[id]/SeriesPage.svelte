@@ -37,7 +37,6 @@
 	import { modalStack } from '$lib/stores/modal.store';
 	import SeasonsChooserModal from '$lib/components/modals/SeasonsChooserModal.svelte';
 	import { onMount } from 'svelte';
-	import type { components as SonarrComponents } from '$lib/apis/sonarr/sonarr.generated';
 	import {
 		sonarrAddSeries,
 		sonarrGetSeries,
@@ -47,6 +46,7 @@
 	import { createSuccessNotification } from '$lib/stores/notification.store';
 	import { jellyfinGetEpisodes } from '$lib/remote/jellyfin.remote';
 	import type { components as JellyfinComponents } from '$lib/apis/jellyfin/jellyfin.generated';
+	import type { SonarrSeriesResource } from '@reiverr/connectors/types/sonarr';
 
 	let {
 		tmdbId,
@@ -63,7 +63,7 @@
 	let seasonSelectVisible = $state(false);
 	let visibleSeasonNumber: number = $state(1);
 	let nextJellyfinEpisode: JellyfinItem | undefined = $state();
-	let sonarrSeries: SonarrComponents['schemas']['SeriesResource'] | undefined = $state();
+	let sonarrSeries: SonarrSeriesResource | undefined = $state();
 	let seasonsData: Promise<SeasonData>[] | undefined = $state();
 	let jellyfinItem: JellyfinComponents['schemas']['BaseItemDto'] | undefined = $state();
 

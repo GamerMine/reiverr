@@ -2,11 +2,10 @@ import { command, getRequestEvent, query } from '$app/server';
 import * as v from 'valibot';
 import { ApiSchema, type Result, SeriesAddSchema } from '$lib/types';
 import { FilteringProfilesEntity, GlobalSettingsEntity } from '@reiverr/db/entities';
-import { SonarrConnector } from '$lib/server/connectors/sonarrConnector.server';
 import { assertUserAuth } from '$lib/server/utils.server';
-import { BaseSync } from '$lib/server/tasks/baseSync.server';
 import { scheduleTask, TaskType } from '$lib/service/scheduler.server';
-import type { components as SonarrComponents } from '$lib/apis/sonarr/sonarr.generated';
+import type { SonarrQueueResource } from '@reiverr/connectors/types/sonarr';
+import Connectors, { SonarrConnector } from '@reiverr/connectors';
 
 export const sonarrIsHealthy = query(v.optional(ApiSchema), async (api) => {
 	if (api && api.url && api.key) return await new SonarrConnector(api.url, api.key).isHealthy();
@@ -27,7 +26,7 @@ export const sonarrGetSeries = query(async () => {
 	if (!(await assertUserAuth(cookies)))
 		return { success: false, error: 'general.connectionRequired' };
 
-	const { sonarrConnector: conn } = await BaseSync.getInstance();
+	const { sonarrConnector: conn } = await Connectors.getInstance();
 	if (!conn) return { success: false };
 
 	const series = await conn.getSeries();
@@ -59,12 +58,12 @@ export const sonarrRemoveSeries = command(v.number(), async (seriesId) => {
 	return { success: true };
 });
 
-let cachedQueue: Result<SonarrComponents['schemas']['QueueResource'][]> | undefined;
+let cachedQueue: Result<SonarrQueueResource[]> | undefined;
 let lastFetch = 0;
 async function getCachedQueue() {
 	const now = Date.now();
 	if (!cachedQueue || now - lastFetch > 2000) {
-		const { sonarrConnector: conn } = await BaseSync.getInstance();
+		const { sonarrConnector: conn } = await Connectors.getInstance();
 		if (!conn) return { success: false };
 
 		await conn.postCommand('RefreshMonitoredDownloads');
@@ -97,7 +96,7 @@ export const sonarrGetDiskspace = query(async () => {
 	if (!(await assertUserAuth(cookies)))
 		return { success: false, error: 'general.connectionRequired' };
 
-	const { sonarrConnector: conn } = await BaseSync.getInstance();
+	const { sonarrConnector: conn } = await Connectors.getInstance();
 	if (!conn) return { success: false };
 
 	const diskspace = await conn.getDiskSpace();

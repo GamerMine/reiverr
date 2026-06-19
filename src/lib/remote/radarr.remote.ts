@@ -2,11 +2,10 @@ import { command, getRequestEvent, query } from '$app/server';
 import * as v from 'valibot';
 import { assertUserAuth } from '$lib/server/utils.server';
 import { FilteringProfilesEntity, GlobalSettingsEntity } from '@reiverr/db/entities';
-import { RadarrConnector } from '$lib/server/connectors/radarrConnector.server';
 import { ApiSchema, type Result } from '$lib/types';
 import { scheduleTask, TaskType } from '$lib/service/scheduler.server';
-import { BaseSync } from '$lib/server/tasks/baseSync.server';
-import type { components as RadarrComponents } from '$lib/apis/radarr/radarr.generated';
+import type { RadarrQueueResource } from '@reiverr/connectors/types/radarr';
+import Connectors, { RadarrConnector } from '@reiverr/connectors';
 
 export const radarrIsHealthy = query(v.optional(ApiSchema), async (api) => {
 	if (api && api.url && api.key) return await new RadarrConnector(api.url, api.key).isHealthy();
@@ -22,13 +21,13 @@ export const radarrGetRootFolders = query(v.optional(ApiSchema), async (api) => 
 		.data;
 });
 
-let cachedQueue: Result<RadarrComponents['schemas']['QueueResource'][]> | undefined;
+let cachedQueue: Result<RadarrQueueResource[]> | undefined;
 let lastFetch = 0;
 
 async function getCachedQueue() {
 	const now = Date.now();
 	if (!cachedQueue || now - lastFetch > 2000) {
-		const { radarrConnector: conn } = await BaseSync.getInstance();
+		const { radarrConnector: conn } = await Connectors.getInstance();
 		if (!conn) return { success: false };
 
 		await conn.postCommand('RefreshMonitoredDownloads');
@@ -61,7 +60,7 @@ export const radarrGetMovies = query(async () => {
 	if (!(await assertUserAuth(cookies)))
 		return { success: false, error: 'general.connectionRequired' };
 
-	const { radarrConnector: conn } = await BaseSync.getInstance();
+	const { radarrConnector: conn } = await Connectors.getInstance();
 	if (!conn) return { success: false };
 
 	const movies = await conn.getMovie();
@@ -101,7 +100,7 @@ export const radarrGetDiskspace = query(async () => {
 	if (!(await assertUserAuth(cookies)))
 		return { success: false, error: 'general.connectionRequired' };
 
-	const { radarrConnector: conn } = await BaseSync.getInstance();
+	const { radarrConnector: conn } = await Connectors.getInstance();
 	if (!conn) return { success: false };
 
 	const diskspace = await conn.getDiskSpace();

@@ -2,7 +2,7 @@
 	import { Cross1, HamburgerMenu, MagnifyingGlass } from 'svelte-radix';
 	import classNames from 'classnames';
 	import { page } from '$app/state';
-	import TitleSearchModal from './TitleSearchModal.svelte';
+	import TitleSearchModal from '../../../modals/TitleSearchModal.svelte';
 	import IconButton from '$lib/components/common/inputs/buttons/IconButton.svelte';
 	import { fade } from 'svelte/transition';
 	import { modalStack } from '$lib/stores/modal.store';

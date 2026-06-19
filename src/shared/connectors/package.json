@@ -1,0 +1,19 @@
+{
+  "name": "@reiverr/connectors",
+  "version": "0.0.1",
+  "description": "Shared API connectors for Reiverr",
+  "type": "module",
+  "dependencies": {
+
+  },
+  "devDependencies": {
+
+  },
+  "exports": {
+    ".": "./index.ts",
+    "./types/radarr": "./types/radarrTypes.ts",
+    "./types/sonarr": "./types/sonarrTypes.ts",
+    "./types/jellyfin": "./types/jellyfinTypes.ts",
+    "./mappers": "./mappers/index.ts"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "@reiverr/db",
+  "version": "0.0.1",
+  "description": "Shared database access for Reiverr",
+  "type": "module",
+  "dependencies": {
+    "typeorm": "^1.0.0",
+    "reflect-metadata": "^0.2.2",
+    "pg": "^8.22.0",
+    "mysql2": "^3.22.5"
+  },
+  "exports": {
+    ".": "./index.ts",
+    "./entities": "./entities.ts",
+    "./types": "./types.ts"
+  }
+}

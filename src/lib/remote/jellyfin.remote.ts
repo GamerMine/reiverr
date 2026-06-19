@@ -1,7 +1,7 @@
 import { command, getRequestEvent, query } from '$app/server';
 import { assertUserAuth } from '$lib/server/utils.server';
-import { BaseSync } from '$lib/server/tasks/baseSync.server';
 import * as v from 'valibot';
+import Connectors from '@reiverr/connectors';
 
 export const jellyfinGetItems = query(async () => {
 	const { cookies } = getRequestEvent();
@@ -12,7 +12,7 @@ export const jellyfinGetItems = query(async () => {
 		success: true,
 		data: (
 			await (
-				await BaseSync.getInstance()
+				await Connectors.getInstance()
 			).jellyfinConnector.getItems(userId, true, ['Movie', 'Series'])
 		).data?.Items
 	};
@@ -27,7 +27,7 @@ export const jellyfinGetEpisodes = query(async () => {
 		success: true,
 		data: (
 			await (
-				await BaseSync.getInstance()
+				await Connectors.getInstance()
 			).jellyfinConnector.getItems(userId, undefined, ['Series', 'Episode'])
 		).data?.Items
 	};
@@ -39,7 +39,7 @@ export const jellyfinSetItemWatched = command(
 		const { cookies } = getRequestEvent();
 		const userId = await assertUserAuth(cookies);
 		if (!userId) return { success: false, error: 'general.connectionRequired' };
-		const conn = (await BaseSync.getInstance()).jellyfinConnector;
+		const conn = (await Connectors.getInstance()).jellyfinConnector;
 
 		let res;
 		if (item.watched) res = await conn.postUserPlayedItems(userId, item.id);
@@ -53,7 +53,7 @@ export const jellyfinSetItemWatched = command(
 );
 
 export const jellyfinGetUserImage = query(v.string(), async (userId) => {
-	const conn = (await BaseSync.getInstance()).jellyfinConnector;
+	const conn = (await Connectors.getInstance()).jellyfinConnector;
 
 	const image = await conn.getUserImage(userId);
 	return {
