@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { jellyfinGetUserImage, type JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
+	import { type JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
 	import classNames from 'classnames';
+	import { jellyfinGetUserImage } from '$lib/remote/jellyfin.remote';
 
 	let {
 		user = undefined,
@@ -23,8 +24,14 @@
 		if (userImgDiv) {
 			userImgDiv.innerHTML = '';
 			if (user && user.Id && user.Name) {
-				let ppBlob = await jellyfinGetUserImage(user.Id);
-				if (ppBlob.size !== 0) {
+				let ppData = await jellyfinGetUserImage(user.Id);
+				if (ppData.data) {
+					let ppBlob = new Blob(
+						[Uint8Array.from(atob(ppData.data), (c) => c.charCodeAt(0))],
+						{
+							type: 'image/png'
+						}
+					);
 					let img = document.createElement('img');
 
 					img.src = URL.createObjectURL(ppBlob);

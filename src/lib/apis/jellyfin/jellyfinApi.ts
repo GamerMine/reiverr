@@ -1,6 +1,5 @@
 import type { components } from '$lib/apis/jellyfin/jellyfin.generated';
 import type { DeviceProfile } from '$lib/apis/jellyfin/playback-profiles';
-import { arrayToQuery } from '$lib/utils';
 import { settings } from '$lib/stores/settings.svelte.js';
 
 export type JellyfinItem = components['schemas']['BaseItemDto'];
@@ -15,15 +14,6 @@ export const getJellyfinNextUp = async () =>
 	await fetch('/api/jellyfin/shows/nextUp', {
 		method: 'GET'
 	}).then(async (res): Promise<JellyfinItem[]> => (await res.json())?.Items || []);
-
-export const getJellyfinItems = async () =>
-	(await fetch(
-		`/api/jellyfin/items?${arrayToQuery('includeItemTypes', ['Movie', 'Series'])}&hasTmdbId=true&${arrayToQuery('fields', ['ProviderIds', 'Genres', 'DateLastMediaAdded', 'DateCreated'])}`,
-		{
-			method: 'GET'
-		}
-	).then(async (res): Promise<JellyfinItem[]> => (await res.json()).Items || [])) ||
-	Promise.resolve([]);
 
 export const getJellyfinItem = async (itemId: string) =>
 	await fetch(`/api/jellyfin/items/item?itemId=${itemId}`, {
@@ -141,12 +131,6 @@ export const jellyfinGetUsers = async () => {
 	return await fetch('/api/jellyfin/users', {
 		method: 'GET'
 	}).then(async (res): Promise<JellyfinUser[]> => await res.json());
-};
-
-export const jellyfinGetUserImage = async (userId: string) => {
-	return await fetch(`/api/jellyfin/userImage?userId=${userId}`, {
-		method: 'GET'
-	}).then(async (res) => await res.blob());
 };
 
 export const getJellyfinPosterUrl = (item: JellyfinItem, quality = 100, original = false) =>

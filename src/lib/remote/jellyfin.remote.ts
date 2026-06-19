@@ -51,3 +51,16 @@ export const jellyfinSetItemWatched = command(
 		};
 	}
 );
+
+export const jellyfinGetUserImage = query(v.string(), async (userId) => {
+	const conn = (await BaseSync.getInstance()).jellyfinConnector;
+
+	const image = await conn.getUserImage(userId);
+	return {
+		success: image.response.ok,
+		data: image.data
+			? Buffer.from(await image.data.arrayBuffer()).toString('base64')
+			: undefined,
+		error: image.response.ok ? undefined : image.response.statusText
+	};
+});

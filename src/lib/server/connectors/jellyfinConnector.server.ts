@@ -31,6 +31,13 @@ export class JellyfinConnector {
 		});
 	}
 
+	public async getUserImage(userId: string) {
+		return await this.client.GET('/UserImage', {
+			params: { query: { userId, format: 'Png', width: 26 * 10 } },
+			parseAs: 'blob'
+		});
+	}
+
 	public async postUserPlayedItems(userId: string, itemId: string) {
 		return await this.client.POST('/UserPlayedItems/{itemId}', {
 			params: { path: { itemId }, query: { userId, datePlayed: new Date().toISOString() } }

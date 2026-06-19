@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { jellyfinGetUserImage, type JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
+	import { type JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
+	import { jellyfinGetUserImage } from '$lib/remote/jellyfin.remote';
 
 	let {
 		user,
@@ -18,8 +19,14 @@
 		if (contentDiv) {
 			contentDiv.innerHTML = '';
 			if (user && user.Id && user.Name) {
-				let ppBlob = await jellyfinGetUserImage(user.Id);
-				if (ppBlob.size !== 0) {
+				let ppData = await jellyfinGetUserImage(user.Id);
+				if (ppData.data) {
+					let ppBlob = new Blob(
+						[Uint8Array.from(atob(ppData.data), (c) => c.charCodeAt(0))],
+						{
+							type: 'image/png'
+						}
+					);
 					let img = document.createElement('img');
 
 					img.src = URL.createObjectURL(ppBlob);
