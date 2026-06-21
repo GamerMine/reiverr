@@ -3,9 +3,10 @@ import * as v from 'valibot';
 import { assertUserAuth } from '$lib/server/utils.server';
 import { FilteringProfilesEntity, GlobalSettingsEntity } from '@reiverr/db/entities';
 import { ApiSchema, type Result } from '$lib/types';
-import { scheduleTask, TaskType } from '$lib/service/scheduler.server';
+import { scheduleTask } from '../../tasksWorker/scheduler.server';
 import type { RadarrQueueResource } from '@reiverr/connectors/types/radarr';
 import Connectors, { RadarrConnector } from '@reiverr/connectors';
+import { TaskType } from '@reiverr/db/types';
 
 export const radarrIsHealthy = query(v.optional(ApiSchema), async (api) => {
 	if (api && api.url && api.key) return await new RadarrConnector(api.url, api.key).isHealthy();

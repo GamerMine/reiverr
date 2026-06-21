@@ -1,6 +1,5 @@
-import TypeOrm from '@reiverr/db';
-import { initWorker } from '$lib/service/scheduler.server';
 import { env } from '$env/dynamic/private';
+import TypeOrm from '@reiverr/db';
 
 TypeOrm.init({
 	DB_TYPE: env.DB_TYPE,
@@ -11,4 +10,4 @@ TypeOrm.init({
 	DB_DATABASE: env.DB_DATABASE
 });
 await TypeOrm.getDb();
-initWorker();
+import('./tasksWorker/scheduler.server');

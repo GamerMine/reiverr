@@ -7,7 +7,7 @@ import * as v from 'valibot';
 import { assertAdminUserAuth } from '$lib/server/utils.server';
 import { QUALITY_DEFS } from '$lib/constants';
 import { In, Not } from 'typeorm';
-import { scheduleTask, TaskType } from '$lib/service/scheduler.server';
+import { scheduleTask } from '../../tasksWorker/scheduler.server';
 import {
 	CustomFormatsEntity,
 	FilteringProfilesEntity,
@@ -18,6 +18,7 @@ import {
 import {
 	type FilteringProfile,
 	FilteringProfileSchema,
+	TaskType,
 	type UserSettings
 } from '@reiverr/db/types';
 import { PlatformSchema, OptionalStringSchema, type Result } from '$lib/types';

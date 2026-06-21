@@ -27,12 +27,6 @@ export type SeasonDataWithCheck = SeasonData & {
 	episodes: EpisodeDataWithCheck[];
 };
 
-export const MessageObjectSchema = v.object({
-	id: v.string(),
-	values: v.optional(v.record(v.string(), v.union([v.string(), v.number(), v.date()])))
-});
-export type MessageObject = InferOutput<typeof MessageObjectSchema>;
-
 export type Result<TResultData extends object | undefined> = {
 	success: boolean;
 	error?: string;

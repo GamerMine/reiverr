@@ -3,9 +3,10 @@ import * as v from 'valibot';
 import { ApiSchema, type Result, SeriesAddSchema } from '$lib/types';
 import { FilteringProfilesEntity, GlobalSettingsEntity } from '@reiverr/db/entities';
 import { assertUserAuth } from '$lib/server/utils.server';
-import { scheduleTask, TaskType } from '$lib/service/scheduler.server';
+import { scheduleTask } from '../../tasksWorker/scheduler.server';
 import type { SonarrQueueResource } from '@reiverr/connectors/types/sonarr';
 import Connectors, { SonarrConnector } from '@reiverr/connectors';
+import { TaskType } from '@reiverr/db/types';
 
 export const sonarrIsHealthy = query(v.optional(ApiSchema), async (api) => {
 	if (api && api.url && api.key) return await new SonarrConnector(api.url, api.key).isHealthy();

@@ -9,11 +9,30 @@
   "devDependencies": {
 
   },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
   "exports": {
-    ".": "./index.ts",
-    "./types/radarr": "./types/radarrTypes.ts",
-    "./types/sonarr": "./types/sonarrTypes.ts",
-    "./types/jellyfin": "./types/jellyfinTypes.ts",
-    "./mappers": "./mappers/index.ts"
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./types/radarr": {
+      "import": "./dist/types/radarrTypes.js",
+      "types": "./dist/types/radarrTypes.d.ts"
+    },
+    "./types/sonarr": {
+      "import": "./dist/types/sonarrTypes.js",
+      "types": "./dist/types/sonarrTypes.d.ts"
+    },
+    "./types/jellyfin": {
+      "import": "./dist/types/jellyfinTypes.js",
+      "types": "./dist/types/jellyfinTypes.d.ts"
+    },
+    "./mappers": {
+      "import": "./dist/mappers/index.js",
+      "types": "./dist/mappers/index.d.ts"
+    }
   }
 }

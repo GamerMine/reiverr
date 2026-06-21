@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "NodeNext",
+    "target": "es2022",
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationMap": true,
+    "rootDir": "./src",
+    "strictPropertyInitialization": false,
+    "strict": false,
+    "types": ["node"]
+  },
+  "include": ["src"]
+}

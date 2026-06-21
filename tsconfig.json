@@ -17,7 +17,8 @@
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
 		"strictPropertyInitialization": false,
-		"verbatimModuleSyntax": true
+		"verbatimModuleSyntax": true,
+		"allowImportingTsExtensions": true
 	}
 	// Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
 	//

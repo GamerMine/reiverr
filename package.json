@@ -8,7 +8,8 @@
   },
   "scripts": {
     "dev": "vite dev --host",
-    "build": "vite build"
+    "build:shared": "npm run build -w @reiverr/db && npm run build -w @reiverr/connectors",
+    "build": "npm run build:shared && vite build"
   },
   "devDependencies": {
     "@eslint/compat": "^2.1.0",
@@ -31,6 +32,7 @@
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.61.1",
     "vite": "^8.0.16",
+    "vite-plugin-node-worker": "^1.0.6",
     "vitest": "^4.1.9"
   },
   "dependencies": {

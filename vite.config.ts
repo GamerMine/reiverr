@@ -1,13 +1,10 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vitest/config';
-// import * as pkg from './package.json';
+import workerPlugin from 'vite-plugin-node-worker';
 
 export default defineConfig({
-	plugins: [sveltekit()],
-	// define: {
-	// 	PKG: pkg
-	// },
-	test: {
-		include: ['src/**/*.{test,spec}.{js,ts}']
+	plugins: [sveltekit(), workerPlugin()],
+	worker: {
+		plugins: () => [workerPlugin()]
 	}
 });

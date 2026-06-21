@@ -9,9 +9,25 @@
     "pg": "^8.22.0",
     "mysql2": "^3.22.5"
   },
+  "devDependencies": {
+    "@types/node": "^26.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
   "exports": {
-    ".": "./index.ts",
-    "./entities": "./entities.ts",
-    "./types": "./types.ts"
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist.index.d.ts"
+    },
+    "./entities": {
+      "import": "./dist/entities.js",
+      "types": "./dist/entities.d.ts"
+    },
+    "./types": {
+      "import": "./dist/types.js",
+      "types": "./dist/types.d.ts"
+    }
   }
 }
