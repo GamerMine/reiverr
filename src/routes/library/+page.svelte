@@ -34,7 +34,7 @@
 				)?.[3]
 	);
 
-	function getStatusText(status?: RadarrQueueStatus) {
+	function getStatusText(status: RadarrQueueStatus) {
 		switch (status) {
 			case 'failed':
 			// TODO

@@ -13,8 +13,7 @@
     "@types/node": "^26.0.0"
   },
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch"
+    "build": "tsc"
   },
   "exports": {
     ".": {

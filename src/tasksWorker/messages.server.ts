@@ -1,5 +1,4 @@
 import * as v from 'valibot';
-import { MessageObjectSchema } from '@reiverr/db/types';
 
 // Inbound Messages
 
@@ -9,12 +8,6 @@ export const NewTaskMessageSchema = v.object({
 });
 export type NewTaskMessage = v.InferOutput<typeof NewTaskMessageSchema>;
 
-export const TaskUpdatedMessageSchema = v.object({
-	type: v.literal('taskUpdated'),
-	uuid: v.pipe(v.string(), v.uuid())
-});
-export type TaskUpdatedMessage = v.InferOutput<typeof TaskUpdatedMessageSchema>;
-
 export const TaskCanceledMessageSchema = v.object({
 	type: v.literal('taskCanceled'),
 	uuid: v.pipe(v.string(), v.uuid())
@@ -23,36 +16,11 @@ export type TaskCanceledMessage = v.InferOutput<typeof TaskCanceledMessageSchema
 
 export const InboundMessageSchema = v.variant('type', [
 	NewTaskMessageSchema,
-	TaskUpdatedMessageSchema,
 	TaskCanceledMessageSchema
 ]);
 export type InboundMessage = v.InferOutput<typeof InboundMessageSchema>;
 
 // Outbound Messages
-
-export const TaskPreparationStartedMessageSchema = v.object({
-	type: v.literal('taskPreparationStarted'),
-	uuid: v.pipe(v.string(), v.uuid())
-});
-export type TaskPreparationStartedMessage = v.InferOutput<
-	typeof TaskPreparationStartedMessageSchema
->;
-
-export const TaskPreparationFinishedMessageSchema = v.object({
-	type: v.literal('taskPreparationFinished'),
-	uuid: v.pipe(v.string(), v.uuid()),
-	error: v.optional(MessageObjectSchema)
-});
-export type TaskPreparationFinishedMessage = v.InferOutput<
-	typeof TaskPreparationFinishedMessageSchema
->;
-
-export const TaskFinishedMessageSchema = v.object({
-	type: v.literal('taskFinished'),
-	uuid: v.pipe(v.string(), v.uuid()),
-	error: v.optional(MessageObjectSchema)
-});
-export type TaskFinishedMessage = v.InferOutput<typeof TaskFinishedMessageSchema>;
 
 export const TaskExecutionQueuedMessageSchema = v.object({
 	type: v.literal('taskQueued'),
@@ -87,9 +55,6 @@ export const TaskExecutionCanceledMessageSchema = v.object({
 export type TaskExecutionCanceledMessage = v.InferOutput<typeof TaskExecutionCanceledMessageSchema>;
 
 export const OutboundMessageSchema = v.variant('type', [
-	TaskPreparationStartedMessageSchema,
-	TaskPreparationFinishedMessageSchema,
-	TaskFinishedMessageSchema,
 	TaskExecutionQueuedMessageSchema,
 	TaskExecutionStartedMessageSchema,
 	TaskExecutionProgressMessageSchema,

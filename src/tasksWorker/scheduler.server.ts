@@ -7,8 +7,9 @@ import { RadarrMovieRemove } from './tasks/radarrMovieRemove.server.ts';
 import { SonarrSeriesAdd } from './tasks/sonarrSeriesAdd.server.ts';
 import { SonarrSeriesRemove } from './tasks/sonarrSeriesRemove.server.ts';
 import { isMainThread, Worker } from 'node:worker_threads';
-import { type NewTaskMessage } from './messages.server.ts';
+import { type NewTaskMessage, type OutboundMessage } from './messages.server.ts';
 import { type MessageObject, TaskType } from '@reiverr/db/types';
+import { tasksWorkerFilename } from './worker.ts';
 
 let workerInstance: Worker;
 
@@ -172,30 +173,41 @@ export async function cancelTask(uuid: string) {
 }
 
 if (isMainThread) {
-	import('worker.ts?nodeWorker').then((worker) => {
-		import('$env/dynamic/private').then(({ env }) => {
-			workerInstance = new worker.default({
-				workerData: {
-					DB_TYPE: env.DB_TYPE,
-					DB_HOST: env.DB_HOST,
-					DB_PORT: Number.parseInt(env.DB_PORT),
-					DB_USERNAME: env.DB_USERNAME,
-					DB_PASSWORD: env.DB_PASSWORD,
-					DB_DATABASE: env.DB_DATABASE
-				}
-			});
-
-			workerInstance.on('message', (message: MessageObject) => {});
-			workerInstance.on('exit', (code: number) => {
-				console.log(code);
-			});
-			workerInstance.on('error', (err: Error) => {
-				console.error(err);
-			});
-
-			TaskEntity.getPending().then((tasks) =>
-				tasks.forEach((task) => scheduleExecution(task).then(() => task.save()))
-			);
+	import('$env/dynamic/private').then(({ env }) => {
+		workerInstance = new Worker(new URL(tasksWorkerFilename), {
+			workerData: {
+				DB_TYPE: env.DB_TYPE,
+				DB_HOST: env.DB_HOST,
+				DB_PORT: Number.parseInt(env.DB_PORT),
+				DB_USERNAME: env.DB_USERNAME,
+				DB_PASSWORD: env.DB_PASSWORD,
+				DB_DATABASE: env.DB_DATABASE
+			}
 		});
+
+		workerInstance.on('message', (message: OutboundMessage) => {
+			switch (message.type) {
+				case 'taskQueued':
+					break;
+				case 'taskExecutionStarted':
+					break;
+				case 'taskExecutionProgress':
+					break;
+				case 'taskExecutionFinished':
+					break;
+				case 'taskExecutionCanceled':
+					break;
+			}
+		});
+		workerInstance.on('exit', (code: number) => {
+			console.log(code);
+		});
+		workerInstance.on('error', (err: Error) => {
+			console.error(err);
+		});
+
+		TaskEntity.getPending().then((tasks) =>
+			tasks.forEach((task) => scheduleExecution(task).then(() => task.save()))
+		);
 	});
 }

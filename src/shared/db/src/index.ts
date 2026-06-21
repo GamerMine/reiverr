@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { DataSource, DataSourceOptions } from 'typeorm';
+import { DataSource, type DataSourceOptions } from 'typeorm';
 import { GlobalSettingsEntity } from './entities/GlobalSettings.js';
 import { UserSettingsEntity } from './entities/UserSettings.js';
 import { FilteringProfilesEntity } from './entities/FilteringProfiles.js';
@@ -20,6 +20,9 @@ class TypeOrm {
 	public static getDb(): Promise<DataSource | null> {
 		if (!TypeOrm.config) {
 			throw new Error('Please initialize database config using TypeOrm.init()');
+		}
+		if (!TypeOrm.config.DB_TYPE) {
+			throw new Error(`Unknown database type: ${TypeOrm.config.DB_TYPE}`);
 		}
 		if (!TypeOrm.instance) {
 			TypeOrm.instance = new DataSource({
@@ -43,7 +46,6 @@ class TypeOrm {
 			} as DataSourceOptions)
 				.initialize()
 				.then((fulfilled) => {
-					console.log('Data Source has been initialized!');
 					return fulfilled;
 				})
 				.catch((err) => {

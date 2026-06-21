@@ -1,10 +1,25 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vitest/config';
-import workerPlugin from 'vite-plugin-node-worker';
+import path from 'node:path';
 
-export default defineConfig({
-	plugins: [sveltekit(), workerPlugin()],
-	worker: {
-		plugins: () => [workerPlugin()]
-	}
+export default defineConfig(({ command }) => {
+	return {
+		plugins: [sveltekit()],
+
+		// FIXME: The following expo-sqlite related stuff fixes a typeorm issue (see ./src/stubs/expo-sqlite.js)
+		resolve: {
+			alias: {
+				'expo-sqlite': path.resolve('./src/stubs/expo-sqlite.js')
+			}
+		},
+		optimizeDeps: {
+			exclude: ['expo-sqlite']
+		},
+		ssr:
+			command === 'build'
+				? {
+						noExternal: ['typeorm']
+					}
+				: {}
+	};
 });
