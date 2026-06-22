@@ -10,8 +10,14 @@ import { isMainThread, Worker } from 'node:worker_threads';
 import { type NewTaskMessage, type OutboundMessage } from './messages.server.ts';
 import { type MessageObject, TaskType } from '@reiverr/db/types';
 import { tasksWorkerFilename } from './worker.ts';
+import { TaskState, type TaskStatus, type UUID } from './types.ts';
 
 let workerInstance: Worker;
+let tasksState: Map<UUID, TaskStatus> = new Map<UUID, TaskStatus>();
+
+export function getTasksState() {
+	return tasksState;
+}
 
 export interface TaskProgressCallback {
 	(current: number, total: number): Promise<void>;
@@ -185,22 +191,67 @@ if (isMainThread) {
 			}
 		});
 
-		workerInstance.on('message', (message: OutboundMessage) => {
+		workerInstance.on('message', async (message: OutboundMessage) => {
+			const task = await TaskExecutionEntity.get(message.uuid);
+			const oldState = tasksState.get(message.uuid);
 			switch (message.type) {
 				case 'taskQueued':
+					tasksState.set(message.uuid, {
+						type: task.task.type,
+						data: task.data,
+						progress: undefined,
+						state: TaskState.QUEUED
+					});
 					break;
 				case 'taskExecutionStarted':
+					tasksState.set(message.uuid, {
+						type: task.task.type,
+						data: task.data,
+						progress: undefined,
+						state: TaskState.STARTED
+					});
 					break;
 				case 'taskExecutionProgress':
+					tasksState.set(message.uuid, {
+						type: task.task.type,
+						data: task.data,
+						progress: {
+							current: message.current,
+							total: message.total
+						},
+						state: TaskState.STARTED
+					});
 					break;
 				case 'taskExecutionFinished':
+					tasksState.set(message.uuid, {
+						type: task.task.type,
+						data: task.data,
+						progress: oldState?.progress
+							? {
+									current: oldState?.progress?.current,
+									total: oldState?.progress?.total
+								}
+							: undefined,
+						state: TaskState.COMPLETED
+					});
 					break;
 				case 'taskExecutionCanceled':
+					tasksState.set(message.uuid, {
+						type: task.task.type,
+						data: task.data,
+						progress: oldState?.progress
+							? {
+									current: oldState?.progress?.current,
+									total: oldState?.progress?.total
+								}
+							: undefined,
+						state: TaskState.CANCELED
+					});
 					break;
 			}
 		});
 		workerInstance.on('exit', (code: number) => {
-			console.log(code);
+			console.info(`Tasks worker exited with code: ${code}`);
 		});
 		workerInstance.on('error', (err: Error) => {
 			console.error(err);

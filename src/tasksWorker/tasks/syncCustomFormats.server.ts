@@ -1,5 +1,5 @@
 import type { TaskExecutor, TaskProgressCallback, TaskQueueCallback } from '../scheduler.server';
-import { PlatformSchema } from '../../lib/types.ts';
+import { PlatformSchema } from '../types.ts';
 import * as v from 'valibot';
 import { arrayDifference } from '../utils.server.ts';
 import { CustomFormatsEntity } from '@reiverr/db/entities';

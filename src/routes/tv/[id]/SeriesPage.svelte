@@ -26,6 +26,7 @@
 		Archive,
 		ChevronLeft,
 		ChevronRight,
+		Clock,
 		DotFilled,
 		Trash
 	} from 'svelte-radix';
@@ -47,6 +48,9 @@
 	import { jellyfinGetEpisodes } from '$lib/remote/jellyfin.remote';
 	import type { components as JellyfinComponents } from '$lib/apis/jellyfin/jellyfin.generated';
 	import type { SonarrSeriesResource } from '@reiverr/connectors/types/sonarr';
+	import { getTasks } from '$lib/remote/tasks.remote.ts';
+	import { type SeriesAdd, TaskState, type TaskStatus } from '../../../tasksWorker/types.ts';
+	import { TaskType } from '@reiverr/db/types';
 
 	let {
 		tmdbId,
@@ -66,6 +70,8 @@
 	let sonarrSeries: SonarrSeriesResource | undefined = $state();
 	let seasonsData: Promise<SeasonData>[] | undefined = $state();
 	let jellyfinItem: JellyfinComponents['schemas']['BaseItemDto'] | undefined = $state();
+	let tasks = $derived(await getTasks());
+	let isBeingAdded = $state(false);
 
 	const jellyfinEpisodeData: {
 		[key: string]: {
@@ -206,18 +212,6 @@
 		await sonarrGetSeries().refresh();
 	}
 
-	onMount(async () => {
-		await Promise.all([sonarrGetSeries(), preloadSeries(), jellyfinGetEpisodes()]);
-		sonarrSeries = sonarrGetSeries().current?.data?.find((s) => s.tmdbId === tmdbId);
-		jellyfinItem = jellyfinGetEpisodes().current?.data?.find(
-			(i) => i.Type === 'Series' && i.ProviderIds?.Tmdb === tmdbId.toString()
-		);
-
-		loadJellyfinEpisodeData();
-
-		loading = false;
-	});
-
 	// Focus next episode on load
 	let didFocusNextEpisode = false;
 	$effect(() => {
@@ -245,6 +239,37 @@
 				}
 			}
 		}
+	});
+
+	$effect(() => {
+		const state = Array.from(tasks.values()).find(
+			(t: TaskStatus) =>
+				t.type === TaskType.SONARR_SERIES_ADD &&
+				(t.data as SeriesAdd).tvdbId === tmdbSeries?.external_ids.tvdb_id
+		);
+		isBeingAdded =
+			!!state && (state.state === TaskState.QUEUED || state.state === TaskState.STARTED);
+		if (state && state.state === TaskState.COMPLETED) {
+			sonarrGetSeries()
+				.refresh()
+				.then(() => {
+					sonarrSeries = sonarrGetSeries().current?.data?.find(
+						(s) => s.tmdbId === tmdbId
+					);
+				});
+		}
+	});
+
+	onMount(async () => {
+		await Promise.all([sonarrGetSeries(), preloadSeries(), jellyfinGetEpisodes()]);
+		sonarrSeries = sonarrGetSeries().current?.data?.find((s) => s.tmdbId === tmdbId);
+		jellyfinItem = jellyfinGetEpisodes().current?.data?.find(
+			(i) => i.Type === 'Series' && i.ProviderIds?.Tmdb === tmdbId.toString()
+		);
+
+		loadJellyfinEpisodeData();
+
+		loading = false;
 	});
 </script>
 
@@ -312,7 +337,7 @@
 						>
 							<Trash size="20" />
 						</Button>
-					{:else if !sonarrSeries && settings.globalSettings.sonarr.baseUrl}
+					{:else if !sonarrSeries && settings.globalSettings.sonarr.baseUrl && !isBeingAdded}
 						<Select
 							disabled={addToSonarrLoading}
 							onchange={addToSonarr}
@@ -336,6 +361,12 @@
 							onclick={async () => await removeSeries()}
 						>
 							<Trash size="20" />
+						</Button>
+					{:else if isBeingAdded}
+						<Button variant="secondary" disabled>
+							<Clock size="20" /><span class="ml-2"
+								>{$_('library.content.beingAdded')}</span
+							>
 						</Button>
 					{/if}
 				{/if}

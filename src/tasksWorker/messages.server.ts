@@ -50,6 +50,7 @@ export const TaskExecutionFinishedMessageSchema = v.object({
 export type TaskExecutionFinishedMessage = v.InferOutput<typeof TaskExecutionFinishedMessageSchema>;
 
 export const TaskExecutionCanceledMessageSchema = v.object({
+	uuid: v.pipe(v.string(), v.uuid()),
 	type: v.literal('taskExecutionCanceled')
 });
 export type TaskExecutionCanceledMessage = v.InferOutput<typeof TaskExecutionCanceledMessageSchema>;

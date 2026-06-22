@@ -8,8 +8,7 @@ import {
 import Connectors from '@reiverr/connectors';
 import { RadarrMapper } from '@reiverr/connectors/mappers';
 import type { MessageObject } from '@reiverr/db/types';
-
-const MovieAddSchema = v.object({ tmdbId: v.number(), language: v.string() });
+import { MovieAddSchema } from '../types.ts';
 
 export class RadarrMovieAdd implements TaskExecutor {
 	async computeDescription(data: unknown): Promise<MessageObject> {

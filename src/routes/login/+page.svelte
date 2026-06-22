@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { jellyfinGetUsers, type JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
+	import { type JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
 	import UserCarousel from '$lib/components/common/misc/carousel/UserCarousel.svelte';
 	import UserCard from '$lib/components/common/misc/cards/UserCard.svelte';
 	import { _ } from 'svelte-i18n';
@@ -12,6 +12,7 @@
 	import { onMount } from 'svelte';
 	import { animateBackground } from '$lib/utils/animation';
 	import { setTmpLanguage } from '$lib/utils';
+	import { jellyfinGetUsers } from '$lib/remote/jellyfin.remote.ts';
 
 	let mainDiv: HTMLDivElement | undefined = $state();
 	let manualLogin: boolean = $state(false);
@@ -74,7 +75,7 @@
 						? 'invisible opacity-0 -translate-y-30'
 						: 'visible'}"
 				>
-					{#each users as user (user)}
+					{#each users.data as user (user)}
 						<UserCard {user} onclick={() => askForPassword(user)}></UserCard>
 					{/each}
 				</UserCarousel>

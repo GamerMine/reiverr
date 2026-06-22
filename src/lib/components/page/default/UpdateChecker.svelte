@@ -14,7 +14,8 @@
 		return await fetch('https://api.github.com/repos/GamerMine/reiverr/tags', {
 			method: 'GET'
 		}).then(
-			async (res) => (await res.json()).find((v: { name: string }) => v.name.startsWith('v1'))?.name
+			async (res) =>
+				(await res.json()).find((v: { name: string }) => v.name.startsWith('v1'))?.type
 		);
 	}
 
@@ -41,7 +42,11 @@
 				>{latestVersion} {$_('update.updateAvailable')}</a
 			>
 			<div class="absolute right-4 inset-y-0 flex items-center gap-2">
-				<Button variant="tertiary" size="xs" onclick={() => skippedVersion.set(latestVersion)}>
+				<Button
+					variant="tertiary"
+					size="xs"
+					onclick={() => skippedVersion.set(latestVersion)}
+				>
 					{$_('update.skipVersion')}
 				</Button>
 				<IconButton onclick={() => (visible = false)}>

@@ -10,7 +10,8 @@
 	import AccountPane from '$lib/components/page/default/navbar/AccountPane.svelte';
 	import UserImage from '$lib/components/common/images/UserImage.svelte';
 	import Divider from '$lib/components/common/misc/Divider.svelte';
-	import { jellyfinDisconnectUser } from '$lib/apis/jellyfin/jellyfinApi';
+	import { jellyfinDisconnect } from '$lib/remote/jellyfin.remote.ts';
+	import { goto } from '$app/navigation';
 
 	let y = $state(0);
 	let transparent = true;
@@ -113,7 +114,7 @@
 
 {#if isMobileMenuVisible}
 	<div
-		class="fixed inset-0 pt-16 bottom-0 bg-stone-900/50 backdrop-blur-2xl z-[9] grid grid-rows-3 transition-all ease-linear"
+		class="fixed inset-0 pt-16 bottom-0 bg-stone-900/50 backdrop-blur-2xl z-9 grid grid-rows-3 transition-all ease-linear"
 		transition:fade={{ duration: 150 }}
 	>
 		<div class="row-span-2 flex flex-col gap-4 items-center justify-center">
@@ -149,8 +150,8 @@
 			<a
 				onclick={async () => {
 					isMobileMenuVisible = false;
-					await jellyfinDisconnectUser();
-					window.location.href = '/login';
+					await jellyfinDisconnect();
+					await goto('/');
 				}}
 				href="/login"
 				class={page && getLinkStyle('/login')}

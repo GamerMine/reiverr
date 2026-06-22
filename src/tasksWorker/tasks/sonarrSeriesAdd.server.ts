@@ -1,5 +1,5 @@
 import type { TaskExecutor, TaskProgressCallback, TaskQueueCallback } from '../scheduler.server';
-import { SeriesAddSchema } from '../../lib/types.ts';
+import { SeriesAddSchema } from '../types.ts';
 import * as v from 'valibot';
 import {
 	FilteringProfilesEntity,

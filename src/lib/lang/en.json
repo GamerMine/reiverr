@@ -118,6 +118,7 @@
       "addSonarr": "Add to Sonarr",
       "downloading": "Downloading",
       "queued": "In Queue",
+      "beingAdded": "Is being added",
       "downloadClientUnavailable": "Download client unavailable",
       "requestSeries": "Request series",
       "sizeDisk": "Size on disk",

@@ -2,34 +2,65 @@ import { command, getRequestEvent, query } from '$app/server';
 import { assertUserAuth } from '$lib/server/utils.server';
 import * as v from 'valibot';
 import Connectors from '@reiverr/connectors';
+import type { RemoteQueryFunction } from '@sveltejs/kit';
+import type { Result } from '$lib/types.ts';
+import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
 
-export const jellyfinGetItems = query(async () => {
-	const { cookies } = getRequestEvent();
-	const userId = await assertUserAuth(cookies);
-	if (!userId) return { success: false, error: 'general.connectionRequired' };
+export const jellyfinGetItems: RemoteQueryFunction<void, Result<JellyfinBaseItemDto[]>> = query(
+	async () => {
+		const { cookies } = getRequestEvent();
+		const userId = await assertUserAuth(cookies);
+		if (!userId) return { success: false, error: 'general.connectionRequired' };
 
+		return {
+			success: true,
+			data: (
+				await (
+					await Connectors.getInstance()
+				).jellyfinConnector.getItems(userId, true, ['Movie', 'Series'])
+			).data?.Items
+		};
+	}
+);
+
+export const jellyfinGetEpisodes: RemoteQueryFunction<void, Result<JellyfinBaseItemDto[]>> = query(
+	async () => {
+		const { cookies } = getRequestEvent();
+		const userId = await assertUserAuth(cookies);
+		if (!userId) return { success: false, error: 'general.connectionRequired' };
+
+		return {
+			success: true,
+			data: (
+				await (
+					await Connectors.getInstance()
+				).jellyfinConnector.getItems(userId, undefined, ['Series', 'Episode'])
+			).data?.Items
+		};
+	}
+);
+
+export const jellyfinGetUserImage = query(v.string(), async (userId) => {
+	const conn = (await Connectors.getInstance()).jellyfinConnector;
+
+	const image = await conn.getUserImage(userId);
 	return {
-		success: true,
-		data: (
-			await (
-				await Connectors.getInstance()
-			).jellyfinConnector.getItems(userId, true, ['Movie', 'Series'])
-		).data?.Items
+		success: image.response.ok,
+		data: image.data
+			? Buffer.from(await image.data.arrayBuffer()).toString('base64')
+			: undefined,
+		error: image.response.ok ? undefined : image.response.statusText
 	};
 });
 
-export const jellyfinGetEpisodes = query(async () => {
-	const { cookies } = getRequestEvent();
-	const userId = await assertUserAuth(cookies);
-	if (!userId) return { success: false, error: 'general.connectionRequired' };
+export const jellyfinGetUsers = query(async () => {
+	const conn = (await Connectors.getInstance()).jellyfinConnector;
+	const users = await conn.getUsers();
 
 	return {
-		success: true,
-		data: (
-			await (
-				await Connectors.getInstance()
-			).jellyfinConnector.getItems(userId, undefined, ['Series', 'Episode'])
-		).data?.Items
+		success: users.response.ok,
+		data: users.data,
+		error: users.response.ok ? undefined : users.response.statusText
 	};
 });
 
@@ -52,15 +83,7 @@ export const jellyfinSetItemWatched = command(
 	}
 );
 
-export const jellyfinGetUserImage = query(v.string(), async (userId) => {
-	const conn = (await Connectors.getInstance()).jellyfinConnector;
-
-	const image = await conn.getUserImage(userId);
-	return {
-		success: image.response.ok,
-		data: image.data
-			? Buffer.from(await image.data.arrayBuffer()).toString('base64')
-			: undefined,
-		error: image.response.ok ? undefined : image.response.statusText
-	};
+export const jellyfinDisconnect = command(async () => {
+	const { cookies } = getRequestEvent();
+	cookies.delete('access_token', { path: '/' });
 });

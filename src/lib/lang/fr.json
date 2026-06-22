@@ -116,6 +116,7 @@
       "get": "Obtenir",
       "downloading": "En téléchargement",
       "queued": "En file d'attente",
+      "beingAdded": "En cours d'ajout",
       "downloadClientUnavailable": "Client de téléchargement indisponible",
       "viewLess": "Moins",
       "viewAll": "Plus",

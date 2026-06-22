@@ -21,8 +21,9 @@ import {
 	TaskType,
 	type UserSettings
 } from '@reiverr/db/types';
-import { PlatformSchema, OptionalStringSchema, type Result } from '$lib/types';
+import { OptionalStringSchema, type Result } from '$lib/types';
 import { RadarrConnector, SonarrConnector } from '@reiverr/connectors';
+import { PlatformSchema } from '../../tasksWorker/types.ts';
 
 export const saveSettings = form(
 	v.object({

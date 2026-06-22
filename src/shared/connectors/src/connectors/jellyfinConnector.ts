@@ -38,6 +38,17 @@ export class JellyfinConnector {
 		});
 	}
 
+	public async getUsers() {
+		return await this.client.GET('/Users', {
+			params: {
+				query: {
+					isHidden: false,
+					isDisabled: false
+				}
+			}
+		});
+	}
+
 	public async postUserPlayedItems(userId: string, itemId: string) {
 		return await this.client.POST('/UserPlayedItems/{itemId}', {
 			params: { path: { itemId }, query: { userId, datePlayed: new Date().toISOString() } }

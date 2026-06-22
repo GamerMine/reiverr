@@ -103,9 +103,9 @@
 											{episode.title}
 										</p>
 										<TruncatedText
-											class="text-sm col-span-3"
+											class="text-sm col-span-3 p-2"
 											text={episode.overview}
-											maxLength={170}
+											maxLength={120}
 										/>
 										<Toggle
 											class="col-span-1 flex items-center justify-center"

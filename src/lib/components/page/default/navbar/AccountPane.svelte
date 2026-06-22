@@ -4,8 +4,10 @@
 	import Divider from '$lib/components/common/misc/Divider.svelte';
 	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
 	import { Exit, Gear } from 'svelte-radix';
-	import { jellyfinDisconnectUser, type JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
+	import { type JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
 	import { _ } from 'svelte-i18n';
+	import { goto } from '$app/navigation';
+	import { jellyfinDisconnect } from '$lib/remote/jellyfin.remote.ts';
 
 	let user: JellyfinUser = JSON.parse(localStorage.getItem('user') || '{}') || undefined;
 </script>
@@ -40,9 +42,9 @@
 			<Button
 				variant="tertiary"
 				class="w-full"
-				onclick={() => {
-					jellyfinDisconnectUser();
-					window.location.href = '/login';
+				onclick={async () => {
+					await jellyfinDisconnect();
+					await goto('/login');
 				}}
 			>
 				<Exit size="20"></Exit><span class="flex ml-2">{$_('navbar.userMenu.logout')}</span>

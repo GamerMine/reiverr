@@ -34,4 +34,8 @@ export class TaskExecutionEntity extends BaseEntity {
 
 	@Column('simple-json', { nullable: true })
 	error: MessageObject | null;
+
+	public static async get(uuid: string) {
+		return await this.findOne({ where: { uuid }, relations: { task: true } });
+	}
 }

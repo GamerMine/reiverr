@@ -9,11 +9,12 @@ import type {
 	TaskExecutionQueuedMessage,
 	TaskExecutionStartedMessage
 } from './messages.server.ts';
+
 export const tasksWorkerFilename = import.meta.url;
 
 let queuedTasks: string[] = [];
-
 let running = true;
+
 if (!isMainThread) {
 	parentPort?.on('message', (msg: InboundMessage) => {
 		switch (msg.type) {

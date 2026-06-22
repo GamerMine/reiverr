@@ -17,7 +17,7 @@
 	import { playerState } from '$lib/components/VideoPlayer/VideoPlayer';
 	import { formatSize } from '$lib/utils';
 	import classNames from 'classnames';
-	import { ActivityLog, Archive, ChevronRight, DotFilled, Trash } from 'svelte-radix';
+	import { ActivityLog, Archive, ChevronRight, Clock, DotFilled, Trash } from 'svelte-radix';
 	import { type ComponentProps, onMount } from 'svelte';
 	import { _ } from 'svelte-i18n';
 	import { settings } from '$lib/stores/settings.svelte';
@@ -32,6 +32,9 @@
 		createSuccessNotification
 	} from '$lib/stores/notification.store';
 	import type { RadarrMovieResource } from '@reiverr/connectors/types/radarr';
+	import { getTasks } from '$lib/remote/tasks.remote.ts';
+	import { type MovieAdd, TaskState, type TaskStatus } from '../../../tasksWorker/types.ts';
+	import { TaskType } from '@reiverr/db/types';
 
 	let {
 		tmdbId,
@@ -43,6 +46,8 @@
 	let tmdbMovie: TmdbMovieFull2 | undefined = $state();
 	let jellyfinItem: JellyfinComponents['schemas']['BaseItemDto'] | undefined = $state();
 	let radarrMovie: RadarrMovieResource | undefined = $state();
+	let tasks = $derived(await getTasks());
+	let isBeingAdded = $state(false);
 
 	async function preloadRecommendationData() {
 		const tmdbRecommendationProps = getTmdbMovieRecommendations(tmdbId)
@@ -75,17 +80,11 @@
 	function addToRadarr(language: string) {
 		addToRadarrLoading = true;
 
-		// FIXME: Because adding a movie to Radarr is done in a task, refreshing the store directly is useless: the task
-		//  might take more time to complete than the Promise might take to resolve.
 		radarrAddMovie({ tmdbId, language }).then((res) => {
 			if (res.success)
 				createSuccessNotification($_('general.success'), 'TODO'); //TODO: Add translation
 			else createErrorNotification($_('general.error'), $_(res.error ?? 'TODO'));
-			radarrGetMovies()
-				.refresh()
-				.then(() => {
-					addToRadarrLoading = false;
-				});
+			addToRadarrLoading = false;
 		});
 	}
 
@@ -93,6 +92,22 @@
 		if (radarrMovie?.id) radarrRemoveMovie(radarrMovie.id);
 		await radarrGetMovies().refresh();
 	}
+
+	$effect(() => {
+		const state = Array.from(tasks.values()).find(
+			(t: TaskStatus) =>
+				t.type === TaskType.RADARR_MOVIE_ADD && (t.data as MovieAdd).tmdbId === tmdbId
+		);
+		isBeingAdded =
+			!!state && (state.state === TaskState.QUEUED || state.state === TaskState.STARTED);
+		if (state && state.state === TaskState.COMPLETED) {
+			radarrGetMovies()
+				.refresh()
+				.then(() => {
+					radarrMovie = radarrGetMovies().current?.data?.find((m) => m.tmdbId === tmdbId);
+				});
+		}
+	});
 
 	onMount(async () => {
 		const resolved = await Promise.all([
@@ -172,7 +187,7 @@
 						>
 							<Trash size="20" />
 						</Button>
-					{:else if !radarrMovie && settings.globalSettings.radarr.baseUrl}
+					{:else if !radarrMovie && settings.globalSettings.radarr.baseUrl && !isBeingAdded}
 						<Select
 							disabled={addToRadarrLoading}
 							onchange={addToRadarr}
@@ -196,6 +211,12 @@
 							onclick={async () => await removeMovie()}
 						>
 							<Trash size="20" />
+						</Button>
+					{:else if isBeingAdded}
+						<Button variant="secondary" disabled>
+							<Clock size="20" /><span class="ml-2"
+								>{$_('library.content.beingAdded')}</span
+							>
 						</Button>
 					{/if}
 				{/if}
@@ -267,7 +288,7 @@
 					<div class="col-span-2 lg:col-span-1">
 						<p class="text-zinc-400 text-sm">Video</p>
 						<h2 class="font-medium">
-							{radarrMovie?.movieFile?.quality.quality?.name}
+							{radarrMovie?.movieFile?.quality.quality?.type}
 						</h2>
 					</div>
 				{/if}

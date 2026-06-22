@@ -7,6 +7,7 @@ import { scheduleTask } from '../../tasksWorker/scheduler.server';
 import type { RadarrQueueResource } from '@reiverr/connectors/types/radarr';
 import Connectors, { RadarrConnector } from '@reiverr/connectors';
 import { TaskType } from '@reiverr/db/types';
+import { MovieAddSchema } from '../../tasksWorker/types.ts';
 
 export const radarrIsHealthy = query(v.optional(ApiSchema), async (api) => {
 	if (api && api.url && api.key) return await new RadarrConnector(api.url, api.key).isHealthy();
@@ -70,21 +71,18 @@ export const radarrGetMovies = query(async () => {
 	return { success: true, data: movies.data };
 });
 
-export const radarrAddMovie = command(
-	v.object({ tmdbId: v.number(), language: v.string() }),
-	async (movie): Promise<Result<undefined>> => {
-		const { cookies } = getRequestEvent();
-		if (!(await assertUserAuth(cookies)))
-			return { success: false, error: 'general.connectionRequired' };
+export const radarrAddMovie = command(MovieAddSchema, async (movie): Promise<Result<undefined>> => {
+	const { cookies } = getRequestEvent();
+	if (!(await assertUserAuth(cookies)))
+		return { success: false, error: 'general.connectionRequired' };
 
-		const defaultFp = await FilteringProfilesEntity.findOne({ where: { isDefault: true } });
-		if (!defaultFp) return { success: false, error: 'settings.misc.noDefaultFilteringProfile' };
+	const defaultFp = await FilteringProfilesEntity.findOne({ where: { isDefault: true } });
+	if (!defaultFp) return { success: false, error: 'settings.misc.noDefaultFilteringProfile' };
 
-		await scheduleTask(TaskType.RADARR_MOVIE_ADD, movie);
+	await scheduleTask(TaskType.RADARR_MOVIE_ADD, movie);
 
-		return { success: true };
-	}
-);
+	return { success: true };
+});
 
 export const radarrRemoveMovie = command(v.number(), async (id: number) => {
 	const { cookies } = getRequestEvent();

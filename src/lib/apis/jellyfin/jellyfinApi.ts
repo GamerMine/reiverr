@@ -127,12 +127,6 @@ export const jellyfinTestConnection = async (
 		.catch(() => false);
 };
 
-export const jellyfinGetUsers = async () => {
-	return await fetch('/api/jellyfin/users', {
-		method: 'GET'
-	}).then(async (res): Promise<JellyfinUser[]> => await res.json());
-};
-
 export const getJellyfinPosterUrl = (item: JellyfinItem, quality = 100, original = false) =>
 	item.ImageTags?.Primary
 		? `${settings.globalSettings.jellyfin.baseUrl}/Items/${item?.Id}/Images/Primary?quality=${quality}${
@@ -150,10 +144,4 @@ export const getJellyfinBackdrop = (item: JellyfinItem, quality = 100) => {
 			item?.Id
 		}/Images/Primary?quality=${quality}&tag=${item?.ImageTags?.Primary}`;
 	}
-};
-
-export const jellyfinDisconnectUser = async () => {
-	return await fetch('/api/jellyfin/users', {
-		method: 'DELETE'
-	});
 };
