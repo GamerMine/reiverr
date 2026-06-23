@@ -190,7 +190,8 @@
 						episodeNumber: e.episodeNumber,
 						checked: e.checked
 					}))
-				}))
+				})),
+				userId: JSON.parse(localStorage.getItem('user') || '{}').Id
 			}).then((res) => {
 				if (res.success) {
 					createSuccessNotification(

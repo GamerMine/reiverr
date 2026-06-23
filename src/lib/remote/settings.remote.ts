@@ -33,6 +33,7 @@ export const saveSettings = form(
 		userDiscoverRegion: v.string(),
 		userDiscoverExcludeLibraryItems: v.optional(v.boolean(), false),
 		userDiscoverIncludedLanguages: v.string(),
+		userFilteringProfileId: v.optional(v.number()),
 
 		adminJellyfinBaseUrl: OptionalStringSchema,
 		adminJellyfinApiKey: OptionalStringSchema,
@@ -42,7 +43,8 @@ export const saveSettings = form(
 		adminSonarrBaseUrl: OptionalStringSchema,
 		adminSonarrApiKey: OptionalStringSchema,
 		adminSonarrRootFolderPath: OptionalStringSchema,
-		adminDownloadLanguages: v.optional(v.array(v.string()))
+		adminDownloadLanguages: v.optional(v.array(v.string())),
+		adminUserCanChooseProfile: v.optional(v.boolean(), false)
 	}),
 	async ({
 		userLanguage,
@@ -51,6 +53,7 @@ export const saveSettings = form(
 		userDiscoverRegion,
 		userDiscoverExcludeLibraryItems,
 		userDiscoverIncludedLanguages,
+		userFilteringProfileId,
 
 		adminJellyfinBaseUrl,
 		adminJellyfinApiKey,
@@ -60,7 +63,8 @@ export const saveSettings = form(
 		adminSonarrBaseUrl,
 		adminSonarrApiKey,
 		adminSonarrRootFolderPath,
-		adminDownloadLanguages
+		adminDownloadLanguages,
+		adminUserCanChooseProfile
 	}): Promise<Result<{ needLogin: boolean }>> => {
 		const { cookies } = getRequestEvent();
 		const userReq = await isJellyfinUserConnected(cookies);
@@ -82,7 +86,8 @@ export const saveSettings = form(
 				region: userDiscoverRegion,
 				excludeLibraryItems: userDiscoverExcludeLibraryItems,
 				includedLanguages: userDiscoverIncludedLanguages
-			}
+			},
+			filteringProfileId: userFilteringProfileId
 		};
 
 		await UserSettingsEntity.setUserSettings(userReq.data.Id, newUserSettings);
@@ -175,6 +180,8 @@ export const saveSettings = form(
 				}
 			}
 
+			globalSettings.userCanChooseProfile = adminUserCanChooseProfile;
+
 			await globalSettings.save();
 
 			// Set other admin settings
@@ -228,8 +235,6 @@ export const saveSettings = form(
 				).identifiers.length > 0 || qualityProfileModified;
 
 			if (qualityProfileModified) await scheduleTask(TaskType.SYNC_QUALITY_PROFILES, []);
-		} else {
-			return { success: false, error: 'general.unauthorizedAction' };
 		}
 
 		return {

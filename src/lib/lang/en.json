@@ -38,7 +38,7 @@
       "unableConnect": "Unable to connect to Jellyfin",
       "invalidURL": "Unreachable Jellyfin instance. Check the URL.",
       "invalidAPIKey": "Cannot connect using the provided API Key. Verify that the key is valid and try again.",
-      "unknownError": "An unknown error has occured."
+      "unknownError": "An unknown error has occurred."
     }
   },
   "login": {
@@ -114,7 +114,7 @@
       "similarSeries": "Similar Series",
       "similarMovies": "Similar Series",
       "minLeft": "min left",
-      "get": "Obtenir",
+      "get": "Get",
       "addSonarr": "Add to Sonarr",
       "downloading": "Downloading",
       "queued": "In Queue",
@@ -191,7 +191,7 @@
     },
     "integrations": {
       "integrations": "Integrations",
-      "integrationsNote": "Note: Base urls must be accessible from the browser, meaning that internal docker addresses won't work, for example. API Keys <span class='font-medium underline'>will be exposed</span> to the browser.",
+      "integrationsNote": "Note: Base URLs must be accessible from the browser, meaning that internal docker addresses won't work, for example. API Keys <span class='font-medium underline'>will be exposed</span> to the browser.",
       "baseUrl": "Base URL",
       "apiKey": "API Key",
       "testConnection": "Test Connection",
@@ -210,7 +210,8 @@
     },
     "filtering": {
       "filteringProfiles": "Filtering profiles",
-      "letUserChoose": "Let the user choose [TODO]",
+      "filteringProfilesDescription": "Here, you can select a default filtering profile. When you want to get a movie or series episodes, this default profile will be used.",
+      "letUserChoose": "Let the user choose",
       "letUserChooseDescription": "If checked, any user can choose one of the profile available here.",
       "addProfile": "Add a profile",
       "editProfile": "Edit a profile",
@@ -219,7 +220,7 @@
       "languages": "Languages",
       "qualities": "Video qualities",
       "filteringProfileCreatedSuccess": "Filtering profile created successfully",
-      "filteringProfileDeleteSuccess": "Filtering profile deletion successfull"
+      "filteringProfileDeleteSuccess": "Filtering profile deletion successful"
     },
     "misc": {
       "invalidConfiguration": "Invalid Configuration",

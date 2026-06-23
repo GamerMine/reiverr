@@ -11,6 +11,9 @@ export class GlobalSettingsEntity extends BaseEntity {
 	@OneToMany(() => CustomFormatsEntity, (entity) => entity.globalSettings)
 	downloadLanguages: CustomFormatsEntity[];
 
+	@Column('boolean', { default: defaultGlobalSettings.general.userCanChooseProfile })
+	userCanChooseProfile: boolean;
+
 	// Sonarr
 	@Column('text', { nullable: true, default: defaultGlobalSettings.sonarr.baseUrl })
 	sonarrBaseUrl: string | null;
@@ -171,7 +174,8 @@ export class GlobalSettingsEntity extends BaseEntity {
 			...defaultGlobalSettings,
 
 			general: {
-				downloadLanguages: settings.downloadLanguages.map((e) => e.lang)
+				downloadLanguages: settings.downloadLanguages.map((e) => e.lang),
+				userCanChooseProfile: settings.userCanChooseProfile
 			},
 			sonarr: {
 				...defaultGlobalSettings.sonarr,

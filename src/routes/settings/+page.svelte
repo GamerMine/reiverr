@@ -19,7 +19,7 @@
 	import Option from '$lib/components/common/inputs/forms/Option.svelte';
 	import { saveSettings } from '$lib/remote/settings.remote';
 
-	type Section = 'general' | 'integrations' | 'filtering';
+	type Section = 'general' | 'userFiltering' | 'integrations' | 'filtering';
 
 	let { data }: PageProps = $props();
 
@@ -122,6 +122,14 @@
 			>
 				{$_('settings.navbar.general')}
 			</button>
+			{#if data.filteringProfiles}
+				<button
+					onclick={() => setTab('userFiltering')}
+					class={openTab && getNavButtonStyle('userFiltering')}
+				>
+					{$_('settings.navbar.filtering')}
+				</button>
+			{/if}
 			{#if data.isAdmin}
 				<p class="text-xs text-zinc-500 mt-1">{$_('settings.navbar.adminSettings')}</p>
 				<button
@@ -173,6 +181,11 @@
 				<GeneralSettingsPage
 					bind:userSettings={currSettings.userSettings}
 					visible={openTab === 'general'}
+				/>
+				<FilteringConfigPage
+					visible={openTab === 'userFiltering'}
+					profiles={data.filteringProfiles}
+					bind:userFilteringProfileId={settings.userSettings.filteringProfileId}
 				/>
 
 				{#if data.isAdmin}

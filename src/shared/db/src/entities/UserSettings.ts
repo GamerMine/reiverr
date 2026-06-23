@@ -26,6 +26,9 @@ export class UserSettingsEntity extends BaseEntity {
 	@Column('text', { default: defaultUserSettings.discover.includedLanguages })
 	discoverIncludedLanguages: string;
 
+	@Column('integer', { nullable: true, default: defaultUserSettings.filteringProfileId })
+	filteringProfileId: number;
+
 	public static async getUserSettings(userId: string) {
 		const userSettings = await this.findOne({ where: { userId } });
 
@@ -51,7 +54,8 @@ export class UserSettingsEntity extends BaseEntity {
 				region: userSettingsEntity.discoverRegion,
 				excludeLibraryItems: userSettingsEntity.discoverExcludeLibraryItems,
 				includedLanguages: userSettingsEntity.discoverIncludedLanguages
-			}
+			},
+			filteringProfileId: userSettingsEntity.filteringProfileId
 		};
 	}
 
@@ -75,5 +79,7 @@ export class UserSettingsEntity extends BaseEntity {
 		userSettingsEntity.discoverIncludedLanguages = newUserSettings.discover.includedLanguages;
 		userSettingsEntity.discoverExcludeLibraryItems =
 			newUserSettings.discover.excludeLibraryItems;
+
+		userSettingsEntity.filteringProfileId = newUserSettings.filteringProfileId ?? null;
 	}
 }

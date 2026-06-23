@@ -42,7 +42,7 @@ export class RadarrMovieAdd implements TaskExecutor {
 			return { id: 'general.unknownError' };
 		}
 
-		const defaultFp = await FilteringProfilesEntity.getDefaultProfile();
+		const defaultFp = await FilteringProfilesEntity.getDefaultProfile(movie.userId);
 		if (!defaultFp) return { id: 'settings.misc.noDefaultFilteringProfile' };
 
 		const qp = await QualityProfilesEntity.findOne({

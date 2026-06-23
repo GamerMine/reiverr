@@ -27,11 +27,7 @@
 		</div>
 		<Divider />
 		<div class="mx-2 my-2">
-			<Button
-				variant="tertiary"
-				class="w-full"
-				onclick={() => (window.location.href = '/settings')}
-			>
+			<Button variant="tertiary" class="w-full" onclick={async () => await goto('/settings')}>
 				<Gear size="20"></Gear><span class="flex ml-2"
 					>{$_('navbar.userMenu.settings')}</span
 				>

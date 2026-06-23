@@ -42,7 +42,7 @@ export class SonarrSeriesAdd implements TaskExecutor {
 			return { id: 'general.unknownError' };
 		}
 
-		const defaultFp = await FilteringProfilesEntity.getDefaultProfile();
+		const defaultFp = await FilteringProfilesEntity.getDefaultProfile(series.userId);
 		if (!defaultFp) return { id: 'settings.misc.noDefaultFilteringProfile' };
 
 		const qp = await QualityProfilesEntity.findOne({

@@ -14,6 +14,7 @@ export type GlobalSettings = {
 	initialised: boolean;
 	general: {
 		downloadLanguages: string[];
+		userCanChooseProfile: boolean;
 	};
 	sonarr: {
 		baseUrl: string | undefined;
@@ -42,6 +43,7 @@ export type UserSettings = {
 		excludeLibraryItems: boolean;
 		includedLanguages: string;
 	};
+	filteringProfileId: number | undefined;
 };
 
 export type Settings = {
@@ -62,7 +64,8 @@ export const defaultGlobalSettings: GlobalSettings = {
 	initialised: false,
 
 	general: {
-		downloadLanguages: []
+		downloadLanguages: [],
+		userCanChooseProfile: false
 	},
 	sonarr: {
 		apiKey: undefined,
@@ -90,7 +93,8 @@ export const defaultUserSettings: UserSettings = {
 		region: '',
 		excludeLibraryItems: false,
 		includedLanguages: 'en'
-	}
+	},
+	filteringProfileId: undefined
 };
 
 export const MessageObjectSchema = v.object({

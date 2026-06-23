@@ -13,6 +13,7 @@
 	import { animateBackground } from '$lib/utils/animation';
 	import { setTmpLanguage } from '$lib/utils';
 	import { jellyfinGetUsers } from '$lib/remote/jellyfin.remote.ts';
+	import { goto } from '$app/navigation';
 
 	let mainDiv: HTMLDivElement | undefined = $state();
 	let manualLogin: boolean = $state(false);
@@ -137,7 +138,7 @@
 							}
 						} else {
 							localStorage.setItem('user', JSON.stringify(result.data?.user));
-							window.location.href = '/';
+							await goto('/');
 						}
 					};
 				}}

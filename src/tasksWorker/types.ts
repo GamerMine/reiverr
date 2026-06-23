@@ -11,7 +11,11 @@ export function PlatformWithDataSchema<TDataSchema extends GenericSchema>(dataSc
 	});
 }
 
-export const MovieAddSchema = v.object({ tmdbId: v.number(), language: v.string() });
+export const MovieAddSchema = v.object({
+	tmdbId: v.number(),
+	language: v.string(),
+	userId: v.string()
+});
 export type MovieAdd = InferOutput<typeof MovieAddSchema>;
 
 export const SeriesAddSchema = v.object({
@@ -28,7 +32,8 @@ export const SeriesAddSchema = v.object({
 				})
 			)
 		})
-	)
+	),
+	userId: v.string()
 });
 export type SeriesAdd = InferOutput<typeof SeriesAddSchema>;
 

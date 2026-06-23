@@ -8,6 +8,7 @@
 	import { enhance } from '$app/forms';
 	import { createErrorNotification } from '$lib/stores/notification.store';
 	import { setTmpLanguage } from '$lib/utils';
+	import { goto } from '$app/navigation';
 
 	let mainDiv: HTMLDivElement | undefined = $state();
 
@@ -68,7 +69,7 @@
 				needValidation = false;
 				errorMessage = undefined;
 				nextButtonText = $_('settings.misc.finish');
-				nextButtonAction = () => (window.location.href = '/login');
+				nextButtonAction = () => goto('/login');
 				break;
 			}
 			default: {
@@ -95,8 +96,10 @@
 
 	function onJellyfinInputChange() {
 		disableNext =
-			!(jellyfinFormBaseURL.startsWith('http://') || jellyfinFormBaseURL.startsWith('https://')) ||
-			jellyfinFormAPIKey.length === 0;
+			!(
+				jellyfinFormBaseURL.startsWith('http://') ||
+				jellyfinFormBaseURL.startsWith('https://')
+			) || jellyfinFormAPIKey.length === 0;
 		errorMessage = undefined;
 	}
 

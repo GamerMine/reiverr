@@ -80,7 +80,11 @@
 	function addToRadarr(language: string) {
 		addToRadarrLoading = true;
 
-		radarrAddMovie({ tmdbId, language }).then((res) => {
+		radarrAddMovie({
+			tmdbId,
+			language,
+			userId: JSON.parse(localStorage.getItem('user') || '{}').Id
+		}).then((res) => {
 			if (res.success)
 				createSuccessNotification($_('general.success'), 'TODO'); //TODO: Add translation
 			else createErrorNotification($_('general.error'), $_(res.error ?? 'TODO'));

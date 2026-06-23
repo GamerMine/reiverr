@@ -1,5 +1,7 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import type { FilteringProfile } from '../types.js';
+import { GlobalSettingsEntity } from './GlobalSettings.js';
+import { UserSettingsEntity } from './UserSettings.js';
 
 @Entity({ name: 'filteringProfiles' })
 export class FilteringProfilesEntity extends BaseEntity {
@@ -35,7 +37,14 @@ export class FilteringProfilesEntity extends BaseEntity {
 		return profiles;
 	}
 
-	public static async getDefaultProfile() {
+	public static async getDefaultProfile(userId: string) {
+		const { userCanChooseProfile } = await GlobalSettingsEntity.getDefault();
+
+		if (userCanChooseProfile) {
+			const { filteringProfileId } = await UserSettingsEntity.getUserSettings(userId);
+			if (filteringProfileId) return await this.findOneBy({ id: filteringProfileId });
+		}
+
 		return await this.findOne({ where: { isDefault: true } });
 	}
 

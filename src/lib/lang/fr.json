@@ -204,7 +204,8 @@
     },
     "filtering": {
       "filteringProfiles": "Profiles de filtrage",
-      "letUserChoose": "Laisser l'utilisateur choisir [TODO]",
+      "filteringProfilesDescription": "Ici, vous pouvez sélectionner un profil de filtrage à utiliser par défaut. Lorsque vous voulez obtenir un film ou des épisodes d'une série, ce profil par défaut sera utilisé.",
+      "letUserChoose": "Laisser l'utilisateur choisir",
       "letUserChooseDescription": "Si coché, n'importe quel utilisateur peux choisir parmis l'un des profils disponible ici.",
       "addProfile": "Ajouter un profile",
       "editProfile": "Modifier un profile",
