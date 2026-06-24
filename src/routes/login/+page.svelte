@@ -7,29 +7,40 @@
 	import { Keyboard, Enter, Update } from 'svelte-radix';
 	import Input from '$lib/components/common/inputs/forms/Input.svelte';
 	import { ChevronLeft } from 'svelte-radix';
-	import { enhance } from '$app/forms';
 	import { createErrorNotification } from '$lib/stores/notification.store';
 	import { onMount } from 'svelte';
 	import { animateBackground } from '$lib/utils/animation';
 	import { setTmpLanguage } from '$lib/utils';
 	import { jellyfinGetUsers } from '$lib/remote/jellyfin.remote.ts';
 	import { goto } from '$app/navigation';
+	import { login } from '$lib/remote/login.remote.ts';
 
 	let mainDiv: HTMLDivElement | undefined = $state();
 	let manualLogin: boolean = $state(false);
 	let userSelected: boolean = $state(false);
 	let selectedUser: JellyfinUser | undefined = $state();
 	let isInputDisabled: boolean = $state(false);
-	let errorMessage: string | undefined = $state();
+	let errored: boolean = $state(false);
 
 	function askForPassword(user: JellyfinUser) {
 		userSelected = true;
 		selectedUser = user;
+		if (selectedUser?.Name) login.fields.username.set(selectedUser.Name);
 	}
 
 	$effect(() => {
-		if (errorMessage) {
-			createErrorNotification(errorMessage, errorMessage);
+		if (login.result) {
+			if (login.result.success && login.result.data) {
+				localStorage.setItem('user', JSON.stringify(login.result.data));
+				goto('/');
+			} else {
+				errored = true;
+				createErrorNotification(
+					$_('general.error'),
+					$_(login.result.error ?? 'general.unknownError')
+				);
+			}
+			isInputDisabled = false;
 		}
 	});
 
@@ -106,7 +117,7 @@
 					: 'opacity-0 invisible'}"
 				disabled={isInputDisabled}
 				onclick={() => {
-					errorMessage = undefined;
+					errored = false;
 					userSelected = false;
 					manualLogin = false;
 					selectedUser = undefined;
@@ -121,61 +132,33 @@
 					: 'opacity-0 translate-y-30 invisible'}"
 			></UserCard>
 			<form
-				method="POST"
-				use:enhance={({ formData }) => {
+				{...login.enhance(async (form) => {
 					isInputDisabled = true;
-					if (formData.get('username') === '') {
-						formData.set('username', selectedUser?.Name || '');
-					}
-					return async ({ result, update }) => {
-						await update();
-						if (result.type !== 'success') {
-							isInputDisabled = false;
-							if (result.data?.code === 1) {
-								errorMessage = $_('login.invalidCredential');
-							} else {
-								errorMessage = $_('login.unknownError');
-							}
-						} else {
-							localStorage.setItem('user', JSON.stringify(result.data?.user));
-							await goto('/');
-						}
-					};
-				}}
+					await form.submit();
+				})}
 			>
 				<Input
 					placeholder={$_('login.username')}
 					type="text"
-					name="username"
+					name={login.fields.username.as('text').name}
 					disabled={isInputDisabled}
 					klass="absolute items-center left-1/2 -translate-x-1/2 transition duration-300 ease-in-out {manualLogin
 						? 'visible opacity-90 -translate-y-46'
-						: 'opacity-0 translate-y-30 invisible'} {errorMessage
-						? 'bg-red-500/20!'
-						: ''}"
-					onchange={() => {
-						if (errorMessage) {
-							errorMessage = undefined;
-						}
-					}}
+						: 'opacity-0 translate-y-30 invisible'} {errored ? 'bg-red-500/20!' : ''}"
+					onchange={() => (errored = false)}
+					value={selectedUser?.Name || ''}
 				></Input>
 				<Input
 					placeholder={$_('login.password')}
 					type="password"
-					name="password"
+					name={login.fields._password.as('password').name}
 					disabled={isInputDisabled}
 					klass="absolute items-center left-1/2 -translate-x-1/2 transition duration-300 ease-in-out {userSelected ||
 					manualLogin
 						? 'visible opacity-90 -translate-y-35'
-						: 'opacity-0 translate-y-30 invisible'} {errorMessage
-						? 'bg-red-500/20!'
-						: ''}"
-					onchange={() => {
-						if (errorMessage) {
-							errorMessage = undefined;
-						}
-					}}
-				></Input>
+						: 'opacity-0 translate-y-30 invisible'} {errored ? 'bg-red-500/20!' : ''}"
+					onchange={() => (errored = false)}
+				/>
 				<div
 					class="absolute items-center left-1/2 -translate-x-1/2 transition duration-300 ease-in-out {userSelected ||
 					manualLogin

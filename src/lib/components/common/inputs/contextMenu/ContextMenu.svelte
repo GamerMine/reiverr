@@ -71,8 +71,6 @@
 	bind:innerHeight={windowHeight}
 />
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	oncontextmenu={handleOpen}
 	onclick={(e) => {
@@ -91,7 +89,8 @@
 			class={`${position} z-50 my-2 px-1 py-1 bg-zinc-800/50 rounded-lg backdrop-blur-xl flex flex-col w-max`}
 			style={position === 'fixed'
 				? `left: ${
-						fixedPosition.x - (fixedPosition.x > windowWidth / 2 ? (menu_div?.clientWidth ?? 0) : 0)
+						fixedPosition.x -
+						(fixedPosition.x > windowWidth / 2 ? (menu_div?.clientWidth ?? 0) : 0)
 					}px; top: ${
 						fixedPosition.y -
 						(fixedPosition.y > windowHeight / 2 ? (menu_div?.clientHeight ?? 0) : 0)
@@ -113,8 +112,6 @@
 					</h2>
 				{/if}
 			{/if}
-			<!-- svelte-ignore a11y_click_events_have_key_events -->
-			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			<div class="flex flex-col gap-0.5" onclick={() => close()}>
 				{@render menu?.()}
 			</div>

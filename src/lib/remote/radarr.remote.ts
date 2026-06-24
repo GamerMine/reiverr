@@ -35,9 +35,8 @@ async function getCachedQueue() {
 		await conn.postCommand('RefreshMonitoredDownloads');
 
 		const queue = await conn.getQueue();
-		if (!queue || !queue.data || !queue.data.records) return { success: false };
 
-		cachedQueue = { success: true, data: queue.data.records };
+		cachedQueue = { success: queue.response.ok, data: queue.data.records };
 		lastFetch = now;
 	}
 	return cachedQueue;
@@ -63,12 +62,15 @@ export const radarrGetMovies = query(async () => {
 		return { success: false, error: 'general.connectionRequired' };
 
 	const { radarrConnector: conn } = await Connectors.getInstance();
-	if (!conn) return { success: false };
+	if (!conn) {
+		console.warn('Cannot get Radarr movies: Radarr is unavailable');
+		return { success: false };
+	}
 
 	const movies = await conn.getMovie();
-	if (!movies || !movies.data) return { success: false };
+	if (!movies.response.ok) console.error(JSON.stringify(movies.error, null, 2));
 
-	return { success: true, data: movies.data };
+	return { success: movies.response.ok, data: movies.data };
 });
 
 export const radarrAddMovie = command(MovieAddSchema, async (movie): Promise<Result<undefined>> => {
@@ -100,10 +102,13 @@ export const radarrGetDiskspace = query(async () => {
 		return { success: false, error: 'general.connectionRequired' };
 
 	const { radarrConnector: conn } = await Connectors.getInstance();
-	if (!conn) return { success: false };
+	if (!conn) {
+		console.warn('Cannot get Radarr diskspace: Radarr is unavailable');
+		return { success: false };
+	}
 
 	const diskspace = await conn.getDiskSpace();
-	if (!diskspace || !diskspace.data) return { success: false };
+	if (!diskspace.response.ok) console.error(JSON.stringify(diskspace.error, null, 2));
 
-	return { success: true, data: diskspace.data };
+	return { success: diskspace.response.ok, data: diskspace.data };
 });

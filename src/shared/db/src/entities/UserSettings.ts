@@ -58,28 +58,4 @@ export class UserSettingsEntity extends BaseEntity {
 			filteringProfileId: userSettingsEntity.filteringProfileId
 		};
 	}
-
-	public static async setUserSettings(userId: string, newUserSettings: UserSettings) {
-		const userSettings = await this.findOne({ where: { userId } });
-
-		if (!userSettings) {
-			return false;
-		}
-
-		this.set(userSettings, newUserSettings);
-		await userSettings.save();
-	}
-
-	static set(userSettingsEntity: UserSettingsEntity, newUserSettings: UserSettings) {
-		userSettingsEntity.language = newUserSettings.interface.language;
-		userSettingsEntity.autoplayTrailers = newUserSettings.interface.autoplayTrailers;
-		userSettingsEntity.animationDuration = newUserSettings.interface.animationDuration;
-
-		userSettingsEntity.discoverRegion = newUserSettings.discover.region;
-		userSettingsEntity.discoverIncludedLanguages = newUserSettings.discover.includedLanguages;
-		userSettingsEntity.discoverExcludeLibraryItems =
-			newUserSettings.discover.excludeLibraryItems;
-
-		userSettingsEntity.filteringProfileId = newUserSettings.filteringProfileId ?? null;
-	}
 }

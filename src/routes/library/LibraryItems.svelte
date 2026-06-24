@@ -9,8 +9,8 @@
 	import { tick, type ComponentProps, onMount } from 'svelte';
 	import Poster from '$lib/components/Poster/Poster.svelte';
 	import { getJellyfinPosterUrl, type JellyfinItem } from '$lib/apis/jellyfin/jellyfinApi';
-	import type { RadarrMovieResource } from '@reiverr/connectors/types/radarr';
-	import type { SonarrSeriesResource } from '@reiverr/connectors/types/sonarr';
+	import type { RadarrMediaCover, RadarrMovieResource } from '@reiverr/connectors/types/radarr';
+	import type { SonarrMediaCover, SonarrSeriesResource } from '@reiverr/connectors/types/sonarr';
 	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
 	import ContextMenu from '$lib/components/common/inputs/contextMenu/ContextMenu.svelte';
 	import SelectableContextMenuItem from '$lib/components/common/inputs/contextMenu/SelectableContextMenuItem.svelte';
@@ -36,7 +36,6 @@
 
 	const PAGE_SIZE = 100;
 
-	let itemsVisible: 'all' | 'movies' | 'shows' = 'all';
 	const sortBy = createLocalStorageStore<string>('library-sort-by', SortBy.DateAdded);
 	const sortOrder = createLocalStorageStore<string>('library-sort-order', SortOrder.Descending);
 	let searchQuery = $state('');
@@ -78,9 +77,11 @@
 			subtitle: item.genres?.join(', ') || undefined,
 			backdropUrl: isSeries
 				? settings.globalSettings.sonarr.baseUrl +
-					(item.images?.find((i) => i.coverType === 'poster')?.url || '')
+					(item.images?.find((i: SonarrMediaCover) => i.coverType === 'poster')?.url ||
+						'')
 				: settings.globalSettings.radarr.baseUrl +
-					(item.images?.find((i) => i.coverType === 'poster')?.url || ''),
+					(item.images?.find((i: RadarrMediaCover) => i.coverType === 'poster')?.url ||
+						''),
 			size: 'dynamic',
 			type: isSeries ? 'tv' : 'movie',
 			orientation: 'portrait',
@@ -241,7 +242,7 @@
 					})}
 					onclick={() => handleTabChange('available')}
 				>
-					{$_('library.available')}
+					{$_('library.content.available')}
 				</button>
 				<button
 					class={classNames('hover:text-zinc-300 selectable rounded-sm px-1 -mx-1', {

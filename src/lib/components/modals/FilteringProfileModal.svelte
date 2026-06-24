@@ -51,7 +51,10 @@
 						$_('settings.filtering.filteringProfileCreatedSuccess')
 					);
 				} else {
-					createErrorNotification('ERROR', 'TODO'); // TODO: Add reasons
+					createErrorNotification(
+						$_('general.error'),
+						$_(form.result?.error ?? 'general.unknownError')
+					);
 				}
 				disableInputs = false;
 			}

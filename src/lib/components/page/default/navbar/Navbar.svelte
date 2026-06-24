@@ -19,6 +19,7 @@
 
 	let openAccountMenu = $state(false);
 	let isMobileMenuVisible = $state(false);
+	let elt: HTMLDivElement | undefined = $state();
 
 	function getLinkStyle(path: string) {
 		return classNames('selectable rounded-xs px-2 -mx-2 sm:text-base text-xl', {
@@ -38,6 +39,10 @@
 		}
 	}
 
+	function handleClickOutside(e: MouseEvent) {
+		if (elt && !elt.contains(e.target as Node)) openAccountMenu = false;
+	}
+
 	$effect(() => {
 		transparent = y <= 0;
 		baseStyle = classNames(
@@ -50,6 +55,15 @@
 				'h-16 sm:h-24': transparent
 			}
 		);
+	});
+
+	$effect(() => {
+		if (elt) setTimeout(() => document.addEventListener('click', handleClickOutside), 10);
+		else document.removeEventListener('click', handleClickOutside);
+
+		return () => {
+			document.removeEventListener('click', handleClickOutside);
+		};
 	});
 </script>
 
@@ -163,5 +177,7 @@
 {/if}
 
 {#if openAccountMenu}
-	<AccountPane />
+	<div bind:this={elt}>
+		<AccountPane onclick={() => (openAccountMenu = false)} />
+	</div>
 {/if}

@@ -29,12 +29,15 @@ export const sonarrGetSeries = query(async () => {
 		return { success: false, error: 'general.connectionRequired' };
 
 	const { sonarrConnector: conn } = await Connectors.getInstance();
-	if (!conn) return { success: false };
+	if (!conn) {
+		console.warn('Cannot get Sonarr series: Sonarr is unavailable');
+		return { success: false };
+	}
 
 	const series = await conn.getSeries();
-	if (!series || !series.data) return { success: false };
+	if (!series.response.ok) console.error(JSON.stringify(series.error, null, 2));
 
-	return { success: true, data: series.data };
+	return { success: series.response.ok, data: series.data };
 });
 
 export const sonarrAddSeries = command(SeriesAddSchema, async (series) => {
@@ -71,9 +74,8 @@ async function getCachedQueue() {
 		await conn.postCommand('RefreshMonitoredDownloads');
 
 		const queue = await conn.getQueue();
-		if (!queue || !queue.data || !queue.data.records) return { success: false };
 
-		cachedQueue = { success: true, data: queue.data.records };
+		cachedQueue = { success: queue.response.ok, data: queue.data.records };
 		lastFetch = now;
 	}
 	return cachedQueue;
@@ -99,10 +101,13 @@ export const sonarrGetDiskspace = query(async () => {
 		return { success: false, error: 'general.connectionRequired' };
 
 	const { sonarrConnector: conn } = await Connectors.getInstance();
-	if (!conn) return { success: false };
+	if (!conn) {
+		console.warn('Cannot get Sonarr diskspace: Sonarr is unavailable');
+		return { success: false };
+	}
 
 	const diskspace = await conn.getDiskSpace();
-	if (!diskspace || !diskspace.data) return { success: false };
+	if (!diskspace.response.ok) console.error(JSON.stringify(diskspace.error, null, 2));
 
-	return { success: true, data: diskspace.data };
+	return { success: diskspace.response.ok, data: diskspace.data };
 });

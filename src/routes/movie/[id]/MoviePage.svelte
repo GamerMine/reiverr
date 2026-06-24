@@ -17,7 +17,7 @@
 	import { playerState } from '$lib/components/VideoPlayer/VideoPlayer';
 	import { formatSize } from '$lib/utils';
 	import classNames from 'classnames';
-	import { ActivityLog, Archive, ChevronRight, Clock, DotFilled, Trash } from 'svelte-radix';
+	import { ActivityLog, ChevronRight, Clock, DotFilled, Trash } from 'svelte-radix';
 	import { type ComponentProps, onMount } from 'svelte';
 	import { _ } from 'svelte-i18n';
 	import { settings } from '$lib/stores/settings.svelte';
@@ -86,8 +86,15 @@
 			userId: JSON.parse(localStorage.getItem('user') || '{}').Id
 		}).then((res) => {
 			if (res.success)
-				createSuccessNotification($_('general.success'), 'TODO'); //TODO: Add translation
-			else createErrorNotification($_('general.error'), $_(res.error ?? 'TODO'));
+				createSuccessNotification(
+					$_('ui.notification.header.movieAdded'),
+					$_('ui.notification.description.movieAdded')
+				);
+			else
+				createErrorNotification(
+					$_('general.error'),
+					$_(res.error ?? 'general.unknownError')
+				);
 			addToRadarrLoading = false;
 		});
 	}
@@ -304,14 +311,6 @@
 						</h2>
 					</div>
 				{/if}
-
-				<div class="flex gap-4 flex-wrap col-span-4 sm:col-span-6 mt-4">
-					<Button>
-						<span class="mr-2">{$_('library.content.manage')}</span><Archive
-							size="20"
-						/>
-					</Button>
-				</div>
 			{:else if radarrGetMovies().loading}
 				<div class="flex gap-4 flex-wrap col-span-4 sm:col-span-6 mt-4">
 					<div class="placeholder h-10 w-40 rounded-xl"></div>

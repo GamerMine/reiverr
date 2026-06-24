@@ -21,15 +21,7 @@
 	import { TMDB_BACKDROP_SMALL, TMDB_BASE_TV_URL } from '$lib/constants';
 	import { capitalize, formatSize } from '$lib/utils';
 	import classNames from 'classnames';
-	import {
-		ActivityLog,
-		Archive,
-		ChevronLeft,
-		ChevronRight,
-		Clock,
-		DotFilled,
-		Trash
-	} from 'svelte-radix';
+	import { ActivityLog, ChevronLeft, ChevronRight, Clock, DotFilled, Trash } from 'svelte-radix';
 	import { _ } from 'svelte-i18n';
 	import { tmdbDataFormat } from '$lib/utils.js';
 	import { settings } from '$lib/stores/settings.svelte';
@@ -44,7 +36,10 @@
 		sonarrRemoveSeries
 	} from '$lib/remote/sonarr.remote';
 	import type { EpisodeDataWithCheck, SeasonData, SeasonDataWithCheck } from '$lib/types';
-	import { createSuccessNotification } from '$lib/stores/notification.store';
+	import {
+		createErrorNotification,
+		createSuccessNotification
+	} from '$lib/stores/notification.store';
 	import { jellyfinGetEpisodes } from '$lib/remote/jellyfin.remote';
 	import type { components as JellyfinComponents } from '$lib/apis/jellyfin/jellyfin.generated';
 	import type { SonarrSeriesResource } from '@reiverr/connectors/types/sonarr';
@@ -195,14 +190,19 @@
 			}).then((res) => {
 				if (res.success) {
 					createSuccessNotification(
-						'Episode(s) added to queue',
-						'The episode(s) will be added to the library once available.'
+						$_('ui.notification.header.episodesAdded'),
+						$_('ui.notification.description.episodesAdded')
 					);
 					sonarrGetSeries()
 						.refresh()
 						.then(() => {
 							addToSonarrLoading = false;
 						});
+				} else {
+					createErrorNotification(
+						$_('general.error'),
+						$_(res.error ?? 'general.unknownError')
+					);
 				}
 			});
 		}
@@ -538,14 +538,6 @@
 						</h2>
 					</div>
 				{/if}
-
-				<div class="flex gap-4 flex-wrap col-span-4 sm:col-span-6 mt-4">
-					<Button>
-						<span class="mr-2">{$_('library.content.manage')}</span><Archive
-							size="20"
-						/>
-					</Button>
-				</div>
 			{:else if sonarrGetSeries().loading}
 				<div class="flex gap-4 flex-wrap col-span-4 sm:col-span-6 mt-4">
 					<div class="placeholder h-10 w-40 rounded-xl"></div>

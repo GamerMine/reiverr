@@ -33,8 +33,8 @@ Local Library & Playback
 ### Manual Instructions
 
 1. Requirements:
-   - Node v23.11.0 or greater
-   - NPM 10.9.2 or greater
+   - Node v20.19 or greater
+   - NPM v10.8.2 or greater
 2. Clone the repository
 3. Build the app:
    ```sh
@@ -57,7 +57,8 @@ To get started with development:
 1. Clone the repository
 2. Checkout the `main` branch
 3. Run `npm install`
-4. Run `npm run dev`
+4. Run `npm run build:shared`
+5. Run `npm run dev`
 
 Useful resources:
 

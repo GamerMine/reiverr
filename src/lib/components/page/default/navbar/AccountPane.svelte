@@ -9,6 +9,12 @@
 	import { goto } from '$app/navigation';
 	import { jellyfinDisconnect } from '$lib/remote/jellyfin.remote.ts';
 
+	let {
+		onclick = () => {}
+	}: {
+		onclick?: () => void;
+	} = $props();
+
 	let user: JellyfinUser = JSON.parse(localStorage.getItem('user') || '{}') || undefined;
 </script>
 
@@ -27,7 +33,14 @@
 		</div>
 		<Divider />
 		<div class="mx-2 my-2">
-			<Button variant="tertiary" class="w-full" onclick={async () => await goto('/settings')}>
+			<Button
+				variant="tertiary"
+				class="w-full"
+				onclick={async () => {
+					onclick();
+					await goto('/settings');
+				}}
+			>
 				<Gear size="20"></Gear><span class="flex ml-2"
 					>{$_('navbar.userMenu.settings')}</span
 				>
@@ -39,6 +52,7 @@
 				variant="tertiary"
 				class="w-full"
 				onclick={async () => {
+					onclick();
 					await jellyfinDisconnect();
 					await goto('/login');
 				}}

@@ -11,14 +11,14 @@ export const jellyfinGetItems: RemoteQueryFunction<void, Result<JellyfinBaseItem
 		const { cookies } = getRequestEvent();
 		const userId = await assertUserAuth(cookies);
 		if (!userId) return { success: false, error: 'general.connectionRequired' };
+		const conn = (await Connectors.getInstance()).jellyfinConnector;
+
+		const items = await conn.getItems(userId, true, ['Movie', 'Series']);
+		if (!items.response.ok) console.error(JSON.stringify(items.error, null, 2));
 
 		return {
 			success: true,
-			data: (
-				await (
-					await Connectors.getInstance()
-				).jellyfinConnector.getItems(userId, true, ['Movie', 'Series'])
-			).data?.Items
+			data: items.data?.Items
 		};
 	}
 );
@@ -28,14 +28,14 @@ export const jellyfinGetEpisodes: RemoteQueryFunction<void, Result<JellyfinBaseI
 		const { cookies } = getRequestEvent();
 		const userId = await assertUserAuth(cookies);
 		if (!userId) return { success: false, error: 'general.connectionRequired' };
+		const conn = (await Connectors.getInstance()).jellyfinConnector;
+
+		const items = await conn.getItems(userId, undefined, ['Series', 'Episode']);
+		if (!items.response.ok) console.error(JSON.stringify(items.error, null, 2));
 
 		return {
 			success: true,
-			data: (
-				await (
-					await Connectors.getInstance()
-				).jellyfinConnector.getItems(userId, undefined, ['Series', 'Episode'])
-			).data?.Items
+			data: items.data.Items
 		};
 	}
 );
@@ -44,23 +44,24 @@ export const jellyfinGetUserImage = query(v.string(), async (userId) => {
 	const conn = (await Connectors.getInstance()).jellyfinConnector;
 
 	const image = await conn.getUserImage(userId);
+	if (!image.response.ok) console.error(JSON.stringify(image.error, null, 2));
+
 	return {
 		success: image.response.ok,
 		data: image.data
 			? Buffer.from(await image.data.arrayBuffer()).toString('base64')
-			: undefined,
-		error: image.response.ok ? undefined : image.response.statusText
+			: undefined
 	};
 });
 
 export const jellyfinGetUsers = query(async () => {
 	const conn = (await Connectors.getInstance()).jellyfinConnector;
 	const users = await conn.getUsers();
+	if (!users.response.ok) console.error(JSON.stringify(users.error, null, 2));
 
 	return {
 		success: users.response.ok,
-		data: users.data,
-		error: users.response.ok ? undefined : users.response.statusText
+		data: users.data
 	};
 });
 
@@ -75,11 +76,9 @@ export const jellyfinSetItemWatched = command(
 		let res;
 		if (item.watched) res = await conn.postUserPlayedItems(userId, item.id);
 		else res = await conn.deleteUserPlayedItems(userId, item.id);
+		if (!res.response.ok) console.error(JSON.stringify(res.error, null, 2));
 
-		return {
-			success: res.response.ok,
-			error: res.response.ok ? undefined : res.response.statusText
-		};
+		return { success: res.response.ok };
 	}
 );
 

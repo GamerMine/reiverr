@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectConfigService">
+    <option name="keyComment" value="false" />
+    <option name="sorting" value="true" />
+    <option name="previewLocale" value="en" />
+    <option name="modules">
+      <map>
+        <entry key="reiverr">
+          <value>
+            <ProjectConfigModuleState>
+              <option name="id" value="reiverr" />
+              <option name="pathTemplate" value="$PROJECT_DIR$/src/lib/lang/{locale}.json" />
+              <option name="fileCodec" value="JSON" />
+              <option name="fileTemplate" value="[{fileKey}]" />
+              <option name="keyTemplate" value="{fileKey:.}" />
+              <option name="rootDirectory" value="$PROJECT_DIR$/src" />
+              <option name="defaultKeyPrefixes">
+                <set />
+              </option>
+              <option name="editorFlavorTemplate" value="$_('{i18nKey}')" />
+              <option name="editorRules">
+                <list>
+                  <EditorRuleState>
+                    <option name="id" value="svelte-i18n" />
+                    <option name="languages">
+                      <set>
+                        <option value="JAVASCRIPT" />
+                        <option value="TYPESCRIPT" />
+                        <option value="SVELTE" />
+                      </set>
+                    </option>
+                    <option name="triggerKind" value="CALL_ARGUMENT" />
+                    <option name="priority" value="0" />
+                    <option name="excludeRule" value="false" />
+                    <option name="constraints">
+                      <list>
+                        <EditorRuleConstraintState>
+                          <option name="type" value="CALLABLE_NAME" />
+                          <option name="value" value="$_" />
+                          <option name="matchMode" value="EXACT" />
+                          <option name="negated" value="false" />
+                        </EditorRuleConstraintState>
+                      </list>
+                    </option>
+                  </EditorRuleState>
+                </list>
+              </option>
+            </ProjectConfigModuleState>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

@@ -15,12 +15,7 @@ import {
 	QualityProfilesEntity,
 	UserSettingsEntity
 } from '@reiverr/db/entities';
-import {
-	type FilteringProfile,
-	FilteringProfileSchema,
-	TaskType,
-	type UserSettings
-} from '@reiverr/db/types';
+import { type FilteringProfile, FilteringProfileSchema, TaskType } from '@reiverr/db/types';
 import { OptionalStringSchema, type Result } from '$lib/types';
 import { RadarrConnector, SonarrConnector } from '@reiverr/connectors';
 import { PlatformSchema } from '../../tasksWorker/types.ts';
@@ -46,67 +41,45 @@ export const saveSettings = form(
 		adminDownloadLanguages: v.optional(v.array(v.string())),
 		adminUserCanChooseProfile: v.optional(v.boolean(), false)
 	}),
-	async ({
-		userLanguage,
-		userAutoplayTrailers,
-		userAnimationDuration,
-		userDiscoverRegion,
-		userDiscoverExcludeLibraryItems,
-		userDiscoverIncludedLanguages,
-		userFilteringProfileId,
-
-		adminJellyfinBaseUrl,
-		adminJellyfinApiKey,
-		adminRadarrBaseUrl,
-		adminRadarrApiKey,
-		adminRadarrRootFolderPath,
-		adminSonarrBaseUrl,
-		adminSonarrApiKey,
-		adminSonarrRootFolderPath,
-		adminDownloadLanguages,
-		adminUserCanChooseProfile
-	}): Promise<Result<{ needLogin: boolean }>> => {
+	async (settings): Promise<Result<{ needLogin: boolean }>> => {
 		const { cookies } = getRequestEvent();
 		const userReq = await isJellyfinUserConnected(cookies);
-		if (!userReq.response.ok) {
+		if (!userReq.response.ok || !userReq.data?.Id) {
 			return { success: false, error: 'general.connectionRequired' };
 		}
 
-		if (!userReq.data?.Id) {
-			return { success: false, error: 'general.connectionRequired' };
-		}
-
-		const newUserSettings: UserSettings = {
-			interface: {
-				language: userLanguage,
-				autoplayTrailers: userAutoplayTrailers,
-				animationDuration: userAnimationDuration
+		await UserSettingsEntity.upsert(
+			{
+				userId: userReq.data.Id,
+				language: settings.userLanguage,
+				autoplayTrailers: settings.userAutoplayTrailers,
+				animationDuration: settings.userAnimationDuration,
+				discoverRegion: settings.userDiscoverRegion,
+				discoverExcludeLibraryItems: settings.userDiscoverExcludeLibraryItems,
+				discoverIncludedLanguages: settings.userDiscoverIncludedLanguages,
+				filteringProfileId: settings.userFilteringProfileId
 			},
-			discover: {
-				region: userDiscoverRegion,
-				excludeLibraryItems: userDiscoverExcludeLibraryItems,
-				includedLanguages: userDiscoverIncludedLanguages
-			},
-			filteringProfileId: userFilteringProfileId
-		};
-
-		await UserSettingsEntity.setUserSettings(userReq.data.Id, newUserSettings);
+			{
+				conflictPaths: ['userId'],
+				skipUpdateIfNoValuesChanged: true
+			}
+		);
 
 		let needLogin = false;
 		if (userReq.data.Policy?.IsAdministrator) {
 			const globalSettings = await GlobalSettingsEntity.getDefault();
 			if (
-				adminJellyfinBaseUrl &&
-				adminJellyfinApiKey &&
-				adminJellyfinBaseUrl !== globalSettings.jellyfinBaseUrl
+				settings.adminJellyfinBaseUrl &&
+				settings.adminJellyfinApiKey &&
+				settings.adminJellyfinBaseUrl !== globalSettings.jellyfinBaseUrl
 			) {
 				const connection = await checkJellyfinConnection(
-					adminJellyfinBaseUrl,
-					adminJellyfinApiKey
+					settings.adminJellyfinBaseUrl,
+					settings.adminJellyfinApiKey
 				);
 				if (connection.ok) {
-					globalSettings.jellyfinBaseUrl = adminJellyfinBaseUrl;
-					globalSettings.jellyfinApiKey = adminJellyfinApiKey;
+					globalSettings.jellyfinBaseUrl = settings.adminJellyfinBaseUrl;
+					globalSettings.jellyfinApiKey = settings.adminJellyfinApiKey;
 					cookies.delete('access_token', { path: '/' });
 					needLogin = true;
 				} else {
@@ -117,17 +90,17 @@ export const saveSettings = form(
 			// New Radarr BaseUrl & ApiKey
 			let radarrHealthy: boolean;
 			if (
-				adminRadarrBaseUrl &&
-				adminRadarrApiKey &&
-				adminRadarrBaseUrl !== globalSettings.radarrBaseUrl
+				settings.adminRadarrBaseUrl &&
+				settings.adminRadarrApiKey &&
+				settings.adminRadarrBaseUrl !== globalSettings.radarrBaseUrl
 			) {
 				radarrHealthy = await new RadarrConnector(
-					adminRadarrBaseUrl,
-					adminRadarrApiKey
+					settings.adminRadarrBaseUrl,
+					settings.adminRadarrApiKey
 				).isHealthy();
 				if (radarrHealthy) {
-					globalSettings.radarrBaseUrl = adminRadarrBaseUrl;
-					globalSettings.radarrApiKey = adminRadarrApiKey;
+					globalSettings.radarrBaseUrl = settings.adminRadarrBaseUrl;
+					globalSettings.radarrApiKey = settings.adminRadarrApiKey;
 				} else {
 					return { success: false, error: 'settings.misc.checkRadarrCredentials' };
 				}
@@ -140,8 +113,8 @@ export const saveSettings = form(
 
 			// If Radarr connection is possible, checks for the configuration
 			if (radarrHealthy) {
-				if (adminRadarrRootFolderPath) {
-					globalSettings.radarrRootFolderPath = adminRadarrRootFolderPath;
+				if (settings.adminRadarrRootFolderPath) {
+					globalSettings.radarrRootFolderPath = settings.adminRadarrRootFolderPath;
 				} else {
 					return { success: false, error: 'settings.misc.radarrConfigurationInvalid' };
 				}
@@ -150,17 +123,17 @@ export const saveSettings = form(
 			// New Sonarr BaseUrl & ApiKey
 			let sonarrHealthy: boolean;
 			if (
-				adminSonarrBaseUrl &&
-				adminSonarrApiKey &&
-				adminSonarrBaseUrl !== globalSettings.sonarrBaseUrl
+				settings.adminSonarrBaseUrl &&
+				settings.adminSonarrApiKey &&
+				settings.adminSonarrBaseUrl !== globalSettings.sonarrBaseUrl
 			) {
 				sonarrHealthy = await new SonarrConnector(
-					adminSonarrBaseUrl,
-					adminSonarrApiKey
+					settings.adminSonarrBaseUrl,
+					settings.adminSonarrApiKey
 				).isHealthy();
 				if (sonarrHealthy) {
-					globalSettings.sonarrBaseUrl = adminSonarrBaseUrl;
-					globalSettings.sonarrApiKey = adminSonarrApiKey;
+					globalSettings.sonarrBaseUrl = settings.adminSonarrBaseUrl;
+					globalSettings.sonarrApiKey = settings.adminSonarrApiKey;
 				} else {
 					return { success: false, error: 'settings.misc.checkSonarrCredentials' };
 				}
@@ -173,22 +146,22 @@ export const saveSettings = form(
 
 			// If Sonarr connection is possible, checks for the configuration
 			if (sonarrHealthy) {
-				if (adminSonarrRootFolderPath) {
-					globalSettings.sonarrRootFolderPath = adminSonarrRootFolderPath;
+				if (settings.adminSonarrRootFolderPath) {
+					globalSettings.sonarrRootFolderPath = settings.adminSonarrRootFolderPath;
 				} else {
 					return { success: false, error: 'settings.misc.sonarrConfigurationInvalid' };
 				}
 			}
 
-			globalSettings.userCanChooseProfile = adminUserCanChooseProfile;
+			globalSettings.userCanChooseProfile = settings.adminUserCanChooseProfile;
 
 			await globalSettings.save();
 
 			// Set other admin settings
-			if (!adminDownloadLanguages) adminDownloadLanguages = [];
+			if (!settings.adminDownloadLanguages) settings.adminDownloadLanguages = [];
 			let customFormatModified =
-				(await CustomFormatsEntity.upsertFormats(adminDownloadLanguages)).identifiers
-					.length > 0;
+				(await CustomFormatsEntity.upsertFormats(settings.adminDownloadLanguages))
+					.identifiers.length > 0;
 
 			let qualityProfileModified =
 				((
@@ -197,7 +170,7 @@ export const saveSettings = form(
 							(
 								await CustomFormatsEntity.find({
 									select: { id: true },
-									where: { lang: Not(In(adminDownloadLanguages)) }
+									where: { lang: Not(In(settings.adminDownloadLanguages)) }
 								})
 							).map((f) => f.id)
 						)
@@ -206,7 +179,7 @@ export const saveSettings = form(
 			customFormatModified =
 				((
 					await CustomFormatsEntity.delete({
-						lang: Not(In(adminDownloadLanguages))
+						lang: Not(In(settings.adminDownloadLanguages))
 					})
 				).affected ?? 1) > 0 || customFormatModified;
 			if (customFormatModified) await scheduleTask(TaskType.SYNC_CUSTOM_FORMATS, undefined);

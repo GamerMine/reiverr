@@ -8,7 +8,10 @@
 	import type { FilteringProfile, GlobalSettings } from '@reiverr/db/types';
 	import { deleteFilteringProfile, saveSettings } from '$lib/remote/settings.remote';
 	import { invalidateAll } from '$app/navigation';
-	import { createSuccessNotification } from '$lib/stores/notification.store';
+	import {
+		createErrorNotification,
+		createSuccessNotification
+	} from '$lib/stores/notification.store';
 	import { LANGUAGES } from '$lib/constants';
 	import Select from '$lib/components/common/inputs/forms/Select.svelte';
 	import Option from '$lib/components/common/inputs/forms/Option.svelte';
@@ -48,6 +51,8 @@
 				$_('general.success'),
 				$_('settings.filtering.filteringProfileDeleteSuccess')
 			);
+		} else {
+			createErrorNotification($_('general.error'), $_(res.error ?? 'general.unknownError'));
 		}
 	}
 

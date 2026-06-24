@@ -1,293 +1,56 @@
 {
-  "ui": {
-    "modal": {
-      "seasonsChooser": {
-        "title": "Choix des saisons"
-      }
-    }
-  },
-
-
-  "general": {
-    "error": "Erreur",
-    "select": "Sélection",
-    "success": "Succès",
-    "add": "Créer",
-    "edit": "Modifier",
-    "jellyfinUnreachable": "L'hôte Jellyfin est injoignable ! Merci de contacter votre administrateur.",
-    "connectionRequired": "Vous devez être connectés pour effectuer cette action.",
-    "unknownError": "Erreur inconnue. Vérifiez les logs du serveur.",
-    "unauthorizedAction": "Vous devez être connecté en tant qu'administrateur pour effectuer cette action.",
-    "invalidInputs": "Échec de validation des champs."
-  },
   "appName": "Reiverr",
-  "setup": {
-    "welcome": "Bienvenue !",
-    "welcomeOnReiverr": "Bienvenue sur Reiverr !",
-    "configureJellyfin": "Configuration de Jellyfin",
-    "configurationFinished": "Félicitation !",
-    "page1_1": "Cet assistant va vous guider pas à pas, afin de configurer vos service et personnaliser votre expérience.",
-    "page1_2": "Cliquez sur Suivant pour continuer la configuration. Tous les paramètres pourrons êtres modifiés ultérieurement.",
-    "page2_1": "Afin d'utiliser Reiverr, il est nécessaire de fournir l'URL que vous utilisez pour accéder à Jellyfin, ainsi que la clé API Jellyfin. Cet clé ne sera utilisé que pour l'authentification des utilisateurs. Vous pouvez récupérer votre clé API sur Jellyfin dans Tableau de bord > Clés API.",
-    "page2_2": "Merci de compléter le(s) champ(s) ci-desous :",
-    "page3_1": "Ça y est, Jellyfin est configuré !",
-    "page3_2": "Cliquez sur Terminer pour terminer la configuration.",
-    "jellyfinURLInput": "URL de Jellyfin",
-    "apiKeyInput": "Clé API de Jellyfin",
-    "errors": {
-      "unableConnect": "Connection à Jellyfin impossible",
-      "invalidURL": "Instance de Jellyfin inaccessible. Vérifiez l'URL.",
-      "invalidAPIKey": "Authentification impossible à Jellyfin. Vérifiez que la clé fournie est valide et rééessayez.",
-      "unknownError": "Une erreur inconnue s'est produite."
-    }
-  },
-  "login": {
-    "whoWatching": "Qui regarde ?",
-    "manualLogin": "Connexion Manuelle",
-    "goBack": "Retour",
-    "username": "Nom d'utilisateur",
-    "password": "Mot de passe",
-    "logIn": "Se connecter",
-    "invalidCredential": "Identifiants invalides",
-    "unknownError": "Erreur inconnue"
-  },
-  "navbar": {
-    "home": "Accueil",
-    "discover": "Découvrir",
-    "library": "Bibliothèque",
-    "sources": "Sources",
-    "userMenu": {
-      "administrator": "Administrateur",
-      "user": "Utilisateur",
-      "settings": "Paramètres",
-      "logout": "Se déconnecter"
-    }
-  },
-  "search": {
-    "placeHolder": "Rechercher des films et des émissions de télévision",
-    "noRecentSearches": "Aucune recherche récente",
-    "noResults": "Aucun résultat trouvé"
+  "data": {
+    "known_for_department": {
+      "acting": "Acteur",
+      "actors": "Acteur",
+      "art": "Direction artistique",
+      "camera": "Caméra",
+      "costume_make_up": "Costumes et maquillage",
+      "crew": "Équipe technique",
+      "directing": "Réalisation",
+      "editing": "Montage",
+      "lighting": "Éclairage",
+      "production": "Production",
+      "sound": "Son",
+      "visual_effects": "Effets visuels",
+      "writing": "Scénario"
+    },
+    "status": {
+      "canceled": "Annulée",
+      "ended": "Terminée",
+      "in_production": "En Production",
+      "pilot": "Épisode Pilote",
+      "planned": "Prévu",
+      "returning_series": "En Cours"
+    },
+    "unknown": "Inconnu"
   },
   "discover": {
     "LatestAddition": "Dernier ajout",
+    "TVNetworks": "Réseaux de télévision",
     "continueWatching": "Continuer à regarder",
-    "trending": "Tendance",
-    "popularPeople": "Personnes populaires",
-    "upcomingMovies": "Films à venir",
-    "upcomingSeries": "Série à venir",
     "genres": "Genres",
     "newDigitalReleases": "Nouvelles versions numériques",
+    "popularPeople": "Personnes populaires",
     "streamingNow": "En cours de diffusion",
-    "TVNetworks": "Réseaux de télévision"
+    "trending": "Tendance",
+    "upcomingMovies": "Films à venir",
+    "upcomingSeries": "Série à venir"
   },
-  "library": {
-    "missingConfiguration": "Configurez Radarr, Sonarr et Jellyfin pour surveiller et gérer votre bibliothèque",
-    "available": "Disponible",
-    "watched": "Regardé",
-    "unavailable": "Indisponible",
-    "loadMore": "Voir plus",
-    "search": "Rechercher dans la bibliothèque",
-    "sort": {
-      "sortBy": "Trier par",
-      "dateAdded": "Date d'ajout",
-      "rating": "Note",
-      "releaseDate": "Date de sortie",
-      "size": "Taille",
-      "name": "Nom",
-      "ascending": "Ascendant",
-      "descending": "Descendant"
-    },
-    "content": {
-      "movie": "Film",
-      "show": "Série",
-      "requestContent": "Demander",
-      "directedBy": "Dirigé par",
-      "releaseDate": "Date de sortie",
-      "budget": "Budget",
-      "status": "Statut",
-      "runtime": "Durée",
-      "castAndCrew": "Casting",
-      "recommendations": "Recommandations",
-      "similarTitles": "Titres similaires",
-
-      "play": "Lire",
-      "similarSeries": "Séries similaires",
-      "similarMovies": "Films similaires",
-      "get": "Obtenir",
-      "downloading": "En téléchargement",
-      "queued": "En file d'attente",
-      "beingAdded": "En cours d'ajout",
-      "downloadClientUnavailable": "Client de téléchargement indisponible",
-      "viewLess": "Moins",
-      "viewAll": "Plus",
-      "networks": "Plateformes",
-
-      "firstAirDate": "Première date de diffusion",
-      "episodeRunTime": "Longueur des épisodes",
-      "nextAirDate": "Prochaine diffusion",
-      "lastAirDate": "Dernière diffusion",
-      "spokenLanguages": "Langue parlée",
-      "season": "Saison",
-      "available": "Disponible"
-    },
-    "LibraryItemContext": {
-      "markWatched": "Marquer comme vu",
-      "markUnwatched": "Marquer comme non vu",
-      "openJellyfin": "Ouvrir dans Jellyfin",
-      "openRadarr": "Ouvrir dans Radarr",
-      "openSonarr": "Ouvrir dans Sonarr",
-      "openTMDB": "Ouvrir dans TMDB"
-    },
-    "personPage": {
-      "externalLinks": "Liens externes",
-      "birthday": "Date de naissance",
-      "knownFor": "Connu pour",
-      "placeOfBirth": "Lieu de naissance",
-      "gender": "Genre",
-      "notSet": "Non défini",
-      "female": "Femme",
-      "male": "Homme",
-      "nonBinary": "Non binaire",
-      "homepage": "Site web"
-    }
-  },
-  "sources": {},
-  "titleShowcase": {
-    "details": "Détails",
-    "watchTrailer": "Regarde la bande-annonce",
-    "releaseDate": "Date de sortie",
-    "directedBy": "Dirigé par"
-  },
-  "settings": {
-    "navbar": {
-      "userSettings": "Paramètres utilisateur",
-      "adminSettings": "Paramètres administrateur",
-      "settings": "Configuration",
-      "general": "Général",
-      "integrations": "Intégrations",
-      "filtering": "Profiles de filtrage"
-    },
-    "general": {
-      "userInterface": {
-        "userInterface": "Interface utilisateur",
-        "language": "Langue",
-        "autoplayTrailers": "Lecture automatique des bandes annonce",
-        "animationDuration": "Durée de l'animation"
-      },
-      "discovery": {
-        "discovery": "Découverte",
-        "none": "Aucun",
-        "region": "Région",
-        "excludeLibraryItemsFromDiscovery": "Exclure la bibliothèque de Découverte",
-        "includedLanguages": "Langues incluses",
-        "includedLanguagesDescription": "Filtrer les résultats en fonction de la langue parlée. Prends les codes ISO 639-1 séparés par des virgules. Laisser vide pour désactiver."
-      }
-    },
-    "integrations": {
-      "integrations": "Intégrations",
-      "integrationsNote": "Remarque: Les URL de base doivent être accessibles depuis le navigateur, ce qui signifie que les adresses Docker internes ne fonctionneront pas, par exemple. Les clés de l'API <span class='font-medium underline'>sera exposé</span> au navigateur.",
-      "baseUrl": "URL de base",
-      "apiKey": "Clé API",
-      "testConnection": "Tester la connexion",
-      "status": {
-        "connected": "Connecté",
-        "disconnected": "Déconnecté"
-      },
-      "options": {
-        "options": "Options",
-        "rootFolder": "Dossier racine",
-        "qualityProfile": "Profil de qualité",
-        "languageProfile": "Profil linguistique",
-        "jellyfinUser": "Utilisateur de Jellyfin",
-        "searchForMovie": "Recherche automatique du film sur Radarr"
-      }
-    },
-    "filtering": {
-      "filteringProfiles": "Profiles de filtrage",
-      "filteringProfilesDescription": "Ici, vous pouvez sélectionner un profil de filtrage à utiliser par défaut. Lorsque vous voulez obtenir un film ou des épisodes d'une série, ce profil par défaut sera utilisé.",
-      "letUserChoose": "Laisser l'utilisateur choisir",
-      "letUserChooseDescription": "Si coché, n'importe quel utilisateur peux choisir parmis l'un des profils disponible ici.",
-      "addProfile": "Ajouter un profile",
-      "editProfile": "Modifier un profile",
-      "profileName": "Nom du profile",
-      "defaultProfile": "Profile par défaut",
-      "languages": "Langues",
-      "qualities": "Qualitées vidéo",
-      "filteringProfileCreatedSuccess": "Profile de filtrage créé avec succès",
-      "filteringProfileDeleteSuccess": "Profile de filtrage supprimé"
-    },
-    "misc": {
-      "invalidConfiguration": "Configuration Invalide",
-      "checkJellyfinCredentials": "Connexion à Jellyfin impossible. Vérifiez les informations de connexions.",
-      "checkRadarrCredentials": "Connexion à Radarr impossible. Vérifiez les informations de connexions.",
-      "radarrConfigurationInvalid": "La configuration de Radarr est invalide. Vérifiez le champ Dossier racine.",
-      "checkSonarrCredentials": "Connexion à Sonarr impossible. Vérifiez les informations de connexions.",
-      "sonarrConfigurationInvalid": "La configuration de Sonarr est invalide. Vérifiez le champ Dossier racine.",
-      "jellyfinConfirmChangesDialog": "En modifiant la configuration de Jellyfin, vous allez être redirigé vers la page de connexion.",
-      "radarrRemoveConfirmDialog": "Vous êtes sur le point de supprimer l'intégration Radarr. Voulez-vous continuer ?",
-      "sonarrRemoveConfirmDialog": "Vous êtes sur le point de supprimer l'intégration Sonarr. Voulez-vous continuer ?",
-      "noDefaultFilteringProfile": "Aucun profil de filtrage par défaut n'as été créé.",
-      "changesSavedSuccess": "Paramètres modifiés avec succès.",
-      "saveChanges": "Sauvegarder les modifications",
-      "resetToDefaults": "Réinitialiser aux paramètres par défaut",
-      "changelog": "Journal des modifications",
-      "next": "Suivant",
-      "back": "Retour",
-      "finish": "Terminer",
-      "cancel": "Annuler",
-      "continue": "Continuer"
-    }
-  },
-  "update": {
-    "updateAvailable": "est désormais disponible !",
-    "skipVersion": "Passer cette version"
-  },
-  "data": {
-    "unknown": "Inconnu",
-    "known_for_department": {
-      "acting": "Acteur",
-      "sound": "Son",
-      "directing": "Réalisation",
-      "camera": "Caméra",
-      "writing": "Scénario",
-      "production": "Production",
-      "editing": "Montage",
-      "lighting": "Éclairage",
-      "art": "Direction artistique",
-      "actors": "Acteur",
-      "visual_effects": "Effets visuels",
-      "costume_make_up": "Costumes et maquillage",
-      "crew": "Équipe technique"
-    },
-    "status": {
-      "returning_series": "En Cours",
-      "planned": "Prévu",
-      "in_production": "En Production",
-      "ended": "Terminée",
-      "canceled": "Annulée",
-      "pilot": "Épisode Pilote"
-    }
-  },
-  "service": {
-    "tasks": {
-      "test": {
-        "single": "Tester la planification d'une seule tache",
-        "multiple": "Tester la planification de {count} taches (succès : {success} / erreur : {error})",
-        "success": "Exécution #{id} (succès)",
-        "error": "Exécution #{id} (erreur)"
-      },
-      "sync": {
-        "languagesSync": "Synchronisation des langues",
-        "languagesSyncOn": "Synchronisation des langues sur {platform}"
-      }
-    },
-    "messages": {
-      "unknownTaskType": "Type de tâche inconnu : {type}",
-      "queuingFailed": "Impossible d'ajouter l'exécution de la tâche en file d'attente : {error}"
-    }
+  "general": {
+    "add": "Créer",
+    "connectionRequired": "Vous devez être connectés pour effectuer cette action.",
+    "edit": "Modifier",
+    "error": "Erreur",
+    "invalidInputs": "Échec de validation des champs.",
+    "jellyfinUnreachable": "L'hôte Jellyfin est injoignable ! Merci de contacter votre administrateur.",
+    "select": "Sélection",
+    "success": "Succès",
+    "unauthorizedAction": "Vous devez être connecté en tant qu'administrateur pour effectuer cette action.",
+    "unknownError": "Erreur inconnue. Vérifiez les logs du serveur."
   },
   "languages": {
-    "original": "Original",
     "arabic": "Arabe",
     "bosnian": "Bosnien",
     "bulgarian": "Bulgare",
@@ -317,6 +80,7 @@
     "macedonian": "Macédonien",
     "malayalam": "Malayalam",
     "norwegian": "Norvégien",
+    "original": "Original",
     "persian": "Persan",
     "polish": "Polonais",
     "portuguese": "Portugais",
@@ -334,5 +98,248 @@
     "turkish": "Turc",
     "ukrainian": "Ukrainien",
     "vietnamese": "Vietnamien"
+  },
+  "library": {
+    "LibraryItemContext": {
+      "markUnwatched": "Marquer comme non vu",
+      "markWatched": "Marquer comme vu",
+      "openJellyfin": "Ouvrir dans Jellyfin",
+      "openRadarr": "Ouvrir dans Radarr",
+      "openSonarr": "Ouvrir dans Sonarr",
+      "openTMDB": "Ouvrir dans TMDB"
+    },
+    "content": {
+      "available": "Disponible",
+      "beingAdded": "En cours d'ajout",
+      "budget": "Budget",
+      "castAndCrew": "Casting",
+      "directedBy": "Dirigé par",
+      "downloadClientUnavailable": "Client de téléchargement indisponible",
+      "downloading": "En téléchargement",
+      "episodeRunTime": "Longueur des épisodes",
+      "firstAirDate": "Première date de diffusion",
+      "get": "Obtenir",
+      "lastAirDate": "Dernière diffusion",
+      "minLeft": "min restante(s)",
+      "movie": "Film",
+      "networks": "Plateformes",
+      "nextAirDate": "Prochaine diffusion",
+      "play": "Lire",
+      "queued": "En file d'attente",
+      "recommendations": "Recommandations",
+      "releaseDate": "Date de sortie",
+      "requestContent": "Demander",
+      "revenue": "Revenue",
+      "runtime": "Durée",
+      "season": "Saison",
+      "show": "Série",
+      "similarMovies": "Films similaires",
+      "similarSeries": "Séries similaires",
+      "similarTitles": "Titres similaires",
+      "sizeDisk": "Taille sur le disque",
+      "spokenLanguages": "Langue parlée",
+      "status": "Statut",
+      "viewAll": "Plus",
+      "viewLess": "Moins"
+    },
+    "loadMore": "Voir plus",
+    "missingConfiguration": "Configurez Radarr, Sonarr et Jellyfin pour surveiller et gérer votre bibliothèque",
+    "personPage": {
+      "birthday": "Date de naissance",
+      "externalLinks": "Liens externes",
+      "female": "Femme",
+      "gender": "Genre",
+      "homepage": "Site web",
+      "knownFor": "Connu pour",
+      "male": "Homme",
+      "nonBinary": "Non binaire",
+      "notSet": "Non défini",
+      "placeOfBirth": "Lieu de naissance"
+    },
+    "search": "Rechercher dans la bibliothèque",
+    "sort": {
+      "ascending": "Ascendant",
+      "dateAdded": "Date d'ajout",
+      "descending": "Descendant",
+      "name": "Nom",
+      "rating": "Note",
+      "releaseDate": "Date de sortie",
+      "size": "Taille",
+      "sortBy": "Trier par"
+    },
+    "unavailable": "Indisponible",
+    "watched": "Regardé"
+  },
+  "login": {
+    "goBack": "Retour",
+    "invalidCredential": "Identifiants invalides",
+    "logIn": "Se connecter",
+    "manualLogin": "Connexion Manuelle",
+    "password": "Mot de passe",
+    "unknownError": "Erreur inconnue",
+    "username": "Nom d'utilisateur",
+    "whoWatching": "Qui regarde ?"
+  },
+  "navbar": {
+    "discover": "Découvrir",
+    "home": "Accueil",
+    "library": "Bibliothèque",
+    "sources": "Sources",
+    "userMenu": {
+      "administrator": "Administrateur",
+      "logout": "Se déconnecter",
+      "settings": "Paramètres",
+      "user": "Utilisateur"
+    }
+  },
+  "search": {
+    "noRecentSearches": "Aucune recherche récente",
+    "noResults": "Aucun résultat trouvé",
+    "placeHolder": "Rechercher des films et des émissions de télévision"
+  },
+  "service": {
+    "messages": {
+      "queuingFailed": "Impossible d'ajouter l'exécution de la tâche en file d'attente : {error}",
+      "unknownTaskType": "Type de tâche inconnu : {type}"
+    },
+    "tasks": {
+      "sync": {
+        "languagesSync": "Synchronisation des langues",
+        "languagesSyncOn": "Synchronisation des langues sur {platform}"
+      },
+      "test": {
+        "error": "Exécution #{id} (erreur)",
+        "multiple": "Tester la planification de {count} taches (succès : {success} / erreur : {error})",
+        "single": "Tester la planification d'une seule tache",
+        "success": "Exécution #{id} (succès)"
+      }
+    }
+  },
+  "settings": {
+    "filtering": {
+      "addProfile": "Ajouter un profile",
+      "defaultProfile": "Profile par défaut",
+      "editProfile": "Modifier un profile",
+      "filteringProfileCreatedSuccess": "Profile de filtrage créé avec succès",
+      "filteringProfileDeleteSuccess": "Profile de filtrage supprimé",
+      "filteringProfiles": "Profiles de filtrage",
+      "filteringProfilesDescription": "Ici, vous pouvez sélectionner un profil de filtrage à utiliser par défaut. Lorsque vous voulez obtenir un film ou des épisodes d'une série, ce profil par défaut sera utilisé.",
+      "languages": "Langues",
+      "letUserChoose": "Laisser l'utilisateur choisir",
+      "letUserChooseDescription": "Si coché, n'importe quel utilisateur peux choisir parmis l'un des profils disponible ici.",
+      "profileName": "Nom du profile",
+      "qualities": "Qualitées vidéo"
+    },
+    "general": {
+      "discovery": {
+        "discovery": "Découverte",
+        "excludeLibraryItemsFromDiscovery": "Exclure la bibliothèque de Découverte",
+        "includedLanguages": "Langues incluses",
+        "includedLanguagesDescription": "Filtrer les résultats en fonction de la langue parlée. Prends les codes ISO 639-1 séparés par des virgules. Laisser vide pour désactiver.",
+        "none": "Aucun",
+        "region": "Région"
+      },
+      "userInterface": {
+        "animationDuration": "Durée de l'animation",
+        "autoplayTrailers": "Lecture automatique des bandes annonce",
+        "language": "Langue",
+        "userInterface": "Interface utilisateur"
+      }
+    },
+    "integrations": {
+      "apiKey": "Clé API",
+      "baseUrl": "URL de base",
+      "integrations": "Intégrations",
+      "integrationsNote": "Remarque: Les URL de base doivent être accessibles depuis le navigateur, ce qui signifie que les adresses Docker internes ne fonctionneront pas, par exemple. Les clés de l'API <span class='font-medium underline'>sera exposé</span> au navigateur.",
+      "options": {
+        "jellyfinUser": "Utilisateur de Jellyfin",
+        "languageProfile": "Profil linguistique",
+        "options": "Options",
+        "qualityProfile": "Profil de qualité",
+        "rootFolder": "Dossier racine",
+        "searchForMovie": "Recherche automatique du film sur Radarr"
+      },
+      "status": {
+        "connected": "Connecté",
+        "disconnected": "Déconnecté"
+      },
+      "testConnection": "Tester la connexion"
+    },
+    "misc": {
+      "back": "Retour",
+      "cancel": "Annuler",
+      "changelog": "Journal des modifications",
+      "changesSavedSuccess": "Paramètres modifiés avec succès.",
+      "checkJellyfinCredentials": "Connexion à Jellyfin impossible. Vérifiez les informations de connexions.",
+      "checkRadarrCredentials": "Connexion à Radarr impossible. Vérifiez les informations de connexions.",
+      "checkSonarrCredentials": "Connexion à Sonarr impossible. Vérifiez les informations de connexions.",
+      "continue": "Continuer",
+      "finish": "Terminer",
+      "invalidConfiguration": "Configuration Invalide",
+      "jellyfinConfirmChangesDialog": "En modifiant la configuration de Jellyfin, vous allez être redirigé vers la page de connexion.",
+      "next": "Suivant",
+      "noDefaultFilteringProfile": "Aucun profil de filtrage par défaut n'as été trouvé.",
+      "radarrConfigurationInvalid": "La configuration de Radarr est invalide. Vérifiez le champ Dossier racine.",
+      "radarrRemoveConfirmDialog": "Vous êtes sur le point de supprimer l'intégration Radarr. Voulez-vous continuer ?",
+      "resetToDefaults": "Réinitialiser aux paramètres par défaut",
+      "saveChanges": "Sauvegarder les modifications",
+      "sonarrConfigurationInvalid": "La configuration de Sonarr est invalide. Vérifiez le champ Dossier racine.",
+      "sonarrRemoveConfirmDialog": "Vous êtes sur le point de supprimer l'intégration Sonarr. Voulez-vous continuer ?"
+    },
+    "navbar": {
+      "adminSettings": "Paramètres administrateur",
+      "filtering": "Profiles de filtrage",
+      "general": "Général",
+      "integrations": "Intégrations",
+      "settings": "Configuration",
+      "userSettings": "Paramètres utilisateur"
+    }
+  },
+  "setup": {
+    "apiKeyInput": "Clé API de Jellyfin",
+    "configurationFinished": "Félicitation !",
+    "configureJellyfin": "Configuration de Jellyfin",
+    "errors": {
+      "invalidAPIKey": "Authentification impossible à Jellyfin. Vérifiez que la clé fournie est valide et rééessayez.",
+      "invalidURL": "Instance de Jellyfin inaccessible. Vérifiez l'URL.",
+      "unableConnect": "Connection à Jellyfin impossible",
+      "unknownError": "Une erreur inconnue s'est produite."
+    },
+    "jellyfinURLInput": "URL de Jellyfin",
+    "page1_1": "Cet assistant va vous guider pas à pas, afin de configurer vos service et personnaliser votre expérience.",
+    "page1_2": "Cliquez sur Suivant pour continuer la configuration. Tous les paramètres pourrons êtres modifiés ultérieurement.",
+    "page2_1": "Afin d'utiliser Reiverr, il est nécessaire de fournir l'URL que vous utilisez pour accéder à Jellyfin, ainsi que la clé API Jellyfin. Cet clé ne sera utilisé que pour l'authentification des utilisateurs. Vous pouvez récupérer votre clé API sur Jellyfin dans Tableau de bord > Clés API.",
+    "page2_2": "Merci de compléter le(s) champ(s) ci-desous :",
+    "page3_1": "Ça y est, Jellyfin est configuré !",
+    "page3_2": "Cliquez sur Terminer pour terminer la configuration.",
+    "welcome": "Bienvenue !",
+    "welcomeOnReiverr": "Bienvenue sur Reiverr !"
+  },
+  "titleShowcase": {
+    "details": "Détails",
+    "directedBy": "Dirigé par",
+    "releaseDate": "Date de sortie",
+    "watchTrailer": "Regarde la bande-annonce"
+  },
+  "ui": {
+    "modal": {
+      "seasonsChooser": {
+        "title": "Choix des saisons"
+      }
+    },
+    "notification": {
+      "description": {
+        "episodesAdded": "Les épisodes vont-être ajouté à la bibliothèque lorsqu'ils seront disponible",
+        "movieAdded": "Le film va être ajouté à la bibliothèque lorqu'il sera disponible."
+      },
+      "header": {
+        "episodesAdded": "Épisodes ajoutés à la file d'attente",
+        "movieAdded": "Film ajouté à la file d'attente"
+      }
+    }
+  },
+  "update": {
+    "skipVersion": "Passer cette version",
+    "updateAvailable": "est désormais disponible !"
   }
 }

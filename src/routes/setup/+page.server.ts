@@ -1,7 +1,7 @@
 import { checkJellyfinConnection } from '$lib/apis/jellyfin/server/jellyfin.server';
 import { fail, redirect } from '@sveltejs/kit';
 import { GlobalSettingsEntity } from '@reiverr/db/entities';
-import type { PageServerLoad } from '../../../.svelte-kit/types/src/routes/setup/$types';
+import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const jellyfinAPIKey = await GlobalSettingsEntity.find();

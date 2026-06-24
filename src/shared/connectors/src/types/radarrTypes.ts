@@ -11,3 +11,4 @@ export type RadarrQualityProfileQualityItemResource =
 	components['schemas']['QualityProfileQualityItemResource'];
 export type RadarrProfileFormatItemResource = components['schemas']['ProfileFormatItemResource'];
 export type RadarrQueueStatus = components['schemas']['QueueStatus'];
+export type RadarrMediaCover = components['schemas']['MediaCover'];

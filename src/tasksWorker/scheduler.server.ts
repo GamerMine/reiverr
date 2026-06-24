@@ -130,7 +130,6 @@ async function queueExecution(task: TaskEntity) {
 		task.error = { id: 'service.messages.unknownTaskType', values: { type: task.type } };
 	}
 
-	task.executed = new Date();
 	await task.save();
 }
 
@@ -138,13 +137,8 @@ async function queueExecution(task: TaskEntity) {
  * @param type The type of the task to schedule
  * @param data The data to pass to the task executor
  * @param cron The cron expression to schedule the task (optional)
- * @returns The task entity
  */
-export async function scheduleTask(
-	type: TaskType,
-	data: unknown,
-	cron: string | null = null
-): Promise<TaskEntity> {
+export async function scheduleTask(type: TaskType, data: unknown, cron: string | null = null) {
 	const task = new TaskEntity();
 	task.data = data;
 	task.type = type;
@@ -152,8 +146,6 @@ export async function scheduleTask(
 
 	const saved = await task.save();
 	await scheduleExecution(saved);
-
-	return saved;
 }
 
 /** Modifies a task.
