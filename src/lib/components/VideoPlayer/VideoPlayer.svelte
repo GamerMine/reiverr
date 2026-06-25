@@ -1,12 +1,5 @@
 <script lang="ts">
-	import {
-		deleteActiveEncoding as deleteActiveEncoding,
-		getJellyfinItem,
-		getJellyfinPlaybackInfo,
-		reportJellyfinPlaybackProgress,
-		reportJellyfinPlaybackStarted,
-		reportJellyfinPlaybackStopped
-	} from '$lib/apis/jellyfin/jellyfinApi';
+	import { getJellyfinPlaybackInfo } from '$lib/apis/jellyfin/jellyfinApi';
 	import getDeviceProfile from '$lib/apis/jellyfin/playback-profiles';
 	import { getQualities } from '$lib/apis/jellyfin/qualities';
 	import classNames from 'classnames';
@@ -34,6 +27,13 @@
 	import { linear } from 'svelte/easing';
 	import ContextMenuButton from '$lib/components/common/inputs/contextMenu/ContextMenuButton.svelte';
 	import { settings } from '$lib/stores/settings.svelte';
+	import {
+		jellyfinDeleteActiveEncoding,
+		jellyfinGetItemById,
+		jellyfinReportPlaybackProgress,
+		jellyfinReportPlaybackStarted,
+		jellyfinReportPlaybackStopped
+	} from '$lib/remote/jellyfin.remote.ts';
 
 	let { modalId }: { modalId: symbol } = $props();
 
@@ -105,7 +105,7 @@
 		maxBitrate: number | undefined = undefined,
 		starting: boolean = true
 	) =>
-		getJellyfinItem(itemId).then((item) =>
+		jellyfinGetItemById(itemId).then(({ data: item }) =>
 			getJellyfinPlaybackInfo(
 				itemId,
 				getDeviceProfile(),
@@ -165,16 +165,20 @@
 				// A start report should only be sent when the video starts playing,
 				// not every time a playback info request is made
 				if (mediaSourceId && starting) {
-					await reportJellyfinPlaybackStarted(itemId, sessionId, mediaSourceId);
+					await jellyfinReportPlaybackStarted({
+						itemId,
+						playSessionId: sessionId,
+						mediaSourceId
+					});
 				}
 
 				reportProgress = async () => {
-					await reportJellyfinPlaybackProgress(
+					await jellyfinReportPlaybackProgress({
 						itemId,
-						sessionId,
-						video.paused == true,
-						video.currentTime * 10_000_000
-					);
+						playSessionId: sessionId,
+						isPaused: video.paused == true,
+						positionTicks: Math.floor(video.currentTime * 10_000_000)
+					});
 				};
 
 				if (progressInterval) clearInterval(progressInterval);
@@ -184,15 +188,15 @@
 				}, 5000);
 
 				deleteEncoding = () => {
-					deleteActiveEncoding(sessionId);
+					jellyfinDeleteActiveEncoding(sessionId);
 				};
 
 				stopCallback = () => {
-					reportJellyfinPlaybackStopped(
+					jellyfinReportPlaybackStopped({
 						itemId,
-						sessionId,
-						video.currentTime * 10_000_000
-					);
+						playSessionId: sessionId,
+						positionTicks: Math.floor(video.currentTime * 10_000_000)
+					});
 					deleteEncoding();
 				};
 			})

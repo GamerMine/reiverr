@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { type JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
 	import { jellyfinGetUserImage } from '$lib/remote/jellyfin.remote';
+	import type { JellyfinUserDto } from '@reiverr/connectors/types/jellyfin';
 
 	let {
 		user,
@@ -8,7 +8,7 @@
 		klass = '',
 		onclick = (_) => {}
 	}: {
-		user?: JellyfinUser;
+		user?: JellyfinUserDto;
 		clickable?: boolean;
 		klass?: string;
 		onclick?: (e: MouseEvent) => void;

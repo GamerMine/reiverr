@@ -13,7 +13,9 @@ export function assertParam(url: URL, name: string): string {
 export async function assertUserAuth(cookies: Cookies) {
 	const auth = await isJellyfinUserConnected(cookies);
 
-	return auth.response.ok ? auth.data?.Id : undefined;
+	return auth.response.ok
+		? { userId: auth.data?.Id, username: auth.data?.Name }
+		: { userId: undefined, username: undefined };
 }
 
 export async function assertAdminUserAuth(cookies: Cookies) {

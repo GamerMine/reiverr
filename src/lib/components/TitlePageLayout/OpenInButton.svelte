@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { JellyfinItem } from '$lib/apis/jellyfin/jellyfinApi';
 	import type { TitleType } from '$lib/types';
 	import { DotsVertical } from 'svelte-radix';
 	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
 	import ContextMenuButton from '$lib/components/common/inputs/contextMenu/ContextMenuButton.svelte';
 	import LibraryItemContextItems from '$lib/components/common/inputs/contextMenu/LibraryItemContextItems.svelte';
+	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
 
 	let {
 		title = '',
@@ -16,7 +16,7 @@
 	}: {
 		title?: string;
 
-		jellyfinItem?: JellyfinItem;
+		jellyfinItem?: JellyfinBaseItemDto;
 
 		type: TitleType;
 		tmdbId: number;

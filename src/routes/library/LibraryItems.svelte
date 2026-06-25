@@ -8,9 +8,10 @@
 	import CardPlaceholder from '$lib/components/common/misc/cards/CardPlaceholder.svelte';
 	import { tick, type ComponentProps, onMount } from 'svelte';
 	import Poster from '$lib/components/Poster/Poster.svelte';
-	import { getJellyfinPosterUrl, type JellyfinItem } from '$lib/apis/jellyfin/jellyfinApi';
+	import { getJellyfinPosterUrl } from '$lib/apis/jellyfin/jellyfinApi';
 	import type { RadarrMediaCover, RadarrMovieResource } from '@reiverr/connectors/types/radarr';
 	import type { SonarrMediaCover, SonarrSeriesResource } from '@reiverr/connectors/types/sonarr';
+	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
 	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
 	import ContextMenu from '$lib/components/common/inputs/contextMenu/ContextMenu.svelte';
 	import SelectableContextMenuItem from '$lib/components/common/inputs/contextMenu/SelectableContextMenuItem.svelte';
@@ -51,7 +52,7 @@
 	let posterProps: ComponentProps<typeof Poster>[] = $state([]);
 	let hasMore = $state(true);
 
-	function getPropsFromJellyfinItem(item: JellyfinItem): ComponentProps<typeof Poster> {
+	function getPropsFromJellyfinItem(item: JellyfinBaseItemDto): ComponentProps<typeof Poster> {
 		return {
 			tmdbId: Number(item.ProviderIds?.Tmdb) || 0,
 			jellyfinId: item.Id,

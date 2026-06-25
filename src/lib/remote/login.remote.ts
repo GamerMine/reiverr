@@ -1,15 +1,14 @@
 import { form, getRequestEvent } from '$app/server';
 import * as v from 'valibot';
 import {
-	getDeviceIdFromUsername,
 	isJellyfinUserConnected,
-	JELLYFIN_CLIENT,
 	JELLYFIN_CLIENT_VERSION,
 	JELLYFIN_DEVICE
 } from '$lib/apis/jellyfin/server/jellyfin.server.ts';
 import createClient from 'openapi-fetch';
 import type { paths } from '$lib/apis/jellyfin/jellyfin.generated';
 import { GlobalSettingsEntity } from '@reiverr/db/entities';
+import { JellyfinConnector } from '@reiverr/connectors';
 
 export const login = form(
 	v.object({
@@ -57,7 +56,7 @@ async function authenticateJellyfinUser(username: string, password: string) {
 	return createClient<paths>({
 		baseUrl: (await GlobalSettingsEntity.getJellyfinBaseUrl()) || undefined,
 		headers: {
-			Authorization: `MediaBrowser Client=${JELLYFIN_CLIENT}, Device=${JELLYFIN_DEVICE}, DeviceId=${await getDeviceIdFromUsername(username)}, Version=${JELLYFIN_CLIENT_VERSION}`
+			Authorization: `MediaBrowser Client=${JellyfinConnector.JELLYFIN_CLIENT}, Device=${JELLYFIN_DEVICE}, DeviceId=${await JellyfinConnector.getDeviceId(username)}, Version=${JELLYFIN_CLIENT_VERSION}`
 		}
 	}).POST('/Users/AuthenticateByName', {
 		body: {

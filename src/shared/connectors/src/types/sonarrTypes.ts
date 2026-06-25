@@ -12,3 +12,4 @@ export type SonarrQualityProfileQualityItemResource =
 	components['schemas']['QualityProfileQualityItemResource'];
 export type SonarrProfileFormatItemResource = components['schemas']['ProfileFormatItemResource'];
 export type SonarrMediaCover = components['schemas']['MediaCover'];
+export type SonarrQueueStatus = components['schemas']['QueueStatus'];

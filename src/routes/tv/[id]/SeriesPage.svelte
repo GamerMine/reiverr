@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { type JellyfinItem } from '$lib/apis/jellyfin/jellyfinApi';
 	import {
 		getTmdbSeries,
 		getTmdbSeriesRecommendations,
@@ -41,11 +40,11 @@
 		createSuccessNotification
 	} from '$lib/stores/notification.store';
 	import { jellyfinGetEpisodes } from '$lib/remote/jellyfin.remote';
-	import type { components as JellyfinComponents } from '$lib/apis/jellyfin/jellyfin.generated';
 	import type { SonarrSeriesResource } from '@reiverr/connectors/types/sonarr';
 	import { getTasks } from '$lib/remote/tasks.remote.ts';
 	import { type SeriesAdd, TaskState, type TaskStatus } from '../../../tasksWorker/types.ts';
 	import { TaskType } from '@reiverr/db/types';
+	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
 
 	let {
 		tmdbId,
@@ -61,10 +60,10 @@
 	let tmdbSeries: TmdbSeriesFull2 | undefined = $state();
 	let seasonSelectVisible = $state(false);
 	let visibleSeasonNumber: number = $state(1);
-	let nextJellyfinEpisode: JellyfinItem | undefined = $state();
+	let nextJellyfinEpisode: JellyfinBaseItemDto | undefined = $state();
 	let sonarrSeries: SonarrSeriesResource | undefined = $state();
 	let seasonsData: Promise<SeasonData>[] | undefined = $state();
-	let jellyfinItem: JellyfinComponents['schemas']['BaseItemDto'] | undefined = $state();
+	let jellyfinItem: JellyfinBaseItemDto | undefined = $state();
 	let tasks = $derived(await getTasks());
 	let isBeingAdded = $state(false);
 

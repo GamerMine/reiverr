@@ -18,7 +18,7 @@ services:
 
   jellyfin:
     container_name: jellyfin
-    image: jellyfin/jellyfin:10
+    image: jellyfin/jellyfin:latest
     ports:
       - "8096:8096/tcp"
       - "7359:7359/udp"
@@ -32,7 +32,7 @@ services:
 
   radarr:
     container_name: radarr
-    image: linuxserver/radarr:6.0.4
+    image: linuxserver/radarr:latest
     environment:
       - PUID=1000
       - PGID=1000
@@ -51,7 +51,7 @@ services:
 
   sonarr:
     container_name: sonarr
-    image: linuxserver/sonarr:4.0.16
+    image: linuxserver/sonarr:latest
     environment:
       - PUID=1000
       - PGID=1000
@@ -71,7 +71,7 @@ services:
 
   prowlarr:
     container_name: prowlarr
-    image: linuxserver/prowlarr:2.3.0
+    image: linuxserver/prowlarr:latest
     environment:
       - PUID=1000
       - PGID=1000

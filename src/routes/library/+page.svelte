@@ -1,9 +1,5 @@
 <script lang="ts">
-	import {
-		getJellyfinBackdrop,
-		getJellyfinPosterUrl,
-		type JellyfinItem
-	} from '$lib/apis/jellyfin/jellyfinApi';
+	import { getJellyfinBackdrop, getJellyfinPosterUrl } from '$lib/apis/jellyfin/jellyfinApi';
 	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
 	import Carousel from '$lib/components/common/misc/carousel/Carousel.svelte';
 	import Poster from '$lib/components/Poster/Poster.svelte';
@@ -18,11 +14,13 @@
 	import { radarrGetQueue } from '$lib/remote/radarr.remote';
 	import { sonarrGetQueue } from '$lib/remote/sonarr.remote';
 	import { jellyfinGetItems } from '$lib/remote/jellyfin.remote';
-	import type { RadarrQueueStatus } from '@reiverr/connectors/types/radarr';
+	import type { RadarrMediaCover, RadarrQueueStatus } from '@reiverr/connectors/types/radarr';
+	import type { SonarrMediaCover, SonarrQueueStatus } from '@reiverr/connectors/types/sonarr';
+	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
 
 	let noItems = false;
 
-	let showcasePromise: Promise<JellyfinItem | undefined> = jellyfinGetItems().then(
+	let showcasePromise: Promise<JellyfinBaseItemDto | undefined> = jellyfinGetItems().then(
 		(items) =>
 			items.data
 				?.slice()
@@ -34,7 +32,7 @@
 				)?.[3]
 	);
 
-	function getStatusText(status: RadarrQueueStatus) {
+	function getStatusText(status: RadarrQueueStatus | SonarrQueueStatus) {
 		switch (status) {
 			case 'failed':
 			// TODO
@@ -161,7 +159,7 @@
 								subtitle={$_(getStatusText(item.status))}
 								type="movie"
 								backdropUrl={item.movie?.images?.find(
-									(i) => i.coverType === 'poster'
+									(i: RadarrMediaCover) => i.coverType === 'poster'
 								)?.remoteUrl || ''}
 								progress={100 *
 									(((item.size || 0) - (item.sizeleft || 0)) / (item.size || 1))}
@@ -177,7 +175,7 @@
 								subtitle={$_(getStatusText(item.status))}
 								type="tv"
 								backdropUrl={item.series?.images?.find(
-									(i) => i.coverType === 'poster'
+									(i: SonarrMediaCover) => i.coverType === 'poster'
 								)?.remoteUrl || ''}
 								progress={100 *
 									(((item.size || 0) - (item.sizeleft || 0)) / (item.size || 1))}

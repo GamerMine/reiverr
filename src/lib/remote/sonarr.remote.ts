@@ -25,7 +25,7 @@ export const sonarrGetRootFolders = query(v.optional(ApiSchema), async (api) => 
 
 export const sonarrGetSeries = query(async () => {
 	const { cookies } = getRequestEvent();
-	if (!(await assertUserAuth(cookies)))
+	if (!(await assertUserAuth(cookies)).userId)
 		return { success: false, error: 'general.connectionRequired' };
 
 	const { sonarrConnector: conn } = await Connectors.getInstance();
@@ -42,7 +42,7 @@ export const sonarrGetSeries = query(async () => {
 
 export const sonarrAddSeries = command(SeriesAddSchema, async (series) => {
 	const { cookies } = getRequestEvent();
-	if (!(await assertUserAuth(cookies)))
+	if (!(await assertUserAuth(cookies)).userId)
 		return { success: false, error: 'general.connectionRequired' };
 
 	const defaultFp = await FilteringProfilesEntity.findOne({ where: { isDefault: true } });
@@ -55,7 +55,7 @@ export const sonarrAddSeries = command(SeriesAddSchema, async (series) => {
 
 export const sonarrRemoveSeries = command(v.number(), async (seriesId) => {
 	const { cookies } = getRequestEvent();
-	if (!(await assertUserAuth(cookies)))
+	if (!(await assertUserAuth(cookies)).userId)
 		return { success: false, error: 'general.connectionRequired' };
 
 	await scheduleTask(TaskType.SONARR_SERIES_REMOVE, seriesId);
@@ -84,7 +84,7 @@ async function getCachedQueue() {
 export const sonarrGetQueue = query.live(async function* () {
 	while (true) {
 		const { cookies } = getRequestEvent();
-		if (!(await assertUserAuth(cookies))) {
+		if (!(await assertUserAuth(cookies)).userId) {
 			yield { success: false, error: 'general.connectionRequired' };
 			await new Promise((f) => setTimeout(f, 2000));
 			continue;
@@ -97,7 +97,7 @@ export const sonarrGetQueue = query.live(async function* () {
 
 export const sonarrGetDiskspace = query(async () => {
 	const { cookies } = getRequestEvent();
-	if (!(await assertUserAuth(cookies)))
+	if (!(await assertUserAuth(cookies)).userId)
 		return { success: false, error: 'general.connectionRequired' };
 
 	const { sonarrConnector: conn } = await Connectors.getInstance();

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { type JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
 	import UserCarousel from '$lib/components/common/misc/carousel/UserCarousel.svelte';
 	import UserCard from '$lib/components/common/misc/cards/UserCard.svelte';
 	import { _ } from 'svelte-i18n';
@@ -14,15 +13,16 @@
 	import { jellyfinGetUsers } from '$lib/remote/jellyfin.remote.ts';
 	import { goto } from '$app/navigation';
 	import { login } from '$lib/remote/login.remote.ts';
+	import type { JellyfinUserDto } from '@reiverr/connectors/types/jellyfin';
 
 	let mainDiv: HTMLDivElement | undefined = $state();
 	let manualLogin: boolean = $state(false);
 	let userSelected: boolean = $state(false);
-	let selectedUser: JellyfinUser | undefined = $state();
+	let selectedUser: JellyfinUserDto | undefined = $state();
 	let isInputDisabled: boolean = $state(false);
 	let errored: boolean = $state(false);
 
-	function askForPassword(user: JellyfinUser) {
+	function askForPassword(user: JellyfinUserDto) {
 		userSelected = true;
 		selectedUser = user;
 		if (selectedUser?.Name) login.fields.username.set(selectedUser.Name);

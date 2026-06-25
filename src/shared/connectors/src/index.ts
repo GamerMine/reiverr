@@ -98,4 +98,4 @@ class Connectors {
 }
 
 export default Connectors;
-export { RadarrConnector, SonarrConnector };
+export { RadarrConnector, SonarrConnector, JellyfinConnector };

@@ -5950,7 +5950,7 @@ export interface components {
              */
             ParentId?: string | null;
             /**
-             * @description The base item kind.
+             * @description Gets or sets the type.
              * @enum {unknown}
              */
             Type?: "AggregateFolder" | "Audio" | "AudioBook" | "BasePluginFolder" | "Book" | "BoxSet" | "Channel" | "ChannelFolderItem" | "CollectionFolder" | "Episode" | "Folder" | "Genre" | "ManualPlaylistsFolder" | "Movie" | "LiveTvChannel" | "LiveTvProgram" | "MusicAlbum" | "MusicArtist" | "MusicGenre" | "MusicVideo" | "Person" | "Photo" | "PhotoAlbum" | "Playlist" | "PlaylistsFolder" | "Program" | "Recording" | "Season" | "Series" | "Studio" | "Trailer" | "TvChannel" | "TvProgram" | "UserRootFolder" | "UserView" | "Video" | "Year";
@@ -6161,7 +6161,7 @@ export interface components {
              */
             IsoType?: "Dvd" | "BluRay" | null;
             /**
-             * @description Media types.
+             * @description Gets or sets the type of the media.
              * @default Unknown
              * @enum {unknown}
              */
@@ -6325,7 +6325,7 @@ export interface components {
             /** @description Gets or sets the role. */
             Role?: string | null;
             /**
-             * @description The person kind.
+             * @description Gets or sets the type.
              * @default Unknown
              * @enum {unknown}
              */
@@ -6907,7 +6907,7 @@ export interface components {
                 [key: string]: string | null;
             };
             /**
-             * @description An enum representing the axis that should be scrolled.
+             * @description Gets or sets the scroll direction.
              * @enum {unknown}
              */
             ScrollDirection?: "Horizontal" | "Vertical";
@@ -6916,7 +6916,7 @@ export interface components {
             /** @description Gets or sets a value indicating whether [remember sorting]. */
             RememberSorting?: boolean;
             /**
-             * @description An enum representing the sorting order.
+             * @description Gets or sets the sort order.
              * @enum {unknown}
              */
             SortOrder?: "Ascending" | "Descending";
@@ -8013,7 +8013,7 @@ export interface components {
              */
             ItemId?: string;
             /**
-             * @description Defines the types of content an individual Jellyfin.Database.Implementations.Entities.MediaSegment represents.
+             * @description Gets or sets the type of content this segment defines.
              * @default Unknown
              * @enum {unknown}
              */
@@ -8196,13 +8196,13 @@ export interface components {
             Title?: string | null;
             Hdr10PlusPresentFlag?: boolean | null;
             /**
-             * @description An enum representing video ranges.
+             * @description Gets the video range.
              * @default Unknown
              * @enum {unknown}
              */
             readonly VideoRange: "Unknown" | "SDR" | "HDR";
             /**
-             * @description An enum representing types of video ranges.
+             * @description Gets the video range type.
              * @default Unknown
              * @enum {unknown}
              */
@@ -8210,7 +8210,7 @@ export interface components {
             /** @description Gets the video dovi title. */
             readonly VideoDoViTitle?: string | null;
             /**
-             * @description An enum representing formats of spatial audio.
+             * @description Gets the audio spatial format.
              * @default None
              * @enum {unknown}
              */
@@ -9739,7 +9739,7 @@ export interface components {
             /** @description Gets or sets the backdrop image item identifier. */
             BackdropImageItemId?: string | null;
             /**
-             * @description The base item kind.
+             * @description Gets or sets the type.
              * @enum {unknown}
              */
             Type?: "AggregateFolder" | "Audio" | "AudioBook" | "BasePluginFolder" | "Book" | "BoxSet" | "Channel" | "ChannelFolderItem" | "CollectionFolder" | "Episode" | "Folder" | "Genre" | "ManualPlaylistsFolder" | "Movie" | "LiveTvChannel" | "LiveTvProgram" | "MusicAlbum" | "MusicArtist" | "MusicGenre" | "MusicVideo" | "Person" | "Photo" | "PhotoAlbum" | "Playlist" | "PlaylistsFolder" | "Program" | "Recording" | "Season" | "Series" | "Studio" | "Trailer" | "TvChannel" | "TvProgram" | "UserRootFolder" | "UserView" | "Video" | "Year";
@@ -9751,7 +9751,7 @@ export interface components {
              */
             RunTimeTicks?: number | null;
             /**
-             * @description Media types.
+             * @description Gets or sets the type of the media.
              * @default Unknown
              * @enum {unknown}
              */
@@ -11176,8 +11176,7 @@ export interface components {
             /** @description Gets or sets the audio codec. */
             AudioCodec?: string;
             /**
-             * @description Media streaming protocol.
-             *     Lowercase for backwards compatibility.
+             * @description Gets or sets the protocol.
              * @enum {unknown}
              */
             Protocol?: "http" | "hls";
@@ -11713,7 +11712,7 @@ export interface components {
             AuthenticationProviderId: string;
             PasswordResetProviderId: string;
             /**
-             * @description Enum SyncPlayUserAccessType.
+             * @description Gets or sets a value indicating what SyncPlay features the user can access.
              * @enum {unknown}
              */
             SyncPlayAccess?: "CreateAndJoinGroups" | "JoinGroups" | "None";

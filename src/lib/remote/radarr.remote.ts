@@ -45,7 +45,7 @@ async function getCachedQueue() {
 export const radarrGetQueue = query.live(async function* () {
 	while (true) {
 		const { cookies } = getRequestEvent();
-		if (!(await assertUserAuth(cookies))) {
+		if (!(await assertUserAuth(cookies)).userId) {
 			yield { success: false, error: 'general.connectionRequired' };
 			await new Promise((f) => setTimeout(f, 2000));
 			continue;
@@ -58,7 +58,7 @@ export const radarrGetQueue = query.live(async function* () {
 
 export const radarrGetMovies = query(async () => {
 	const { cookies } = getRequestEvent();
-	if (!(await assertUserAuth(cookies)))
+	if (!(await assertUserAuth(cookies)).userId)
 		return { success: false, error: 'general.connectionRequired' };
 
 	const { radarrConnector: conn } = await Connectors.getInstance();
@@ -75,7 +75,7 @@ export const radarrGetMovies = query(async () => {
 
 export const radarrAddMovie = command(MovieAddSchema, async (movie): Promise<Result<undefined>> => {
 	const { cookies } = getRequestEvent();
-	if (!(await assertUserAuth(cookies)))
+	if (!(await assertUserAuth(cookies)).userId)
 		return { success: false, error: 'general.connectionRequired' };
 
 	const defaultFp = await FilteringProfilesEntity.findOne({ where: { isDefault: true } });
@@ -88,7 +88,7 @@ export const radarrAddMovie = command(MovieAddSchema, async (movie): Promise<Res
 
 export const radarrRemoveMovie = command(v.number(), async (id: number) => {
 	const { cookies } = getRequestEvent();
-	if (!(await assertUserAuth(cookies)))
+	if (!(await assertUserAuth(cookies)).userId)
 		return { success: false, error: 'general.connectionRequired' };
 
 	await scheduleTask(TaskType.RADARR_MOVIE_REMOVE, id);
@@ -98,7 +98,7 @@ export const radarrRemoveMovie = command(v.number(), async (id: number) => {
 
 export const radarrGetDiskspace = query(async () => {
 	const { cookies } = getRequestEvent();
-	if (!(await assertUserAuth(cookies)))
+	if (!(await assertUserAuth(cookies)).userId)
 		return { success: false, error: 'general.connectionRequired' };
 
 	const { radarrConnector: conn } = await Connectors.getInstance();

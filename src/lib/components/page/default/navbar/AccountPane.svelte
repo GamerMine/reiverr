@@ -4,10 +4,10 @@
 	import Divider from '$lib/components/common/misc/Divider.svelte';
 	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
 	import { Exit, Gear } from 'svelte-radix';
-	import { type JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
 	import { _ } from 'svelte-i18n';
 	import { goto } from '$app/navigation';
 	import { jellyfinDisconnect } from '$lib/remote/jellyfin.remote.ts';
+	import type { JellyfinUserDto } from '@reiverr/connectors/types/jellyfin';
 
 	let {
 		onclick = () => {}
@@ -15,7 +15,7 @@
 		onclick?: () => void;
 	} = $props();
 
-	let user: JellyfinUser = JSON.parse(localStorage.getItem('user') || '{}') || undefined;
+	let user: JellyfinUserDto = JSON.parse(localStorage.getItem('user') || '{}') || undefined;
 </script>
 
 <div class="fixed z-20 flex justify-end top-20 right-3" transition:fade={{ duration: 150 }}>

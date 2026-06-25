@@ -3,22 +3,6 @@ import type { DeviceProfile } from '$lib/apis/jellyfin/playback-profiles';
 import { settings } from '$lib/stores/settings.svelte.js';
 
 export type JellyfinItem = components['schemas']['BaseItemDto'];
-export type JellyfinUser = components['schemas']['UserDto'];
-
-export const getJellyfinContinueWatching = async (): Promise<JellyfinItem[] | undefined> =>
-	await fetch('/api/jellyfin/userItems/resume', {
-		method: 'GET'
-	}).then(async (res): Promise<JellyfinItem[]> => (await res.json())?.Items || []);
-
-export const getJellyfinNextUp = async () =>
-	await fetch('/api/jellyfin/shows/nextUp', {
-		method: 'GET'
-	}).then(async (res): Promise<JellyfinItem[]> => (await res.json())?.Items || []);
-
-export const getJellyfinItem = async (itemId: string) =>
-	await fetch(`/api/jellyfin/items/item?itemId=${itemId}`, {
-		method: 'GET'
-	}).then(async (res): Promise<JellyfinItem> => await res.json());
 
 export const getJellyfinPlaybackInfo = async (
 	itemId: string,
@@ -50,65 +34,6 @@ export const getJellyfinPlaybackInfo = async (
 				!!data?.MediaSources?.[0]?.SupportsDirectPlay ||
 				!!data?.MediaSources?.[0]?.SupportsDirectStream
 		};
-	});
-
-export const reportJellyfinPlaybackStarted = async (
-	itemId: string,
-	sessionId: string,
-	mediaSourceId: string
-) =>
-	await fetch('/api/jellyfin/sessions/playing', {
-		method: 'POST',
-		body: JSON.stringify({
-			ItemId: itemId,
-			PlaySessionId: sessionId,
-			MediaSourceId: mediaSourceId,
-			AudioStreamIndex: 1,
-			SubtitleStreamIndex: -1
-		}),
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	});
-
-export const reportJellyfinPlaybackProgress = async (
-	itemId: string,
-	sessionId: string,
-	isPaused: boolean,
-	positionTicks: number
-) =>
-	await fetch('/api/jellyfin/sessions/playing/progress', {
-		method: 'POST',
-		body: JSON.stringify({
-			ItemId: itemId,
-			PlaySessionId: sessionId,
-			IsPaused: isPaused,
-			PositionTicks: Math.round(positionTicks),
-			MediaSourceId: itemId
-		})
-	});
-
-export const reportJellyfinPlaybackStopped = async (
-	itemId: string,
-	sessionId: string,
-	positionTicks: number
-) =>
-	await fetch('/api/jellyfin/sessions/playing/stopped', {
-		method: 'POST',
-		body: JSON.stringify({
-			ItemId: itemId,
-			PlaySessionId: sessionId,
-			PositionTicks: Math.round(positionTicks),
-			MediaSourceId: itemId
-		}),
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	});
-
-export const deleteActiveEncoding = async (playSessionId: string) =>
-	await fetch(`/api/jellyfin/videos/activeEncodings?playSessionId=${playSessionId}`, {
-		method: 'DELETE'
 	});
 
 export const jellyfinTestConnection = async (

@@ -1,18 +1,18 @@
 <script lang="ts">
-	import { type JellyfinItem } from '$lib/apis/jellyfin/jellyfinApi';
 	import type { TitleType } from '$lib/types';
 	import Divider from '../../misc/Divider.svelte';
 	import ContextMenuItem from './ContextMenuItem.svelte';
 	import { _ } from 'svelte-i18n';
 	import { settings } from '$lib/stores/settings.svelte.js';
 	import { jellyfinSetItemWatched } from '$lib/remote/jellyfin.remote';
+	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
 
 	let {
 		jellyfinItem = undefined,
 		type,
 		tmdbId
 	}: {
-		jellyfinItem?: JellyfinItem;
+		jellyfinItem?: JellyfinBaseItemDto;
 		type: TitleType;
 		tmdbId: number;
 	} = $props();

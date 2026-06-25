@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { type JellyfinUser } from '$lib/apis/jellyfin/jellyfinApi';
 	import classNames from 'classnames';
 	import { jellyfinGetUserImage } from '$lib/remote/jellyfin.remote';
+	import type { JellyfinUserDto } from '@reiverr/connectors/types/jellyfin';
 
 	let {
 		user = undefined,
@@ -11,7 +11,7 @@
 
 		klass = ''
 	}: {
-		user?: JellyfinUser;
+		user?: JellyfinUserDto;
 		size?: number;
 		textSize?: 'text-xl' | 'text-2xl' | 'text-3xl' | 'text-4xl' | 'text-5xl';
 		klass?: string;

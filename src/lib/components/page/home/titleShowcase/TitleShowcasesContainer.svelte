@@ -1,9 +1,5 @@
 <script lang="ts">
-	import {
-		getJellyfinBackdrop,
-		getJellyfinContinueWatching,
-		getJellyfinNextUp
-	} from '$lib/apis/jellyfin/jellyfinApi';
+	import { getJellyfinBackdrop } from '$lib/apis/jellyfin/jellyfinApi';
 	import { getTmdbMovie, getTmdbPopularMovies } from '$lib/apis/tmdb/tmdbApi';
 	import classNames from 'classnames';
 	import Carousel from '$lib/components/common/misc/carousel/Carousel.svelte';
@@ -14,20 +10,25 @@
 	import PageDots from '../../../common/misc/PageDots.svelte';
 	import IconButton from '$lib/components/common/inputs/buttons/IconButton.svelte';
 	import { ChevronLeft, ChevronRight } from 'svelte-radix';
-	import { jellyfinGetItems } from '$lib/remote/jellyfin.remote';
+	import {
+		jellyfinGetContinueWatching,
+		jellyfinGetItems,
+		jellyfinGetNextUp
+	} from '$lib/remote/jellyfin.remote';
 
 	let hideUI = false;
 
 	let continueWatchingEmpty = false;
 
-	let nextUpP = getJellyfinNextUp();
-	let continueWatchingP = getJellyfinContinueWatching();
+	let nextUpP = jellyfinGetNextUp();
+	let continueWatchingP = jellyfinGetContinueWatching();
 
 	let nextUpProps = Promise.all([nextUpP, continueWatchingP])
 		.then(([nextUp, continueWatching]) => [
-			...(continueWatching || []),
-			...(nextUp?.filter((i) => !continueWatching?.find((c) => c.SeriesId === i.SeriesId)) ||
-				[])
+			...(continueWatching.data || []),
+			...(nextUp.data?.filter(
+				(i) => !continueWatching.data?.find((c) => c.SeriesId === i.SeriesId)
+			) || [])
 		])
 		.then((items) =>
 			Promise.all(
