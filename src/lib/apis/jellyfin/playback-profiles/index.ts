@@ -25,13 +25,13 @@
  * "superior" codec in this situation)
  */
 
-import type { components as JellyfinComponents } from '$lib/apis/jellyfin/jellyfin.generated';
 import { getCodecProfiles } from './helpers/codec-profiles';
 import { getDirectPlayProfiles } from './directplay-profile';
 import { getTranscodingProfiles } from './transcoding-profile';
 import { getSubtitleProfiles } from './subtitle-profile';
-
-export type DeviceProfile = JellyfinComponents['schemas']['DeviceProfile'];
+import type { JellyfinDeviceProfile } from '@reiverr/connectors/types/jellyfin';
+import * as v from 'valibot';
+import { OptionalNumberSchema, OptionalStringSchema } from '$lib/types.ts';
 
 /**
  * Creates a device profile containing supported codecs for the active Cast device.
@@ -39,7 +39,7 @@ export type DeviceProfile = JellyfinComponents['schemas']['DeviceProfile'];
  * @param videoTestElement - Dummy video element for compatibility tests
  * @returns Device profile.
  */
-function getDeviceProfile(videoTestElement?: HTMLVideoElement): DeviceProfile {
+function getDeviceProfile(videoTestElement?: HTMLVideoElement): JellyfinDeviceProfile {
 	const element = videoTestElement || document.createElement('video');
 	return {
 		MaxStreamingBitrate: 120_000_000,
@@ -54,3 +54,113 @@ function getDeviceProfile(videoTestElement?: HTMLVideoElement): DeviceProfile {
 }
 
 export default getDeviceProfile;
+export const JellyfinProfileConditionSchema = v.object({
+	Condition: v.optional(
+		v.picklist(['Equals', 'NotEquals', 'LessThanEqual', 'GreaterThanEqual', 'EqualsAny'])
+	),
+	Property: v.optional(
+		v.picklist([
+			'AudioChannels',
+			'AudioBitrate',
+			'AudioProfile',
+			'Width',
+			'Height',
+			'Has64BitOffsets',
+			'PacketLength',
+			'VideoBitDepth',
+			'VideoBitrate',
+			'VideoFramerate',
+			'VideoLevel',
+			'VideoProfile',
+			'VideoTimestamp',
+			'IsAnamorphic',
+			'RefFrames',
+			'NumAudioStreams',
+			'NumVideoStreams',
+			'IsSecondaryAudio',
+			'VideoCodecTag',
+			'IsAvc',
+			'IsInterlaced',
+			'AudioSampleRate',
+			'AudioBitDepth',
+			'VideoRangeType',
+			'NumStreams'
+		])
+	),
+	Value: OptionalStringSchema,
+	IsRequired: v.optional(v.boolean())
+});
+export const JellyfinDeviceProfileSchema = v.object({
+	Name: OptionalStringSchema,
+	Id: OptionalStringSchema,
+	MaxStreamingBitrate: OptionalNumberSchema,
+	MaxStaticBitrate: OptionalNumberSchema,
+	MusicStreamingTranscodingBitrate: OptionalNumberSchema,
+	MaxStaticMusicBitrate: OptionalNumberSchema,
+	DirectPlayProfiles: v.optional(
+		v.array(
+			v.object({
+				Container: OptionalStringSchema,
+				AudioCodec: OptionalStringSchema,
+				VideoCodec: OptionalStringSchema,
+				Type: v.optional(v.picklist(['Audio', 'Video', 'Photo', 'Subtitle', 'Lyric']))
+			})
+		)
+	),
+	TranscodingProfiles: v.optional(
+		v.array(
+			v.object({
+				Container: OptionalStringSchema,
+				Type: v.optional(v.picklist(['Audio', 'Video', 'Photo', 'Subtitle', 'Lyric'])),
+				VideoCodec: OptionalStringSchema,
+				AudioCodec: OptionalStringSchema,
+				Protocol: v.optional(v.picklist(['http', 'hls'])),
+				EstimateContentLength: v.boolean(),
+				EnableMpegtsM2TsMode: v.boolean(),
+				TranscodeSeekInfo: v.picklist(['Auto', 'Bytes']),
+				CopyTimestamps: v.boolean(),
+				Context: v.picklist(['Streaming', 'Static']),
+				EnableSubtitlesInManifest: v.boolean(),
+				MaxAudioChannels: OptionalStringSchema,
+				MinSegments: v.number(),
+				SegmentLength: v.number(),
+				BreakOnNonKeyFrames: v.boolean(),
+				Conditions: v.optional(v.array(JellyfinProfileConditionSchema)),
+				EnableAudioVbrEncoding: v.boolean()
+			})
+		)
+	),
+	ContainerProfiles: v.optional(
+		v.array(
+			v.object({
+				Type: v.optional(v.picklist(['Audio', 'Video', 'Photo', 'Subtitle', 'Lyric'])),
+				Conditions: v.optional(v.array(JellyfinProfileConditionSchema)),
+				Container: OptionalStringSchema,
+				SubContainer: OptionalStringSchema
+			})
+		)
+	),
+	CodecProfiles: v.optional(
+		v.array(
+			v.object({
+				Type: v.optional(v.picklist(['Video', 'VideoAudio', 'Audio'])),
+				Conditions: v.optional(v.array(JellyfinProfileConditionSchema)),
+				ApplyConditions: v.optional(v.array(v.object({}))),
+				Codec: OptionalStringSchema,
+				Container: OptionalStringSchema,
+				SubContainer: OptionalStringSchema
+			})
+		)
+	),
+	SubtitleProfiles: v.optional(
+		v.array(
+			v.object({
+				Format: OptionalStringSchema,
+				Method: v.optional(v.picklist(['Encode', 'Embed', 'External', 'Hls', 'Drop'])),
+				DidlMode: OptionalStringSchema,
+				Language: OptionalStringSchema,
+				Container: OptionalStringSchema
+			})
+		)
+	)
+});

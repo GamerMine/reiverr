@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { getJellyfinPlaybackInfo } from '$lib/apis/jellyfin/jellyfinApi';
 	import getDeviceProfile from '$lib/apis/jellyfin/playback-profiles';
 	import { getQualities } from '$lib/apis/jellyfin/qualities';
 	import classNames from 'classnames';
@@ -30,6 +29,7 @@
 	import {
 		jellyfinDeleteActiveEncoding,
 		jellyfinGetItemById,
+		jellyfinGetPlaySession,
 		jellyfinReportPlaybackProgress,
 		jellyfinReportPlaybackStarted,
 		jellyfinReportPlaybackStopped
@@ -44,7 +44,7 @@
 	let mouseMovementTimeout: NodeJS.Timeout;
 	let stopCallback: () => void;
 	let deleteEncoding: () => void;
-	let reportProgress: () => void;
+	let reportProgress: () => Promise<void>;
 	let progressInterval: NodeJS.Timeout;
 
 	// These functions are different in some browser
@@ -106,12 +106,13 @@
 		starting: boolean = true
 	) =>
 		jellyfinGetItemById(itemId).then(({ data: item }) =>
-			getJellyfinPlaybackInfo(
+			jellyfinGetPlaySession({
 				itemId,
-				getDeviceProfile(),
-				item?.UserData?.PlaybackPositionTicks || Math.floor(displayedTime * 10_000_000),
-				maxBitrate || getQualities(item?.Height || 1080)[0].maxBitrate
-			).then(async (playbackInfo) => {
+				deviceProfile: getDeviceProfile(),
+				startTimeTicks:
+					item?.UserData?.PlaybackPositionTicks || Math.floor(displayedTime * 10_000_000),
+				maxStreamingBitrate: maxBitrate || getQualities(item?.Height || 1080)[0].maxBitrate
+			}).then(async ({ data: playbackInfo }) => {
 				if (!playbackInfo) return;
 				const {
 					playbackUri,
@@ -176,15 +177,15 @@
 					await jellyfinReportPlaybackProgress({
 						itemId,
 						playSessionId: sessionId,
-						isPaused: video.paused == true,
+						isPaused: video.paused,
 						positionTicks: Math.floor(video.currentTime * 10_000_000)
 					});
 				};
 
 				if (progressInterval) clearInterval(progressInterval);
-				progressInterval = setInterval(() => {
+				progressInterval = setInterval(async () => {
 					video.readyState === 4 && video.currentTime > 0 && sessionId && itemId;
-					reportProgress();
+					await reportProgress();
 				}, 5000);
 
 				deleteEncoding = () => {
@@ -196,8 +197,7 @@
 						itemId,
 						playSessionId: sessionId,
 						positionTicks: Math.floor(video.currentTime * 10_000_000)
-					});
-					deleteEncoding();
+					}).then(() => deleteEncoding());
 				};
 			})
 		);
@@ -262,7 +262,7 @@
 		video.pause();
 		let timeBeforeLoad = video.currentTime;
 		let stateBeforeLoad = paused;
-		reportProgress?.();
+		await reportProgress?.();
 		deleteEncoding?.();
 		await fetchPlaybackInfo?.($playerState.jellyfinId, bitrate, false);
 		displayedTime = timeBeforeLoad;

@@ -5,6 +5,7 @@ import Connectors from '@reiverr/connectors';
 import type { RemoteQueryFunction } from '@sveltejs/kit';
 import type { Result } from '$lib/types.ts';
 import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
+import { JellyfinDeviceProfileSchema } from '$lib/apis/jellyfin/playback-profiles';
 
 export const jellyfinGetItems: RemoteQueryFunction<void, Result<JellyfinBaseItemDto[]>> = query(
 	async () => {
@@ -168,6 +169,8 @@ export const jellyfinReportPlaybackProgress = command(
 		if (!userId) return { success: false, error: 'general.connectionRequired' };
 		const conn = (await Connectors.getInstance()).jellyfinConnector;
 
+		// FIXME: This is not working since we are using a Jellyfin API token. Without a user access token, Jellyfin does not know who is the session owner
+		//			so it does not set the UserData.PlaybackPositionTicks. We should use POST /UserItems/{itemId}/UserData to achieve this.
 		const res = await conn.postSessionsPlayingProgress(
 			data.itemId,
 			data.playSessionId,
@@ -212,6 +215,45 @@ export const jellyfinDeleteActiveEncoding = command(v.string(), async (playSessi
 
 	return { success: res.response.ok };
 });
+
+export const jellyfinGetPlaySession = command(
+	v.object({
+		itemId: v.string(),
+		deviceProfile: JellyfinDeviceProfileSchema,
+		startTimeTicks: v.number(),
+		maxStreamingBitrate: v.number()
+	}),
+	async (data) => {
+		const { cookies } = getRequestEvent();
+		const { userId } = await assertUserAuth(cookies);
+		if (!userId) return { success: false, error: 'general.connectionRequired' };
+		const conn = (await Connectors.getInstance()).jellyfinConnector;
+
+		const session = await conn.postItemsByIdPlaybackInfo(
+			userId,
+			data.itemId,
+			data.maxStreamingBitrate,
+			data.startTimeTicks,
+			data.deviceProfile
+		);
+		if (!session.response.ok) console.error(JSON.stringify(session.error, null, 2));
+
+		const mediaSource = session.data?.MediaSources?.[0];
+		return {
+			success: session.response.ok,
+			data: {
+				playbackUri:
+					mediaSource?.TranscodingUrl ||
+					`/Videos/${mediaSource.Id}/stream.mp4?Static=true&mediaSourceId=${
+						mediaSource.Id
+					}&Tag=${mediaSource.ETag}`,
+				mediaSourceId: mediaSource?.Id,
+				playSessionId: session.data?.PlaySessionId,
+				directPlay: !!mediaSource?.SupportsDirectPlay || !!mediaSource?.SupportsDirectStream
+			}
+		};
+	}
+);
 
 export const jellyfinDisconnect = command(async () => {
 	const { cookies } = getRequestEvent();

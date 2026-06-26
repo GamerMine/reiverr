@@ -34,5 +34,6 @@ export type Result<TResultData extends object | undefined> = {
 };
 
 export const OptionalStringSchema = v.optional(v.string());
+export const OptionalNumberSchema = v.optional(v.number());
 export const ApiSchema = v.object({ url: OptionalStringSchema, key: OptionalStringSchema });
 export type Api = InferOutput<typeof ApiSchema>;

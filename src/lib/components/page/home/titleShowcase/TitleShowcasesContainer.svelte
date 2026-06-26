@@ -53,7 +53,7 @@
 									subtitle: item.Genres?.join(', ') || ''
 								}
 							: {
-									type: 'series',
+									type: 'tv',
 									subtitle:
 										(item?.IndexNumber && 'Episode ' + item.IndexNumber) ||
 										item.Genres?.join(', ') ||

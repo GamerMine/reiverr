@@ -1,5 +1,6 @@
 import createClient, { type Client } from 'openapi-fetch';
 import type { paths } from '../generated/jellyfin.generated.js';
+import { JellyfinDeviceProfile } from '../types/jellyfinTypes.js';
 
 export class JellyfinConnector {
 	private client: Client<paths>;
@@ -135,6 +136,27 @@ export class JellyfinConnector {
 				MediaSourceId: mediaSourceId,
 				PositionTicks: positionTicks,
 				PlaySessionId: playSessionId
+			}
+		});
+	}
+
+	public async postItemsByIdPlaybackInfo(
+		userId: string,
+		itemId: string,
+		maxStreamingBitrate: number,
+		startTimeTicks: number,
+		deviceProfile: JellyfinDeviceProfile
+	) {
+		return this.client.POST('/Items/{itemId}/PlaybackInfo', {
+			params: {
+				path: { itemId }
+			},
+			body: {
+				UserId: userId,
+				MaxStreamingBitrate: maxStreamingBitrate,
+				StartTimeTicks: startTimeTicks,
+				DeviceProfile: deviceProfile,
+				AutoOpenLiveStream: true
 			}
 		});
 	}
