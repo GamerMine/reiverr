@@ -30,9 +30,7 @@
 		jellyfinDeleteActiveEncoding,
 		jellyfinGetItemById,
 		jellyfinGetPlaySession,
-		jellyfinReportPlaybackProgress,
-		jellyfinReportPlaybackStarted,
-		jellyfinReportPlaybackStopped
+		jellyfinUpdateProgress
 	} from '$lib/remote/jellyfin.remote.ts';
 
 	let { modalId }: { modalId: symbol } = $props();
@@ -114,12 +112,7 @@
 				maxStreamingBitrate: maxBitrate || getQualities(item?.Height || 1080)[0].maxBitrate
 			}).then(async ({ data: playbackInfo }) => {
 				if (!playbackInfo) return;
-				const {
-					playbackUri,
-					playSessionId: sessionId,
-					mediaSourceId,
-					directPlay
-				} = playbackInfo;
+				const { playbackUri, playSessionId: sessionId, directPlay } = playbackInfo;
 
 				if (!playbackUri || !sessionId) {
 					console.log('No playback URL or session ID', playbackUri, sessionId);
@@ -163,21 +156,9 @@
 				// if the video takes a while to load.
 				// video.play().then(() => videoWrapper.requestFullscreen());
 
-				// A start report should only be sent when the video starts playing,
-				// not every time a playback info request is made
-				if (mediaSourceId && starting) {
-					await jellyfinReportPlaybackStarted({
-						itemId,
-						playSessionId: sessionId,
-						mediaSourceId
-					});
-				}
-
 				reportProgress = async () => {
-					await jellyfinReportPlaybackProgress({
+					await jellyfinUpdateProgress({
 						itemId,
-						playSessionId: sessionId,
-						isPaused: video.paused,
 						positionTicks: Math.floor(video.currentTime * 10_000_000)
 					});
 				};
@@ -193,11 +174,7 @@
 				};
 
 				stopCallback = () => {
-					jellyfinReportPlaybackStopped({
-						itemId,
-						playSessionId: sessionId,
-						positionTicks: Math.floor(video.currentTime * 10_000_000)
-					}).then(() => deleteEncoding());
+					deleteEncoding();
 				};
 			})
 		);

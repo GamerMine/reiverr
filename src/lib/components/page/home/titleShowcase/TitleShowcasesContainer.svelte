@@ -15,6 +15,7 @@
 		jellyfinGetItems,
 		jellyfinGetNextUp
 	} from '$lib/remote/jellyfin.remote';
+	import { _ } from 'svelte-i18n';
 
 	let hideUI = false;
 
@@ -198,7 +199,9 @@
 		{#if !continueWatchingEmpty}
 			<Carousel gradientFromColor="from-transparent" scrollClass={PADDING}>
 				{#snippet title()}
-					<div class="text-lg font-semibold text-zinc-300">Continue Watching</div>
+					<div class="text-lg font-semibold text-zinc-300">
+						{$_('discover.continueWatching')}
+					</div>
 				{/snippet}
 				{#await nextUpProps}
 					<CarouselPlaceholderItems />

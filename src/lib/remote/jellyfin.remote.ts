@@ -137,30 +137,9 @@ export const jellyfinSetItemWatched = command(
 	}
 );
 
-export const jellyfinReportPlaybackStarted = command(
-	v.object({ itemId: v.string(), playSessionId: v.string(), mediaSourceId: v.string() }),
-	async (data) => {
-		const { cookies } = getRequestEvent();
-		const { userId } = await assertUserAuth(cookies);
-		if (!userId) return { success: false, error: 'general.connectionRequired' };
-		const conn = (await Connectors.getInstance()).jellyfinConnector;
-
-		const res = await conn.postSessionsPlaying(
-			data.itemId,
-			data.playSessionId,
-			data.mediaSourceId
-		);
-		if (!res.response.ok) console.error(JSON.stringify(res.error, null, 2));
-
-		return { success: res.response.ok };
-	}
-);
-
-export const jellyfinReportPlaybackProgress = command(
+export const jellyfinUpdateProgress = command(
 	v.object({
 		itemId: v.string(),
-		playSessionId: v.string(),
-		isPaused: v.boolean(),
 		positionTicks: v.number()
 	}),
 	async (data) => {
@@ -169,35 +148,7 @@ export const jellyfinReportPlaybackProgress = command(
 		if (!userId) return { success: false, error: 'general.connectionRequired' };
 		const conn = (await Connectors.getInstance()).jellyfinConnector;
 
-		// FIXME: This is not working since we are using a Jellyfin API token. Without a user access token, Jellyfin does not know who is the session owner
-		//			so it does not set the UserData.PlaybackPositionTicks. We should use POST /UserItems/{itemId}/UserData to achieve this.
-		const res = await conn.postSessionsPlayingProgress(
-			data.itemId,
-			data.playSessionId,
-			data.itemId,
-			data.isPaused,
-			data.positionTicks
-		);
-		if (!res.response.ok) console.error(JSON.stringify(res.error, null, 2));
-
-		return { success: res.response.ok };
-	}
-);
-
-export const jellyfinReportPlaybackStopped = command(
-	v.object({ itemId: v.string(), playSessionId: v.string(), positionTicks: v.number() }),
-	async (data) => {
-		const { cookies } = getRequestEvent();
-		const { userId } = await assertUserAuth(cookies);
-		if (!userId) return { success: false, error: 'general.connectionRequired' };
-		const conn = (await Connectors.getInstance()).jellyfinConnector;
-
-		const res = await conn.postSessionsPlayingStopped(
-			data.itemId,
-			data.playSessionId,
-			data.itemId,
-			data.positionTicks
-		);
+		const res = await conn.postUserItemsByIdUserData(userId, data.itemId, data.positionTicks);
 		if (!res.response.ok) console.error(JSON.stringify(res.error, null, 2));
 
 		return { success: res.response.ok };

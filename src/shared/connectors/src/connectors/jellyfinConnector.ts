@@ -92,51 +92,14 @@ export class JellyfinConnector {
 		});
 	}
 
-	public async postSessionsPlaying(itemId: string, playSessionId: string, mediaSourceId: string) {
-		return await this.client.POST('/Sessions/Playing', {
-			body: {
-				CanSeek: true,
-				ItemId: itemId,
-				PlaySessionId: playSessionId,
-				MediaSourceId: mediaSourceId,
-				AudioStreamIndex: 1,
-				SubtitleStreamIndex: -1
-			}
-		});
-	}
-
-	public async postSessionsPlayingProgress(
+	public async postUserItemsByIdUserData(
+		userId: string,
 		itemId: string,
-		playSessionId: string,
-		mediaSourceId: string,
-		isPaused: boolean,
-		positionTicks: number
+		playbackPositionTicks: number
 	) {
-		return await this.client.POST('/Sessions/Playing/Progress', {
-			body: {
-				CanSeek: true,
-				ItemId: itemId,
-				MediaSourceId: mediaSourceId,
-				IsPaused: isPaused,
-				PositionTicks: positionTicks,
-				PlaySessionId: playSessionId
-			}
-		});
-	}
-
-	public async postSessionsPlayingStopped(
-		itemId: string,
-		playSessionId: string,
-		mediaSourceId: string,
-		positionTicks: number
-	) {
-		return await this.client.POST('/Sessions/Playing/Stopped', {
-			body: {
-				ItemId: itemId,
-				MediaSourceId: mediaSourceId,
-				PositionTicks: positionTicks,
-				PlaySessionId: playSessionId
-			}
+		return this.client.POST('/UserItems/{itemId}/UserData', {
+			params: { path: { itemId }, query: { userId } },
+			body: { PlaybackPositionTicks: playbackPositionTicks }
 		});
 	}
 
