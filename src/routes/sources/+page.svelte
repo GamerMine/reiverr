@@ -1,6 +1,6 @@
 <script lang="ts">
-	import RadarrStats from '$lib/components/SourceStats/RadarrStats.svelte';
-	import SonarrStats from '$lib/components/SourceStats/SonarrStats.svelte';
+	import RadarrStats from './components/RadarrStats.svelte';
+	import SonarrStats from './components/SonarrStats.svelte';
 	import { fade } from 'svelte/transition';
 	import { settings } from '$lib/stores/settings.svelte';
 </script>

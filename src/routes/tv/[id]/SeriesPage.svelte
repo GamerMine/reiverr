@@ -6,26 +6,26 @@
 		getTmdbSeriesSimilar,
 		type TmdbSeriesFull2
 	} from '$lib/apis/tmdb/tmdbApi';
-	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
-	import Card from '$lib/components/common/misc/cards/Card.svelte';
-	import { fetchCardTmdbProps } from '$lib/components/common/misc/cards/card';
-	import Carousel from '$lib/components/common/misc/carousel/Carousel.svelte';
-	import CarouselPlaceholderItems from '$lib/components/common/misc/carousel/CarouselPlaceholderItems.svelte';
-	import UiCarousel from '$lib/components/common/misc/carousel/UICarousel.svelte';
-	import EpisodeCard from '$lib/components/common/misc/cards/EpisodeCard.svelte';
-	import PersonCard from '$lib/components/common/misc/cards/PersonCard.svelte';
+	import Button from '$lib/components/controls/Button.svelte';
+	import Card from '$lib/components/cards/Card.svelte';
+	import { fetchCardTmdbProps } from '$lib/components/cards/card';
+	import Carousel from '$lib/components/carousel/Carousel.svelte';
+	import CarouselPlaceholderItems from '$lib/components/carousel/CarouselPlaceholderItems.svelte';
+	import UiCarousel from '$lib/components/carousel/UICarousel.svelte';
+	import EpisodeCard from '$lib/components/cards/EpisodeCard.svelte';
+	import PersonCard from '$lib/components/cards/PersonCard.svelte';
 	import OpenInButton from '$lib/components/TitlePageLayout/OpenInButton.svelte';
 	import TitlePageLayout from '$lib/components/TitlePageLayout/TitlePageLayout.svelte';
-	import { playerState } from '$lib/components/VideoPlayer/VideoPlayer';
-	import { TMDB_BACKDROP_SMALL, TMDB_BASE_TV_URL } from '$lib/constants';
-	import { capitalize, formatSize } from '$lib/utils';
+	import { playerState } from '$lib/components/player/VideoPlayer';
+	import { TMDB_BACKDROP_SMALL, TMDB_BASE_TV_URL } from '$lib/utils/constants';
+	import { capitalize, formatSize } from '$lib/utils/utils';
 	import classNames from 'classnames';
 	import { ActivityLog, ChevronLeft, ChevronRight, Clock, DotFilled, Trash } from 'svelte-radix';
 	import { _ } from 'svelte-i18n';
-	import { tmdbDataFormat } from '$lib/utils.js';
+	import { tmdbDataFormat } from '$lib/utils/utils.js';
 	import { settings } from '$lib/stores/settings.svelte';
-	import Select from '$lib/components/common/inputs/forms/Select.svelte';
-	import Option from '$lib/components/common/inputs/forms/Option.svelte';
+	import Select from '$lib/components/controls/Select.svelte';
+	import Option from '$lib/components/controls/Option.svelte';
 	import { modalStack } from '$lib/stores/modal.store';
 	import SeasonsChooserModal from '$lib/components/modals/SeasonsChooserModal.svelte';
 	import { onMount } from 'svelte';
@@ -34,7 +34,7 @@
 		sonarrGetSeries,
 		sonarrRemoveSeries
 	} from '$lib/remote/sonarr.remote';
-	import type { EpisodeDataWithCheck, SeasonData, SeasonDataWithCheck } from '$lib/types';
+	import type { EpisodeDataWithCheck, SeasonData, SeasonDataWithCheck } from '$lib/utils/types';
 	import {
 		createErrorNotification,
 		createSuccessNotification

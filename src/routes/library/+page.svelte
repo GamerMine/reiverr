@@ -1,15 +1,14 @@
 <script lang="ts">
-	import { getJellyfinBackdrop, getJellyfinPosterUrl } from '$lib/apis/jellyfin/jellyfinApi';
-	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
-	import Carousel from '$lib/components/common/misc/carousel/Carousel.svelte';
-	import Poster from '$lib/components/Poster/Poster.svelte';
-	import { playerState } from '$lib/components/VideoPlayer/VideoPlayer';
-	import { PLACEHOLDER_BACKDROP } from '$lib/constants';
+	import Button from '$lib/components/controls/Button.svelte';
+	import Carousel from '$lib/components/carousel/Carousel.svelte';
+	import Poster from '$lib/components/cards/Poster.svelte';
+	import { playerState } from '$lib/components/player/VideoPlayer';
+	import { PLACEHOLDER_BACKDROP } from '$lib/utils/constants';
 	import { ChevronRight } from 'svelte-radix';
 	import { _ } from 'svelte-i18n';
 	import { fade } from 'svelte/transition';
 	import LibraryItems from './LibraryItems.svelte';
-	import LazyImg from '$lib/components/common/images/LazyImg.svelte';
+	import LazyImg from '$lib/components/images/LazyImg.svelte';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { radarrGetQueue } from '$lib/remote/radarr.remote';
 	import { sonarrGetQueue } from '$lib/remote/sonarr.remote';
@@ -17,6 +16,7 @@
 	import type { RadarrMediaCover, RadarrQueueStatus } from '@reiverr/connectors/types/radarr';
 	import type { SonarrMediaCover, SonarrQueueStatus } from '@reiverr/connectors/types/sonarr';
 	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
+	import { getJellyfinBackdrop, getJellyfinPosterUrl } from '$lib/utils/utils.ts';
 
 	let noItems = false;
 

@@ -1,11 +1,7 @@
 import { command, form, getRequestEvent } from '$app/server';
-import {
-	checkJellyfinConnection,
-	isJellyfinUserConnected
-} from '$lib/apis/jellyfin/server/jellyfin.server';
 import * as v from 'valibot';
-import { assertAdminUserAuth } from '$lib/server/utils.server';
-import { QUALITY_DEFS } from '$lib/constants';
+import { assertUserAuth } from '$lib/server/utils.server';
+import { QUALITY_DEFS } from '$lib/utils/constants.ts';
 import { In, Not } from 'typeorm';
 import { scheduleTask } from '../../tasksWorker/scheduler.server';
 import {
@@ -16,8 +12,8 @@ import {
 	UserSettingsEntity
 } from '@reiverr/db/entities';
 import { type FilteringProfile, FilteringProfileSchema, TaskType } from '@reiverr/db/types';
-import { OptionalStringSchema, type Result } from '$lib/types';
-import { RadarrConnector, SonarrConnector } from '@reiverr/connectors';
+import { OptionalStringSchema, type Result } from '$lib/utils/types.ts';
+import { JellyfinConnector, RadarrConnector, SonarrConnector } from '@reiverr/connectors';
 import { PlatformSchema } from '../../tasksWorker/types.ts';
 
 export const saveSettings = form(
@@ -43,14 +39,12 @@ export const saveSettings = form(
 	}),
 	async (settings): Promise<Result<{ needLogin: boolean }>> => {
 		const { cookies } = getRequestEvent();
-		const userReq = await isJellyfinUserConnected(cookies);
-		if (!userReq.response.ok || !userReq.data?.Id) {
-			return { success: false, error: 'general.connectionRequired' };
-		}
+		const { userId, isAdmin } = await assertUserAuth(cookies);
+		if (!userId) return { success: false, error: 'general.connectionRequired' };
 
 		await UserSettingsEntity.upsert(
 			{
-				userId: userReq.data.Id,
+				userId: userId,
 				language: settings.userLanguage,
 				autoplayTrailers: settings.userAutoplayTrailers,
 				animationDuration: settings.userAnimationDuration,
@@ -66,18 +60,18 @@ export const saveSettings = form(
 		);
 
 		let needLogin = false;
-		if (userReq.data.Policy?.IsAdministrator) {
+		if (isAdmin) {
 			const globalSettings = await GlobalSettingsEntity.getDefault();
 			if (
 				settings.adminJellyfinBaseUrl &&
 				settings.adminJellyfinApiKey &&
 				settings.adminJellyfinBaseUrl !== globalSettings.jellyfinBaseUrl
 			) {
-				const connection = await checkJellyfinConnection(
+				const connection = await new JellyfinConnector(
 					settings.adminJellyfinBaseUrl,
 					settings.adminJellyfinApiKey
-				);
-				if (connection.ok) {
+				).isHealthy();
+				if (connection) {
 					globalSettings.jellyfinBaseUrl = settings.adminJellyfinBaseUrl;
 					globalSettings.jellyfinApiKey = settings.adminJellyfinApiKey;
 					cookies.delete('access_token', { path: '/' });
@@ -233,7 +227,8 @@ export const createUpdateFilteringProfile = form(
 		profileId
 	}): Promise<Result<undefined>> => {
 		const { cookies } = getRequestEvent();
-		await assertAdminUserAuth(cookies);
+		const { isAdmin } = await assertUserAuth(cookies);
+		if (!isAdmin) return { success: false, error: 'general.connectionRequired' };
 
 		for (const quality of qualities) {
 			if (!QUALITY_DEFS.includes(quality))
@@ -274,14 +269,8 @@ export const createUpdateFilteringProfile = form(
 
 export const deleteFilteringProfile = command(FilteringProfileSchema, async (profile) => {
 	const { cookies } = getRequestEvent();
-	const userReq = await isJellyfinUserConnected(cookies);
-	if (!userReq.response.ok) {
-		return { success: false, error: 'general.connectionRequired' };
-	}
-
-	if (!userReq.data?.Id || !userReq.data.Policy?.IsAdministrator) {
-		return { success: false, error: 'general.unauthorizedAction' };
-	}
+	const { isAdmin } = await assertUserAuth(cookies);
+	if (!isAdmin) return { success: false, error: 'general.connectionRequired' };
 
 	await QualityProfilesEntity.delete({
 		filteringProfile: { id: profile.id }
@@ -295,14 +284,8 @@ export const deleteFilteringProfile = command(FilteringProfileSchema, async (pro
 
 export const deleteIntegration = command(PlatformSchema, async (platform) => {
 	const { cookies } = getRequestEvent();
-	const userReq = await isJellyfinUserConnected(cookies);
-	if (!userReq.response.ok) {
-		return { success: false, error: 'general.connectionRequired' };
-	}
-
-	if (!userReq.data?.Id || !userReq.data.Policy?.IsAdministrator) {
-		return { success: false, error: 'general.unauthorizedAction' };
-	}
+	const { isAdmin } = await assertUserAuth(cookies);
+	if (!isAdmin) return { success: false, error: 'general.connectionRequired' };
 
 	const globalSettings = await GlobalSettingsEntity.getDefault();
 	switch (platform) {

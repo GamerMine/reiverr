@@ -1,8 +1,8 @@
 import { browser } from '$app/environment';
-import { TMDB_API_KEY, TMDB_BACKDROP_SMALL } from '$lib/constants';
+import { TMDB_API_KEY, TMDB_BACKDROP_SMALL } from '$lib/utils/constants.ts';
 import createClient from 'openapi-fetch';
 import type { operations, paths } from './tmdb.generated';
-import type { TitleType } from '$lib/types';
+import type { TitleType } from '$lib/utils/types.ts';
 import { settings } from '$lib/stores/settings.svelte.js';
 
 const CACHE_ONE_DAY = 'max-age=86400';

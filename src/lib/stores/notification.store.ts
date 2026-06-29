@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import Notification from '$lib/components/common/misc/notification/Notification.svelte';
+import Notification from '$lib/components/notification/Notification.svelte';
 import type { Component } from 'svelte';
 
 export type NotificationItem = {
@@ -73,7 +73,7 @@ export function createInfoNotification(title: string, details: string, type = 'i
 		type,
 		title,
 		description: details
-	})
+	});
 }
 
 export function createSuccessNotification(title: string, details: string, type = 'success') {
@@ -81,5 +81,5 @@ export function createSuccessNotification(title: string, details: string, type =
 		type,
 		title,
 		description: details
-	})
+	});
 }

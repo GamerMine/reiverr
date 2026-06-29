@@ -1,18 +1,18 @@
 <script lang="ts">
 	import { getTmdbPerson } from '$lib/apis/tmdb/tmdbApi';
-	import Carousel from '$lib/components/common/misc/carousel/Carousel.svelte';
-	import Poster from '$lib/components/Poster/Poster.svelte';
+	import Carousel from '$lib/components/carousel/Carousel.svelte';
+	import Poster from '$lib/components/cards/Poster.svelte';
 	import TitlePageLayout from '$lib/components/TitlePageLayout/TitlePageLayout.svelte';
-	import FacebookIcon from '$lib/components/common/icons/FacebookIcon.svelte';
-	import ImdbIcon from '$lib/components/common/icons/ImdbIcon.svelte';
-	import TiktokIcon from '$lib/components/common/icons/TiktokIcon.svelte';
-	import TmdbIcon from '$lib/components/common/icons/TmdbIcon.svelte';
-	import TwitterIcon from '$lib/components/common/icons/TwitterIcon.svelte';
-	import YoutubeIcon from '$lib/components/common/icons/YoutubeIcon.svelte';
-	import { TMDB_POSTER_SMALL } from '$lib/constants';
+	import FacebookIcon from '$lib/components/icons/FacebookIcon.svelte';
+	import ImdbIcon from '$lib/components/icons/ImdbIcon.svelte';
+	import TiktokIcon from '$lib/components/icons/TiktokIcon.svelte';
+	import TmdbIcon from '$lib/components/icons/TmdbIcon.svelte';
+	import TwitterIcon from '$lib/components/icons/TwitterIcon.svelte';
+	import YoutubeIcon from '$lib/components/icons/YoutubeIcon.svelte';
+	import { TMDB_POSTER_SMALL } from '$lib/utils/constants';
 	import { DotFilled, InstagramLogo } from 'svelte-radix';
 	import { _ } from 'svelte-i18n';
-	import { tmdbDataFormat } from '$lib/utils.js';
+	import { tmdbDataFormat } from '$lib/utils/utils.js';
 	import { settings } from '$lib/stores/settings.svelte';
 
 	const GENDER_OPTIONS = [

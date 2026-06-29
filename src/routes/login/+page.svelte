@@ -1,15 +1,15 @@
 <script lang="ts">
-	import UserCarousel from '$lib/components/common/misc/carousel/UserCarousel.svelte';
-	import UserCard from '$lib/components/common/misc/cards/UserCard.svelte';
+	import UserCarousel from '$lib/components/carousel/UserCarousel.svelte';
+	import UserCard from '$lib/components/cards/UserCard.svelte';
 	import { _ } from 'svelte-i18n';
-	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
+	import Button from '$lib/components/controls/Button.svelte';
 	import { Keyboard, Enter, Update } from 'svelte-radix';
-	import Input from '$lib/components/common/inputs/forms/Input.svelte';
+	import Input from '$lib/components/controls/Input.svelte';
 	import { ChevronLeft } from 'svelte-radix';
 	import { createErrorNotification } from '$lib/stores/notification.store';
 	import { onMount } from 'svelte';
 	import { animateBackground } from '$lib/utils/animation';
-	import { setTmpLanguage } from '$lib/utils';
+	import { setTmpLanguage } from '$lib/utils/utils';
 	import { jellyfinGetUsers } from '$lib/remote/jellyfin.remote.ts';
 	import { goto } from '$app/navigation';
 	import { login } from '$lib/remote/login.remote.ts';

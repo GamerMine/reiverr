@@ -1,4 +1,4 @@
-import type { TitleType } from '$lib/types';
+import type { TitleType } from '$lib/utils/types.ts';
 import { writable } from 'svelte/store';
 
 type Type = TitleType | undefined;

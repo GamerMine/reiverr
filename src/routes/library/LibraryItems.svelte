@@ -1,26 +1,26 @@
 <script lang="ts">
-	import UiCarousel from '$lib/components/common/misc/carousel/UICarousel.svelte';
-	import IconButton from '$lib/components/common/inputs/buttons/IconButton.svelte';
+	import UiCarousel from '$lib/components/carousel/UICarousel.svelte';
+	import IconButton from '$lib/components/controls/IconButton.svelte';
 	import classNames from 'classnames';
 	import { fly } from 'svelte/transition';
 	import { _ } from 'svelte-i18n';
 	import { ChevronDown, Cross2, MagnifyingGlass } from 'svelte-radix';
-	import CardPlaceholder from '$lib/components/common/misc/cards/CardPlaceholder.svelte';
+	import CardPlaceholder from '$lib/components/cards/CardPlaceholder.svelte';
 	import { tick, type ComponentProps, onMount } from 'svelte';
-	import Poster from '$lib/components/Poster/Poster.svelte';
-	import { getJellyfinPosterUrl } from '$lib/apis/jellyfin/jellyfinApi';
+	import Poster from '$lib/components/cards/Poster.svelte';
 	import type { RadarrMediaCover, RadarrMovieResource } from '@reiverr/connectors/types/radarr';
 	import type { SonarrMediaCover, SonarrSeriesResource } from '@reiverr/connectors/types/sonarr';
 	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
-	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
-	import ContextMenu from '$lib/components/common/inputs/contextMenu/ContextMenu.svelte';
-	import SelectableContextMenuItem from '$lib/components/common/inputs/contextMenu/SelectableContextMenuItem.svelte';
-	import Divider from '$lib/components/common/misc/Divider.svelte';
+	import Button from '$lib/components/controls/Button.svelte';
+	import ContextMenu from '$lib/components/controls/ContextMenu.svelte';
+	import SelectableContextMenuItem from '$lib/components/controls/SelectableContextMenuItem.svelte';
+	import Divider from '$lib/components/layout/Divider.svelte';
 	import { createLocalStorageStore } from '$lib/stores/localstorage.store';
 	import { radarrGetMovies } from '$lib/remote/radarr.remote';
 	import { jellyfinGetItems } from '$lib/remote/jellyfin.remote';
 	import { sonarrGetSeries } from '$lib/remote/sonarr.remote';
 	import { settings } from '$lib/stores/settings.svelte';
+	import { getJellyfinPosterUrl } from '$lib/utils/utils.ts';
 
 	const SortBy = {
 		DateAdded: $_('library.sort.dateAdded'),

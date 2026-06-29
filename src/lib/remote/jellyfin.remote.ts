@@ -1,11 +1,18 @@
 import { command, getRequestEvent, query } from '$app/server';
 import { assertUserAuth } from '$lib/server/utils.server';
 import * as v from 'valibot';
-import Connectors from '@reiverr/connectors';
+import Connectors, { JellyfinConnector } from '@reiverr/connectors';
 import type { RemoteQueryFunction } from '@sveltejs/kit';
-import type { Result } from '$lib/types.ts';
+import { ApiSchema, type Result } from '$lib/utils/types.ts';
 import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
-import { JellyfinDeviceProfileSchema } from '$lib/apis/jellyfin/playback-profiles';
+import { JellyfinDeviceProfileSchema } from '$lib/components/player/playback-profiles';
+import { GlobalSettingsEntity } from '@reiverr/db/entities';
+
+export const jellyfinIsHealthy = query(v.optional(ApiSchema), async (api) => {
+	if (api?.url && api.key) return await new JellyfinConnector(api.url, api.key).isHealthy();
+	const creds = await GlobalSettingsEntity.getJellyfinApi();
+	return await new JellyfinConnector(creds.apiUrl ?? '', creds.apiKey ?? '').isHealthy();
+});
 
 export const jellyfinGetItems: RemoteQueryFunction<void, Result<JellyfinBaseItemDto[]>> = query(
 	async () => {

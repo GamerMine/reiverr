@@ -4,6 +4,7 @@ import { JellyfinDeviceProfile } from '../types/jellyfinTypes.js';
 
 export class JellyfinConnector {
 	private client: Client<paths>;
+	private url: string;
 
 	public static JELLYFIN_CLIENT = 'Reiverr Web Client';
 
@@ -14,6 +15,55 @@ export class JellyfinConnector {
 				Authorization: `MediaBrowser Token="${apiKey}"`
 			}
 		});
+		this.url = baseUrl;
+	}
+
+	public async isHealthy() {
+		try {
+			const health = await this.client.GET('/System/Info');
+			return health.response.ok;
+		} catch (e) {
+			console.warn('Cannot connect to Jellyfin:\n', e);
+			return false;
+		}
+	}
+
+	public async isUserConnected(accessToken: string) {
+		try {
+			return await createClient<paths>({
+				baseUrl: this.url,
+				headers: {
+					Authorization: `MediaBrowser Token="${accessToken}"`
+				}
+			}).GET('/Users/Me');
+		} catch (e) {
+			console.warn('Cannot connect to Jellyfin:\n', e);
+			return undefined;
+		}
+	}
+
+	public async postUsersAuthenticateByName(
+		username: string,
+		password: string,
+		device: string,
+		version: string
+	) {
+		try {
+			return await createClient<paths>({
+				baseUrl: this.url,
+				headers: {
+					Authorization: `MediaBrowser Client=${JellyfinConnector.JELLYFIN_CLIENT}, Device=${device}, DeviceId=${await JellyfinConnector.getDeviceId(username)}, Version=${version}`
+				}
+			}).POST('/Users/AuthenticateByName', {
+				body: {
+					Username: username,
+					Pw: password
+				}
+			});
+		} catch (e) {
+			console.warn('Cannot connect to Jellyfin:\n', e);
+			return undefined;
+		}
 	}
 
 	public async getItems(

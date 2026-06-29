@@ -5,33 +5,33 @@
 		getTmdbMovieSimilar,
 		type TmdbMovieFull2
 	} from '$lib/apis/tmdb/tmdbApi';
-	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
-	import Card from '$lib/components/common/misc/cards/Card.svelte';
-	import { fetchCardTmdbProps } from '$lib/components/common/misc/cards/card';
-	import Carousel from '$lib/components/common/misc/carousel/Carousel.svelte';
-	import CarouselPlaceholderItems from '$lib/components/common/misc/carousel/CarouselPlaceholderItems.svelte';
-	import PersonCard from '$lib/components/common/misc/cards/PersonCard.svelte';
-	import ProgressBar from '$lib/components/common/ProgressBar.svelte';
+	import Button from '$lib/components/controls/Button.svelte';
+	import Card from '$lib/components/cards/Card.svelte';
+	import { fetchCardTmdbProps } from '$lib/components/cards/card';
+	import Carousel from '$lib/components/carousel/Carousel.svelte';
+	import CarouselPlaceholderItems from '$lib/components/carousel/CarouselPlaceholderItems.svelte';
+	import PersonCard from '$lib/components/cards/PersonCard.svelte';
+	import ProgressBar from '$lib/components/layout/ProgressBar.svelte';
 	import OpenInButton from '$lib/components/TitlePageLayout/OpenInButton.svelte';
 	import TitlePageLayout from '$lib/components/TitlePageLayout/TitlePageLayout.svelte';
-	import { playerState } from '$lib/components/VideoPlayer/VideoPlayer';
-	import { formatSize } from '$lib/utils';
+	import { playerState } from '$lib/components/player/VideoPlayer';
+	import { formatSize } from '$lib/utils/utils';
 	import classNames from 'classnames';
 	import { ActivityLog, ChevronRight, Clock, DotFilled, Trash } from 'svelte-radix';
 	import { type ComponentProps, onMount } from 'svelte';
 	import { _ } from 'svelte-i18n';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { radarrAddMovie, radarrGetMovies, radarrRemoveMovie } from '$lib/remote/radarr.remote';
-	import Select from '$lib/components/common/inputs/forms/Select.svelte';
-	import Option from '$lib/components/common/inputs/forms/Option.svelte';
-	import type { components as JellyfinComponents } from '$lib/apis/jellyfin/jellyfin.generated';
-	import { TMDB_BASE_MOVIE_URL } from '$lib/constants';
+	import Select from '$lib/components/controls/Select.svelte';
+	import Option from '$lib/components/controls/Option.svelte';
+	import { TMDB_BASE_MOVIE_URL } from '$lib/utils/constants';
 	import { jellyfinGetItems } from '$lib/remote/jellyfin.remote';
 	import {
 		createErrorNotification,
 		createSuccessNotification
 	} from '$lib/stores/notification.store';
 	import type { RadarrMovieResource } from '@reiverr/connectors/types/radarr';
+	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
 	import { getTasks } from '$lib/remote/tasks.remote.ts';
 	import { type MovieAdd, TaskState, type TaskStatus } from '../../../tasksWorker/types.ts';
 	import { TaskType } from '@reiverr/db/types';
@@ -44,7 +44,7 @@
 
 	let loading = $state(true);
 	let tmdbMovie: TmdbMovieFull2 | undefined = $state();
-	let jellyfinItem: JellyfinComponents['schemas']['BaseItemDto'] | undefined = $state();
+	let jellyfinItem: JellyfinBaseItemDto | undefined = $state();
 	let radarrMovie: RadarrMovieResource | undefined = $state();
 	let tasks = $derived(await getTasks());
 	let isBeingAdded = $state(false);

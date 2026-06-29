@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import I18n from '$lib/components/common/I18n.svelte';
-	import DynamicModal from '$lib/components/common/modal/DynamicModal.svelte';
-	import Navbar from '$lib/components/page/default/navbar/Navbar.svelte';
-	import UpdateChecker from '$lib/components/page/default/UpdateChecker.svelte';
+	import I18n from '$lib/components/text/I18n.svelte';
+	import DynamicModal from '$lib/components/modals/DynamicModal.svelte';
+	import Navbar from '$lib/components/navigation/navbar/Navbar.svelte';
+	import UpdateChecker from '$lib/components/layout/UpdateChecker.svelte';
 	import '../app.css';
 	import type { LayoutServerData } from './$types';
-	import NotificationPane from '$lib/components/common/misc/notification/NotificationPane.svelte';
+	import NotificationPane from '$lib/components/notification/NotificationPane.svelte';
 	import { type Snippet } from 'svelte';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { CrossCircled } from 'svelte-radix';

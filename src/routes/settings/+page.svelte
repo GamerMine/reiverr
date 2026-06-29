@@ -1,22 +1,22 @@
 <script lang="ts">
 	import { version } from '$app/environment';
-	import Select from '$lib/components/common/inputs/forms/Select.svelte';
+	import Select from '$lib/components/controls/Select.svelte';
 	import classNames from 'classnames';
 	import { ChevronLeft } from 'svelte-radix';
-	import GeneralSettingsPage from '$lib/components/page/settings/GeneralSettingsPage.svelte';
-	import IntegrationSettingsPage from '$lib/components/page/settings/IntegrationSettingsPage.svelte';
+	import GeneralSettingsPage from './components/GeneralSettingsPage.svelte';
+	import IntegrationSettingsPage from './components/IntegrationSettingsPage.svelte';
 	import { fade } from 'svelte/transition';
 	import { _ } from 'svelte-i18n';
 	import { createErrorNotification } from '$lib/stores/notification.store';
 	import type { Settings } from '@reiverr/db/types';
 	import { settings } from '$lib/stores/settings.svelte';
-	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
+	import Button from '$lib/components/controls/Button.svelte';
 	import type { PageProps } from '../../../.svelte-kit/types/src/routes/settings/$types';
-	import ConfirmDialog from '$lib/components/common/inputs/forms/ConfirmDialog.svelte';
-	import FilteringConfigPage from '$lib/components/page/settings/FilteringConfigPage.svelte';
+	import ConfirmDialog from '$lib/components/controls/ConfirmDialog.svelte';
+	import FilteringConfigPage from './components/FilteringConfigPage.svelte';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import Option from '$lib/components/common/inputs/forms/Option.svelte';
+	import Option from '$lib/components/controls/Option.svelte';
 	import { saveSettings } from '$lib/remote/settings.remote';
 
 	type Section = 'general' | 'userFiltering' | 'integrations' | 'filtering';

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { TitleType } from '$lib/types';
+	import type { TitleType } from '$lib/utils/types';
 	import { fly } from 'svelte/transition';
 	import MoviePage from '../../../routes/movie/[id]/MoviePage.svelte';
 	import SeriesPage from '../../../routes/tv/[id]/SeriesPage.svelte';

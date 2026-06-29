@@ -2,7 +2,7 @@ import { command, getRequestEvent, query } from '$app/server';
 import * as v from 'valibot';
 import { assertUserAuth } from '$lib/server/utils.server';
 import { FilteringProfilesEntity, GlobalSettingsEntity } from '@reiverr/db/entities';
-import { ApiSchema, type Result } from '$lib/types';
+import { ApiSchema, type Result } from '$lib/utils/types.ts';
 import { scheduleTask } from '../../tasksWorker/scheduler.server';
 import type { RadarrQueueResource } from '@reiverr/connectors/types/radarr';
 import Connectors, { RadarrConnector } from '@reiverr/connectors';

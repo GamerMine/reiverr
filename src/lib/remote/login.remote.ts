@@ -1,14 +1,8 @@
 import { form, getRequestEvent } from '$app/server';
 import * as v from 'valibot';
-import {
-	isJellyfinUserConnected,
-	JELLYFIN_CLIENT_VERSION,
-	JELLYFIN_DEVICE
-} from '$lib/apis/jellyfin/server/jellyfin.server.ts';
-import createClient from 'openapi-fetch';
-import type { paths } from '$lib/apis/jellyfin/jellyfin.generated';
-import { GlobalSettingsEntity } from '@reiverr/db/entities';
-import { JellyfinConnector } from '@reiverr/connectors';
+import Connectors from '@reiverr/connectors';
+import { getBrowserName } from '$lib/utils/browser-detection.ts';
+import { version } from '$app/environment';
 
 export const login = form(
 	v.object({
@@ -17,7 +11,13 @@ export const login = form(
 	}),
 	async (creds) => {
 		const { cookies, request } = getRequestEvent();
-		const authResult = await authenticateJellyfinUser(creds.username, creds._password);
+		const conn = (await Connectors.getInstance()).jellyfinConnector;
+		const authResult = await conn.postUsersAuthenticateByName(
+			creds.username,
+			creds._password,
+			getBrowserName(),
+			version
+		);
 
 		if (!authResult.response.ok) {
 			if (authResult.response.status === 401) {
@@ -45,23 +45,6 @@ export const login = form(
 			maxAge: 60 * 60 * 24 * 30
 		});
 
-		const user = await isJellyfinUserConnected(cookies);
-		if (!user.response.ok) console.error(JSON.stringify(user.error, null, 2));
-
-		return { success: user.response.ok, data: user.data };
+		return { success: true, data: authResult.data.User };
 	}
 );
-
-async function authenticateJellyfinUser(username: string, password: string) {
-	return createClient<paths>({
-		baseUrl: (await GlobalSettingsEntity.getJellyfinBaseUrl()) || undefined,
-		headers: {
-			Authorization: `MediaBrowser Client=${JellyfinConnector.JELLYFIN_CLIENT}, Device=${JELLYFIN_DEVICE}, DeviceId=${await JellyfinConnector.getDeviceId(username)}, Version=${JELLYFIN_CLIENT_VERSION}`
-		}
-	}).POST('/Users/AuthenticateByName', {
-		body: {
-			Username: username,
-			Pw: password
-		}
-	});
-}

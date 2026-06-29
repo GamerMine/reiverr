@@ -1,18 +1,18 @@
 <script lang="ts">
 	import { getPosterProps, TmdbApiOpen } from '$lib/apis/tmdb/tmdbApi';
-	import Carousel from '$lib/components/common/misc/carousel/Carousel.svelte';
-	import GenreCard from '$lib/components/common/misc/cards/GenreCard.svelte';
-	import NetworkCard from '$lib/components/common/misc/cards/NetworkCard.svelte';
-	import PersonCard from '$lib/components/common/misc/cards/PersonCard.svelte';
-	import Poster from '$lib/components/Poster/Poster.svelte';
-	import TitleShowcases from '$lib/components/page/home/titleShowcase/TitleShowcasesContainer.svelte';
-	import { genres, networks } from '$lib/discover';
-	import type { TitleType } from '$lib/types';
-	import { formatDateToYearMonthDay } from '$lib/utils';
+	import Carousel from '$lib/components/carousel/Carousel.svelte';
+	import GenreCard from '$lib/components/cards/GenreCard.svelte';
+	import NetworkCard from '$lib/components/cards/NetworkCard.svelte';
+	import PersonCard from '$lib/components/cards/PersonCard.svelte';
+	import Poster from '$lib/components/cards/Poster.svelte';
+	import TitleShowcases from './components/titleShowcase/TitleShowcasesContainer.svelte';
+	import { genres, networks } from '$lib/utils/discover';
+	import type { TitleType } from '$lib/utils/types';
+	import { formatDateToYearMonthDay } from '$lib/utils/utils';
 	import type { ComponentProps } from 'svelte';
 	import { _ } from 'svelte-i18n';
 	import { fade } from 'svelte/transition';
-	import { tmdbDataFormat } from '$lib/utils.js';
+	import { tmdbDataFormat } from '$lib/utils/utils.js';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { jellyfinGetItems } from '$lib/remote/jellyfin.remote';
 

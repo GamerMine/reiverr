@@ -1,6 +1,6 @@
 import { command, getRequestEvent, query } from '$app/server';
 import * as v from 'valibot';
-import { ApiSchema, type Result } from '$lib/types';
+import { ApiSchema, type Result } from '$lib/utils/types.ts';
 import { FilteringProfilesEntity, GlobalSettingsEntity } from '@reiverr/db/entities';
 import { assertUserAuth } from '$lib/server/utils.server';
 import { scheduleTask } from '../../tasksWorker/scheduler.server';

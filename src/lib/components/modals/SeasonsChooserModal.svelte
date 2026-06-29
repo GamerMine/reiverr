@@ -1,13 +1,13 @@
 <script lang="ts">
-	import ModalContainer from '$lib/components/common/modal/ModalContainer.svelte';
-	import ModalHeader from '$lib/components/common/modal/ModalHeader.svelte';
+	import ModalContainer from '$lib/components/modals/ModalContainer.svelte';
+	import ModalHeader from '$lib/components/modals/ModalHeader.svelte';
 	import { _ } from 'svelte-i18n';
 	import { modalStack } from '$lib/stores/modal.store';
-	import Accordion from '$lib/components/common/misc/Accordion.svelte';
-	import type { EpisodeDataWithCheck, SeasonData, SeasonDataWithCheck } from '$lib/types';
-	import Button from '$lib/components/common/inputs/buttons/Button.svelte';
-	import TruncatedText from '$lib/components/common/text/TruncatedText.svelte';
-	import Toggle from '$lib/components/common/inputs/forms/Toggle.svelte';
+	import Accordion from '$lib/components/controls/Accordion.svelte';
+	import type { EpisodeDataWithCheck, SeasonData, SeasonDataWithCheck } from '$lib/utils/types';
+	import Button from '$lib/components/controls/Button.svelte';
+	import TruncatedText from '$lib/components/text/TruncatedText.svelte';
+	import Toggle from '$lib/components/controls/Toggle.svelte';
 	import { onMount } from 'svelte';
 
 	let {

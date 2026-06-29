@@ -1,7 +1,7 @@
-import { checkJellyfinConnection } from '$lib/apis/jellyfin/server/jellyfin.server';
 import { fail, redirect } from '@sveltejs/kit';
 import { GlobalSettingsEntity } from '@reiverr/db/entities';
 import type { PageServerLoad } from './$types';
+import { JellyfinConnector } from '@reiverr/connectors';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const jellyfinAPIKey = await GlobalSettingsEntity.find();
@@ -16,12 +16,10 @@ export const actions = {
 		const formData = await request.formData();
 		const baseURL = formData.get('baseURL') as string;
 		const apiKey = formData.get('apiKey') as string;
-		const jellyfinConnection = await checkJellyfinConnection(baseURL, apiKey);
+		const jellyfinConnection = await new JellyfinConnector(baseURL, apiKey).isHealthy();
 
-		if (jellyfinConnection.status === 404) {
-			return fail(jellyfinConnection.status, { code: 1 });
-		} else if (jellyfinConnection.status === 401) {
-			return fail(jellyfinConnection.status, { code: 2 });
+		if (!jellyfinConnection) {
+			return fail(400, { code: 2 });
 		}
 
 		await GlobalSettingsEntity.setJellyfinApiEndpoint(baseURL, apiKey);

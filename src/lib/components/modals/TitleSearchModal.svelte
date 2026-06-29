@@ -1,13 +1,13 @@
 <script lang="ts">
 	import type { TmdbMovie2, TmdbSeries2 } from '$lib/apis/tmdb/tmdbApi';
 	import { searchTmdbTitles } from '$lib/apis/tmdb/tmdbApi';
-	import { TMDB_POSTER_SMALL } from '$lib/constants';
+	import { TMDB_POSTER_SMALL } from '$lib/utils/constants';
 	import { MagnifyingGlass } from 'svelte-radix';
 	import { modalStack } from '$lib/stores/modal.store';
-	import ModalContent from '$lib/components/common/modal/ModalContainer.svelte';
-	import ModalHeader from '$lib/components/common/modal/ModalHeader.svelte';
+	import ModalContent from '$lib/components/modals/ModalContainer.svelte';
+	import ModalHeader from '$lib/components/modals/ModalHeader.svelte';
 	import { onMount } from 'svelte';
-	import type { TitleType } from '$lib/types';
+	import type { TitleType } from '$lib/utils/types';
 	import { _ } from 'svelte-i18n';
 
 	let { modalId }: { modalId: symbol } = $props();
