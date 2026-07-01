@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import classNames from 'classnames';
 	import { jellyfinGetUserImage } from '$lib/remote/jellyfin.remote';
-	import type { JellyfinUserDto } from '@reiverr/connectors/types/radarr';
+	import type { JellyfinUserDto } from '@reiverr/connectors/types/jellyfin';
 
 	let {
 		user = undefined,

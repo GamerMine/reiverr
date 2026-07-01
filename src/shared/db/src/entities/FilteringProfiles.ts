@@ -42,7 +42,8 @@ export class FilteringProfilesEntity extends BaseEntity {
 
 		if (userCanChooseProfile) {
 			const { filteringProfileId } = await UserSettingsEntity.getUserSettings(userId);
-			if (filteringProfileId) return await this.findOneBy({ id: filteringProfileId });
+			const profile = await this.findOneBy({ id: filteringProfileId });
+			if (profile) return profile;
 		}
 
 		return await this.findOne({ where: { isDefault: true } });

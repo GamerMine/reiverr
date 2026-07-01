@@ -176,7 +176,8 @@ export const saveSettings = form(
 						lang: Not(In(settings.adminDownloadLanguages))
 					})
 				).affected ?? 1) > 0 || customFormatModified;
-			if (customFormatModified) await scheduleTask(TaskType.SYNC_CUSTOM_FORMATS, undefined);
+			if (customFormatModified)
+				await scheduleTask(userId, TaskType.SYNC_CUSTOM_FORMATS, undefined);
 
 			const [filteringProfiles, formats] = await Promise.all([
 				FilteringProfilesEntity.find(),
@@ -201,7 +202,8 @@ export const saveSettings = form(
 					})
 				).identifiers.length > 0 || qualityProfileModified;
 
-			if (qualityProfileModified) await scheduleTask(TaskType.SYNC_QUALITY_PROFILES, []);
+			if (qualityProfileModified)
+				await scheduleTask(userId, TaskType.SYNC_QUALITY_PROFILES, []);
 		}
 
 		return {
@@ -227,8 +229,8 @@ export const createUpdateFilteringProfile = form(
 		profileId
 	}): Promise<Result<undefined>> => {
 		const { cookies } = getRequestEvent();
-		const { isAdmin } = await assertUserAuth(cookies);
-		if (!isAdmin) return { success: false, error: 'general.connectionRequired' };
+		const { isAdmin, userId } = await assertUserAuth(cookies);
+		if (!userId || !isAdmin) return { success: false, error: 'general.connectionRequired' };
 
 		for (const quality of qualities) {
 			if (!QUALITY_DEFS.includes(quality))
@@ -261,7 +263,7 @@ export const createUpdateFilteringProfile = form(
 			);
 		}
 
-		await scheduleTask(TaskType.SYNC_QUALITY_PROFILES, profileId ? [profileId] : []);
+		await scheduleTask(userId, TaskType.SYNC_QUALITY_PROFILES, profileId ? [profileId] : []);
 
 		return { success: true };
 	}
@@ -269,15 +271,15 @@ export const createUpdateFilteringProfile = form(
 
 export const deleteFilteringProfile = command(FilteringProfileSchema, async (profile) => {
 	const { cookies } = getRequestEvent();
-	const { isAdmin } = await assertUserAuth(cookies);
-	if (!isAdmin) return { success: false, error: 'general.connectionRequired' };
+	const { isAdmin, userId } = await assertUserAuth(cookies);
+	if (!userId || !isAdmin) return { success: false, error: 'general.connectionRequired' };
 
 	await QualityProfilesEntity.delete({
 		filteringProfile: { id: profile.id }
 	});
 
 	await FilteringProfilesEntity.deleteFilteringProfile(profile.id);
-	await scheduleTask(TaskType.SYNC_QUALITY_PROFILES, []);
+	await scheduleTask(userId, TaskType.SYNC_QUALITY_PROFILES, []);
 
 	return { success: true };
 });

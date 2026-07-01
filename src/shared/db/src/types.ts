@@ -104,7 +104,9 @@ export const MessageObjectSchema = v.object({
 export type MessageObject = InferOutput<typeof MessageObjectSchema>;
 
 export enum TaskType {
-	SYNC_CUSTOM_FORMATS = 'syncCustomFormat',
+	TEST = 'test',
+
+	SYNC_CUSTOM_FORMATS = 'syncCustomFormats',
 	SYNC_QUALITY_PROFILES = 'syncQualityProfiles',
 
 	RADARR_MOVIE_ADD = 'radarrMovieAdd',
@@ -113,3 +115,19 @@ export enum TaskType {
 	SONARR_SERIES_ADD = 'sonarrSeriesAdd',
 	SONARR_SERIES_REMOVE = 'sonarrSeriesRemove'
 }
+
+export const TaskState = {
+	QUEUED: 'queued',
+	ERROR: 'error',
+	CANCELED: 'canceled',
+	COMPLETED: 'completed'
+} as const;
+export type TaskStateType = (typeof TaskState)[keyof typeof TaskState];
+
+export type TaskStatus = {
+	userId: string;
+	type: TaskType;
+	data?: unknown | undefined;
+	state: TaskStateType;
+	completionDate: Date;
+};

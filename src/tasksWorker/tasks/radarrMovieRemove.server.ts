@@ -1,22 +1,23 @@
-import type { TaskExecutor, TaskProgressCallback, TaskQueueCallback } from '../scheduler.server';
+import type { TaskExecutor, TaskQueueCallback } from '../scheduler.server';
 import * as v from 'valibot';
 import Connectors from '@reiverr/connectors';
 import type { MessageObject } from '@reiverr/db/types';
+import { MovieRemoveSchema } from '../types.ts';
 
 export class RadarrMovieRemove implements TaskExecutor {
 	async computeDescription(data: unknown): Promise<MessageObject> {
-		const id = v.parse(v.number(), data);
+		const movie = v.parse(MovieRemoveSchema, data);
 		return {
 			id: 'service.tasks.radarrAddMovie.addingMovie',
-			values: { id }
+			values: { id: movie.radarrId }
 		};
 	}
 
 	async computeExecutionDescription(data: unknown): Promise<MessageObject> {
-		const id = v.parse(v.number(), data);
+		const movie = v.parse(MovieRemoveSchema, data);
 		return {
 			id: 'service.tasks.radarrAddMovie.addingMovie',
-			values: { id }
+			values: { id: movie.radarrId }
 		};
 	}
 
@@ -24,20 +25,18 @@ export class RadarrMovieRemove implements TaskExecutor {
 		await queue(data);
 	}
 
-	async execute(data: unknown, progress: TaskProgressCallback): Promise<void | MessageObject> {
-		const id = v.parse(v.number(), data);
+	async execute(data: unknown): Promise<void | MessageObject> {
+		const movie = v.parse(MovieRemoveSchema, data);
 		const { radarrConnector } = await Connectors.getInstance();
-		await progress(0, 1);
 
-		const res = await radarrConnector?.deleteMovie(id);
+		const res = await radarrConnector?.deleteMovie(movie.radarrId);
 
 		if (!res || !res.response.ok) {
 			console.error(
-				`Cannot remove movie ${id} from Radarr:`,
+				`Cannot remove movie ${movie.radarrId} from Radarr:`,
 				res ? JSON.stringify(res.error, null, 2) : 'Unable to connect to Radarr.'
 			);
 			return { id: 'general.unknownError' };
 		}
-		await progress(1, 1);
 	}
 }

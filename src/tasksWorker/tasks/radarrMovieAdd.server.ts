@@ -1,4 +1,4 @@
-import type { TaskExecutor, TaskProgressCallback, TaskQueueCallback } from '../scheduler.server';
+import type { TaskExecutor, TaskQueueCallback } from '../scheduler.server';
 import * as v from 'valibot';
 import {
 	FilteringProfilesEntity,
@@ -31,10 +31,9 @@ export class RadarrMovieAdd implements TaskExecutor {
 		await queue(data);
 	}
 
-	async execute(data: unknown, progress: TaskProgressCallback): Promise<void | MessageObject> {
+	async execute(data: unknown): Promise<void | MessageObject> {
 		const movie = v.parse(MovieAddSchema, data);
 		const { radarrConnector } = await Connectors.getInstance();
-		await progress(0, 1);
 
 		const settings = await GlobalSettingsEntity.getDefault();
 		if (!settings.radarrRootFolderPath) {
@@ -66,6 +65,5 @@ export class RadarrMovieAdd implements TaskExecutor {
 			);
 			return { id: 'general.unknownError' };
 		}
-		await progress(1, 1);
 	}
 }

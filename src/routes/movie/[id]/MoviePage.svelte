@@ -32,8 +32,8 @@
 	} from '$lib/stores/notification.store';
 	import type { RadarrMovieResource } from '@reiverr/connectors/types/radarr';
 	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
-	import { getTasks } from '$lib/remote/tasks.remote.ts';
-	import { type MovieAdd, TaskState, type TaskStatus } from '../../../tasksWorker/types.ts';
+	import { getQueuedTasks } from '$lib/remote/tasks.remote.ts';
+	import { type MovieAdd } from '../../../tasksWorker/types.ts';
 	import { TaskType } from '@reiverr/db/types';
 
 	let {
@@ -46,7 +46,7 @@
 	let tmdbMovie: TmdbMovieFull2 | undefined = $state();
 	let jellyfinItem: JellyfinBaseItemDto | undefined = $state();
 	let radarrMovie: RadarrMovieResource | undefined = $state();
-	let tasks = $derived(await getTasks());
+	let tasks = $derived(await getQueuedTasks(true));
 	let isBeingAdded = $state(false);
 
 	async function preloadRecommendationData() {
@@ -82,6 +82,7 @@
 
 		radarrAddMovie({
 			tmdbId,
+			name: tmdbMovie?.title || '',
 			language,
 			userId: JSON.parse(localStorage.getItem('user') || '{}').Id
 		}).then((res) => {
@@ -100,18 +101,20 @@
 	}
 
 	async function removeMovie() {
-		if (radarrMovie?.id) radarrRemoveMovie(radarrMovie.id);
+		if (radarrMovie?.id)
+			radarrRemoveMovie({
+				radarrId: radarrMovie.id,
+				name: tmdbMovie?.title || radarrMovie.title
+			});
 		await radarrGetMovies().refresh();
 	}
 
 	$effect(() => {
-		const state = Array.from(tasks.values()).find(
-			(t: TaskStatus) =>
-				t.type === TaskType.RADARR_MOVIE_ADD && (t.data as MovieAdd).tmdbId === tmdbId
+		const state = tasks.find(
+			(t) => t.type === TaskType.RADARR_MOVIE_ADD && (t.data as MovieAdd).tmdbId === tmdbId
 		);
-		isBeingAdded =
-			!!state && (state.state === TaskState.QUEUED || state.state === TaskState.STARTED);
-		if (state && state.state === TaskState.COMPLETED) {
+		isBeingAdded = !!state;
+		if (!isBeingAdded) {
 			radarrGetMovies()
 				.refresh()
 				.then(() => {

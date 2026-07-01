@@ -5,7 +5,7 @@
 	import { Plus, StarFilled, Star, Trash } from 'svelte-radix';
 	import { modalStack } from '$lib/stores/modal.store';
 	import FilteringProfileModal from '$lib/components/modals/FilteringProfileModal.svelte';
-	import type { FilteringProfile, GlobalSettings } from '@reiverr/db';
+	import type { FilteringProfile, GlobalSettings } from '@reiverr/db/types';
 	import { deleteFilteringProfile, saveSettings } from '$lib/remote/settings.remote';
 	import { invalidateAll } from '$app/navigation';
 	import {
@@ -58,7 +58,7 @@
 
 	$effect(() => {
 		if (!globalSettings) {
-			if (userFilteringProfileId) {
+			if (userFilteringProfileId && profiles.find((p) => p.id === userFilteringProfileId)) {
 				// There can be an edge case when an admin deletes a profile, and, a new profile gets
 				// the same ID. In that case the default user profile would be the new one even though
 				// it's different.

@@ -6,7 +6,7 @@
 	import IntegrationCard from './IntegrationCard.svelte';
 	import TestConnectionButton from './TestConnectionButton.svelte';
 	import { _ } from 'svelte-i18n';
-	import { defaultGlobalSettings, type GlobalSettings } from '@reiverr/db';
+	import { defaultGlobalSettings, type GlobalSettings } from '@reiverr/db/types';
 	import Button from '$lib/components/controls/Button.svelte';
 	import { onMount } from 'svelte';
 	import ConfirmDialog from '$lib/components/controls/ConfirmDialog.svelte';

@@ -23,13 +23,13 @@ export class TaskExecutionEntity extends BaseEntity {
 	@CreateDateColumn()
 	created: Date;
 
-	@Column('date', { nullable: true })
+	@Column('timestamptz', { nullable: true })
 	started: Date | null;
 
-	@Column('date', { nullable: true })
+	@Column('timestamptz', { nullable: true })
 	finished: Date | null;
 
-	@Column('date', { nullable: true })
+	@Column('timestamptz', { nullable: true })
 	canceled: Date | null;
 
 	@Column('simple-json', { nullable: true })

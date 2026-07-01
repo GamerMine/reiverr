@@ -15,7 +15,7 @@
 			method: 'GET'
 		}).then(
 			async (res) =>
-				(await res.json()).find((v: { name: string }) => v.name.startsWith('v1'))?.type
+				(await res.json()).find((v: { name: string }) => v.name.startsWith('v1'))?.name
 		);
 	}
 

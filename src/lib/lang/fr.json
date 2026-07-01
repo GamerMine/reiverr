@@ -188,6 +188,7 @@
     "userMenu": {
       "administrator": "Administrateur",
       "logout": "Se déconnecter",
+      "notifications": "Notifications",
       "settings": "Paramètres",
       "user": "Utilisateur"
     }
@@ -199,10 +200,29 @@
   },
   "service": {
     "messages": {
+      "executeFailed": "Erreur d'éxecution d'une tâche: {error}",
       "queuingFailed": "Impossible d'ajouter l'exécution de la tâche en file d'attente : {error}",
       "unknownTaskType": "Type de tâche inconnu : {type}"
     },
+    "taskName": {
+      "radarrMovieAdd": "Ajout d'un film à la file d'attente",
+      "radarrMovieRemove": "Suppression d'un film",
+      "sonarrSeriesAdd": "Ajout de Série/Épisodes à la file d'attente",
+      "sonarrrSeriesRemove": "Suppression d'une série ou d'épiodes"
+    },
     "tasks": {
+      "radarrMovieAdd": {
+        "error": "Une erreur est survenue lors de l'ajout de '{name}' à la file d'attente. Réessayez plus tard.",
+        "success": "Le film '{name}' à été ajouté à la file d'attente. Il sera disponible une fois téléchargé."
+      },
+      "radarrMovieRemove": {
+        "error": "Le film '{name}' n'as pas pu être supprimé. Réessayez plus tard.",
+        "success": "Le film '{name}' à été supprimé."
+      },
+      "sonarrSeriesAdd": {
+        "error": "La série '{name}' n'as pas pu être supprimée. Réessayez plus tard.",
+        "success": "La série '{name}' à été ajouté à la file d'attente. Il sera disponible une fois téléchargé."
+      },
       "sync": {
         "languagesSync": "Synchronisation des langues",
         "languagesSyncOn": "Synchronisation des langues sur {platform}"

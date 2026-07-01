@@ -1,4 +1,4 @@
-import type { TaskExecutor, TaskProgressCallback, TaskQueueCallback } from '../scheduler.server';
+import type { TaskExecutor, TaskQueueCallback } from '../scheduler.server';
 import { PlatformSchema } from '../types.ts';
 import * as v from 'valibot';
 import { arrayDifference } from '../utils.server.ts';
@@ -33,7 +33,7 @@ export class SyncCustomFormats implements TaskExecutor {
 		}
 	}
 
-	async execute(data: unknown, progress: TaskProgressCallback): Promise<void | MessageObject> {
+	async execute(data: unknown): Promise<void | MessageObject> {
 		const platform = v.parse(PlatformSchema, data);
 		const baseSync = await Connectors.getInstance();
 		const formats = await CustomFormatsEntity.getAll();
@@ -48,8 +48,7 @@ export class SyncCustomFormats implements TaskExecutor {
 			return await this.runOnRadarr(
 				baseSync.radarrLanguages,
 				baseSync.radarrConnector,
-				Array.from(formats.values()),
-				progress
+				Array.from(formats.values())
 			);
 		}
 		if (
@@ -62,8 +61,7 @@ export class SyncCustomFormats implements TaskExecutor {
 			return await this.runOnSonarr(
 				baseSync.sonarrLanguages,
 				baseSync.sonarrConnector,
-				Array.from(formats.values()),
-				progress
+				Array.from(formats.values())
 			);
 		}
 	}
@@ -71,8 +69,7 @@ export class SyncCustomFormats implements TaskExecutor {
 	async runOnRadarr(
 		languages: RadarrLanguageResource[],
 		conn: RadarrConnector,
-		formats: CustomFormatsEntity[],
-		progress: TaskProgressCallback
+		formats: CustomFormatsEntity[]
 	): Promise<void | MessageObject> {
 		const { data: radarrData } = await conn.getCustomFormats();
 		if (!radarrData) return { id: 'service.messages.radarrFetchError' };
@@ -85,14 +82,9 @@ export class SyncCustomFormats implements TaskExecutor {
 		const toCreate = formats.filter(
 			(f) => f.radarrId === undefined || tmpCreate.includes(f.radarrId)
 		);
-		const totalActions = toRemove.length + toCreate.length;
-		let doneActions = 0;
 
-		await progress(doneActions, totalActions);
 		if (!(await conn.deleteCustomFormatBulk(toRemove)).response.ok)
 			return { id: 'service.messages.noLanguagesRadarr' };
-		doneActions = toRemove.length;
-		await progress(doneActions, totalActions);
 
 		for (const format of toCreate) {
 			const langId = languages.find((e) => e.nameLower === format.lang)?.id;
@@ -109,15 +101,13 @@ export class SyncCustomFormats implements TaskExecutor {
 			}
 			format.radarrId = createdFormat.data.id;
 			await format.save();
-			await progress(++doneActions, totalActions);
 		}
 	}
 
 	async runOnSonarr(
 		languages: SonarrLanguageResource[],
 		conn: SonarrConnector,
-		formats: CustomFormatsEntity[],
-		progress: TaskProgressCallback
+		formats: CustomFormatsEntity[]
 	): Promise<void | MessageObject> {
 		const { data: sonarrData } = await conn.getCustomFormats();
 		if (!sonarrData) return { id: 'service.messages.sonarrFetchError' };
@@ -130,14 +120,9 @@ export class SyncCustomFormats implements TaskExecutor {
 		const toCreate = formats.filter(
 			(f) => f.sonarrId === undefined || tmpCreate.includes(f.sonarrId)
 		);
-		const totalActions = toRemove.length + toCreate.length;
-		let doneActions = 0;
 
-		await progress(doneActions, totalActions);
 		if (!(await conn.deleteCustomFormatBulk(toRemove)).response.ok)
 			return { id: 'service.messages.noLanguagesSonarr' };
-		doneActions = toRemove.length;
-		await progress(doneActions, totalActions);
 
 		for (const format of toCreate) {
 			const langId = languages.find((e) => e.nameLower === format.lang)?.id;
@@ -154,7 +139,6 @@ export class SyncCustomFormats implements TaskExecutor {
 			}
 			format.sonarrId = createdFormat.data.id;
 			await format.save();
-			await progress(++doneActions, totalActions);
 		}
 	}
 }

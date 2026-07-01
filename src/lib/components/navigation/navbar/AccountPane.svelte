@@ -1,30 +1,30 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
-	import UserImage from '$lib/components/images/UserImage.svelte';
+	import AccountIImage from '$lib/components/images/AccountIImage.svelte';
 	import Divider from '$lib/components/layout/Divider.svelte';
 	import Button from '$lib/components/controls/Button.svelte';
-	import { Exit, Gear } from 'svelte-radix';
+	import { ActivityLog, Exit, Gear } from 'svelte-radix';
 	import { _ } from 'svelte-i18n';
 	import { goto } from '$app/navigation';
 	import { jellyfinDisconnect } from '$lib/remote/jellyfin.remote.js';
-	import type { JellyfinUserDto } from '@reiverr/connectors/types/radarr';
+	import type { JellyfinUserDto } from '@reiverr/connectors/types/jellyfin';
 
 	let {
 		onclick = () => {}
 	}: {
-		onclick?: () => void;
+		onclick?: (menu?: 'notifications' | undefined) => void;
 	} = $props();
 
 	let user: JellyfinUserDto = JSON.parse(localStorage.getItem('user') || '{}') || undefined;
 </script>
 
 <div class="fixed z-20 flex justify-end top-20 right-3" transition:fade={{ duration: 150 }}>
-	<div class="bg-stone-900 rounded-xl shadow-lg max-w-60 w-full">
+	<div class="bg-neutral-800 rounded-xl shadow-lg max-w-60 w-full">
 		<div class="flex m-4">
-			<UserImage {user} size={11} textSize="text-2xl" />
+			<AccountIImage {user} size={11} textSize="text-2xl" />
 			<div class="ml-4 w-36">
 				<p class="truncate">{user.Name}</p>
-				<p class="text-zinc-700 text-sm truncate">
+				<p class="text-zinc-600 text-sm truncate">
 					{user.Policy?.IsAdministrator
 						? $_('navbar.userMenu.administrator')
 						: $_('navbar.userMenu.user')}
@@ -43,6 +43,17 @@
 			>
 				<Gear size="20"></Gear><span class="flex ml-2"
 					>{$_('navbar.userMenu.settings')}</span
+				>
+			</Button>
+			<Button
+				variant="tertiary"
+				class="w-full mt-1"
+				onclick={async () => {
+					onclick('notifications');
+				}}
+			>
+				<ActivityLog size="20"></ActivityLog><span class="flex ml-2"
+					>{$_('navbar.userMenu.notifications')}</span
 				>
 			</Button>
 		</div>

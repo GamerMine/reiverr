@@ -7,7 +7,7 @@ import { scheduleTask } from '../../tasksWorker/scheduler.server';
 import type { SonarrQueueResource } from '@reiverr/connectors/types/sonarr';
 import Connectors, { SonarrConnector } from '@reiverr/connectors';
 import { TaskType } from '@reiverr/db/types';
-import { SeriesAddSchema } from '../../tasksWorker/types';
+import { SeriesAddSchema, SeriesRemoveSchema } from '../../tasksWorker/types';
 
 export const sonarrIsHealthy = query(v.optional(ApiSchema), async (api) => {
 	if (api && api.url && api.key) return await new SonarrConnector(api.url, api.key).isHealthy();
@@ -42,23 +42,23 @@ export const sonarrGetSeries = query(async () => {
 
 export const sonarrAddSeries = command(SeriesAddSchema, async (series) => {
 	const { cookies } = getRequestEvent();
-	if (!(await assertUserAuth(cookies)).userId)
-		return { success: false, error: 'general.connectionRequired' };
+	const { userId } = await assertUserAuth(cookies);
+	if (!userId) return { success: false, error: 'general.connectionRequired' };
 
 	const defaultFp = await FilteringProfilesEntity.findOne({ where: { isDefault: true } });
 	if (!defaultFp) return { success: false, error: 'settings.misc.noDefaultFilteringProfile' };
 
-	await scheduleTask(TaskType.SONARR_SERIES_ADD, series);
+	await scheduleTask(userId, TaskType.SONARR_SERIES_ADD, series);
 
 	return { success: true };
 });
 
-export const sonarrRemoveSeries = command(v.number(), async (seriesId) => {
+export const sonarrRemoveSeries = command(SeriesRemoveSchema, async (seriesId) => {
 	const { cookies } = getRequestEvent();
-	if (!(await assertUserAuth(cookies)).userId)
-		return { success: false, error: 'general.connectionRequired' };
+	const { userId } = await assertUserAuth(cookies);
+	if (!userId) return { success: false, error: 'general.connectionRequired' };
 
-	await scheduleTask(TaskType.SONARR_SERIES_REMOVE, seriesId);
+	await scheduleTask(userId, TaskType.SONARR_SERIES_REMOVE, seriesId);
 
 	return { success: true };
 });

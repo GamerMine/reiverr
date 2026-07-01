@@ -1,4 +1,4 @@
-import type { TaskExecutor, TaskProgressCallback, TaskQueueCallback } from '../scheduler.server';
+import type { TaskExecutor, TaskQueueCallback } from '../scheduler.server';
 import { PlatformSchema, PlatformWithDataSchema } from '../types.ts';
 import * as v from 'valibot';
 import { QualityProfilesEntity } from '@reiverr/db/entities';
@@ -35,7 +35,7 @@ export class SyncQualityProfiles implements TaskExecutor {
 		}
 	}
 
-	async execute(data: unknown, progress: TaskProgressCallback): Promise<void | MessageObject> {
+	async execute(data: unknown): Promise<void | MessageObject> {
 		const parsedData = v.parse(PlatformWithDataSchema(ModifiedProfilesIdsSchema), data);
 		const baseSync = await Connectors.getInstance();
 		const qualityProfiles = await QualityProfilesEntity.find({
@@ -53,8 +53,7 @@ export class SyncQualityProfiles implements TaskExecutor {
 				baseSync.radarrQualities,
 				qualityProfiles,
 				baseSync.radarrConnector,
-				parsedData.data,
-				progress
+				parsedData.data
 			);
 		}
 
@@ -69,8 +68,7 @@ export class SyncQualityProfiles implements TaskExecutor {
 				baseSync.sonarrQualities,
 				qualityProfiles,
 				baseSync.sonarrConnector,
-				parsedData.data,
-				progress
+				parsedData.data
 			);
 		}
 	}
@@ -79,8 +77,7 @@ export class SyncQualityProfiles implements TaskExecutor {
 		qualityDefs: RadarrQualityDefinitionResource[],
 		profiles: QualityProfilesEntity[],
 		conn: RadarrConnector,
-		modifiedIds: number[],
-		progress: TaskProgressCallback
+		modifiedIds: number[]
 	): Promise<void | MessageObject> {
 		const { data: radarrData } = await conn.getQualityProfile();
 		if (!radarrData) return { id: 'service.message.radarrFetchError' };
@@ -96,10 +93,7 @@ export class SyncQualityProfiles implements TaskExecutor {
 		const toEdit = profiles.filter(
 			(p) => modifiedIds.includes(p.filteringProfile.id) && !toCreate.includes(p)
 		);
-		const totalActions = toRemove.length + toCreate.length + toEdit.length;
-		let doneActions = 0;
 
-		await progress(doneActions, totalActions);
 		for (const id of toRemove) {
 			const res = await conn.deleteQualityProfile(id);
 			if (!res.response.ok) {
@@ -108,7 +102,6 @@ export class SyncQualityProfiles implements TaskExecutor {
 				);
 				return { id: 'service.messages.noQualityProfileRadarr' };
 			}
-			await progress(++doneActions, totalActions);
 		}
 
 		const formats = await conn.getCustomFormats();
@@ -136,7 +129,6 @@ export class SyncQualityProfiles implements TaskExecutor {
 			}
 			quality.radarrId = createdQualityProfile.data.id;
 			await quality.save();
-			await progress(++doneActions, totalActions);
 		}
 
 		for (const quality of toEdit) {
@@ -161,9 +153,7 @@ export class SyncQualityProfiles implements TaskExecutor {
 					`Cannot update QualityProfile with id ${quality.radarrId} on Radarr:`,
 					JSON.stringify(res.error, null, 2)
 				);
-				continue;
 			}
-			await progress(++doneActions, totalActions);
 		}
 	}
 
@@ -171,8 +161,7 @@ export class SyncQualityProfiles implements TaskExecutor {
 		qualityDefs: SonarrQualityDefinitionResource[],
 		profiles: QualityProfilesEntity[],
 		conn: SonarrConnector,
-		modifiedIds: number[],
-		progress: TaskProgressCallback
+		modifiedIds: number[]
 	): Promise<void | MessageObject> {
 		const { data: sonarrData } = await conn.getQualityProfile();
 		if (!sonarrData) return { id: 'service.message.sonarrFetchError' };
@@ -188,10 +177,7 @@ export class SyncQualityProfiles implements TaskExecutor {
 		const toEdit = profiles.filter(
 			(p) => modifiedIds.includes(p.filteringProfile.id) && !toCreate.includes(p)
 		);
-		const totalActions = toRemove.length + toCreate.length + toEdit.length;
-		let doneActions = 0;
 
-		await progress(doneActions, totalActions);
 		for (const id of toRemove) {
 			const res = await conn.deleteQualityProfile(id);
 			if (!res.response.ok) {
@@ -200,7 +186,6 @@ export class SyncQualityProfiles implements TaskExecutor {
 				);
 				return { id: 'service.messages.noQualityProfileSonarr' };
 			}
-			await progress(++doneActions, totalActions);
 		}
 
 		const formats = await conn.getCustomFormats();
@@ -227,7 +212,6 @@ export class SyncQualityProfiles implements TaskExecutor {
 			}
 			quality.sonarrId = createdQualityProfile.data.id;
 			await quality.save();
-			await progress(++doneActions, totalActions);
 		}
 
 		for (const quality of toEdit) {
@@ -252,9 +236,7 @@ export class SyncQualityProfiles implements TaskExecutor {
 					`Cannot update QualityProfile with id ${quality.sonarrId} on Sonarr:`,
 					JSON.stringify(res.error, null, 2)
 				);
-				continue;
 			}
-			await progress(++doneActions, totalActions);
 		}
 	}
 }

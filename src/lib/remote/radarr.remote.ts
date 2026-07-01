@@ -7,7 +7,7 @@ import { scheduleTask } from '../../tasksWorker/scheduler.server';
 import type { RadarrQueueResource } from '@reiverr/connectors/types/radarr';
 import Connectors, { RadarrConnector } from '@reiverr/connectors';
 import { TaskType } from '@reiverr/db/types';
-import { MovieAddSchema } from '../../tasksWorker/types.ts';
+import { MovieAddSchema, MovieRemoveSchema } from '../../tasksWorker/types.ts';
 
 export const radarrIsHealthy = query(v.optional(ApiSchema), async (api) => {
 	if (api && api.url && api.key) return await new RadarrConnector(api.url, api.key).isHealthy();
@@ -75,23 +75,23 @@ export const radarrGetMovies = query(async () => {
 
 export const radarrAddMovie = command(MovieAddSchema, async (movie): Promise<Result<undefined>> => {
 	const { cookies } = getRequestEvent();
-	if (!(await assertUserAuth(cookies)).userId)
-		return { success: false, error: 'general.connectionRequired' };
+	const { userId } = await assertUserAuth(cookies);
+	if (!userId) return { success: false, error: 'general.connectionRequired' };
 
 	const defaultFp = await FilteringProfilesEntity.findOne({ where: { isDefault: true } });
 	if (!defaultFp) return { success: false, error: 'settings.misc.noDefaultFilteringProfile' };
 
-	await scheduleTask(TaskType.RADARR_MOVIE_ADD, movie);
+	await scheduleTask(userId, TaskType.RADARR_MOVIE_ADD, movie);
 
 	return { success: true };
 });
 
-export const radarrRemoveMovie = command(v.number(), async (id: number) => {
+export const radarrRemoveMovie = command(MovieRemoveSchema, async (series) => {
 	const { cookies } = getRequestEvent();
-	if (!(await assertUserAuth(cookies)).userId)
-		return { success: false, error: 'general.connectionRequired' };
+	const { userId } = await assertUserAuth(cookies);
+	if (!userId) return { success: false, error: 'general.connectionRequired' };
 
-	await scheduleTask(TaskType.RADARR_MOVIE_REMOVE, id);
+	await scheduleTask(userId, TaskType.RADARR_MOVIE_REMOVE, series);
 
 	return { success: true };
 });

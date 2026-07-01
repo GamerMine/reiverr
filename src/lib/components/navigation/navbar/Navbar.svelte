@@ -7,11 +7,10 @@
 	import { fade } from 'svelte/transition';
 	import { modalStack } from '$lib/stores/modal.store';
 	import { _ } from 'svelte-i18n';
-	import AccountPane from '$lib/components/navigation/navbar/AccountPane.svelte';
-	import UserImage from '$lib/components/images/UserImage.svelte';
 	import Divider from '$lib/components/layout/Divider.svelte';
 	import { jellyfinDisconnect } from '$lib/remote/jellyfin.remote.js';
 	import { goto } from '$app/navigation';
+	import Account from '$lib/components/navigation/navbar/Account.svelte';
 
 	let y = $state(0);
 	let transparent = true;
@@ -19,7 +18,6 @@
 
 	let openAccountMenu = $state(false);
 	let isMobileMenuVisible = $state(false);
-	let elt: HTMLDivElement | undefined = $state();
 
 	function getLinkStyle(path: string) {
 		return classNames('selectable rounded-xs px-2 -mx-2 sm:text-base text-xl', {
@@ -39,10 +37,6 @@
 		}
 	}
 
-	function handleClickOutside(e: MouseEvent) {
-		if (elt && !elt.contains(e.target as Node)) openAccountMenu = false;
-	}
-
 	$effect(() => {
 		transparent = y <= 0;
 		baseStyle = classNames(
@@ -56,22 +50,13 @@
 			}
 		);
 	});
-
-	$effect(() => {
-		if (elt) setTimeout(() => document.addEventListener('click', handleClickOutside), 10);
-		else document.removeEventListener('click', handleClickOutside);
-
-		return () => {
-			document.removeEventListener('click', handleClickOutside);
-		};
-	});
 </script>
 
 <svelte:window bind:scrollY={y} on:keydown={handleShortcuts} />
 
 <div class={classNames(baseStyle, 'hidden sm:grid')}>
 	<a
-		href="/static"
+		href="/"
 		class="hidden sm:flex gap-2 items-center hover:text-inherit selectable rounded-xs px-2 -mx-2"
 	>
 		<div class="rounded-full bg-amber-300 h-4 w-4"></div>
@@ -80,7 +65,7 @@
 	<div
 		class="flex items-center justify-center gap-4 md:gap-8 font-normal text-sm tracking-wider text-zinc-200"
 	>
-		<a href="/static" class={page && getLinkStyle('/')}>
+		<a href="/" class={page && getLinkStyle('/')}>
 			{$_('navbar.home')}
 		</a>
 		<a href="/library" class={page && getLinkStyle('/library')}>
@@ -94,12 +79,7 @@
 		<IconButton onclick={openSearchModal}>
 			<MagnifyingGlass size="20" />
 		</IconButton>
-		<IconButton onclick={() => (openAccountMenu = !openAccountMenu)}>
-			<UserImage
-				user={JSON.parse(localStorage.getItem('user') || '{}') || undefined}
-				size={8}
-			/>
-		</IconButton>
+		<Account />
 	</div>
 </div>
 
@@ -176,11 +156,5 @@
 				{$_('navbar.userMenu.logout')}
 			</a>
 		</div>
-	</div>
-{/if}
-
-{#if openAccountMenu}
-	<div bind:this={elt}>
-		<AccountPane onclick={() => (openAccountMenu = false)} />
 	</div>
 {/if}

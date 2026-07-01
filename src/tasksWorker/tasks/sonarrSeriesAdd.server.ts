@@ -1,4 +1,4 @@
-import type { TaskExecutor, TaskProgressCallback, TaskQueueCallback } from '../scheduler.server';
+import type { TaskExecutor, TaskQueueCallback } from '../scheduler.server';
 import { SeriesAddSchema } from '../types.ts';
 import * as v from 'valibot';
 import {
@@ -31,10 +31,9 @@ export class SonarrSeriesAdd implements TaskExecutor {
 		await queue(data);
 	}
 
-	async execute(data: unknown, progress: TaskProgressCallback): Promise<void | MessageObject> {
+	async execute(data: unknown): Promise<void | MessageObject> {
 		const series = v.parse(SeriesAddSchema, data);
 		const { sonarrConnector } = await Connectors.getInstance();
-		await progress(0, 1);
 
 		const settings = await GlobalSettingsEntity.getDefault();
 		if (!settings.sonarrRootFolderPath) {
@@ -130,7 +129,5 @@ export class SonarrSeriesAdd implements TaskExecutor {
 			);
 			return { id: 'general.unknownError' };
 		}
-
-		await progress(1, 1);
 	}
 }

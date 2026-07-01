@@ -1,6 +1,5 @@
 import * as v from 'valibot';
 import type { GenericSchema, InferOutput } from 'valibot';
-import { TaskType } from '@reiverr/db/types';
 
 export const PlatformSchema = v.picklist(['radarr', 'sonarr']);
 export type Platform = InferOutput<typeof PlatformSchema>;
@@ -13,13 +12,20 @@ export function PlatformWithDataSchema<TDataSchema extends GenericSchema>(dataSc
 
 export const MovieAddSchema = v.object({
 	tmdbId: v.number(),
+	name: v.string(),
 	language: v.string(),
 	userId: v.string()
 });
 export type MovieAdd = InferOutput<typeof MovieAddSchema>;
 
+export const MovieRemoveSchema = v.object({
+	radarrId: v.number(),
+	name: v.string()
+});
+
 export const SeriesAddSchema = v.object({
 	tvdbId: v.number(),
+	name: v.string(),
 	language: v.string(),
 	seasons: v.array(
 		v.object({
@@ -35,26 +41,9 @@ export const SeriesAddSchema = v.object({
 	),
 	userId: v.string()
 });
+
+export const SeriesRemoveSchema = v.object({
+	sonarrId: v.number(),
+	name: v.string()
+});
 export type SeriesAdd = InferOutput<typeof SeriesAddSchema>;
-
-export type UUID = string;
-export const TaskState = {
-	QUEUED: 'queued',
-	STARTED: 'started',
-	ERROR: 'error',
-	CANCELED: 'canceled',
-	COMPLETED: 'completed'
-} as const;
-export type TaskStateType = (typeof TaskState)[keyof typeof TaskState];
-
-export type TaskStatus = {
-	type: TaskType;
-	data: unknown;
-	progress:
-		| {
-				current: number;
-				total: number;
-		  }
-		| undefined;
-	state: TaskStateType;
-};

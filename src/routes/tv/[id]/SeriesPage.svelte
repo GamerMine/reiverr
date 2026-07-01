@@ -41,8 +41,8 @@
 	} from '$lib/stores/notification.store';
 	import { jellyfinGetEpisodes } from '$lib/remote/jellyfin.remote';
 	import type { SonarrSeriesResource } from '@reiverr/connectors/types/sonarr';
-	import { getTasks } from '$lib/remote/tasks.remote.ts';
-	import { type SeriesAdd, TaskState, type TaskStatus } from '../../../tasksWorker/types.ts';
+	import { getQueuedTasks } from '$lib/remote/tasks.remote.ts';
+	import { type SeriesAdd } from '../../../tasksWorker/types.ts';
 	import { TaskType } from '@reiverr/db/types';
 	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
 
@@ -64,7 +64,7 @@
 	let sonarrSeries: SonarrSeriesResource | undefined = $state();
 	let seasonsData: Promise<SeasonData>[] | undefined = $state();
 	let jellyfinItem: JellyfinBaseItemDto | undefined = $state();
-	let tasks = $derived(await getTasks());
+	let tasks = $derived(await getQueuedTasks(true));
 	let isBeingAdded = $state(false);
 
 	const jellyfinEpisodeData: {
@@ -176,6 +176,7 @@
 		if (res && tmdbSeries?.external_ids.tvdb_id) {
 			sonarrAddSeries({
 				tvdbId: tmdbSeries?.external_ids.tvdb_id,
+				name: tmdbSeries.name || '',
 				language,
 				seasons: res.map((s) => ({
 					seasonNumber: s.seasonNumber,
@@ -208,7 +209,11 @@
 	}
 
 	async function removeSeries() {
-		if (sonarrSeries?.id) sonarrRemoveSeries(sonarrSeries.id);
+		if (sonarrSeries?.id)
+			sonarrRemoveSeries({
+				sonarrId: sonarrSeries.id,
+				name: tmdbSeries?.name || sonarrSeries.title
+			});
 		await sonarrGetSeries().refresh();
 	}
 
@@ -242,14 +247,13 @@
 	});
 
 	$effect(() => {
-		const state = Array.from(tasks.values()).find(
-			(t: TaskStatus) =>
+		const state = tasks.find(
+			(t) =>
 				t.type === TaskType.SONARR_SERIES_ADD &&
 				(t.data as SeriesAdd).tvdbId === tmdbSeries?.external_ids.tvdb_id
 		);
-		isBeingAdded =
-			!!state && (state.state === TaskState.QUEUED || state.state === TaskState.STARTED);
-		if (state && state.state === TaskState.COMPLETED) {
+		isBeingAdded = !!state;
+		if (isBeingAdded) {
 			sonarrGetSeries()
 				.refresh()
 				.then(() => {

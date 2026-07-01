@@ -188,6 +188,7 @@
     "userMenu": {
       "administrator": "Administrator",
       "logout": "Logout",
+      "notifications": "Notifications",
       "settings": "Settings",
       "user": "User"
     }
@@ -199,10 +200,29 @@
   },
   "service": {
     "messages": {
+      "executeFailed": "Task execution failed: {error}",
       "queuingFailed": "Failed to queue task execution: {error}",
       "unknownTaskType": "Unknown task type: {type}"
     },
+    "taskName": {
+      "radarrMovieAdd": "Movie added to the queue",
+      "radarrMovieRemove": "Removing a movie",
+      "sonarrSeriesAdd": "Series/Episodes added to the queue",
+      "sonarrrSeriesRemove": "Removing Series/Episode"
+    },
     "tasks": {
+      "radarrMovieAdd": {
+        "error": "Something went wrong while adding '{name}' to the queue. Please try again later.",
+        "success": "The movie '{name}' has been added to the queue. It will be available once downloaded."
+      },
+      "radarrMovieRemove": {
+        "error": "The movie '{name}' cannot be removed. Please try again later.",
+        "success": "The movie '{name}' has been removed."
+      },
+      "sonarrSeriesAdd": {
+        "error": "The series '{name}' cannot be removed. Please try again later.",
+        "success": "The series '{name}' has been added to the queue. It will be available once downloaded."
+      },
       "sync": {
         "languagesSync": "Language synchronization",
         "languagesSyncOn": "Language synchronization on {platform}"

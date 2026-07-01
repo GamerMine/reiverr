@@ -29,7 +29,7 @@ import { getCodecProfiles } from './helpers/codec-profiles.ts';
 import { getDirectPlayProfiles } from './directplay-profile.ts';
 import { getTranscodingProfiles } from './transcoding-profile.ts';
 import { getSubtitleProfiles } from './subtitle-profile.ts';
-import type { JellyfinDeviceProfile } from '@reiverr/connectors/types/radarr';
+import type { JellyfinDeviceProfile } from '@reiverr/connectors/types/jellyfin';
 import * as v from 'valibot';
 import { OptionalNumberSchema, OptionalStringSchema } from '$lib/utils/types.ts';
 
