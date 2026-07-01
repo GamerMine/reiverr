@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { slide } from 'svelte/transition';
 	import { ChevronLeft } from 'svelte-radix';
 	import { _ } from 'svelte-i18n';
 	import classNames from 'classnames';
@@ -6,9 +7,11 @@
 	import { TaskState, type TaskStatus } from '@reiverr/db/types';
 
 	let {
-		tasks
+		tasks,
+		back
 	}: {
 		tasks: TaskStatus[];
+		back: () => void;
 	} = $props();
 
 	function fillTemplate(message: string, data: any | undefined) {
@@ -20,11 +23,14 @@
 	}
 </script>
 
-<div class="fixed top-20 right-3 bg-neutral-800 rounded-xl p-2 min-w-2xs max-w-sm">
-	<div class="flex">
+<div
+	class="fixed top-20 right-3 bg-neutral-800 rounded-xl p-2 min-w-2xs max-w-sm"
+	transition:slide={{ duration: 500 }}
+>
+	<a class="flex cursor-pointer" onclick={back}>
 		<ChevronLeft />
 		<p>{$_('settings.misc.back')}</p>
-	</div>
+	</a>
 	<Divider />
 	<div class="bg-neutral-700 p-1 rounded-xl overflow-y-auto max-h-60">
 		{#each tasks as task}

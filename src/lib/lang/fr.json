@@ -208,7 +208,9 @@
       "radarrMovieAdd": "Ajout d'un film à la file d'attente",
       "radarrMovieRemove": "Suppression d'un film",
       "sonarrSeriesAdd": "Ajout de Série/Épisodes à la file d'attente",
-      "sonarrrSeriesRemove": "Suppression d'une série ou d'épiodes"
+      "sonarrrSeriesRemove": "Suppression d'une série ou d'épiodes",
+      "syncCustomFormats": "Synchronisation des langues",
+      "syncQualityProfiles": "Synchronisation des profiles de filtrage"
     },
     "tasks": {
       "radarrMovieAdd": {
@@ -226,6 +228,14 @@
       "sync": {
         "languagesSync": "Synchronisation des langues",
         "languagesSyncOn": "Synchronisation des langues sur {platform}"
+      },
+      "syncCustomFormats": {
+        "error": "Les langues n'ont pas pu être synchronisés. Vérifiez les logs du serveur.",
+        "success": "Les langues ont été synchronisés."
+      },
+      "syncQualityProfiles": {
+        "error": "Les profiles de filtrage n'ont pas pu être synchronisés. Vérifez les logs du serveur.",
+        "success": "Les profils de filtrage ont été synchronisé."
       },
       "test": {
         "error": "Exécution #{id} (erreur)",

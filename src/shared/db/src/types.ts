@@ -125,6 +125,7 @@ export const TaskState = {
 export type TaskStateType = (typeof TaskState)[keyof typeof TaskState];
 
 export type TaskStatus = {
+	uuid: string;
 	userId: string;
 	type: TaskType;
 	data?: unknown | undefined;

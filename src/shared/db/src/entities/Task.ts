@@ -99,7 +99,8 @@ export class TaskEntity extends BaseEntity {
 			order: {
 				executed: 'ASC'
 			},
-			relations: { executions: true, user: true }
+			relations: { executions: true, user: true },
+			take: 20
 		});
 	}
 
@@ -119,6 +120,7 @@ export class TaskEntity extends BaseEntity {
 		}
 
 		return {
+			uuid: tasks.uuid,
 			userId: tasks.user.userId,
 			type: tasks.type,
 			data: tasks.data,

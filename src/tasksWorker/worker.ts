@@ -55,7 +55,7 @@ const taskExecutors = {
 
 async function run() {
 	TypeOrm.init(workerData);
-	if (!workerData) throw 'No database credentials information. Tasks worker is not running.';
+	if (!workerData) return 'No database credentials information. Tasks worker is not running.';
 	await TypeOrm.getDb();
 	console.log('Tasks worker initialized');
 
@@ -179,7 +179,7 @@ if (!isMainThread) {
 	parentPort?.on('close', () => {
 		running = false;
 	});
-	run().then(() => {
-		console.log('Tasks worker stopped');
+	run().then((e) => {
+		console.log('Tasks worker stopped', e);
 	});
 }

@@ -15,7 +15,6 @@
 	import ContextMenu from '$lib/components/controls/ContextMenu.svelte';
 	import SelectableContextMenuItem from '$lib/components/controls/SelectableContextMenuItem.svelte';
 	import Divider from '$lib/components/layout/Divider.svelte';
-	import { createLocalStorageStore } from '$lib/stores/localstorage.store';
 	import { radarrGetMovies } from '$lib/remote/radarr.remote';
 	import { jellyfinGetItems } from '$lib/remote/jellyfin.remote';
 	import { sonarrGetSeries } from '$lib/remote/sonarr.remote';
@@ -37,8 +36,8 @@
 
 	const PAGE_SIZE = 100;
 
-	const sortBy = createLocalStorageStore<string>('library-sort-by', SortBy.DateAdded);
-	const sortOrder = createLocalStorageStore<string>('library-sort-order', SortOrder.Descending);
+	const sortBy = localStorage.getItem('librarySortBy') || SortBy.DateAdded;
+	const sortOrder = localStorage.getItem('librarySortOrder') || SortOrder.Descending;
 	let searchQuery = $state('');
 
 	let openTab: 'available' | 'watched' | 'unavailable' = $state('available');
@@ -204,7 +203,7 @@
 	}
 
 	onMount(() => {
-		loadPosterProps(openTab, page, $sortBy, $sortOrder, searchQuery);
+		loadPosterProps(openTab, page, sortBy, sortOrder, searchQuery);
 	});
 </script>
 
@@ -268,9 +267,9 @@
 				{#snippet menu()}
 					{#each Object.values(SortBy) as sortOption (sortOption)}
 						<SelectableContextMenuItem
-							selected={$sortBy === sortOption}
+							selected={sortBy === sortOption}
 							onclick={() => {
-								sortBy.set(sortOption);
+								localStorage.setItem('librarySortBy', sortOption);
 								page = 0;
 							}}
 						>
@@ -280,9 +279,9 @@
 					<Divider />
 					{#each Object.values(SortOrder) as order (order)}
 						<SelectableContextMenuItem
-							selected={$sortOrder === order}
+							selected={sortOrder === order}
 							onclick={() => {
-								sortOrder.set(order);
+								localStorage.setItem('librarySortOrder', order);
 								page = 0;
 							}}
 						>
@@ -292,7 +291,7 @@
 				{/snippet}
 				<IconButton>
 					<div class="flex gap-1 items-center">
-						{$sortBy}
+						{sortBy}
 						<ChevronDown size="20" />
 					</div>
 				</IconButton>

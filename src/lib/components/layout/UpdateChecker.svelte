@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { version } from '$app/environment';
-	import { createLocalStorageStore } from '$lib/stores/localstorage.store';
 	import { Cross2 } from 'svelte-radix';
 	import IconButton from '$lib/components/controls/IconButton.svelte';
 	import Button from '$lib/components/controls/Button.svelte';
@@ -8,7 +7,7 @@
 
 	let visible = true;
 
-	const skippedVersion = createLocalStorageStore<string>('skipped-version', '');
+	const skippedVersion = localStorage.getItem('skippedVersion') || '';
 
 	async function fetchLatestVersion() {
 		return await fetch('https://api.github.com/repos/GamerMine/reiverr/tags', {
@@ -26,7 +25,7 @@
 		let currentBug: number = +`v${version}`.split('.')[2];
 
 		if (latestVersion === `v${version}`) return true;
-		if (latestVersion === $skippedVersion) return true;
+		if (latestVersion === skippedVersion) return true;
 		if (latestMinor > currentMinor) {
 			return false;
 		} else if (latestBug > currentBug && latestMinor == currentMinor) return false;
@@ -45,7 +44,7 @@
 				<Button
 					variant="tertiary"
 					size="xs"
-					onclick={() => skippedVersion.set(latestVersion)}
+					onclick={() => localStorage.setItem('skippedVersion', latestVersion)}
 				>
 					{$_('update.skipVersion')}
 				</Button>

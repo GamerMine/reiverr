@@ -1,16 +1,17 @@
 <script lang="ts">
 	import classNames from 'classnames';
 	import type { Snippet } from 'svelte';
+	import type { ClassValue } from 'svelte/elements';
 
 	let {
 		disabled = false,
-		klass = '',
+		class: className = '',
 
 		onclick,
 		children
 	}: {
 		disabled?: boolean;
-		klass?: string;
+		class?: ClassValue;
 		onclick?: (e: MouseEvent) => void;
 		children: Snippet;
 	} = $props();
@@ -23,7 +24,7 @@
 			'opacity-30 cursor-not-allowed pointer-events-none': disabled,
 			'cursor-pointer': !disabled
 		},
-		klass
+		className
 	)}
 	{onclick}
 >

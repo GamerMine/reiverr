@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { fade } from 'svelte/transition';
+	import { slide } from 'svelte/transition';
 	import AccountIImage from '$lib/components/images/AccountIImage.svelte';
 	import Divider from '$lib/components/layout/Divider.svelte';
 	import Button from '$lib/components/controls/Button.svelte';
@@ -18,7 +18,7 @@
 	let user: JellyfinUserDto = JSON.parse(localStorage.getItem('user') || '{}') || undefined;
 </script>
 
-<div class="fixed z-20 flex justify-end top-20 right-3" transition:fade={{ duration: 150 }}>
+<div class="fixed z-20 flex justify-end top-20 right-3" transition:slide={{ duration: 500 }}>
 	<div class="bg-neutral-800 rounded-xl shadow-lg max-w-60 w-full">
 		<div class="flex m-4">
 			<AccountIImage {user} size={11} textSize="text-2xl" />
