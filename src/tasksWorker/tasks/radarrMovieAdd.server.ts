@@ -9,6 +9,9 @@ import Connectors from '@reiverr/connectors';
 import { RadarrMapper } from '@reiverr/connectors/mappers';
 import type { MessageObject } from '@reiverr/db/types';
 import { MovieAddSchema } from '../types.ts';
+import Logger, { LogLevel } from '@reiverr/logging';
+
+const logger = Logger.getLogger('Task:RadarrMovieAdd');
 
 export class RadarrMovieAdd implements TaskExecutor {
 	async computeDescription(data: unknown): Promise<MessageObject> {
@@ -37,7 +40,7 @@ export class RadarrMovieAdd implements TaskExecutor {
 
 		const settings = await GlobalSettingsEntity.getDefault();
 		if (!settings.radarrRootFolderPath) {
-			console.error('Radarr root folder is missing.');
+			logger.log(LogLevel.ERROR, 'Radarr root folder is missing.');
 			return { id: 'general.unknownError' };
 		}
 
@@ -59,9 +62,9 @@ export class RadarrMovieAdd implements TaskExecutor {
 			RadarrMapper.movieResource(movie.tmdbId, qp.radarrId, settings.radarrRootFolderPath)
 		);
 		if (!res || !res.response.ok) {
-			console.error(
-				`Cannot add movie ${movie.tmdbId} on Radarr:`,
-				res ? JSON.stringify(res.error, null, 2) : 'Unable to connect to Radarr.'
+			logger.log(
+				LogLevel.ERROR,
+				`Cannot add movie ${movie.tmdbId} on Radarr: ${res ? JSON.stringify(res.error, null, 2) : 'Unable to connect to Radarr.'}`
 			);
 			return { id: 'general.unknownError' };
 		}

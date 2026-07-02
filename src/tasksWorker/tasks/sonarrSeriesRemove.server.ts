@@ -3,6 +3,9 @@ import * as v from 'valibot';
 import Connectors from '@reiverr/connectors';
 import type { MessageObject } from '@reiverr/db/types';
 import { SeriesRemoveSchema } from '../types.ts';
+import Logger, { LogLevel } from '@reiverr/logging';
+
+const logger = Logger.getLogger('Task:SonarrSeriesRemove');
 
 export class SonarrSeriesRemove implements TaskExecutor {
 	async computeDescription(data: unknown): Promise<MessageObject> {
@@ -32,9 +35,9 @@ export class SonarrSeriesRemove implements TaskExecutor {
 		const res = await sonarrConnector?.deleteSeries(series.sonarrId);
 
 		if (!res || !res.response.ok) {
-			console.error(
-				`Cannot remove series ${series.sonarrId} from Sonarr:`,
-				res ? JSON.stringify(res.error, null, 2) : 'Unable to connect to Sonarr.'
+			logger.log(
+				LogLevel.ERROR,
+				`Cannot remove series ${series.sonarrId} from Sonarr: ${res ? JSON.stringify(res.error, null, 2) : 'Unable to connect to Sonarr.'}`
 			);
 			return { id: 'general.unknownError' };
 		}

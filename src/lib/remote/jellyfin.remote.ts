@@ -7,6 +7,9 @@ import { ApiSchema, type Result } from '$lib/utils/types.ts';
 import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
 import { JellyfinDeviceProfileSchema } from '$lib/components/player/playback-profiles';
 import { GlobalSettingsEntity } from '@reiverr/db/entities';
+import Logger, { LogLevel } from '@reiverr/logging';
+
+const logger = Logger.getLogger('JellyfinRemote');
 
 export const jellyfinIsHealthy = query(v.optional(ApiSchema), async (api) => {
 	if (api?.url && api.key) return await new JellyfinConnector(api.url, api.key).isHealthy();
@@ -22,7 +25,7 @@ export const jellyfinGetItems: RemoteQueryFunction<void, Result<JellyfinBaseItem
 		const conn = (await Connectors.getInstance()).jellyfinConnector;
 
 		const items = await conn.getItems(userId, true, ['Movie', 'Series']);
-		if (!items.response.ok) console.error(JSON.stringify(items.error, null, 2));
+		if (!items.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(items.error, null, 2));
 
 		return {
 			success: true,
@@ -39,9 +42,9 @@ export const jellyfinGetItemById = query(v.string(), async (itemId) => {
 
 	const item = await conn.getItemById(userId, itemId);
 	if (!item.response.ok)
-		console.error(
-			`Error code ${item.response.status} ${item.response.statusText}`,
-			JSON.stringify(item.error, null, 2)
+		logger.log(
+			LogLevel.ERROR,
+			`${item.response.status} ${item.response.statusText} ${JSON.stringify(item.error, null, 2)}`
 		);
 
 	return {
@@ -58,7 +61,7 @@ export const jellyfinGetEpisodes: RemoteQueryFunction<void, Result<JellyfinBaseI
 		const conn = (await Connectors.getInstance()).jellyfinConnector;
 
 		const items = await conn.getItems(userId, undefined, ['Series', 'Episode']);
-		if (!items.response.ok) console.error(JSON.stringify(items.error, null, 2));
+		if (!items.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(items.error, null, 2));
 
 		return {
 			success: items.response.ok,
@@ -71,7 +74,7 @@ export const jellyfinGetUserImage = query(v.string(), async (userId) => {
 	const conn = (await Connectors.getInstance()).jellyfinConnector;
 
 	const image = await conn.getUserImage(userId);
-	if (!image.response.ok) console.error(JSON.stringify(image.error, null, 2));
+	if (!image.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(image.error, null, 2));
 
 	return {
 		success: image.response.ok,
@@ -84,7 +87,7 @@ export const jellyfinGetUserImage = query(v.string(), async (userId) => {
 export const jellyfinGetUsers = query(async () => {
 	const conn = (await Connectors.getInstance()).jellyfinConnector;
 	const users = await conn.getUsers();
-	if (!users.response.ok) console.error(JSON.stringify(users.error, null, 2));
+	if (!users.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(users.error, null, 2));
 
 	return {
 		success: users.response.ok,
@@ -100,7 +103,7 @@ export const jellyfinGetNextUp: RemoteQueryFunction<void, Result<JellyfinBaseIte
 		const conn = (await Connectors.getInstance()).jellyfinConnector;
 
 		const items = await conn.getShowsNextUp(userId);
-		if (!items.response.ok) console.error(JSON.stringify(items.error, null, 2), 'COUCOU2');
+		if (!items.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(items.error, null, 2));
 
 		return {
 			success: items.response.ok,
@@ -119,7 +122,7 @@ export const jellyfinGetContinueWatching: RemoteQueryFunction<
 	const conn = (await Connectors.getInstance()).jellyfinConnector;
 
 	const items = await conn.getUserItemsResume(userId);
-	if (!items.response.ok) console.error(JSON.stringify(items.error, null, 2), 'COUCOU');
+	if (!items.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(items.error, null, 2));
 
 	return {
 		success: items.response.ok,
@@ -138,7 +141,7 @@ export const jellyfinSetItemWatched = command(
 		let res;
 		if (item.watched) res = await conn.postUserPlayedItems(userId, item.id);
 		else res = await conn.deleteUserPlayedItems(userId, item.id);
-		if (!res.response.ok) console.error(JSON.stringify(res.error, null, 2));
+		if (!res.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(res.error, null, 2));
 
 		return { success: res.response.ok };
 	}
@@ -156,7 +159,7 @@ export const jellyfinUpdateProgress = command(
 		const conn = (await Connectors.getInstance()).jellyfinConnector;
 
 		const res = await conn.postUserItemsByIdUserData(userId, data.itemId, data.positionTicks);
-		if (!res.response.ok) console.error(JSON.stringify(res.error, null, 2));
+		if (!res.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(res.error, null, 2));
 
 		return { success: res.response.ok };
 	}
@@ -169,7 +172,7 @@ export const jellyfinDeleteActiveEncoding = command(v.string(), async (playSessi
 	const conn = (await Connectors.getInstance()).jellyfinConnector;
 
 	const res = await conn.deleteVideosActiveEncodings(username, playSessionId);
-	if (!res.response.ok) console.error(JSON.stringify(res.error, null, 2));
+	if (!res.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(res.error, null, 2));
 
 	return { success: res.response.ok };
 });
@@ -194,7 +197,8 @@ export const jellyfinGetPlaySession = command(
 			data.startTimeTicks,
 			data.deviceProfile
 		);
-		if (!session.response.ok) console.error(JSON.stringify(session.error, null, 2));
+		if (!session.response.ok)
+			logger.log(LogLevel.ERROR, JSON.stringify(session.error, null, 2));
 
 		const mediaSource = session.data?.MediaSources?.[0];
 		return {

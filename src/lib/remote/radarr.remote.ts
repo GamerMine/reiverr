@@ -8,6 +8,9 @@ import type { RadarrQueueResource } from '@reiverr/connectors/types/radarr';
 import Connectors, { RadarrConnector } from '@reiverr/connectors';
 import { TaskType } from '@reiverr/db/types';
 import { MovieAddSchema, MovieRemoveSchema } from '../../tasksWorker/types.ts';
+import Logger, { LogLevel } from '@reiverr/logging';
+
+const logger = Logger.getLogger('RadarrRemote');
 
 export const radarrIsHealthy = query(v.optional(ApiSchema), async (api) => {
 	if (api && api.url && api.key) return await new RadarrConnector(api.url, api.key).isHealthy();
@@ -63,12 +66,12 @@ export const radarrGetMovies = query(async () => {
 
 	const { radarrConnector: conn } = await Connectors.getInstance();
 	if (!conn) {
-		console.warn('Cannot get Radarr movies: Radarr is unavailable');
+		logger.log(LogLevel.WARNING, 'Cannot get Radarr movies: Radarr is unavailable');
 		return { success: false };
 	}
 
 	const movies = await conn.getMovie();
-	if (!movies.response.ok) console.error(JSON.stringify(movies.error, null, 2));
+	if (!movies.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(movies.error, null, 2));
 
 	return { success: movies.response.ok, data: movies.data };
 });
@@ -103,12 +106,13 @@ export const radarrGetDiskspace = query(async () => {
 
 	const { radarrConnector: conn } = await Connectors.getInstance();
 	if (!conn) {
-		console.warn('Cannot get Radarr diskspace: Radarr is unavailable');
+		logger.log(LogLevel.WARNING, 'Cannot get Radarr diskspace: Radarr is unavailable');
 		return { success: false };
 	}
 
 	const diskspace = await conn.getDiskSpace();
-	if (!diskspace.response.ok) console.error(JSON.stringify(diskspace.error, null, 2));
+	if (!diskspace.response.ok)
+		logger.log(LogLevel.ERROR, JSON.stringify(diskspace.error, null, 2));
 
 	return { success: diskspace.response.ok, data: diskspace.data };
 });

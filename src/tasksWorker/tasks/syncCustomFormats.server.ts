@@ -8,6 +8,9 @@ import type { RadarrLanguageResource } from '@reiverr/connectors/types/radarr';
 import { RadarrMapper, SonarrMapper } from '@reiverr/connectors/mappers';
 import type { SonarrLanguageResource } from '@reiverr/connectors/types/sonarr';
 import type { MessageObject } from '@reiverr/db/types';
+import Logger, { LogLevel } from '@reiverr/logging';
+
+const logger = Logger.getLogger('Task:SyncCustomFormats');
 
 export class SyncCustomFormats implements TaskExecutor {
 	async computeDescription(data: unknown): Promise<MessageObject> {
@@ -89,14 +92,17 @@ export class SyncCustomFormats implements TaskExecutor {
 		for (const format of toCreate) {
 			const langId = languages.find((e) => e.nameLower === format.lang)?.id;
 			if (!langId) {
-				console.error(`Could not find language ${format.lang} on Radarr.`);
+				logger.log(LogLevel.ERROR, `Could not find language ${format.lang} on Radarr.`);
 				continue; // FIXME: Continue and reschedule a sync task
 			}
 			const createdFormat = await conn.postCustomFormat(
 				RadarrMapper.customFormatResource(langId, format.lang)
 			);
 			if (!createdFormat.data || !createdFormat.data.id || !createdFormat.response.ok) {
-				console.error(`Could not create CustomFormat on Radarr:\n${createdFormat.error}`);
+				logger.log(
+					LogLevel.ERROR,
+					`Could not create CustomFormat on Radarr:\n${createdFormat.error}`
+				);
 				continue; // FIXME: Continue and reschedule a sync task
 			}
 			format.radarrId = createdFormat.data.id;
@@ -127,14 +133,17 @@ export class SyncCustomFormats implements TaskExecutor {
 		for (const format of toCreate) {
 			const langId = languages.find((e) => e.nameLower === format.lang)?.id;
 			if (!langId) {
-				console.error(`Could not find language ${format.lang} on Sonarr.`);
+				logger.log(LogLevel.ERROR, `Could not find language ${format.lang} on Sonarr.`);
 				continue; // FIXME: Continue and reschedule a sync task
 			}
 			const createdFormat = await conn.postCustomFormat(
 				SonarrMapper.customFormatResource(langId, format.lang)
 			);
 			if (!createdFormat.data || !createdFormat.data.id || !createdFormat.response.ok) {
-				console.error(`Could not create CustomFormat on Sonarr:\n${createdFormat.error}`);
+				logger.log(
+					LogLevel.ERROR,
+					`Could not create CustomFormat on Sonarr:\n${createdFormat.error}`
+				);
 				continue; // FIXME: Continue and reschedule a sync task
 			}
 			format.sonarrId = createdFormat.data.id;

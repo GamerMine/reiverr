@@ -7,6 +7,9 @@ import type {
 	RadarrQualityProfileQualityItemResource,
 	RadarrQualityProfileResource
 } from '../types/radarrTypes.js';
+import Logger, { LogLevel } from '@reiverr/logging';
+
+const logger = Logger.getLogger('RadarrRemote');
 
 export class RadarrMapper {
 	private static QUALITY_REPLACEMENTS: Map<string, string> = new Map([
@@ -67,7 +70,7 @@ export class RadarrMapper {
 		}
 
 		if (remaining.length > 0)
-			console.warn('The following qualities were not found: ', remaining);
+			logger.log(LogLevel.WARNING, `The following qualities were not found: ${remaining}`);
 
 		const formatItems: RadarrProfileFormatItemResource[] = customFormats.map((f) => ({
 			format: f.id,

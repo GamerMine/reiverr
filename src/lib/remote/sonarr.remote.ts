@@ -8,6 +8,9 @@ import type { SonarrQueueResource } from '@reiverr/connectors/types/sonarr';
 import Connectors, { SonarrConnector } from '@reiverr/connectors';
 import { TaskType } from '@reiverr/db/types';
 import { SeriesAddSchema, SeriesRemoveSchema } from '../../tasksWorker/types';
+import Logger, { LogLevel } from '@reiverr/logging';
+
+const logger = Logger.getLogger('SonarrRemote');
 
 export const sonarrIsHealthy = query(v.optional(ApiSchema), async (api) => {
 	if (api && api.url && api.key) return await new SonarrConnector(api.url, api.key).isHealthy();
@@ -30,12 +33,12 @@ export const sonarrGetSeries = query(async () => {
 
 	const { sonarrConnector: conn } = await Connectors.getInstance();
 	if (!conn) {
-		console.warn('Cannot get Sonarr series: Sonarr is unavailable');
+		logger.log(LogLevel.WARNING, 'Cannot get Sonarr series: Sonarr is unavailable');
 		return { success: false };
 	}
 
 	const series = await conn.getSeries();
-	if (!series.response.ok) console.error(JSON.stringify(series.error, null, 2));
+	if (!series.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(series.error, null, 2));
 
 	return { success: series.response.ok, data: series.data };
 });
@@ -102,12 +105,13 @@ export const sonarrGetDiskspace = query(async () => {
 
 	const { sonarrConnector: conn } = await Connectors.getInstance();
 	if (!conn) {
-		console.warn('Cannot get Sonarr diskspace: Sonarr is unavailable');
+		logger.log(LogLevel.WARNING, 'Cannot get Sonarr diskspace: Sonarr is unavailable');
 		return { success: false };
 	}
 
 	const diskspace = await conn.getDiskSpace();
-	if (!diskspace.response.ok) console.error(JSON.stringify(diskspace.error, null, 2));
+	if (!diskspace.response.ok)
+		logger.log(LogLevel.ERROR, JSON.stringify(diskspace.error, null, 2));
 
 	return { success: diskspace.response.ok, data: diskspace.data };
 });

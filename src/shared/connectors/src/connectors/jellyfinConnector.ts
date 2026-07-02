@@ -1,6 +1,9 @@
 import createClient, { type Client } from 'openapi-fetch';
 import type { paths } from '../generated/jellyfin.generated.js';
 import { JellyfinDeviceProfile } from '../types/jellyfinTypes.js';
+import Logger, { LogLevel } from '@reiverr/logging';
+
+const logger = Logger.getLogger('JellyfinRemote');
 
 export class JellyfinConnector {
 	private client: Client<paths>;
@@ -23,7 +26,7 @@ export class JellyfinConnector {
 			const health = await this.client.GET('/System/Info');
 			return health.response.ok;
 		} catch (e) {
-			console.warn('Cannot connect to Jellyfin:\n', e);
+			logger.log(LogLevel.WARNING, `Cannot connect to Jellyfin: ${e}`);
 			return false;
 		}
 	}
@@ -37,7 +40,7 @@ export class JellyfinConnector {
 				}
 			}).GET('/Users/Me');
 		} catch (e) {
-			console.warn('Cannot connect to Jellyfin:\n', e);
+			logger.log(LogLevel.WARNING, `Cannot connect to Jellyfin: ${e}`);
 			return undefined;
 		}
 	}
@@ -61,7 +64,7 @@ export class JellyfinConnector {
 				}
 			});
 		} catch (e) {
-			console.warn('Cannot connect to Jellyfin:\n', e);
+			logger.log(LogLevel.WARNING, `Cannot connect to Jellyfin: ${e}`);
 			return undefined;
 		}
 	}

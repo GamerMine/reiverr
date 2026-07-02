@@ -8,6 +8,9 @@ import type {
 	SonarrQualityProfileResource,
 	SonarrSeriesResource
 } from '../types/sonarrTypes.js';
+import Logger, { LogLevel } from '@reiverr/logging';
+
+const logger = Logger.getLogger('SonarrRemote');
 
 export class SonarrMapper {
 	public static customFormatResource(langId: number, lang: string): SonarrCustomFormatResource {
@@ -57,7 +60,7 @@ export class SonarrMapper {
 		}
 
 		if (remaining.length > 0)
-			console.warn('The following qualities were not found: ', remaining);
+			logger.log(LogLevel.WARNING, `The following qualities were not found: ${remaining}`);
 
 		const formatItems: SonarrProfileFormatItemResource[] = customFormats.map((f) => ({
 			format: f.id,

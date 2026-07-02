@@ -2,8 +2,10 @@ import { TaskEntity, UserSettingsEntity } from '@reiverr/db/entities';
 import { isMainThread, Worker } from 'node:worker_threads';
 import { type MessageObject, TaskType } from '@reiverr/db/types';
 import { tasksWorkerFilename } from './worker.ts';
+import Logger, { LogLevel } from '@reiverr/logging';
 
 let workerInstance: Worker;
+const logger = Logger.getLogger('Scheduler');
 
 export interface TaskQueueCallback {
 	(data: unknown): Promise<void>;
@@ -56,7 +58,7 @@ export async function scheduleTask(
 ) {
 	const user = await UserSettingsEntity.findOneBy({ userId });
 	if (!user) {
-		console.error(`User with user id "${userId}" does not exists`);
+		logger.log(LogLevel.ERROR, `User with user id "${userId}" does not exists`);
 		return;
 	}
 	await TaskEntity.create({
@@ -93,10 +95,10 @@ if (isMainThread) {
 		});
 
 		workerInstance.on('exit', (code: number) => {
-			console.info(`Tasks worker exited with code: ${code}`);
+			logger.log(LogLevel.INFO, `Tasks worker exited with code: ${code}`);
 		});
 		workerInstance.on('error', (err: Error) => {
-			console.error(err);
+			logger.log(LogLevel.ERROR, err.message);
 		});
 	});
 }

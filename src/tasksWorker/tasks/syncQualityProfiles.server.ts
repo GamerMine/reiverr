@@ -8,8 +8,10 @@ import type { RadarrQualityDefinitionResource } from '@reiverr/connectors/types/
 import { RadarrMapper, SonarrMapper } from '@reiverr/connectors/mappers';
 import type { SonarrQualityDefinitionResource } from '@reiverr/connectors/types/sonarr';
 import type { MessageObject } from '@reiverr/db/types';
+import Logger, { LogLevel } from '@reiverr/logging';
 
 const ModifiedProfilesIdsSchema = v.array(v.number());
+const logger = Logger.getLogger('Task:SyncQualityProfiles');
 
 export class SyncQualityProfiles implements TaskExecutor {
 	async computeExecutionDescription(data: unknown): Promise<MessageObject> {
@@ -97,7 +99,8 @@ export class SyncQualityProfiles implements TaskExecutor {
 		for (const id of toRemove) {
 			const res = await conn.deleteQualityProfile(id);
 			if (!res.response.ok) {
-				console.error(
+				logger.log(
+					LogLevel.ERROR,
 					`Cannot remove QualityProfile from Radarr:\n${JSON.stringify(res.error, null, 2)}`
 				);
 				return { id: 'service.messages.noQualityProfileRadarr' };
@@ -122,7 +125,8 @@ export class SyncQualityProfiles implements TaskExecutor {
 				!createdQualityProfile.data.id ||
 				!createdQualityProfile.response.ok
 			) {
-				console.error(
+				logger.log(
+					LogLevel.ERROR,
 					`Cannot create QualityProfile on Radarr:\n${JSON.stringify(createdQualityProfile.error, null, 2)}`
 				);
 				continue;
@@ -134,7 +138,10 @@ export class SyncQualityProfiles implements TaskExecutor {
 		for (const quality of toEdit) {
 			const radarrProfile = radarrData.find((p) => p.id === quality.radarrId);
 			if (!radarrProfile || !radarrProfile.items || !quality.radarrId) {
-				console.error(`Cannot update QualityProfile with id ${quality.radarrId} on Radarr`);
+				logger.log(
+					LogLevel.ERROR,
+					`Cannot update QualityProfile with id ${quality.radarrId} on Radarr`
+				);
 				continue;
 			}
 			const resource = RadarrMapper.qualityProfileResource(
@@ -149,9 +156,9 @@ export class SyncQualityProfiles implements TaskExecutor {
 
 			const res = await conn.putQualityProfile(quality.radarrId, radarrProfile);
 			if (!res.response.ok) {
-				console.error(
-					`Cannot update QualityProfile with id ${quality.radarrId} on Radarr:`,
-					JSON.stringify(res.error, null, 2)
+				logger.log(
+					LogLevel.ERROR,
+					`Cannot update QualityProfile with id ${quality.radarrId} on Radarr: ${JSON.stringify(res.error, null, 2)}`
 				);
 			}
 		}
@@ -181,7 +188,8 @@ export class SyncQualityProfiles implements TaskExecutor {
 		for (const id of toRemove) {
 			const res = await conn.deleteQualityProfile(id);
 			if (!res.response.ok) {
-				console.error(
+				logger.log(
+					LogLevel.ERROR,
 					`Cannot remove QualityProfile from Sonarr:\n${JSON.stringify(res.error, null, 2)}`
 				);
 				return { id: 'service.messages.noQualityProfileSonarr' };
@@ -205,7 +213,8 @@ export class SyncQualityProfiles implements TaskExecutor {
 				!createdQualityProfile.data.id ||
 				!createdQualityProfile.response.ok
 			) {
-				console.error(
+				logger.log(
+					LogLevel.ERROR,
 					`Cannot create QualityProfile on Sonarr:\n${JSON.stringify(createdQualityProfile.error, null, 2)}`
 				);
 				continue;
@@ -217,7 +226,10 @@ export class SyncQualityProfiles implements TaskExecutor {
 		for (const quality of toEdit) {
 			const sonarrProfile = sonarrData.find((p) => p.id === quality.sonarrId);
 			if (!sonarrProfile || !sonarrProfile.items || !quality.sonarrId) {
-				console.error(`Cannot update QualityProfile with id ${quality.sonarrId} on Sonarr`);
+				logger.log(
+					LogLevel.ERROR,
+					`Cannot update QualityProfile with id ${quality.sonarrId} on Sonarr`
+				);
 				continue;
 			}
 			const resource = SonarrMapper.qualityProfileResource(
@@ -232,9 +244,9 @@ export class SyncQualityProfiles implements TaskExecutor {
 
 			const res = await conn.putQualityProfile(quality.sonarrId, sonarrProfile);
 			if (!res.response.ok) {
-				console.error(
-					`Cannot update QualityProfile with id ${quality.sonarrId} on Sonarr:`,
-					JSON.stringify(res.error, null, 2)
+				logger.log(
+					LogLevel.ERROR,
+					`Cannot update QualityProfile with id ${quality.sonarrId} on Sonarr: ${JSON.stringify(res.error, null, 2)}`
 				);
 			}
 		}

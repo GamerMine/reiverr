@@ -11,6 +11,7 @@ import { SonarrSeriesAdd } from './tasks/sonarrSeriesAdd.server.ts';
 import { SonarrSeriesRemove } from './tasks/sonarrSeriesRemove.server.ts';
 import type { TaskExecutor } from './scheduler.server.ts';
 import { CronExpressionParser } from 'cron-parser';
+import Logger, { LogLevel } from '@reiverr/logging';
 
 export const tasksWorkerFilename = import.meta.url;
 
@@ -39,6 +40,7 @@ export const tasksWorkerFilename = import.meta.url;
 let running = true;
 const queuedTasks: Set<string> = new Set();
 const schedulings: Map<string, NodeJS.Timeout> = new Map();
+const logger = Logger.getLogger('TasksWorker');
 
 const taskExecutors = {
 	[TaskType.TEST]: new TestTask(),
@@ -57,7 +59,7 @@ async function run() {
 	TypeOrm.init(workerData);
 	if (!workerData) return 'No database credentials information. Tasks worker is not running.';
 	await TypeOrm.getDb();
-	console.log('Tasks worker initialized');
+	logger.log(LogLevel.INFO, 'Tasks worker initialized');
 
 	while (running) {
 		const pendingTasks = await TaskEntity.getPending();
@@ -90,7 +92,7 @@ async function scheduleExecution(task: TaskEntity) {
 				}, scheduled.getTime() - Date.now())
 			);
 		} catch (error) {
-			console.error('Invalid cron expression: ', error);
+			logger.log(LogLevel.ERROR, `Invalid cron expression: ${error}`);
 		}
 	} else {
 		await queueExecution(task);
@@ -122,17 +124,17 @@ async function queueExecution(task: TaskEntity) {
 			});
 
 			if (error) {
-				console.error('Error while queueing task execution:', error);
+				logger.log(LogLevel.ERROR, `Error while queueing task execution: ${error}`);
 				task.error = error;
 				task.executed = new Date();
 				await task.save();
 			} else {
-				console.info('Adding task execution:', task.type);
+				logger.log(LogLevel.INFO, `Adding task execution: ${task.type}`);
 				await TaskExecutionEntity.save(executions);
 				queuedTasks.add(task.uuid);
 			}
 		} catch (error) {
-			console.error('Error while queueing task execution:', error);
+			logger.log(LogLevel.ERROR, `Error while queueing task execution: ${error}`);
 			task.error = {
 				id: 'service.messages.queuingFailed',
 				values: { error: error as string }
@@ -141,7 +143,7 @@ async function queueExecution(task: TaskEntity) {
 			await task.save();
 		}
 	} else {
-		console.error(`Unknown task type: ${task.type}`);
+		logger.log(LogLevel.ERROR, `Unknown task type: ${task.type}`);
 		task.error = { id: 'service.messages.unknownTaskType', values: { type: task.type } };
 		task.executed = new Date();
 		await task.save();
@@ -156,11 +158,11 @@ async function executeTask(task: TaskEntity) {
 			const error = await taskExecutors[task.type].execute(execution.data);
 
 			if (error) {
-				console.error('Task execution failed:', error);
+				logger.log(LogLevel.ERROR, `Task execution failed: ${error}`);
 				execution.error = error;
 			}
 		} catch (e) {
-			console.error('Task execution failed:', e);
+			logger.log(LogLevel.ERROR, `Task execution failed: ${e}`);
 			execution.error = {
 				id: 'service.messages.executeFailed',
 				values: { error: e as string }
@@ -180,6 +182,6 @@ if (!isMainThread) {
 		running = false;
 	});
 	run().then((e) => {
-		console.log('Tasks worker stopped', e);
+		logger.log(LogLevel.INFO, `Tasks worker stopped ${e}`);
 	});
 }

@@ -3,6 +3,9 @@ import * as v from 'valibot';
 import Connectors from '@reiverr/connectors';
 import type { MessageObject } from '@reiverr/db/types';
 import { MovieRemoveSchema } from '../types.ts';
+import Logger, { LogLevel } from '@reiverr/logging';
+
+const logger = Logger.getLogger('Task:RadarrMovieRemove');
 
 export class RadarrMovieRemove implements TaskExecutor {
 	async computeDescription(data: unknown): Promise<MessageObject> {
@@ -32,9 +35,9 @@ export class RadarrMovieRemove implements TaskExecutor {
 		const res = await radarrConnector?.deleteMovie(movie.radarrId);
 
 		if (!res || !res.response.ok) {
-			console.error(
-				`Cannot remove movie ${movie.radarrId} from Radarr:`,
-				res ? JSON.stringify(res.error, null, 2) : 'Unable to connect to Radarr.'
+			logger.log(
+				LogLevel.ERROR,
+				`Cannot remove movie ${movie.radarrId} from Radarr: ${res ? JSON.stringify(res.error, null, 2) : 'Unable to connect to Radarr.'}`
 			);
 			return { id: 'general.unknownError' };
 		}

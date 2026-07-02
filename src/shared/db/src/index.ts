@@ -49,8 +49,7 @@ class TypeOrm {
 					return fulfilled;
 				})
 				.catch((err) => {
-					console.error('Error during Data Source initialization', err);
-					return null;
+					throw `Error during Data Source initialization: ${err}`;
 				});
 		}
 		return TypeOrm.instance;

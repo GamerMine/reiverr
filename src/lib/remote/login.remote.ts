@@ -3,6 +3,9 @@ import * as v from 'valibot';
 import Connectors from '@reiverr/connectors';
 import { getBrowserName } from '$lib/utils/browser-detection.ts';
 import { version } from '$app/environment';
+import Logger, { LogLevel } from '@reiverr/logging';
+
+const logger = Logger.getLogger('Authentication');
 
 export const login = form(
 	v.object({
@@ -23,14 +26,17 @@ export const login = form(
 			if (authResult.response.status === 401) {
 				return { success: false, error: 'login.invalidCredential' };
 			}
-			console.error(
-				`Status ${authResult.response.status} ${authResult.response.statusText}`,
-				JSON.stringify(authResult.error, null, 2)
+			logger.log(
+				LogLevel.ERROR,
+				`${authResult.response.status} ${authResult.response.statusText} ${JSON.stringify(authResult.error, null, 2)}`
 			);
 			return { success: false };
 		}
 		if (!authResult.data?.AccessToken) {
-			console.error(`Failed attempt to login user "${creds.username}": Missing access token`);
+			logger.log(
+				LogLevel.ERROR,
+				`Failed attempt to login user "${creds.username}": Missing access token`
+			);
 			return { success: false };
 		}
 

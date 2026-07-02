@@ -9,6 +9,9 @@ import {
 import Connectors from '@reiverr/connectors';
 import { SonarrMapper } from '@reiverr/connectors/mappers';
 import type { MessageObject } from '@reiverr/db/types';
+import Logger, { LogLevel } from '@reiverr/logging';
+
+const logger = Logger.getLogger('Task:SonarrSeriesAdd');
 
 export class SonarrSeriesAdd implements TaskExecutor {
 	async computeDescription(data: unknown): Promise<MessageObject> {
@@ -37,7 +40,7 @@ export class SonarrSeriesAdd implements TaskExecutor {
 
 		const settings = await GlobalSettingsEntity.getDefault();
 		if (!settings.sonarrRootFolderPath) {
-			console.error('Sonarr root folder is missing.');
+			logger.log(LogLevel.ERROR, 'Sonarr root folder is missing.');
 			return { id: 'general.unknownError' };
 		}
 
@@ -64,9 +67,9 @@ export class SonarrSeriesAdd implements TaskExecutor {
 			)
 		);
 		if (!res || !res.response.ok || !res.data?.id) {
-			console.error(
-				`Cannot add series ${series.tvdbId} on Sonarr:`,
-				res ? JSON.stringify(res.error, null, 2) : 'Unable to connect to Sonarr.'
+			logger.log(
+				LogLevel.ERROR,
+				`Cannot add series ${series.tvdbId} on Sonarr: ${res ? JSON.stringify(res.error, null, 2) : 'Unable to connect to Sonarr.'}`
 			);
 			return { id: 'general.unknownError' };
 		}
@@ -81,18 +84,18 @@ export class SonarrSeriesAdd implements TaskExecutor {
 			}
 		}
 		if (!created) {
-			console.error(
-				`Cannot add series ${series.tvdbId} on Sonarr:`,
-				'Series creation time out'
+			logger.log(
+				LogLevel.ERROR,
+				`Cannot add series ${series.tvdbId} on Sonarr: Series creation time out`
 			);
 			return { id: 'general.unknownError' };
 		}
 
 		const sonarrEpisodes = await sonarrConnector?.getEpisode(res.data.id);
 		if (!sonarrEpisodes || !sonarrEpisodes.data) {
-			console.error(
-				`Cannot add series ${series.tvdbId} on Sonarr:`,
-				res ? JSON.stringify(res.error, null, 2) : 'Unable to connect to Sonarr.'
+			logger.log(
+				LogLevel.ERROR,
+				`Cannot add series ${series.tvdbId} on Sonarr: ${res ? JSON.stringify(res.error, null, 2) : 'Unable to connect to Sonarr.'}`
 			);
 			return { id: 'general.unknownError' };
 		}
@@ -110,7 +113,7 @@ export class SonarrSeriesAdd implements TaskExecutor {
 					(e) => e.episodeNumber === episode.episodeNumber
 				);
 				if (!sonarrEpisode || !sonarrEpisode.id) {
-					console.warn(
+					logger.log(LogLevel.WARNING,
 						`Episode ${episode.episodeNumber} of season ${season.seasonNumber} not found.`
 					);
 					continue;
@@ -123,9 +126,9 @@ export class SonarrSeriesAdd implements TaskExecutor {
 			SonarrMapper.episodesMonitoredResource(episodesIdsToMonitor)
 		);
 		if (!res2 || !res2.response.ok) {
-			console.error(
-				`Cannot add series ${series.tvdbId} on Sonarr:`,
-				res2 ? JSON.stringify(res2.error, null, 2) : 'Unable to connect to Sonarr.'
+			logger.log(
+				LogLevel.ERROR,
+				`Cannot add series ${series.tvdbId} on Sonarr: ${res2 ? JSON.stringify(res2.error, null, 2) : 'Unable to connect to Sonarr.'}`
 			);
 			return { id: 'general.unknownError' };
 		}
