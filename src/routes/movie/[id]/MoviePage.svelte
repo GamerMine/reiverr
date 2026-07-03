@@ -33,8 +33,9 @@
 	import type { RadarrMovieResource } from '@reiverr/connectors/types/radarr';
 	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
 	import { getQueuedTasks } from '$lib/remote/tasks.remote.ts';
-	import { type MovieAdd } from '../../../tasksWorker/types.ts';
+	import { type MovieAdd, type MovieRemove } from '../../../tasksWorker/types.ts';
 	import { TaskType } from '@reiverr/db/types';
+	import ConfirmDialog from '$lib/components/controls/ConfirmDialog.svelte';
 
 	let {
 		tmdbId,
@@ -48,6 +49,8 @@
 	let radarrMovie: RadarrMovieResource | undefined = $state();
 	let tasks = $derived(await getQueuedTasks(true));
 	let isBeingAdded = $state(false);
+	let isBeingRemoved = $state(false);
+	let showRemoveConfirmDialog = $state(false);
 
 	async function preloadRecommendationData() {
 		const tmdbRecommendationProps = getTmdbMovieRecommendations(tmdbId)
@@ -100,25 +103,41 @@
 		});
 	}
 
-	async function removeMovie() {
-		if (radarrMovie?.id)
+	async function removeMovie(confirm: boolean) {
+		showRemoveConfirmDialog = false;
+		if (confirm && radarrMovie?.id) {
+			isBeingRemoved = true;
 			radarrRemoveMovie({
 				radarrId: radarrMovie.id,
 				name: tmdbMovie?.title || radarrMovie.title
 			});
-		await radarrGetMovies().refresh();
+		}
 	}
 
 	$effect(() => {
-		const state = tasks.find(
+		const addState = tasks.find(
 			(t) => t.type === TaskType.RADARR_MOVIE_ADD && (t.data as MovieAdd).tmdbId === tmdbId
 		);
-		isBeingAdded = !!state;
-		if (!isBeingAdded) {
+		const removeState = tasks.find(
+			(t) =>
+				t.type === TaskType.RADARR_MOVIE_REMOVE &&
+				(t.data as MovieRemove).radarrId === radarrMovie?.id
+		);
+		isBeingAdded = !!addState;
+		isBeingRemoved = !!removeState;
+		console.log(isBeingRemoved);
+		if (!isBeingAdded || !isBeingRemoved) {
 			radarrGetMovies()
 				.refresh()
 				.then(() => {
 					radarrMovie = radarrGetMovies().current?.data?.find((m) => m.tmdbId === tmdbId);
+				});
+			jellyfinGetItems()
+				.refresh()
+				.then(() => {
+					jellyfinItem = jellyfinGetItems().current?.data?.find(
+						(i) => i.ProviderIds?.Tmdb === tmdbId.toString()
+					);
 				});
 		}
 	});
@@ -190,14 +209,20 @@
 					<div class="placeholder h-10 w-48 rounded-xl"></div>
 				{:else}
 					<OpenInButton title={tmdbMovie?.title} {jellyfinItem} type="movie" {tmdbId} />
-					{#if jellyfinItem}
+					{#if isBeingRemoved}
+						<Button variant="secondary" disabled>
+							<Clock size="20" /><span class="ml-2"
+								>{$_('library.content.beingRemoved')}</span
+							>
+						</Button>
+					{:else if jellyfinItem}
 						<Button variant="primary" onclick={play}>
 							<span>{$_('library.content.play')}</span><ChevronRight size="20" />
 						</Button>
 						<Button
 							variant="error"
 							class="px-2!"
-							onclick={async () => await removeMovie()}
+							onclick={() => (showRemoveConfirmDialog = true)}
 						>
 							<Trash size="20" />
 						</Button>
@@ -222,7 +247,7 @@
 						<Button
 							variant="error"
 							class="px-2!"
-							onclick={async () => await removeMovie()}
+							onclick={() => (showRemoveConfirmDialog = true)}
 						>
 							<Trash size="20" />
 						</Button>
@@ -388,4 +413,11 @@
 			{/await}
 		{/snippet}
 	</TitlePageLayout>
+{/if}
+{#if showRemoveConfirmDialog}
+	<ConfirmDialog
+		variant="yesNo"
+		confirmMessage={$_('library.content.removeMovieConfirmation')}
+		onConfirm={removeMovie}
+	/>
 {/if}

@@ -1,6 +1,6 @@
 import { TaskEntity, UserSettingsEntity } from '@reiverr/db/entities';
 import { isMainThread, Worker } from 'node:worker_threads';
-import { type MessageObject, TaskType } from '@reiverr/db/types';
+import { TaskType } from '@reiverr/db/types';
 import { tasksWorkerFilename } from './worker.ts';
 import Logger, { LogLevel } from '@reiverr/logging';
 
@@ -12,30 +12,18 @@ export interface TaskQueueCallback {
 }
 
 export interface TaskExecutor {
-	/** Compute the description of the task.
-	 * @param data The data to compute the description for
-	 * @returns The description of the task as a localized message object
-	 */
-	computeDescription(data: unknown): Promise<MessageObject>;
-
-	/** Compute the description of the execution.
-	 * @param data The data to compute the description for
-	 * @returns The description of the execution as a localized message object
-	 */
-	computeExecutionDescription(data: unknown): Promise<MessageObject>;
-
 	/** Queue the execution of the task.
 	 * @param data The data to queue the execution for
 	 * @param queue The callback to queue the execution
 	 * @returns An array of data to execute the task for or a localized message object if the task failed to queue
 	 */
-	queueExecution(data: unknown, queue: TaskQueueCallback): Promise<void | MessageObject>;
+	queueExecution(data: unknown, queue: TaskQueueCallback): Promise<void | string>;
 
 	/** Execute the task.
 	 * @param data The data to execute the task for
 	 * @returns A localized message object if the task failed, undefined otherwise
 	 */
-	execute(data: unknown): Promise<void | MessageObject>;
+	execute(data: unknown): Promise<void | string>;
 }
 
 /*

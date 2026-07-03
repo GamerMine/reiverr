@@ -7,45 +7,33 @@ import {
 } from '@reiverr/db/entities';
 import Connectors from '@reiverr/connectors';
 import { RadarrMapper } from '@reiverr/connectors/mappers';
-import type { MessageObject } from '@reiverr/db/types';
 import { MovieAddSchema } from '../types.ts';
 import Logger, { LogLevel } from '@reiverr/logging';
 
 const logger = Logger.getLogger('Task:RadarrMovieAdd');
 
 export class RadarrMovieAdd implements TaskExecutor {
-	async computeDescription(data: unknown): Promise<MessageObject> {
-		const movie = v.parse(MovieAddSchema, data);
-		return {
-			id: 'service.tasks.radarrAddMovie.addingMovie',
-			values: { tmdbId: movie.tmdbId, language: movie.language }
-		};
-	}
-
-	async computeExecutionDescription(data: unknown): Promise<MessageObject> {
-		const movie = v.parse(MovieAddSchema, data);
-		return {
-			id: 'service.tasks.radarrAddMovie.addingMovie',
-			values: { tmdbId: movie.tmdbId, language: movie.language }
-		};
-	}
-
-	async queueExecution(data: unknown, queue: TaskQueueCallback): Promise<void | MessageObject> {
+	async queueExecution(data: unknown, queue: TaskQueueCallback): Promise<void | string> {
 		await queue(data);
 	}
 
-	async execute(data: unknown): Promise<void | MessageObject> {
+	async execute(data: unknown): Promise<void | string> {
 		const movie = v.parse(MovieAddSchema, data);
 		const { radarrConnector } = await Connectors.getInstance();
 
 		const settings = await GlobalSettingsEntity.getDefault();
 		if (!settings.radarrRootFolderPath) {
-			logger.log(LogLevel.ERROR, 'Radarr root folder is missing.');
-			return { id: 'general.unknownError' };
+			const err = 'Radarr root folder is missing.';
+			logger.log(LogLevel.ERROR, err);
+			return err;
 		}
 
 		const defaultFp = await FilteringProfilesEntity.getDefaultProfile(movie.userId);
-		if (!defaultFp) return { id: 'settings.misc.noDefaultFilteringProfile' };
+		if (!defaultFp) {
+			const err = 'No default filtering profile found.';
+			logger.log(LogLevel.ERROR, err);
+			return err;
+		}
 
 		const qp = await QualityProfilesEntity.findOne({
 			relations: { customFormat: true, filteringProfile: true },
@@ -55,18 +43,19 @@ export class RadarrMovieAdd implements TaskExecutor {
 			},
 			select: { id: true, radarrId: true }
 		});
-		if (!qp || !qp.radarrId)
-			return { id: 'service.tasks.radarrAddMovie.noQualityProfileFound' };
+		if (!qp || !qp.radarrId) {
+			const err = 'No quality profile matching filtering profile found.';
+			logger.log(LogLevel.ERROR, err);
+			return err;
+		}
 
 		const res = await radarrConnector?.postMovie(
 			RadarrMapper.movieResource(movie.tmdbId, qp.radarrId, settings.radarrRootFolderPath)
 		);
-		if (!res || !res.response.ok) {
-			logger.log(
-				LogLevel.ERROR,
-				`Cannot add movie ${movie.tmdbId} on Radarr: ${res ? JSON.stringify(res.error, null, 2) : 'Unable to connect to Radarr.'}`
-			);
-			return { id: 'general.unknownError' };
+		if (!res.response.ok) {
+			const err = `Cannot add movie ${movie.tmdbId} on Radarr: ${JSON.stringify(res.error, null, 2)}`;
+			logger.log(LogLevel.ERROR, err);
+			return err;
 		}
 	}
 }

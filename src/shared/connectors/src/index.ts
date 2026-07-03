@@ -11,7 +11,6 @@ import type {
 	SonarrQualityDefinitionResource
 } from './types/sonarrTypes.js';
 
-// TODO: Add a refresh method that will create/update the connectors.
 class Connectors {
 	private static _instance: Connectors;
 
@@ -25,7 +24,8 @@ class Connectors {
 
 	private _jellyfinConnector: JellyfinConnector;
 
-	public static async getInstance(): Promise<Connectors> {
+	public static async getInstance(refresh: boolean = false): Promise<Connectors> {
+		if (refresh) Connectors._instance = undefined;
 		if (!Connectors._instance) {
 			const baseSync = new Connectors();
 			const radarrSync = await GlobalSettingsEntity.getRadarrApi();

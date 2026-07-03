@@ -7,7 +7,6 @@ import {
 	PrimaryGeneratedColumn
 } from 'typeorm';
 import { TaskEntity } from './Task.js';
-import type { MessageObject } from '../types.js';
 
 @Entity({ name: 'taskExecutions' })
 export class TaskExecutionEntity extends BaseEntity {
@@ -31,9 +30,6 @@ export class TaskExecutionEntity extends BaseEntity {
 
 	@Column('timestamptz', { nullable: true })
 	canceled: Date | null;
-
-	@Column('simple-json', { nullable: true })
-	error: MessageObject | null;
 
 	public static async get(uuid: string) {
 		return await this.findOne({ where: { uuid }, relations: { task: true } });

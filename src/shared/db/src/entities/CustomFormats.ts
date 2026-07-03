@@ -12,11 +12,11 @@ export class CustomFormatsEntity extends BaseEntity {
 	@Column('text', { unique: true })
 	lang: string;
 
-	@Column('integer', { nullable: true, default: undefined })
-	sonarrId: number | undefined;
+	@Column('integer', { nullable: true })
+	sonarrId: number | null;
 
-	@Column('integer', { nullable: true, default: undefined })
-	radarrId: number | undefined;
+	@Column('integer', { nullable: true })
+	radarrId: number | null;
 
 	/**
 	 * Get all custom formats entries as a map keyed by lang

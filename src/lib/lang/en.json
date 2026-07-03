@@ -111,6 +111,7 @@
     "content": {
       "available": "Available",
       "beingAdded": "Is being added",
+      "beingRemoved": "Is being removed",
       "budget": "Budget",
       "castAndCrew": "Cast & Crew",
       "directedBy": "Directed By",
@@ -128,6 +129,8 @@
       "queued": "In Queue",
       "recommendations": "Recommendations",
       "releaseDate": "Release Date",
+      "removeMovieConfirmation": "Do you really want to remove this movie?",
+      "removeSeriesConfirmation": "Do you really want to remove this series? All the episodes and seasons will be removed.",
       "requestContent": "Request",
       "revenue": "Revenue",
       "runtime": "Runtime",
@@ -208,13 +211,13 @@
       "radarrMovieAdd": "Movie added to the queue",
       "radarrMovieRemove": "Removing a movie",
       "sonarrSeriesAdd": "Series/Episodes added to the queue",
-      "sonarrrSeriesRemove": "Removing Series/Episode",
+      "sonarrSeriesRemove": "Removing Series/Episode",
       "syncCustomFormats": "Languages synchronization",
       "syncQualityProfiles": "Filtering profile synchronization"
     },
     "tasks": {
       "radarrMovieAdd": {
-        "error": "Something went wrong while adding '{name}' to the queue. Please try again later.",
+        "error": "Le film '{name}' cannot be added to the queue. Please try again later.",
         "success": "The movie '{name}' has been added to the queue. It will be available once downloaded."
       },
       "radarrMovieRemove": {
@@ -222,8 +225,12 @@
         "success": "The movie '{name}' has been removed."
       },
       "sonarrSeriesAdd": {
-        "error": "The series '{name}' cannot be removed. Please try again later.",
+        "error": "The series '{name}' cannot be added to the queue. Please try again later.",
         "success": "The series '{name}' has been added to the queue. It will be available once downloaded."
+      },
+      "sonarrSeriesRemove": {
+        "error": "The series '{name}' cannot be removed. Please try again later.",
+        "success": "The series '{name}' has been removed."
       },
       "sync": {
         "languagesSync": "Language synchronization",

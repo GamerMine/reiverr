@@ -28,8 +28,7 @@ export const tasksWorkerFilename = import.meta.url;
  *    If, for some reason a task cannot be prepared because it returned an error on it throws, then no TaskExecution
  *    are created and the task is added to queuedTasks. (Note that it will be picked up on the next loop iteration.)
  *
- * 4. TaskExecutions of the task are executed. In case of an error or a throw, other TaskExecution will be executed and
- *    marked as finished.
+ * 4. TaskExecutions of the task are executed. In case of an error or a throw, other TaskExecution are not executed.
  *    At the end the task is always marked as executed, meaning that this task can't be added back to the queue.
  *
  * 5. Go back to 1
@@ -99,7 +98,7 @@ async function scheduleExecution(task: TaskEntity) {
 	}
 }
 
-async function unscheduleExecution(task: TaskEntity) {
+/*async function unscheduleExecution(task: TaskEntity) {
 	const scheduling = schedulings.get(task.uuid);
 
 	if (scheduling) {
@@ -107,7 +106,7 @@ async function unscheduleExecution(task: TaskEntity) {
 		schedulings.delete(task.uuid);
 		task.scheduled = null;
 	}
-}
+}*/
 
 async function queueExecution(task: TaskEntity) {
 	if (task.type in taskExecutors) {
@@ -124,8 +123,9 @@ async function queueExecution(task: TaskEntity) {
 			});
 
 			if (error) {
-				logger.log(LogLevel.ERROR, `Error while queueing task execution: ${error}`);
-				task.error = error;
+				const err = `Error while queueing task execution: ${error}`;
+				logger.log(LogLevel.ERROR, err);
+				task.error = err;
 				task.executed = new Date();
 				await task.save();
 			} else {
@@ -134,17 +134,16 @@ async function queueExecution(task: TaskEntity) {
 				queuedTasks.add(task.uuid);
 			}
 		} catch (error) {
-			logger.log(LogLevel.ERROR, `Error while queueing task execution: ${error}`);
-			task.error = {
-				id: 'service.messages.queuingFailed',
-				values: { error: error as string }
-			};
+			const err = `Error while queueing task execution: ${error as string}`;
+			logger.log(LogLevel.ERROR, err);
+			task.error = err;
 			task.executed = new Date();
 			await task.save();
 		}
 	} else {
-		logger.log(LogLevel.ERROR, `Unknown task type: ${task.type}`);
-		task.error = { id: 'service.messages.unknownTaskType', values: { type: task.type } };
+		const err = `Unknown task type: ${task.type}`;
+		logger.log(LogLevel.ERROR, err);
+		task.error = err;
 		task.executed = new Date();
 		await task.save();
 	}
@@ -158,18 +157,18 @@ async function executeTask(task: TaskEntity) {
 			const error = await taskExecutors[task.type].execute(execution.data);
 
 			if (error) {
-				logger.log(LogLevel.ERROR, `Task execution failed: ${error}`);
-				execution.error = error;
+				const err = `Error while executing task: ${error}`;
+				logger.log(LogLevel.ERROR, err);
+				task.error = err;
 			}
 		} catch (e) {
-			logger.log(LogLevel.ERROR, `Task execution failed: ${e}`);
-			execution.error = {
-				id: 'service.messages.executeFailed',
-				values: { error: e as string }
-			};
+			const err = `Error while executing task: ${e as string}`;
+			logger.log(LogLevel.ERROR, err);
+			task.error = err;
 		}
-		execution.finished = new Date();
+		if (!task.error) execution.finished = new Date();
 		await execution.save();
+		if (task.error) break;
 	}
 
 	queuedTasks.delete(task.uuid);

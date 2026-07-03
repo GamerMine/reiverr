@@ -1,45 +1,26 @@
 import type { TaskExecutor, TaskQueueCallback } from '../scheduler.server';
 import * as v from 'valibot';
 import Connectors from '@reiverr/connectors';
-import type { MessageObject } from '@reiverr/db/types';
 import { MovieRemoveSchema } from '../types.ts';
 import Logger, { LogLevel } from '@reiverr/logging';
 
 const logger = Logger.getLogger('Task:RadarrMovieRemove');
 
 export class RadarrMovieRemove implements TaskExecutor {
-	async computeDescription(data: unknown): Promise<MessageObject> {
-		const movie = v.parse(MovieRemoveSchema, data);
-		return {
-			id: 'service.tasks.radarrAddMovie.addingMovie',
-			values: { id: movie.radarrId }
-		};
-	}
-
-	async computeExecutionDescription(data: unknown): Promise<MessageObject> {
-		const movie = v.parse(MovieRemoveSchema, data);
-		return {
-			id: 'service.tasks.radarrAddMovie.addingMovie',
-			values: { id: movie.radarrId }
-		};
-	}
-
-	async queueExecution(data: unknown, queue: TaskQueueCallback): Promise<void | MessageObject> {
+	async queueExecution(data: unknown, queue: TaskQueueCallback): Promise<void | string> {
 		await queue(data);
 	}
 
-	async execute(data: unknown): Promise<void | MessageObject> {
+	async execute(data: unknown): Promise<void | string> {
 		const movie = v.parse(MovieRemoveSchema, data);
 		const { radarrConnector } = await Connectors.getInstance();
 
 		const res = await radarrConnector?.deleteMovie(movie.radarrId);
 
 		if (!res || !res.response.ok) {
-			logger.log(
-				LogLevel.ERROR,
-				`Cannot remove movie ${movie.radarrId} from Radarr: ${res ? JSON.stringify(res.error, null, 2) : 'Unable to connect to Radarr.'}`
-			);
-			return { id: 'general.unknownError' };
+			const err = `Cannot remove movie ${movie.radarrId} from Radarr: ${JSON.stringify(res.error, null, 2)}`;
+			logger.log(LogLevel.ERROR, err);
+			return err;
 		}
 	}
 }

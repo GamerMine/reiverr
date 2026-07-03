@@ -1,5 +1,5 @@
 import type { TaskExecutor, TaskQueueCallback } from '../scheduler.server';
-import { PlatformSchema, PlatformWithDataSchema } from '../types.ts';
+import { PlatformWithDataSchema } from '../types.ts';
 import * as v from 'valibot';
 import { QualityProfilesEntity } from '@reiverr/db/entities';
 import { arrayDifference } from '../utils.server.ts';
@@ -7,24 +7,13 @@ import Connectors, { RadarrConnector, SonarrConnector } from '@reiverr/connector
 import type { RadarrQualityDefinitionResource } from '@reiverr/connectors/types/radarr';
 import { RadarrMapper, SonarrMapper } from '@reiverr/connectors/mappers';
 import type { SonarrQualityDefinitionResource } from '@reiverr/connectors/types/sonarr';
-import type { MessageObject } from '@reiverr/db/types';
 import Logger, { LogLevel } from '@reiverr/logging';
 
 const ModifiedProfilesIdsSchema = v.array(v.number());
 const logger = Logger.getLogger('Task:SyncQualityProfiles');
 
 export class SyncQualityProfiles implements TaskExecutor {
-	async computeExecutionDescription(data: unknown): Promise<MessageObject> {
-		void data;
-		return { id: 'service.tasks.sync.qualitySync' };
-	}
-
-	async computeDescription(data: unknown): Promise<MessageObject> {
-		const platform = v.parse(PlatformSchema, data);
-		return { id: 'service.tasks.sync.qualitySyncOn', values: { platform } };
-	}
-
-	async queueExecution(data: unknown, queue: TaskQueueCallback): Promise<void | MessageObject> {
+	async queueExecution(data: unknown, queue: TaskQueueCallback): Promise<void | string> {
 		const modifiedProfileIds = v.parse(ModifiedProfilesIdsSchema, data);
 		const baseSync = await Connectors.getInstance();
 
@@ -37,7 +26,7 @@ export class SyncQualityProfiles implements TaskExecutor {
 		}
 	}
 
-	async execute(data: unknown): Promise<void | MessageObject> {
+	async execute(data: unknown): Promise<void | string> {
 		const parsedData = v.parse(PlatformWithDataSchema(ModifiedProfilesIdsSchema), data);
 		const baseSync = await Connectors.getInstance();
 		const qualityProfiles = await QualityProfilesEntity.find({
@@ -49,8 +38,11 @@ export class SyncQualityProfiles implements TaskExecutor {
 			baseSync.radarrConnector &&
 			(await baseSync.radarrConnector.isHealthy())
 		) {
-			if (baseSync.radarrQualities.length === 0)
-				return { id: 'service.messages.noQualitiesRadarr' };
+			if (baseSync.radarrQualities.length === 0) {
+				const err = 'No qualities have been fetched from Radarr.';
+				logger.log(LogLevel.ERROR, err);
+				return err;
+			}
 			return await this.runOnRadarr(
 				baseSync.radarrQualities,
 				qualityProfiles,
@@ -64,8 +56,11 @@ export class SyncQualityProfiles implements TaskExecutor {
 			baseSync.sonarrConnector &&
 			(await baseSync.sonarrConnector.isHealthy())
 		) {
-			if (baseSync.sonarrQualities.length === 0)
-				return { id: 'service.messages.noQualitiesSonarr' };
+			if (baseSync.sonarrQualities.length === 0) {
+				const err = 'No qualities have been fetched from Sonarr.';
+				logger.log(LogLevel.ERROR, err);
+				return err;
+			}
 			return await this.runOnSonarr(
 				baseSync.sonarrQualities,
 				qualityProfiles,
@@ -80,17 +75,21 @@ export class SyncQualityProfiles implements TaskExecutor {
 		profiles: QualityProfilesEntity[],
 		conn: RadarrConnector,
 		modifiedIds: number[]
-	): Promise<void | MessageObject> {
+	): Promise<void | string> {
 		const { data: radarrData } = await conn.getQualityProfile();
-		if (!radarrData) return { id: 'service.message.radarrFetchError' };
+		if (!radarrData) {
+			const err = 'Cannot fetch quality profiles from Radarr.';
+			logger.log(LogLevel.ERROR, err);
+			return err;
+		}
 
-		const localIds = profiles.map((p) => p.radarrId).filter((id) => id !== undefined);
+		const localIds = profiles.map((p) => p.radarrId).filter((id) => id !== null);
 		const radarrIds = radarrData.map((p) => p.id).filter((id) => id !== undefined);
 
 		const toRemove = arrayDifference(radarrIds, localIds);
 		const tmpCreate = arrayDifference(localIds, radarrIds);
 		const toCreate = profiles.filter(
-			(p) => p.radarrId === undefined || tmpCreate.includes(p.radarrId)
+			(p) => p.radarrId === null || tmpCreate.includes(p.radarrId)
 		);
 		const toEdit = profiles.filter(
 			(p) => modifiedIds.includes(p.filteringProfile.id) && !toCreate.includes(p)
@@ -99,17 +98,18 @@ export class SyncQualityProfiles implements TaskExecutor {
 		for (const id of toRemove) {
 			const res = await conn.deleteQualityProfile(id);
 			if (!res.response.ok) {
-				logger.log(
-					LogLevel.ERROR,
-					`Cannot remove QualityProfile from Radarr:\n${JSON.stringify(res.error, null, 2)}`
-				);
-				return { id: 'service.messages.noQualityProfileRadarr' };
+				const err = `Cannot remove QualityProfile from Radarr:\n${JSON.stringify(res.error, null, 2)}`;
+				logger.log(LogLevel.ERROR, err);
+				return err;
 			}
 		}
 
 		const formats = await conn.getCustomFormats();
-		if (!formats.response.ok || !formats.data)
-			return { id: 'service.messages.radarrFetchError' };
+		if (!formats.response.ok || !formats.data) {
+			const err = 'Cannot fetch custom formats from Radarr.';
+			logger.log(LogLevel.ERROR, err);
+			return err;
+		}
 		for (const quality of toCreate) {
 			const createdQualityProfile = await conn.postQualityProfile(
 				RadarrMapper.qualityProfileResource(
@@ -125,11 +125,9 @@ export class SyncQualityProfiles implements TaskExecutor {
 				!createdQualityProfile.data.id ||
 				!createdQualityProfile.response.ok
 			) {
-				logger.log(
-					LogLevel.ERROR,
-					`Cannot create QualityProfile on Radarr:\n${JSON.stringify(createdQualityProfile.error, null, 2)}`
-				);
-				continue;
+				const err = `Cannot create QualityProfile on Radarr:\n${JSON.stringify(createdQualityProfile.error, null, 2)}`;
+				logger.log(LogLevel.ERROR, err);
+				return err;
 			}
 			quality.radarrId = createdQualityProfile.data.id;
 			await quality.save();
@@ -138,11 +136,9 @@ export class SyncQualityProfiles implements TaskExecutor {
 		for (const quality of toEdit) {
 			const radarrProfile = radarrData.find((p) => p.id === quality.radarrId);
 			if (!radarrProfile || !radarrProfile.items || !quality.radarrId) {
-				logger.log(
-					LogLevel.ERROR,
-					`Cannot update QualityProfile with id ${quality.radarrId} on Radarr`
-				);
-				continue;
+				const err = `Cannot update QualityProfile with id ${quality.radarrId} on Radarr`;
+				logger.log(LogLevel.ERROR, err);
+				return err;
 			}
 			const resource = RadarrMapper.qualityProfileResource(
 				quality.filteringProfile.name,
@@ -156,10 +152,9 @@ export class SyncQualityProfiles implements TaskExecutor {
 
 			const res = await conn.putQualityProfile(quality.radarrId, radarrProfile);
 			if (!res.response.ok) {
-				logger.log(
-					LogLevel.ERROR,
-					`Cannot update QualityProfile with id ${quality.radarrId} on Radarr: ${JSON.stringify(res.error, null, 2)}`
-				);
+				const err = `Cannot update QualityProfile with id ${quality.radarrId} on Radarr: ${JSON.stringify(res.error, null, 2)}`;
+				logger.log(LogLevel.ERROR, err);
+				return err;
 			}
 		}
 	}
@@ -169,17 +164,21 @@ export class SyncQualityProfiles implements TaskExecutor {
 		profiles: QualityProfilesEntity[],
 		conn: SonarrConnector,
 		modifiedIds: number[]
-	): Promise<void | MessageObject> {
+	): Promise<void | string> {
 		const { data: sonarrData } = await conn.getQualityProfile();
-		if (!sonarrData) return { id: 'service.message.sonarrFetchError' };
+		if (!sonarrData) {
+			const err = 'Cannot fetch quality profiles from Sonarr.';
+			logger.log(LogLevel.ERROR, err);
+			return err;
+		}
 
-		const localIds = profiles.map((p) => p.sonarrId).filter((id) => id !== undefined);
+		const localIds = profiles.map((p) => p.sonarrId).filter((id) => id !== null);
 		const sonarrIds = sonarrData.map((p) => p.id).filter((id) => id !== undefined);
 
 		const toRemove = arrayDifference(sonarrIds, localIds);
 		const tmpCreate = arrayDifference(localIds, sonarrIds);
 		const toCreate = profiles.filter(
-			(p) => p.sonarrId === undefined || tmpCreate.includes(p.sonarrId)
+			(p) => p.sonarrId === null || tmpCreate.includes(p.sonarrId)
 		);
 		const toEdit = profiles.filter(
 			(p) => modifiedIds.includes(p.filteringProfile.id) && !toCreate.includes(p)
@@ -188,16 +187,18 @@ export class SyncQualityProfiles implements TaskExecutor {
 		for (const id of toRemove) {
 			const res = await conn.deleteQualityProfile(id);
 			if (!res.response.ok) {
-				logger.log(
-					LogLevel.ERROR,
-					`Cannot remove QualityProfile from Sonarr:\n${JSON.stringify(res.error, null, 2)}`
-				);
-				return { id: 'service.messages.noQualityProfileSonarr' };
+				const err = `Cannot remove QualityProfile from Sonarr:\n${JSON.stringify(res.error, null, 2)}`;
+				logger.log(LogLevel.ERROR, err);
+				return err;
 			}
 		}
 
 		const formats = await conn.getCustomFormats();
-		if (!formats.success || !formats.data) return { id: 'service.messages.sonarrFetchError' };
+		if (!formats.success || !formats.data) {
+			const err = 'Cannot fetch custom formats from Sonarr.';
+			logger.log(LogLevel.ERROR, err);
+			return err;
+		}
 		for (const quality of toCreate) {
 			const createdQualityProfile = await conn.postQualityProfile(
 				SonarrMapper.qualityProfileResource(
@@ -213,11 +214,9 @@ export class SyncQualityProfiles implements TaskExecutor {
 				!createdQualityProfile.data.id ||
 				!createdQualityProfile.response.ok
 			) {
-				logger.log(
-					LogLevel.ERROR,
-					`Cannot create QualityProfile on Sonarr:\n${JSON.stringify(createdQualityProfile.error, null, 2)}`
-				);
-				continue;
+				const err = `Cannot create QualityProfile on Sonarr:\n${JSON.stringify(createdQualityProfile.error, null, 2)}`;
+				logger.log(LogLevel.ERROR, err);
+				return err;
 			}
 			quality.sonarrId = createdQualityProfile.data.id;
 			await quality.save();
@@ -226,11 +225,9 @@ export class SyncQualityProfiles implements TaskExecutor {
 		for (const quality of toEdit) {
 			const sonarrProfile = sonarrData.find((p) => p.id === quality.sonarrId);
 			if (!sonarrProfile || !sonarrProfile.items || !quality.sonarrId) {
-				logger.log(
-					LogLevel.ERROR,
-					`Cannot update QualityProfile with id ${quality.sonarrId} on Sonarr`
-				);
-				continue;
+				const err = `Cannot update QualityProfile with id ${quality.sonarrId} on Sonarr`;
+				logger.log(LogLevel.ERROR, err);
+				return err;
 			}
 			const resource = SonarrMapper.qualityProfileResource(
 				quality.filteringProfile.name,
@@ -244,10 +241,9 @@ export class SyncQualityProfiles implements TaskExecutor {
 
 			const res = await conn.putQualityProfile(quality.sonarrId, sonarrProfile);
 			if (!res.response.ok) {
-				logger.log(
-					LogLevel.ERROR,
-					`Cannot update QualityProfile with id ${quality.sonarrId} on Sonarr: ${JSON.stringify(res.error, null, 2)}`
-				);
+				const err = `Cannot update QualityProfile with id ${quality.sonarrId} on Sonarr: ${JSON.stringify(res.error, null, 2)}`;
+				logger.log(LogLevel.ERROR, err);
+				return err;
 			}
 		}
 	}

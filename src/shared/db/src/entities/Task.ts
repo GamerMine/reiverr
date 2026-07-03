@@ -10,7 +10,7 @@ import {
 	PrimaryGeneratedColumn
 } from 'typeorm';
 import { TaskExecutionEntity, UserSettingsEntity } from '../entities.js';
-import { type MessageObject, TaskState, TaskStateType, TaskStatus, TaskType } from '../types.js';
+import { TaskState, TaskStateType, TaskStatus, TaskType } from '../types.js';
 
 @Entity({ name: 'tasks' })
 export class TaskEntity extends BaseEntity {
@@ -46,8 +46,8 @@ export class TaskEntity extends BaseEntity {
 	@OneToMany(() => TaskExecutionEntity, (execution) => execution.task)
 	executions: TaskExecutionEntity[];
 
-	@Column('simple-json', { nullable: true })
-	error: MessageObject | null;
+	@Column('text', { nullable: true })
+	error: string | null;
 
 	public static async get(uuid: string) {
 		return TaskEntity.findOne({
@@ -111,7 +111,7 @@ export class TaskEntity extends BaseEntity {
 			return tasks.map((t) => TaskEntity.toFormatted(t));
 		}
 		let state: TaskStateType = TaskState.QUEUED;
-		if (tasks.error || tasks.executions.find((e) => !!e.error)) {
+		if (tasks.error) {
 			state = TaskState.ERROR;
 		} else if (tasks.executed) {
 			state = TaskState.COMPLETED;

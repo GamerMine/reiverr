@@ -42,9 +42,10 @@
 	import { jellyfinGetEpisodes } from '$lib/remote/jellyfin.remote';
 	import type { SonarrSeriesResource } from '@reiverr/connectors/types/sonarr';
 	import { getQueuedTasks } from '$lib/remote/tasks.remote.ts';
-	import { type SeriesAdd } from '../../../tasksWorker/types.ts';
+	import { type SeriesAdd, type SeriesRemove } from '../../../tasksWorker/types.ts';
 	import { TaskType } from '@reiverr/db/types';
 	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
+	import ConfirmDialog from '$lib/components/controls/ConfirmDialog.svelte';
 
 	let {
 		tmdbId,
@@ -66,6 +67,8 @@
 	let jellyfinItem: JellyfinBaseItemDto | undefined = $state();
 	let tasks = $derived(await getQueuedTasks(true));
 	let isBeingAdded = $state(false);
+	let isBeingRemoved = $state(false);
+	let showRemoveConfirmDialog = $state(false);
 
 	const jellyfinEpisodeData: {
 		[key: string]: {
@@ -208,13 +211,15 @@
 		}
 	}
 
-	async function removeSeries() {
-		if (sonarrSeries?.id)
+	function removeSeries(confirm: boolean) {
+		showRemoveConfirmDialog = false;
+		if (confirm && sonarrSeries?.id) {
+			isBeingRemoved = true;
 			sonarrRemoveSeries({
 				sonarrId: sonarrSeries.id,
 				name: tmdbSeries?.name || sonarrSeries.title
 			});
-		await sonarrGetSeries().refresh();
+		}
 	}
 
 	// Focus next episode on load
@@ -247,18 +252,31 @@
 	});
 
 	$effect(() => {
-		const state = tasks.find(
+		const addState = tasks.find(
 			(t) =>
 				t.type === TaskType.SONARR_SERIES_ADD &&
 				(t.data as SeriesAdd).tvdbId === tmdbSeries?.external_ids.tvdb_id
 		);
-		isBeingAdded = !!state;
-		if (isBeingAdded) {
+		const removeState = tasks.find(
+			(t) =>
+				t.type === TaskType.SONARR_SERIES_REMOVE &&
+				(t.data as SeriesRemove).sonarrId === sonarrSeries?.id
+		);
+		isBeingAdded = !!addState;
+		isBeingRemoved = !!removeState;
+		if (!isBeingAdded || !isBeingRemoved) {
 			sonarrGetSeries()
 				.refresh()
 				.then(() => {
 					sonarrSeries = sonarrGetSeries().current?.data?.find(
 						(s) => s.tmdbId === tmdbId
+					);
+				});
+			jellyfinGetEpisodes()
+				.refresh()
+				.then(() => {
+					jellyfinItem = jellyfinGetEpisodes().current?.data?.find(
+						(i) => i.Type === 'Series' && i.ProviderIds?.Tmdb === tmdbId.toString()
 					);
 				});
 		}
@@ -326,7 +344,13 @@
 					<div class="placeholder h-10 w-48 rounded-xl"></div>
 				{:else}
 					<OpenInButton title={tmdbSeries?.name} {jellyfinItem} type="tv" {tmdbId} />
-					{#if !!nextJellyfinEpisode}
+					{#if isBeingRemoved}
+						<Button variant="secondary" disabled>
+							<Clock size="20" /><span class="ml-2"
+								>{$_('library.content.beingRemoved')}</span
+							>
+						</Button>
+					{:else if !!nextJellyfinEpisode}
 						<Button variant="primary" onclick={playNextEpisode}>
 							<span>
 								{$_('library.content.play')}
@@ -337,7 +361,7 @@
 						<Button
 							variant="error"
 							class="px-2!"
-							onclick={async () => await removeSeries()}
+							onclick={() => (showRemoveConfirmDialog = true)}
 						>
 							<Trash size="20" />
 						</Button>
@@ -362,7 +386,7 @@
 						<Button
 							variant="error"
 							class="px-2!"
-							onclick={async () => await removeSeries()}
+							onclick={() => (showRemoveConfirmDialog = true)}
 						>
 							<Trash size="20" />
 						</Button>
@@ -615,4 +639,11 @@
 			{/await}
 		{/snippet}
 	</TitlePageLayout>
+{/if}
+{#if showRemoveConfirmDialog}
+	<ConfirmDialog
+		variant="yesNo"
+		confirmMessage={$_('library.content.removeSeriesConfirmation')}
+		onConfirm={removeSeries}
+	/>
 {/if}

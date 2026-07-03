@@ -15,8 +15,8 @@ export class QualityProfilesEntity extends BaseEntity {
 	customFormat: CustomFormatsEntity;
 
 	@Column('integer', { nullable: true })
-	radarrId: number | undefined;
+	radarrId: number | null;
 
 	@Column('integer', { nullable: true })
-	sonarrId: number | undefined;
+	sonarrId: number | null;
 }

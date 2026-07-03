@@ -8,44 +8,32 @@ import {
 } from '@reiverr/db/entities';
 import Connectors from '@reiverr/connectors';
 import { SonarrMapper } from '@reiverr/connectors/mappers';
-import type { MessageObject } from '@reiverr/db/types';
 import Logger, { LogLevel } from '@reiverr/logging';
 
 const logger = Logger.getLogger('Task:SonarrSeriesAdd');
 
 export class SonarrSeriesAdd implements TaskExecutor {
-	async computeDescription(data: unknown): Promise<MessageObject> {
-		const series = v.parse(SeriesAddSchema, data);
-		return {
-			id: 'service.tasks.sonarrAddSeries.addingSeries',
-			values: { tvdbId: series.tvdbId, language: series.language }
-		};
-	}
-
-	async computeExecutionDescription(data: unknown): Promise<MessageObject> {
-		const series = v.parse(SeriesAddSchema, data);
-		return {
-			id: 'service.tasks.sonarrAddSeries.addingSeries',
-			values: { tvdbId: series.tvdbId, language: series.language }
-		};
-	}
-
-	async queueExecution(data: unknown, queue: TaskQueueCallback): Promise<void | MessageObject> {
+	async queueExecution(data: unknown, queue: TaskQueueCallback): Promise<void | string> {
 		await queue(data);
 	}
 
-	async execute(data: unknown): Promise<void | MessageObject> {
+	async execute(data: unknown): Promise<void | string> {
 		const series = v.parse(SeriesAddSchema, data);
 		const { sonarrConnector } = await Connectors.getInstance();
 
 		const settings = await GlobalSettingsEntity.getDefault();
 		if (!settings.sonarrRootFolderPath) {
-			logger.log(LogLevel.ERROR, 'Sonarr root folder is missing.');
-			return { id: 'general.unknownError' };
+			const err = 'Sonarr root folder is missing.';
+			logger.log(LogLevel.ERROR, err);
+			return err;
 		}
 
 		const defaultFp = await FilteringProfilesEntity.getDefaultProfile(series.userId);
-		if (!defaultFp) return { id: 'settings.misc.noDefaultFilteringProfile' };
+		if (!defaultFp) {
+			const err = 'No default filtering profile found.';
+			logger.log(LogLevel.ERROR, err);
+			return err;
+		}
 
 		const qp = await QualityProfilesEntity.findOne({
 			relations: { customFormat: true, filteringProfile: true },
@@ -55,8 +43,11 @@ export class SonarrSeriesAdd implements TaskExecutor {
 			},
 			select: { id: true, sonarrId: true }
 		});
-		if (!qp || !qp.sonarrId)
-			return { id: 'service.tasks.sonarrAddSeries.noQualityProfileFound' };
+		if (!qp || !qp.sonarrId) {
+			const err = 'No quality profile matching filtering profile and language found.';
+			logger.log(LogLevel.ERROR, err);
+			return err;
+		}
 
 		const res = await sonarrConnector?.postSeries(
 			SonarrMapper.seriesResource(
@@ -66,12 +57,10 @@ export class SonarrSeriesAdd implements TaskExecutor {
 				series.seasons.map((s) => ({ seasonNumber: s.seasonNumber, monitored: s.checked }))
 			)
 		);
-		if (!res || !res.response.ok || !res.data?.id) {
-			logger.log(
-				LogLevel.ERROR,
-				`Cannot add series ${series.tvdbId} on Sonarr: ${res ? JSON.stringify(res.error, null, 2) : 'Unable to connect to Sonarr.'}`
-			);
-			return { id: 'general.unknownError' };
+		if (!res.response.ok || !res.data?.id) {
+			const err = `Cannot add series ${series.tvdbId} on Sonarr: ${JSON.stringify(res.error, null, 2)}`;
+			logger.log(LogLevel.ERROR, err);
+			return err;
 		}
 
 		let created = false;
@@ -84,20 +73,16 @@ export class SonarrSeriesAdd implements TaskExecutor {
 			}
 		}
 		if (!created) {
-			logger.log(
-				LogLevel.ERROR,
-				`Cannot add series ${series.tvdbId} on Sonarr: Series creation time out`
-			);
-			return { id: 'general.unknownError' };
+			const err = `Cannot add series ${series.tvdbId} on Sonarr: Series creation time out`;
+			logger.log(LogLevel.ERROR, err);
+			return err;
 		}
 
 		const sonarrEpisodes = await sonarrConnector?.getEpisode(res.data.id);
 		if (!sonarrEpisodes || !sonarrEpisodes.data) {
-			logger.log(
-				LogLevel.ERROR,
-				`Cannot add series ${series.tvdbId} on Sonarr: ${res ? JSON.stringify(res.error, null, 2) : 'Unable to connect to Sonarr.'}`
-			);
-			return { id: 'general.unknownError' };
+			const err = `Cannot add series ${series.tvdbId} on Sonarr: ${JSON.stringify(res.error, null, 2)}`;
+			logger.log(LogLevel.ERROR, err);
+			return err;
 		}
 		series.seasons = series.seasons.filter((s) => !s.checked);
 		series.seasons.forEach((s) => (s.episodes = s.episodes.filter((e) => e.checked)));
@@ -113,7 +98,8 @@ export class SonarrSeriesAdd implements TaskExecutor {
 					(e) => e.episodeNumber === episode.episodeNumber
 				);
 				if (!sonarrEpisode || !sonarrEpisode.id) {
-					logger.log(LogLevel.WARNING,
+					logger.log(
+						LogLevel.WARNING,
 						`Episode ${episode.episodeNumber} of season ${season.seasonNumber} not found.`
 					);
 					continue;
@@ -125,12 +111,10 @@ export class SonarrSeriesAdd implements TaskExecutor {
 		const res2 = await sonarrConnector?.putEpisodeMonitor(
 			SonarrMapper.episodesMonitoredResource(episodesIdsToMonitor)
 		);
-		if (!res2 || !res2.response.ok) {
-			logger.log(
-				LogLevel.ERROR,
-				`Cannot add series ${series.tvdbId} on Sonarr: ${res2 ? JSON.stringify(res2.error, null, 2) : 'Unable to connect to Sonarr.'}`
-			);
-			return { id: 'general.unknownError' };
+		if (!res2.response.ok) {
+			const err = `Cannot add series ${series.tvdbId} on Sonarr: ${JSON.stringify(res2.error, null, 2)}`;
+			logger.log(LogLevel.ERROR, err);
+			return err;
 		}
 	}
 }

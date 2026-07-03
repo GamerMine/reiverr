@@ -1,5 +1,4 @@
 import * as v from 'valibot';
-import { InferOutput } from 'valibot';
 
 export type DbConfig = {
 	DB_TYPE: 'postgres' | 'aurora-postgres' | 'cockroachdb' | 'mariadb' | 'mysql' | 'aurora-mysql';
@@ -96,12 +95,6 @@ export const defaultUserSettings: UserSettings = {
 	},
 	filteringProfileId: undefined
 };
-
-export const MessageObjectSchema = v.object({
-	id: v.string(),
-	values: v.optional(v.record(v.string(), v.union([v.string(), v.number(), v.date()])))
-});
-export type MessageObject = InferOutput<typeof MessageObjectSchema>;
 
 export enum TaskType {
 	TEST = 'test',

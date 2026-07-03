@@ -7,23 +7,12 @@ import Connectors, { RadarrConnector, SonarrConnector } from '@reiverr/connector
 import type { RadarrLanguageResource } from '@reiverr/connectors/types/radarr';
 import { RadarrMapper, SonarrMapper } from '@reiverr/connectors/mappers';
 import type { SonarrLanguageResource } from '@reiverr/connectors/types/sonarr';
-import type { MessageObject } from '@reiverr/db/types';
 import Logger, { LogLevel } from '@reiverr/logging';
 
 const logger = Logger.getLogger('Task:SyncCustomFormats');
 
 export class SyncCustomFormats implements TaskExecutor {
-	async computeDescription(data: unknown): Promise<MessageObject> {
-		void data;
-		return { id: 'service.tasks.sync.languagesSync' };
-	}
-
-	async computeExecutionDescription(data: unknown): Promise<MessageObject> {
-		const platform = v.parse(PlatformSchema, data);
-		return { id: 'service.tasks.sync.languagesSyncOn', values: { platform } };
-	}
-
-	async queueExecution(data: unknown, queue: TaskQueueCallback): Promise<void | MessageObject> {
+	async queueExecution(data: unknown, queue: TaskQueueCallback): Promise<void | string> {
 		void data;
 		const baseSync = await Connectors.getInstance();
 
@@ -36,7 +25,7 @@ export class SyncCustomFormats implements TaskExecutor {
 		}
 	}
 
-	async execute(data: unknown): Promise<void | MessageObject> {
+	async execute(data: unknown): Promise<void | string> {
 		const platform = v.parse(PlatformSchema, data);
 		const baseSync = await Connectors.getInstance();
 		const formats = await CustomFormatsEntity.getAll();
@@ -46,8 +35,11 @@ export class SyncCustomFormats implements TaskExecutor {
 			baseSync.radarrConnector &&
 			(await baseSync.radarrConnector.isHealthy())
 		) {
-			if (baseSync.radarrLanguages.length === 0)
-				return { id: 'service.messages.noLanguagesRadarr' };
+			if (baseSync.radarrLanguages.length === 0) {
+				const err = 'No languages have been fetched from Radarr.';
+				logger.log(LogLevel.ERROR, err);
+				return err;
+			}
 			return await this.runOnRadarr(
 				baseSync.radarrLanguages,
 				baseSync.radarrConnector,
@@ -59,8 +51,11 @@ export class SyncCustomFormats implements TaskExecutor {
 			baseSync.sonarrConnector &&
 			(await baseSync.sonarrConnector.isHealthy())
 		) {
-			if (baseSync.sonarrLanguages.length === 0)
-				return { id: 'service.messages.noLanguagesRadarr' };
+			if (baseSync.sonarrLanguages.length === 0) {
+				const err = 'No languages have been fetched from Sonarr.';
+				logger.log(LogLevel.ERROR, err);
+				return err;
+			}
 			return await this.runOnSonarr(
 				baseSync.sonarrLanguages,
 				baseSync.sonarrConnector,
@@ -73,37 +68,43 @@ export class SyncCustomFormats implements TaskExecutor {
 		languages: RadarrLanguageResource[],
 		conn: RadarrConnector,
 		formats: CustomFormatsEntity[]
-	): Promise<void | MessageObject> {
+	): Promise<void | string> {
 		const { data: radarrData } = await conn.getCustomFormats();
-		if (!radarrData) return { id: 'service.messages.radarrFetchError' };
+		if (!radarrData) {
+			const err = 'Cannot fetch custom formats from Radarr.';
+			logger.log(LogLevel.ERROR, err);
+			return err;
+		}
 
-		const localIds = formats.map((f) => f.radarrId).filter((id) => id !== undefined);
+		const localIds = formats.map((f) => f.radarrId).filter((id) => id !== null);
 		const radarrIds = radarrData.map((f) => f.id).filter((id) => id !== undefined);
 
 		const toRemove = arrayDifference(radarrIds, localIds);
 		const tmpCreate = arrayDifference(localIds, radarrIds);
 		const toCreate = formats.filter(
-			(f) => f.radarrId === undefined || tmpCreate.includes(f.radarrId)
+			(f) => f.radarrId === null || tmpCreate.includes(f.radarrId)
 		);
 
-		if (!(await conn.deleteCustomFormatBulk(toRemove)).response.ok)
-			return { id: 'service.messages.noLanguagesRadarr' };
+		if (!(await conn.deleteCustomFormatBulk(toRemove)).response.ok) {
+			const err = 'Cannot delete custom formats from Radarr.';
+			logger.log(LogLevel.ERROR, err);
+			return err;
+		}
 
 		for (const format of toCreate) {
 			const langId = languages.find((e) => e.nameLower === format.lang)?.id;
 			if (!langId) {
-				logger.log(LogLevel.ERROR, `Could not find language ${format.lang} on Radarr.`);
-				continue; // FIXME: Continue and reschedule a sync task
+				const err = `Could not find language ${format.lang} on Radarr.`;
+				logger.log(LogLevel.ERROR, err);
+				return err;
 			}
 			const createdFormat = await conn.postCustomFormat(
 				RadarrMapper.customFormatResource(langId, format.lang)
 			);
 			if (!createdFormat.data || !createdFormat.data.id || !createdFormat.response.ok) {
-				logger.log(
-					LogLevel.ERROR,
-					`Could not create CustomFormat on Radarr:\n${createdFormat.error}`
-				);
-				continue; // FIXME: Continue and reschedule a sync task
+				const err = `Could not create CustomFormat on Radarr: ${createdFormat.error}`;
+				logger.log(LogLevel.ERROR, err);
+				return err;
 			}
 			format.radarrId = createdFormat.data.id;
 			await format.save();
@@ -114,37 +115,43 @@ export class SyncCustomFormats implements TaskExecutor {
 		languages: SonarrLanguageResource[],
 		conn: SonarrConnector,
 		formats: CustomFormatsEntity[]
-	): Promise<void | MessageObject> {
+	): Promise<void | string> {
 		const { data: sonarrData } = await conn.getCustomFormats();
-		if (!sonarrData) return { id: 'service.messages.sonarrFetchError' };
+		if (!sonarrData) {
+			const err = 'Cannot fetch custom formats from Sonarr.';
+			logger.log(LogLevel.ERROR, err);
+			return err;
+		}
 
-		const localIds = formats.map((f) => f.sonarrId).filter((id) => id !== undefined);
+		const localIds = formats.map((f) => f.sonarrId).filter((id) => id !== null);
 		const sonarrIds = sonarrData.map((f) => f.id).filter((id) => id !== undefined);
 
 		const toRemove = arrayDifference(sonarrIds, localIds);
 		const tmpCreate = arrayDifference(localIds, sonarrIds);
 		const toCreate = formats.filter(
-			(f) => f.sonarrId === undefined || tmpCreate.includes(f.sonarrId)
+			(f) => f.sonarrId === null || tmpCreate.includes(f.sonarrId)
 		);
 
-		if (!(await conn.deleteCustomFormatBulk(toRemove)).response.ok)
-			return { id: 'service.messages.noLanguagesSonarr' };
+		if (!(await conn.deleteCustomFormatBulk(toRemove)).response.ok) {
+			const err = 'Cannot delete custom formats from Sonarr.';
+			logger.log(LogLevel.ERROR, err);
+			return err;
+		}
 
 		for (const format of toCreate) {
 			const langId = languages.find((e) => e.nameLower === format.lang)?.id;
 			if (!langId) {
-				logger.log(LogLevel.ERROR, `Could not find language ${format.lang} on Sonarr.`);
-				continue; // FIXME: Continue and reschedule a sync task
+				const err = `Could not find language ${format.lang} on Sonarr.`;
+				logger.log(LogLevel.ERROR, err);
+				return err;
 			}
 			const createdFormat = await conn.postCustomFormat(
 				SonarrMapper.customFormatResource(langId, format.lang)
 			);
 			if (!createdFormat.data || !createdFormat.data.id || !createdFormat.response.ok) {
-				logger.log(
-					LogLevel.ERROR,
-					`Could not create CustomFormat on Sonarr:\n${createdFormat.error}`
-				);
-				continue; // FIXME: Continue and reschedule a sync task
+				const err = `Could not create CustomFormat on Sonarr:\n${createdFormat.error}`;
+				logger.log(LogLevel.ERROR, err);
+				return err;
 			}
 			format.sonarrId = createdFormat.data.id;
 			await format.save();

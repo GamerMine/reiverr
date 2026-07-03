@@ -15,7 +15,7 @@
 </script>
 
 <div class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50" transition:blur>
-	<div class="bg-zinc-800/50 rounded-lg p-6 shadow-lg max-w-sm w-full">
+	<div class="bg-zinc-800/80 rounded-lg p-6 shadow-lg max-w-sm w-full">
 		<p class="text-white mb-4">{confirmMessage}</p>
 		{#if variant === 'confirm'}
 			<div class="flex justify-end gap-4">

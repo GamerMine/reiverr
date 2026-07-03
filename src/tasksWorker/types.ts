@@ -22,6 +22,7 @@ export const MovieRemoveSchema = v.object({
 	radarrId: v.number(),
 	name: v.string()
 });
+export type MovieRemove = InferOutput<typeof MovieRemoveSchema>;
 
 export const SeriesAddSchema = v.object({
 	tvdbId: v.number(),
@@ -41,9 +42,10 @@ export const SeriesAddSchema = v.object({
 	),
 	userId: v.string()
 });
+export type SeriesAdd = InferOutput<typeof SeriesAddSchema>;
 
 export const SeriesRemoveSchema = v.object({
 	sonarrId: v.number(),
 	name: v.string()
 });
-export type SeriesAdd = InferOutput<typeof SeriesAddSchema>;
+export type SeriesRemove = InferOutput<typeof SeriesRemoveSchema>;

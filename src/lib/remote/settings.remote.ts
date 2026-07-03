@@ -2,7 +2,7 @@ import { command, form, getRequestEvent } from '$app/server';
 import * as v from 'valibot';
 import { assertUserAuth } from '$lib/server/utils.server';
 import { QUALITY_DEFS } from '$lib/utils/constants.ts';
-import { In, Not } from 'typeorm';
+import { In, IsNull, Not } from 'typeorm';
 import { scheduleTask } from '../../tasksWorker/scheduler.server';
 import {
 	CustomFormatsEntity,
@@ -13,7 +13,11 @@ import {
 } from '@reiverr/db/entities';
 import { type FilteringProfile, FilteringProfileSchema, TaskType } from '@reiverr/db/types';
 import { OptionalStringSchema, type Result } from '$lib/utils/types.ts';
-import { JellyfinConnector, RadarrConnector, SonarrConnector } from '@reiverr/connectors';
+import Connectors, {
+	JellyfinConnector,
+	RadarrConnector,
+	SonarrConnector
+} from '@reiverr/connectors';
 import { PlatformSchema } from '../../tasksWorker/types.ts';
 
 export const saveSettings = form(
@@ -60,6 +64,7 @@ export const saveSettings = form(
 		);
 
 		let needLogin = false;
+		let changed = false;
 		if (isAdmin) {
 			const globalSettings = await GlobalSettingsEntity.getDefault();
 			if (
@@ -95,6 +100,7 @@ export const saveSettings = form(
 				if (radarrHealthy) {
 					globalSettings.radarrBaseUrl = settings.adminRadarrBaseUrl;
 					globalSettings.radarrApiKey = settings.adminRadarrApiKey;
+					changed = true;
 				} else {
 					return { success: false, error: 'settings.misc.checkRadarrCredentials' };
 				}
@@ -128,6 +134,7 @@ export const saveSettings = form(
 				if (sonarrHealthy) {
 					globalSettings.sonarrBaseUrl = settings.adminSonarrBaseUrl;
 					globalSettings.sonarrApiKey = settings.adminSonarrApiKey;
+					changed = true;
 				} else {
 					return { success: false, error: 'settings.misc.checkSonarrCredentials' };
 				}
@@ -150,6 +157,7 @@ export const saveSettings = form(
 			globalSettings.userCanChooseProfile = settings.adminUserCanChooseProfile;
 
 			await globalSettings.save();
+			await Connectors.getInstance(true);
 
 			// Set other admin settings
 			if (!settings.adminDownloadLanguages) settings.adminDownloadLanguages = [];
@@ -176,7 +184,7 @@ export const saveSettings = form(
 						lang: Not(In(settings.adminDownloadLanguages))
 					})
 				).affected ?? 1) > 0 || customFormatModified;
-			if (customFormatModified)
+			if (customFormatModified || changed)
 				await scheduleTask(userId, TaskType.SYNC_CUSTOM_FORMATS, undefined);
 
 			const [filteringProfiles, formats] = await Promise.all([
@@ -202,7 +210,7 @@ export const saveSettings = form(
 					})
 				).identifiers.length > 0 || qualityProfileModified;
 
-			if (qualityProfileModified)
+			if (qualityProfileModified || changed)
 				await scheduleTask(userId, TaskType.SYNC_QUALITY_PROFILES, []);
 		}
 
@@ -295,14 +303,19 @@ export const deleteIntegration = command(PlatformSchema, async (platform) => {
 			globalSettings.radarrBaseUrl = null;
 			globalSettings.radarrApiKey = null;
 			globalSettings.radarrRootFolderPath = null;
+			await CustomFormatsEntity.update({ radarrId: Not(IsNull()) }, { radarrId: null });
+			await QualityProfilesEntity.update({ radarrId: Not(IsNull()) }, { radarrId: null });
 			break;
 		case 'sonarr':
 			globalSettings.sonarrBaseUrl = null;
 			globalSettings.sonarrApiKey = null;
 			globalSettings.sonarrRootFolderPath = null;
+			await CustomFormatsEntity.update({ sonarrId: Not(IsNull()) }, { sonarrId: null });
+			await QualityProfilesEntity.update({ sonarrId: Not(IsNull()) }, { sonarrId: null });
 			break;
 	}
 
 	await globalSettings.save();
+	await Connectors.getInstance(true);
 	return { success: true };
 });
