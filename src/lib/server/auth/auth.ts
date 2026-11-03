@@ -23,20 +23,6 @@ export function cookiesParam(age?: number) {
 	};
 }
 
-export async function assertUserAuth(
-	user: { userId: string },
-	url: URL | null,
-	isRemoteRequest: boolean
-) {
-	if (isProtected(url) && user.userId === '') {
-		if (isRemoteRequest) {
-			return { success: false, error: 'general.connectionRequired' };
-		} else {
-			redirect(302, '/auth/login');
-		}
-	}
-}
-
 export async function getUser(cookies: Cookies): Promise<{
 	userId: string;
 	username: string;

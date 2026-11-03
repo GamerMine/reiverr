@@ -3,6 +3,10 @@ import { DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE } from
 import TypeOrm from '@reiverr/db';
 import type { Handle, ServerInit } from '@sveltejs/kit/hooks';
 import { assertUserAuth, getUser } from '#lib/server/auth/auth.ts';
+import { GlobalSettingsEntity } from '@reiverr/db/dist/entities/GlobalSettings.ts';
+import { redirect } from '@sveltejs/kit';
+import { isProtected } from '#lib/utils/utils.ts';
+import { UserSettingsEntity } from '@reiverr/db/dist/entities/UserSettings.ts';
 
 const databaseTypes = [
 	'postgres',
@@ -31,10 +35,25 @@ export const init: ServerInit = async () => {
 };
 
 export const handle: Handle = async ({ event, resolve }) => {
-	const user = await getUser(event.cookies);
-	event.locals.user = user;
+	const globalSettings = await GlobalSettingsEntity.getClient();
 
-	await assertUserAuth(user, event.url, event.isRemoteRequest);
+	if (globalSettings.jellyfin.baseUrl) {
+		const user = await getUser(event.cookies);
+		event.locals.user = user;
+
+		if (user.userId === '' && isProtected(event.url)) {
+			if (event.isRemoteRequest) {
+				return { success: false, error: 'general.connectionRequired' };
+			} else {
+				redirect(302, '/auth/login');
+			}
+		}
+
+		const userSettings = await UserSettingsEntity.getUserSettings(user.userId);
+		event.locals.settings = { globalSettings, userSettings };
+	} else if (event.url && !event.url.pathname.match(/^\/setup.*/) && event.isRemoteRequest) {
+		return redirect(302, '/setup');
+	}
 
 	return await resolve(event);
 };
