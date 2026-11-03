@@ -3,12 +3,8 @@ import { GlobalSettingsEntity } from '@reiverr/db/entities';
 import type { PageServerLoad } from './$types';
 import { JellyfinConnector } from '@reiverr/connectors';
 
-export const load: PageServerLoad = async ({ url }) => {
-	const jellyfinAPIKey = await GlobalSettingsEntity.find();
-
-	if (url.pathname === '/setup' && jellyfinAPIKey.length > 0) {
-		throw redirect(301, '/login');
-	}
+export const load: PageServerLoad = async ({ locals: { settings } }) => {
+	if (settings) throw redirect(301, '/auth/login');
 };
 
 export const actions = {

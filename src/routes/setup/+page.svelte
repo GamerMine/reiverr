@@ -69,7 +69,7 @@
 				needValidation = false;
 				errorMessage = undefined;
 				nextButtonText = $_('settings.misc.finish');
-				nextButtonAction = () => goto('/login');
+				nextButtonAction = () => goto('/auth/login');
 				break;
 			}
 			default: {
@@ -150,26 +150,26 @@
 	});
 </script>
 
-<div bind:this={mainDiv} class="relative overflow-hidden h-screen">
-	<div class="flex z-10 gap-2 rounded-xs items-center justify-center pt-20">
-		<div class="rounded-full bg-amber-300 h-11 w-11"></div>
-		<h1 class="font-display uppercase font-semibold tracking-wider text-5xl">Reiverr</h1>
+<div bind:this={mainDiv} class="relative h-screen overflow-hidden">
+	<div class="z-10 flex items-center justify-center gap-2 rounded-xs pt-20">
+		<div class="h-11 w-11 rounded-full bg-amber-300"></div>
+		<h1 class="font-display text-5xl font-semibold tracking-wider uppercase">Reiverr</h1>
 	</div>
 	<h1
-		class="flex z-10 font-display font-semibold text-4xl items-center justify-center pt-10 w-screen"
+		class="font-display z-10 flex w-screen items-center justify-center pt-10 text-4xl font-semibold"
 	>
 		{$_('setup.welcome')}
 	</h1>
 	<div
-		class="absolute z-10 items-center top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 bg-zinc-900/60 p-6 rounded-xl"
+		class="absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 items-center rounded-xl bg-zinc-900/60 p-6"
 	>
 		<div
 			class="transition duration-300 ease-in-out {isTransitioning
-				? 'opacity-0 invisible'
-				: 'opacity-100 visible'}"
+				? 'invisible opacity-0'
+				: 'visible opacity-100'}"
 		>
-			<h1 class="flex justify-center text-3xl pb-5">{pageTitle}</h1>
-			<p class="text-justify pb-5">
+			<h1 class="flex justify-center pb-5 text-3xl">{pageTitle}</h1>
+			<p class="pb-5 text-justify">
 				{pageDesc}
 			</p>
 			<p class="text-justify">
@@ -181,8 +181,8 @@
 			id="jellyfinForm"
 			class="flex justify-center pt-8 transition duration-300 ease-in-out {isTransitioning ||
 			!enableJellyfinConfigForm
-				? 'opacity-0 invisible'
-				: 'delay-100 opacity-100 visible'}"
+				? 'invisible opacity-0'
+				: 'visible opacity-100 delay-100'}"
 			method="POST"
 			use:enhance={() => {
 				isInputDisabled = true;

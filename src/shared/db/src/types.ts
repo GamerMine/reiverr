@@ -78,7 +78,7 @@ export const defaultGlobalSettings: GlobalSettings = {
 	},
 	jellyfin: {
 		apiKey: undefined,
-		baseUrl: ''
+		baseUrl: undefined
 	}
 };
 
