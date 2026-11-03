@@ -35,10 +35,10 @@ export class GlobalSettingsEntity extends BaseEntity {
 	radarrRootFolderPath: string | null;
 
 	// Jellyfin
-	@Column('text', { default: defaultGlobalSettings.jellyfin.baseUrl })
+	@Column('text', { nullable: true, default: defaultGlobalSettings.jellyfin.baseUrl })
 	jellyfinBaseUrl: string;
 
-	@Column('text', { default: defaultGlobalSettings.jellyfin.apiKey })
+	@Column('text', { nullable: true, default: defaultGlobalSettings.jellyfin.apiKey })
 	jellyfinApiKey: string;
 
 	public static async getDefault(name = 'default') {
