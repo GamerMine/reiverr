@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Button from '$lib/components/controls/Button.svelte';
+	import Button from '#lib/components/controls/Button.svelte';
 	import { blur } from 'svelte/transition';
 	import { _ } from 'svelte-i18n';
 

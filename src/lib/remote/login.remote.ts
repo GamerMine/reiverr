@@ -1,9 +1,16 @@
-import { form, getRequestEvent } from '$app/server';
+import { form, command, getRequestEvent } from '$app/server';
 import * as v from 'valibot';
 import Connectors from '@reiverr/connectors';
-import { getBrowserName } from '$lib/utils/browser-detection.ts';
-import { version } from '$app/environment';
+import { getBrowserName } from '#lib/utils/browser-detection.ts';
+import { version } from '$app/env';
 import Logger, { LogLevel } from '@reiverr/logging';
+import {
+	ACCESS_TOKEN_COOKIE,
+	ACCESS_TYPE_COOKIE,
+	AccessType,
+	cookiesParam,
+	logoutUser
+} from '#lib/server/auth/auth.ts';
 
 const logger = Logger.getLogger('Authentication');
 
@@ -13,7 +20,7 @@ export const login = form(
 		_password: v.pipe(v.string(), v.nonEmpty())
 	}),
 	async (creds) => {
-		const { cookies, request } = getRequestEvent();
+		const { cookies } = getRequestEvent();
 		const conn = (await Connectors.getInstance()).jellyfinConnector;
 		const authResult = await conn.postUsersAuthenticateByName(
 			creds.username,
@@ -40,17 +47,14 @@ export const login = form(
 			return { success: false };
 		}
 
-		const proto =
-			request.headers.get('x-forwarded-proto') === 'https' || request.url.startsWith('https');
-
-		cookies.set('access_token', authResult.data.AccessToken, {
-			secure: proto,
-			httpOnly: true,
-			sameSite: 'strict',
-			path: '/',
-			maxAge: 60 * 60 * 24 * 30
-		});
+		cookies.set(ACCESS_TYPE_COOKIE, AccessType.JELLYFIN, cookiesParam());
+		cookies.set(ACCESS_TOKEN_COOKIE, authResult.data.AccessToken, cookiesParam());
 
 		return { success: true, data: authResult.data.User };
 	}
 );
+
+export const logout = command(async () => {
+	const { cookies } = getRequestEvent();
+	logoutUser(cookies);
+});

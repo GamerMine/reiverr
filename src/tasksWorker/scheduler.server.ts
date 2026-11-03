@@ -3,6 +3,7 @@ import { isMainThread, Worker } from 'node:worker_threads';
 import { TaskType } from '@reiverr/db/types';
 import { tasksWorkerFilename } from './worker.ts';
 import Logger, { LogLevel } from '@reiverr/logging';
+import vars from '../env.ts';
 
 let workerInstance: Worker;
 const logger = Logger.getLogger('Scheduler');
@@ -70,7 +71,8 @@ export async function cancelTask(uuid: string) {
 }
 
 if (isMainThread) {
-	import('$env/dynamic/private').then(({ env }) => {
+	// @ts-ignore
+	import('$app/env/private').then((env) => {
 		workerInstance = new Worker(new URL(tasksWorkerFilename), {
 			workerData: {
 				DB_TYPE: env.DB_TYPE,

@@ -1,14 +1,14 @@
 <script lang="ts">
-	import Input from '$lib/components/controls/Input.svelte';
-	import Select from '$lib/components/controls/Select.svelte';
-	import Toggle from '$lib/components/controls/Toggle.svelte';
-	import { ISO_LANGUAGES } from '$lib/utils/iso-languages';
-	import { ISO_REGIONS } from '$lib/utils/iso-regions';
+	import Input from '#lib/components/controls/Input.svelte';
+	import Select from '#lib/components/controls/Select.svelte';
+	import Toggle from '#lib/components/controls/Toggle.svelte';
+	import { ISO_LANGUAGES } from '#lib/utils/iso-languages.js';
+	import { ISO_REGIONS } from '#lib/utils/iso-regions.js';
 	import { _, dictionary } from 'svelte-i18n';
 	import classNames from 'classnames';
 	import type { UserSettings } from '@reiverr/db';
-	import Option from '$lib/components/controls/Option.svelte';
-	import { saveSettings } from '$lib/remote/settings.remote';
+	import Option from '#lib/components/controls/Option.svelte';
+	import { saveSettings } from '#lib/remote/settings.remote.js';
 
 	let { visible, userSettings = $bindable() }: { visible: boolean; userSettings: UserSettings } =
 		$props();

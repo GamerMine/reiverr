@@ -1,19 +1,19 @@
 <script lang="ts">
-	import RadarrStats from './components/RadarrStats.svelte';
-	import SonarrStats from './components/SonarrStats.svelte';
+	import RadarrStats from '#lib/components/sources/RadarrStats.svelte';
+	import SonarrStats from '#lib/components/sources/SonarrStats.svelte';
 	import { fade } from 'svelte/transition';
-	import { settings } from '$lib/stores/settings.svelte';
+	import { settings } from '#lib/stores/settings.svelte.js';
 </script>
 
 <div
-	class="pt-24 px-8 min-h-screen flex justify-center"
+	class="flex min-h-screen justify-center px-8 pt-24"
 	in:fade|global={{
 		duration: settings.userSettings.interface.animationDuration,
 		delay: settings.userSettings.interface.animationDuration
 	}}
 	out:fade|global={{ duration: settings.userSettings.interface.animationDuration }}
 >
-	<div class="flex flex-col gap-4 max-w-3xl flex-1">
+	<div class="flex max-w-3xl flex-1 flex-col gap-4">
 		<RadarrStats large />
 		<SonarrStats large />
 		<!-- <div

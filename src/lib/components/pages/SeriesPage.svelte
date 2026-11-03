@@ -5,47 +5,51 @@
 		getTmdbSeriesSeasons,
 		getTmdbSeriesSimilar,
 		type TmdbSeriesFull2
-	} from '$lib/apis/tmdb/tmdbApi';
-	import Button from '$lib/components/controls/Button.svelte';
-	import Card from '$lib/components/cards/Card.svelte';
-	import { fetchCardTmdbProps } from '$lib/components/cards/card';
-	import Carousel from '$lib/components/carousel/Carousel.svelte';
-	import CarouselPlaceholderItems from '$lib/components/carousel/CarouselPlaceholderItems.svelte';
-	import UiCarousel from '$lib/components/carousel/UICarousel.svelte';
-	import EpisodeCard from '$lib/components/cards/EpisodeCard.svelte';
-	import PersonCard from '$lib/components/cards/PersonCard.svelte';
-	import OpenInButton from '$lib/components/TitlePageLayout/OpenInButton.svelte';
-	import TitlePageLayout from '$lib/components/TitlePageLayout/TitlePageLayout.svelte';
-	import { playerState } from '$lib/components/player/VideoPlayer';
-	import { TMDB_BACKDROP_SMALL, TMDB_BASE_TV_URL } from '$lib/utils/constants';
-	import { capitalize, formatSize } from '$lib/utils/utils';
+	} from '#lib/apis/tmdb/tmdbApi.js';
+	import Button from '#lib/components/controls/Button.svelte';
+	import Card from '#lib/components/cards/Card.svelte';
+	import { fetchCardTmdbProps } from '#lib/components/cards/card.js';
+	import Carousel from '#lib/components/carousel/Carousel.svelte';
+	import CarouselPlaceholderItems from '#lib/components/carousel/CarouselPlaceholderItems.svelte';
+	import UiCarousel from '#lib/components/carousel/UICarousel.svelte';
+	import EpisodeCard from '#lib/components/cards/EpisodeCard.svelte';
+	import PersonCard from '#lib/components/cards/PersonCard.svelte';
+	import OpenInButton from '#lib/components/TitlePageLayout/OpenInButton.svelte';
+	import TitlePageLayout from '#lib/components/layout/TitlePageLayout.svelte';
+	import { playerState } from '#lib/components/player/VideoPlayer.js';
+	import { TMDB_BACKDROP_SMALL, TMDB_BASE_TV_URL } from '#lib/utils/constants.js';
+	import { capitalize, formatSize } from '#lib/utils/utils.js';
 	import classNames from 'classnames';
 	import { ActivityLog, ChevronLeft, ChevronRight, Clock, DotFilled, Trash } from 'svelte-radix';
 	import { _ } from 'svelte-i18n';
-	import { tmdbDataFormat } from '$lib/utils/utils.js';
-	import { settings } from '$lib/stores/settings.svelte';
-	import Select from '$lib/components/controls/Select.svelte';
-	import Option from '$lib/components/controls/Option.svelte';
-	import { modalStack } from '$lib/stores/modal.store';
-	import SeasonsChooserModal from '$lib/components/modals/SeasonsChooserModal.svelte';
+	import { tmdbDataFormat } from '#lib/utils/utils.js';
+	import { settings } from '#lib/stores/settings.svelte.js';
+	import Select from '#lib/components/controls/Select.svelte';
+	import Option from '#lib/components/controls/Option.svelte';
+	import { modalStack } from '#lib/stores/modal.store.js';
+	import SeasonsChooserModal from '#lib/components/modals/SeasonsChooserModal.svelte';
 	import { onMount } from 'svelte';
 	import {
 		sonarrAddSeries,
 		sonarrGetSeries,
 		sonarrRemoveSeries
-	} from '$lib/remote/sonarr.remote';
-	import type { EpisodeDataWithCheck, SeasonData, SeasonDataWithCheck } from '$lib/utils/types';
+	} from '#lib/remote/sonarr.remote.js';
+	import type {
+		EpisodeDataWithCheck,
+		SeasonData,
+		SeasonDataWithCheck
+	} from '#lib/utils/types.js';
 	import {
 		createErrorNotification,
 		createSuccessNotification
-	} from '$lib/stores/notification.store';
-	import { jellyfinGetEpisodes } from '$lib/remote/jellyfin.remote';
-	import type { SonarrSeriesResource } from '@reiverr/connectors/types/sonarr';
-	import { getQueuedTasks } from '$lib/remote/tasks.remote.ts';
+	} from '#lib/stores/notification.store.js';
+	import { jellyfinGetEpisodes } from '#lib/remote/jellyfin.remote.js';
+	import type { SonarrSeriesResource } from '@reiverr/connectors/types/radarr';
+	import { getQueuedTasks } from '#lib/remote/tasks.remote.ts';
 	import { type SeriesAdd, type SeriesRemove } from '../../../tasksWorker/types.ts';
 	import { TaskType } from '@reiverr/db/types';
-	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
-	import ConfirmDialog from '$lib/components/controls/ConfirmDialog.svelte';
+	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/radarr';
+	import ConfirmDialog from '#lib/components/controls/ConfirmDialog.svelte';
 
 	let {
 		tmdbId,
@@ -338,7 +342,7 @@
 
 		{#snippet title_right()}
 			<div
-				class="flex gap-2 items-center flex-row-reverse justify-end lg:flex-row lg:justify-start"
+				class="flex flex-row-reverse items-center justify-end gap-2 lg:flex-row lg:justify-start"
 			>
 				{#if jellyfinGetEpisodes().loading || sonarrGetSeries().loading}
 					<div class="placeholder h-10 w-48 rounded-xl"></div>
@@ -417,13 +421,13 @@
 							{@const isSelected = season?.season_number === visibleSeasonNumber}
 							<button
 								class={classNames(
-									'font-medium tracking-wide transition-colors shrink-0 flex items-center gap-1',
+									'flex shrink-0 items-center gap-1 font-medium tracking-wide transition-colors',
 									{
 										'text-zinc-200': isSelected && seasonSelectVisible,
-										'text-zinc-500 hover:text-zinc-200 cursor-pointer':
+										'cursor-pointer text-zinc-500 hover:text-zinc-200':
 											(!isSelected || seasonSelectVisible === false) &&
 											tmdbSeries?.number_of_seasons !== 1,
-										'text-zinc-500 cursor-default':
+										'cursor-default text-zinc-500':
 											tmdbSeries?.number_of_seasons === 1,
 										hidden:
 											!seasonSelectVisible &&
@@ -489,12 +493,12 @@
 
 		{#snippet info_components()}
 			<div class="col-span-2 lg:col-span-1">
-				<p class="text-zinc-400 text-sm">{$_('library.content.directedBy')}</p>
+				<p class="text-sm text-zinc-400">{$_('library.content.directedBy')}</p>
 				<h2 class="font-medium">{tmdbSeries?.created_by?.map((c) => c.name).join(', ')}</h2>
 			</div>
 			{#if tmdbSeries?.first_air_date}
 				<div class="col-span-2 lg:col-span-1">
-					<p class="text-zinc-400 text-sm">{$_('library.content.firstAirDate')}</p>
+					<p class="text-sm text-zinc-400">{$_('library.content.firstAirDate')}</p>
 					<h2 class="font-medium">
 						{new Date(tmdbSeries?.first_air_date).toLocaleDateString(
 							settings.userSettings.interface.language,
@@ -509,14 +513,14 @@
 			{/if}
 			{#if ['Returning Series', 'In Production', 'Planned'].includes(tmdbSeries?.status ?? '')}
 				<div class="col-span-2 lg:col-span-1">
-					<p class="text-zinc-400 text-sm">{$_('library.content.nextAirDate')}</p>
+					<p class="text-sm text-zinc-400">{$_('library.content.nextAirDate')}</p>
 					<h2 class="font-medium">
 						{tmdbSeries?.status}
 					</h2>
 				</div>
 			{:else if tmdbSeries?.last_air_date}
 				<div class="col-span-2 lg:col-span-1">
-					<p class="text-zinc-400 text-sm">{$_('library.content.lastAirDate')}</p>
+					<p class="text-sm text-zinc-400">{$_('library.content.lastAirDate')}</p>
 					<h2 class="font-medium">
 						{new Date(tmdbSeries.last_air_date).toLocaleDateString(
 							settings.userSettings.interface.language,
@@ -530,15 +534,15 @@
 				</div>
 			{/if}
 			<div class="col-span-2 lg:col-span-1">
-				<p class="text-zinc-400 text-sm">{$_('library.content.networks')}</p>
+				<p class="text-sm text-zinc-400">{$_('library.content.networks')}</p>
 				<h2 class="font-medium">{tmdbSeries?.networks?.map((n) => n.name).join(', ')}</h2>
 			</div>
 			<div class="col-span-2 lg:col-span-1">
-				<p class="text-zinc-400 text-sm">{$_('library.content.episodeRunTime')}</p>
+				<p class="text-sm text-zinc-400">{$_('library.content.episodeRunTime')}</p>
 				<h2 class="font-medium">{tmdbSeries?.episode_run_time} Minutes</h2>
 			</div>
 			<div class="col-span-2 lg:col-span-1">
-				<p class="text-zinc-400 text-sm">{$_('library.content.spokenLanguages')}</p>
+				<p class="text-sm text-zinc-400">{$_('library.content.spokenLanguages')}</p>
 				<h2 class="font-medium">
 					{tmdbSeries?.spoken_languages
 						?.map((l) => capitalize(l.english_name || ''))
@@ -551,7 +555,7 @@
 			{#if sonarrSeries}
 				{#if sonarrSeries?.statistics?.episodeFileCount}
 					<div class="col-span-2 lg:col-span-1">
-						<p class="text-zinc-400 text-sm">{$_('library.content.available')}</p>
+						<p class="text-sm text-zinc-400">{$_('library.content.available')}</p>
 						<h2 class="font-medium">
 							{sonarrSeries?.statistics?.episodeFileCount || 0} Episodes
 						</h2>
@@ -559,14 +563,14 @@
 				{/if}
 				{#if sonarrSeries?.statistics?.sizeOnDisk}
 					<div class="col-span-2 lg:col-span-1">
-						<p class="text-zinc-400 text-sm">{$_('library.content.sizeDisk')}</p>
+						<p class="text-sm text-zinc-400">{$_('library.content.sizeDisk')}</p>
 						<h2 class="font-medium">
 							{formatSize(sonarrSeries?.statistics?.sizeOnDisk || 0)}
 						</h2>
 					</div>
 				{/if}
 			{:else if sonarrGetSeries().loading}
-				<div class="flex gap-4 flex-wrap col-span-4 sm:col-span-6 mt-4">
+				<div class="col-span-4 mt-4 flex flex-wrap gap-4 sm:col-span-6">
 					<div class="placeholder h-10 w-40 rounded-xl"></div>
 					<div class="placeholder h-10 w-40 rounded-xl"></div>
 				</div>
@@ -577,14 +581,14 @@
 			{#await preloadRecommendationData()}
 				<Carousel gradientFromColor="from-stone-950">
 					{#snippet title()}
-						<div class="font-medium text-lg">{$_('library.content.castAndCrew')}</div>
+						<div class="text-lg font-medium">{$_('library.content.castAndCrew')}</div>
 					{/snippet}
 					<CarouselPlaceholderItems />
 				</Carousel>
 
 				<Carousel gradientFromColor="from-stone-950">
 					{#snippet title()}
-						<div class="font-medium text-lg">
+						<div class="text-lg font-medium">
 							{$_('library.content.recommendations')}
 						</div>
 					{/snippet}
@@ -593,7 +597,7 @@
 
 				<Carousel gradientFromColor="from-stone-950">
 					{#snippet title()}
-						<div class="font-medium text-lg">{$_('library.content.similarSeries')}</div>
+						<div class="text-lg font-medium">{$_('library.content.similarSeries')}</div>
 					{/snippet}
 					<CarouselPlaceholderItems />
 				</Carousel>
@@ -601,7 +605,7 @@
 				{#if castProps?.length}
 					<Carousel gradientFromColor="from-stone-950">
 						{#snippet title()}
-							<div class="font-medium text-lg">
+							<div class="text-lg font-medium">
 								{$_('library.content.castAndCrew')}
 							</div>
 						{/snippet}
@@ -614,7 +618,7 @@
 				{#if tmdbRecommendationProps?.length}
 					<Carousel gradientFromColor="from-stone-950">
 						{#snippet title()}
-							<div class="font-medium text-lg">
+							<div class="text-lg font-medium">
 								{$_('library.content.recommendations')}
 							</div>
 						{/snippet}
@@ -627,7 +631,7 @@
 				{#if tmdbSimilarProps?.length}
 					<Carousel gradientFromColor="from-stone-950">
 						{#snippet title()}
-							<div class="font-medium text-lg">
+							<div class="text-lg font-medium">
 								{$_('library.content.similarSeries')}
 							</div>
 						{/snippet}

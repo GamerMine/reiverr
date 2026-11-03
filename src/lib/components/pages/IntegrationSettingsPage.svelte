@@ -1,21 +1,21 @@
 <script lang="ts">
-	import Input from '$lib/components/controls/Input.svelte';
-	import Select from '$lib/components/controls/Select.svelte';
+	import Input from '#lib/components/controls/Input.svelte';
+	import Select from '#lib/components/controls/Select.svelte';
 	import classNames from 'classnames';
 	import { Trash } from 'svelte-radix';
-	import IntegrationCard from './IntegrationCard.svelte';
-	import TestConnectionButton from './TestConnectionButton.svelte';
+	import IntegrationCard from '#lib/components/settings/IntegrationCard.svelte';
+	import TestConnectionButton from '#lib/components/settings/TestConnectionButton.svelte';
 	import { _ } from 'svelte-i18n';
 	import { defaultGlobalSettings, type GlobalSettings } from '@reiverr/db/types';
-	import Button from '$lib/components/controls/Button.svelte';
+	import Button from '#lib/components/controls/Button.svelte';
 	import { onMount } from 'svelte';
-	import ConfirmDialog from '$lib/components/controls/ConfirmDialog.svelte';
-	import Option from '$lib/components/controls/Option.svelte';
-	import { deleteIntegration, saveSettings } from '$lib/remote/settings.remote';
-	import { createErrorNotification } from '$lib/stores/notification.store';
-	import { radarrGetRootFolders, radarrIsHealthy } from '$lib/remote/radarr.remote';
-	import { sonarrGetRootFolders, sonarrIsHealthy } from '$lib/remote/sonarr.remote';
-	import { jellyfinIsHealthy } from '$lib/remote/jellyfin.remote.js';
+	import ConfirmDialog from '#lib/components/controls/ConfirmDialog.svelte';
+	import Option from '#lib/components/controls/Option.svelte';
+	import { deleteIntegration, saveSettings } from '#lib/remote/settings.remote.js';
+	import { createErrorNotification } from '#lib/stores/notification.store.js';
+	import { radarrGetRootFolders, radarrIsHealthy } from '#lib/remote/radarr.remote.js';
+	import { sonarrGetRootFolders, sonarrIsHealthy } from '#lib/remote/sonarr.remote.js';
+	import { jellyfinIsHealthy } from '#lib/remote/jellyfin.remote.js';
 	import type { Platform } from '../../../tasksWorker/types.ts';
 
 	let {
@@ -168,14 +168,14 @@
 	})}
 >
 	<div
-		class="border-b border-zinc-800 pb-4 mt-8 col-span-2 justify-self-stretch flex flex-col gap-2"
+		class="col-span-2 mt-8 flex flex-col gap-2 justify-self-stretch border-b border-zinc-800 pb-4"
 	>
-		<h1 class="font-medium text-2xl text-zinc-200 tracking-wide">
+		<h1 class="text-2xl font-medium tracking-wide text-zinc-200">
 			{$_('settings.integrations.integrations')}
 		</h1>
 	</div>
 
-	<div class="justify-self-stretch col-span-2">
+	<div class="col-span-2 justify-self-stretch">
 		<IntegrationCard status={sonarrConnected ? 'connected' : 'disconnected'} title="Sonarr">
 			<div class="flex flex-col gap-1">
 				<h2 class="text-sm text-zinc-500">
@@ -216,7 +216,7 @@
 				class={classNames(
 					'grid grid-cols-[1fr_min-content] justify-items-start gap-4 text-zinc-400',
 					{
-						'opacity-50 pointer-events-none': !sonarrConnected
+						'pointer-events-none opacity-50': !sonarrConnected
 					}
 				)}
 			>
@@ -240,7 +240,7 @@
 		</IntegrationCard>
 	</div>
 
-	<div class="justify-self-stretch col-span-2">
+	<div class="col-span-2 justify-self-stretch">
 		<IntegrationCard status={radarrConnected ? 'connected' : 'disconnected'} title="Radarr">
 			<div class="flex flex-col gap-1">
 				<h2 class="text-sm text-zinc-500">
@@ -281,7 +281,7 @@
 				class={classNames(
 					'grid grid-cols-[1fr_min-content] justify-items-start gap-4 text-zinc-400',
 					{
-						'opacity-50 pointer-events-none': !radarrConnected
+						'pointer-events-none opacity-50': !radarrConnected
 					}
 				)}
 			>
@@ -305,7 +305,7 @@
 		</IntegrationCard>
 	</div>
 
-	<div class="justify-self-stretch col-span-2">
+	<div class="col-span-2 justify-self-stretch">
 		<IntegrationCard status={jellyfinConnected ? 'connected' : 'disconnected'} title="Jellyfin">
 			<div class="flex flex-col gap-1">
 				<h2 class="text-sm text-zinc-500">

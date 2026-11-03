@@ -1,19 +1,19 @@
 <script lang="ts">
-	import { getTmdbPerson } from '$lib/apis/tmdb/tmdbApi';
-	import Carousel from '$lib/components/carousel/Carousel.svelte';
-	import Poster from '$lib/components/cards/Poster.svelte';
-	import TitlePageLayout from '$lib/components/TitlePageLayout/TitlePageLayout.svelte';
-	import FacebookIcon from '$lib/components/icons/FacebookIcon.svelte';
-	import ImdbIcon from '$lib/components/icons/ImdbIcon.svelte';
-	import TiktokIcon from '$lib/components/icons/TiktokIcon.svelte';
-	import TmdbIcon from '$lib/components/icons/TmdbIcon.svelte';
-	import TwitterIcon from '$lib/components/icons/TwitterIcon.svelte';
-	import YoutubeIcon from '$lib/components/icons/YoutubeIcon.svelte';
-	import { TMDB_POSTER_SMALL } from '$lib/utils/constants';
+	import { getTmdbPerson } from '#lib/apis/tmdb/tmdbApi.js';
+	import Carousel from '#lib/components/carousel/Carousel.svelte';
+	import Poster from '#lib/components/cards/Poster.svelte';
+	import TitlePageLayout from '#lib/components/layout/TitlePageLayout.svelte';
+	import FacebookIcon from '#lib/components/icons/FacebookIcon.svelte';
+	import ImdbIcon from '#lib/components/icons/ImdbIcon.svelte';
+	import TiktokIcon from '#lib/components/icons/TiktokIcon.svelte';
+	import TmdbIcon from '#lib/components/icons/TmdbIcon.svelte';
+	import TwitterIcon from '#lib/components/icons/TwitterIcon.svelte';
+	import YoutubeIcon from '#lib/components/icons/YoutubeIcon.svelte';
+	import { TMDB_POSTER_SMALL } from '#lib/utils/constants.js';
 	import { DotFilled, InstagramLogo } from 'svelte-radix';
 	import { _ } from 'svelte-i18n';
-	import { tmdbDataFormat } from '$lib/utils/utils.js';
-	import { settings } from '$lib/stores/settings.svelte';
+	import { tmdbDataFormat } from '#lib/utils/utils.js';
+	import { settings } from '#lib/stores/settings.svelte.js';
 
 	const GENDER_OPTIONS = [
 		$_('library.personPage.notSet'),
@@ -169,7 +169,7 @@
 		{#snippet info_components()}
 			{#if tmdbSocials}
 				<div class="col-span-2 lg:col-span-1">
-					<p class="text-zinc-400 text-sm">{$_('library.personPage.externalLinks')}</p>
+					<p class="text-sm text-zinc-400">{$_('library.personPage.externalLinks')}</p>
 					<h2 class="pt-2 text-sm">
 						<div class="flex flex-wrap gap-2">
 							{#each tmdbSocials ?? [] as Prop (Prop)}
@@ -182,7 +182,7 @@
 				</div>
 			{/if}
 			<div class="col-span-2 lg:col-span-1">
-				<p class="text-zinc-400 text-sm">{$_('library.personPage.knownFor')}</p>
+				<p class="text-sm text-zinc-400">{$_('library.personPage.knownFor')}</p>
 				<h2 class="font-medium">
 					{person?.known_for_department
 						? $_(
@@ -193,13 +193,13 @@
 				</h2>
 			</div>
 			<div class="col-span-2 lg:col-span-1">
-				<p class="text-zinc-400 text-sm">{$_('library.personPage.gender')}</p>
+				<p class="text-sm text-zinc-400">{$_('library.personPage.gender')}</p>
 				<h2 class="font-medium">
 					{GENDER_OPTIONS[person?.gender ?? 0]}
 				</h2>
 			</div>
 			<div class="col-span-2 lg:col-span-1">
-				<p class="text-zinc-400 text-sm">{$_('library.personPage.birthday')}</p>
+				<p class="text-sm text-zinc-400">{$_('library.personPage.birthday')}</p>
 				<h2 class="font-medium">
 					{new Date(person?.birthday || Date.now()).toLocaleDateString(
 						settings.userSettings.interface.language,
@@ -212,7 +212,7 @@
 				</h2>
 			</div>
 			<div class="col-span-2 lg:col-span-1">
-				<p class="text-zinc-400 text-sm">{$_('library.personPage.placeOfBirth')}</p>
+				<p class="text-sm text-zinc-400">{$_('library.personPage.placeOfBirth')}</p>
 				<h2 class="font-medium">
 					{person?.place_of_birth}
 				</h2>
@@ -231,10 +231,10 @@
 		{/snippet}
 
 		{#snippet carousels()}
-			<div class="max-w-screen-2xl 2xl:mx-auto w-full">
+			<div class="w-full max-w-screen-2xl 2xl:mx-auto">
 				<Carousel gradientFromColor="from-stone-950">
 					{#snippet title()}
-						<div class="font-medium text-lg">{$_('library.personPage.knownFor')}</div>
+						<div class="text-lg font-medium">{$_('library.personPage.knownFor')}</div>
 					{/snippet}
 					{#each knownForProps as prop (prop)}
 						<Poster orientation="portrait" {...prop} openInModal={isModal} />

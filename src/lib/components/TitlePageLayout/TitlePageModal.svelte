@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { TitleType } from '$lib/utils/types';
+	import type { TitleType } from '#lib/utils/types.js';
 	import { fly } from 'svelte/transition';
-	import MoviePage from '../../../routes/movie/[id]/MoviePage.svelte';
-	import SeriesPage from '../../../routes/tv/[id]/SeriesPage.svelte';
-	import { modalStack } from '$lib/stores/modal.store';
-	import PersonPage from '../../../routes/person/[id]/PersonPage.svelte';
+	import MoviePage from '../pages/MoviePage.svelte';
+	import SeriesPage from '../pages/SeriesPage.svelte';
+	import { modalStack } from '#lib/stores/modal.store.js';
+	import PersonPage from '../pages/PersonPage.svelte';
 
 	let { tmdbId, titleType, modalId }: { tmdbId: number; titleType: TitleType; modalId: symbol } =
 		$props();
@@ -15,7 +15,7 @@
 </script>
 
 <div
-	class="max-w-screen-2xl overflow-x-hidden overflow-y-scroll h-screen sm:mx-4 lg:mx-12 xl:mx-16 scrollbar-hide"
+	class="scrollbar-hide h-screen max-w-screen-2xl overflow-x-hidden overflow-y-scroll sm:mx-4 lg:mx-12 xl:mx-16"
 >
 	<div
 		class="relative overflow-hidden"

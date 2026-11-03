@@ -1,5 +1,5 @@
-import * as v from 'valibot';
 import type { InferOutput } from 'valibot';
+import { ApiSchema } from '#lib/utils/schemas.ts';
 
 export type TitleType = 'movie' | 'tv' | 'person';
 export type SelectOption = {
@@ -33,7 +33,4 @@ export type Result<TResultData extends object | undefined> = {
 	data?: TResultData;
 };
 
-export const OptionalStringSchema = v.optional(v.string());
-export const OptionalNumberSchema = v.optional(v.number());
-export const ApiSchema = v.object({ url: OptionalStringSchema, key: OptionalStringSchema });
 export type Api = InferOutput<typeof ApiSchema>;

@@ -1,12 +1,12 @@
 <script lang="ts">
-	import type { TitleType } from '$lib/utils/types';
+	import type { TitleType } from '#lib/utils/types.js';
 	import classNames from 'classnames';
-	import PlayButton from '$lib/components/controls/PlayButton.svelte';
+	import PlayButton from '#lib/components/controls/PlayButton.svelte';
 	import ProgressBar from '../layout/ProgressBar.svelte';
-	import { playerState } from '$lib/components/player/VideoPlayer';
-	import LazyImg from '$lib/components/images/LazyImg.svelte';
+	import { playerState } from '#lib/components/player/VideoPlayer.js';
+	import LazyImg from '#lib/components/images/LazyImg.svelte';
 	import { Star } from 'svelte-radix';
-	import { openTitleModal } from '$lib/stores/modal.store';
+	import { openTitleModal } from '#lib/stores/modal.store.js';
 	import type { Snippet } from 'svelte';
 
 	let {

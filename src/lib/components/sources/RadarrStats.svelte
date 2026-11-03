@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { settings } from '$lib/stores/settings.svelte.js';
-	import { formatSize } from '$lib/utils/utils.js';
-	import RadarrIcon from '$lib/components/icons/RadarrIcon.svelte';
+	import { settings } from '#lib/stores/settings.svelte.js';
+	import { formatSize } from '#lib/utils/utils.js';
+	import RadarrIcon from '#lib/components/icons/RadarrIcon.svelte';
 	import StatsContainer from './StatsContainer.svelte';
 	import StatsPlaceholder from './StatsPlaceholder.svelte';
-	import { radarrGetDiskspace, radarrGetMovies } from '$lib/remote/radarr.remote';
+	import { radarrGetDiskspace, radarrGetMovies } from '#lib/remote/radarr.remote.js';
 
 	let { large = false }: { large?: boolean } = $props();
 

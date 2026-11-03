@@ -2,7 +2,7 @@
  * @deprecated - Check @/utils/playback-profiles/index
  */
 
-import { isApple, isTizen, isTizen55, isTv, isWebOS5 } from '$lib/utils/browser-detection.ts';
+import { isApple, isTizen, isTizen55, isTv, isWebOS5 } from '#lib/utils/browser-detection.ts';
 
 /**
  * Checks if the client has support for the H264 codec

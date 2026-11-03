@@ -1,20 +1,20 @@
 <script lang="ts">
 	import classNames from 'classnames';
 	import { _ } from 'svelte-i18n';
-	import Toggle from '$lib/components/controls/Toggle.svelte';
+	import Toggle from '#lib/components/controls/Toggle.svelte';
 	import { Plus, StarFilled, Star, Trash } from 'svelte-radix';
-	import { modalStack } from '$lib/stores/modal.store';
-	import FilteringProfileModal from '$lib/components/modals/FilteringProfileModal.svelte';
-	import type { FilteringProfile, GlobalSettings } from '@reiverr/db/types';
-	import { deleteFilteringProfile, saveSettings } from '$lib/remote/settings.remote';
+	import { modalStack } from '#lib/stores/modal.store.js';
+	import FilteringProfileModal from '#lib/components/modals/FilteringProfileModal.svelte';
+	import type { FilteringProfile, GlobalSettings } from '@reiverr/db';
+	import { deleteFilteringProfile, saveSettings } from '#lib/remote/settings.remote.js';
 	import { invalidateAll } from '$app/navigation';
 	import {
 		createErrorNotification,
 		createSuccessNotification
-	} from '$lib/stores/notification.store';
-	import { LANGUAGES } from '$lib/utils/constants';
-	import Select from '$lib/components/controls/Select.svelte';
-	import Option from '$lib/components/controls/Option.svelte';
+	} from '#lib/stores/notification.store.js';
+	import { LANGUAGES } from '#lib/utils/constants.js';
+	import Select from '#lib/components/controls/Select.svelte';
+	import Option from '#lib/components/controls/Option.svelte';
 
 	let {
 		visible,
@@ -76,13 +76,13 @@
 	})}
 >
 	<div
-		class="border-b border-zinc-800 pb-4 mt-8 col-span-2 justify-self-stretch flex flex-col gap-2"
+		class="col-span-2 mt-8 flex flex-col gap-2 justify-self-stretch border-b border-zinc-800 pb-4"
 	>
-		<h1 class="font-medium text-2xl text-zinc-200 tracking-wide">
+		<h1 class="text-2xl font-medium tracking-wide text-zinc-200">
 			{$_('settings.filtering.filteringProfiles')}
 		</h1>
 		{#if !globalSettings}
-			<p class="text-sm text-zinc-500 mt-1">
+			<p class="mt-1 text-sm text-zinc-500">
 				{$_('settings.filtering.filteringProfilesDescription')}
 			</p>
 		{/if}
@@ -92,7 +92,7 @@
 			<h2>
 				{$_('settings.filtering.letUserChoose')}
 			</h2>
-			<p class="text-sm text-zinc-500 mt-1">
+			<p class="mt-1 text-sm text-zinc-500">
 				{$_('settings.filtering.letUserChooseDescription')}
 			</p>
 		</div>
@@ -114,10 +114,10 @@
 		</Select>
 	{/if}
 
-	<div class="flex flex-wrap gap-2 my-8 col-span-2">
+	<div class="col-span-2 my-8 flex flex-wrap gap-2">
 		{#if globalSettings}
 			<button
-				class="bg-neutral-900 rounded-md h-50 w-80 flex justify-center items-center hover:cursor-pointer hover:bg-neutral-800 transition-colors duration-200"
+				class="flex h-50 w-80 items-center justify-center rounded-md bg-neutral-900 transition-colors duration-200 hover:cursor-pointer hover:bg-neutral-800"
 				onclick={addProfile}
 			>
 				<Plus size="40" />
@@ -130,7 +130,7 @@
 				: !!profile.isDefault}
 			<button
 				class={classNames(
-					'bg-neutral-900 rounded-md h-50 w-80 flex hover:bg-neutral-800 transition-colors duration-200 overflow-hidden',
+					'flex h-50 w-80 overflow-hidden rounded-md bg-neutral-900 transition-colors duration-200 hover:bg-neutral-800',
 					{ 'hover:cursor-default': !globalSettings }
 				)}
 				onclick={(e) => {
@@ -139,16 +139,16 @@
 					} else e.preventDefault();
 				}}
 			>
-				<div class="p-4 w-full">
+				<div class="w-full p-4">
 					<div class="flex justify-between">
-						<p class="text-xl font-bold text-start flex items-center">
+						<p class="flex items-center text-start text-xl font-bold">
 							{profile.name}&nbsp<span class={isDefault ? 'visible' : 'hidden'}
 								><StarFilled /></span
 							>
 						</p>
 						{#if globalSettings}
 							<Trash
-								class="bg-red-700 p-1 rounded-md hover:bg-red-900 transition-colors duration-100"
+								class="rounded-md bg-red-700 p-1 transition-colors duration-100 hover:bg-red-900"
 								size="30"
 								onclick={(e) => deleteProfile(e, profile)}
 							/>
@@ -156,7 +156,7 @@
 							<Star
 								color="black"
 								class={classNames(
-									'bg-white p-1 rounded-md hover:bg-neutral-300 hover:cursor-pointer transition-colors duration-200',
+									'rounded-md bg-white p-1 transition-colors duration-200 hover:cursor-pointer hover:bg-neutral-300',
 									{ visible: !isDefault, hidden: isDefault }
 								)}
 								size="30"
@@ -164,11 +164,11 @@
 							/>
 						{/if}
 					</div>
-					<div class="overflow-y-auto max-h-[calc(100%-2rem)] scrollbar-thumb-zinc-600">
-						<p class="text-zinc-500 flex flex-wrap gap-1 border-t mt-1.5 pt-1">
+					<div class="max-h-[calc(100%-2rem)] scrollbar-thumb-zinc-600 overflow-y-auto">
+						<p class="mt-1.5 flex flex-wrap gap-1 border-t pt-1 text-zinc-500">
 							{$_('settings.filtering.qualities')}:&nbsp;
 							{#each profile.qualities as quality (quality)}
-								<span class="bg-amber-300 px-2 py-1 rounded-2xl text-xs text-black"
+								<span class="rounded-2xl bg-amber-300 px-2 py-1 text-xs text-black"
 									>{quality}</span
 								>
 							{/each}

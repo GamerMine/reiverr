@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
-	import IconButton from '$lib/components/controls/IconButton.svelte';
+	import IconButton from '#lib/components/controls/IconButton.svelte';
 	import { ChevronLeft, ChevronRight } from 'svelte-radix';
 	import classNames from 'classnames';
 	import { type Snippet, tick } from 'svelte';

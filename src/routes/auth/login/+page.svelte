@@ -1,19 +1,22 @@
 <script lang="ts">
-	import UserCarousel from '$lib/components/carousel/UserCarousel.svelte';
-	import UserCard from '$lib/components/cards/UserCard.svelte';
+	import UserCarousel from '#lib/components/carousel/UserCarousel.svelte';
+	import UserCard from '#lib/components/cards/UserCard.svelte';
 	import { _ } from 'svelte-i18n';
-	import Button from '$lib/components/controls/Button.svelte';
-	import { Keyboard, Enter, Update } from 'svelte-radix';
-	import Input from '$lib/components/controls/Input.svelte';
+	import Button from '#lib/components/controls/Button.svelte';
+	import { Keyboard, Enter, Update, IdCard } from 'svelte-radix';
+	import Input from '#lib/components/controls/Input.svelte';
 	import { ChevronLeft } from 'svelte-radix';
-	import { createErrorNotification } from '$lib/stores/notification.store';
+	import { createErrorNotification } from '#lib/stores/notification.store.js';
 	import { onMount } from 'svelte';
-	import { animateBackground } from '$lib/utils/animation';
-	import { setTmpLanguage } from '$lib/utils/utils';
-	import { jellyfinGetUsers } from '$lib/remote/jellyfin.remote.ts';
+	import { animateBackground } from '#lib/utils/animation.js';
+	import { setTmpLanguage } from '#lib/utils/utils.js';
+	import { jellyfinGetUsers } from '#lib/remote/jellyfin.remote.ts';
 	import { goto } from '$app/navigation';
-	import { login } from '$lib/remote/login.remote.ts';
-	import type { JellyfinUserDto } from '@reiverr/connectors/types/jellyfin';
+	import { login } from '#lib/remote/login.remote.ts';
+	import type { JellyfinUserDto } from '@reiverr/connectors/types/radarr';
+	import { ScaleOut } from 'svelte-loading-spinners';
+
+	let { data } = $props();
 
 	let mainDiv: HTMLDivElement | undefined = $state();
 	let manualLogin: boolean = $state(false);
@@ -23,6 +26,8 @@
 	let errored: boolean = $state(false);
 
 	function askForPassword(user: JellyfinUserDto) {
+		if (data.oidcOnly) return;
+
 		userSelected = true;
 		selectedUser = user;
 		if (selectedUser?.Name) login.fields.username.set(selectedUser.Name);
@@ -44,6 +49,12 @@
 		}
 	});
 
+	$effect(() => {
+		if (data.oidcError) {
+			createErrorNotification($_('general.error'), $_('general.unknownError'));
+		}
+	});
+
 	onMount(() => {
 		if (mainDiv) {
 			animateBackground(mainDiv);
@@ -62,25 +73,27 @@
 	});
 </script>
 
-<div bind:this={mainDiv} class="relative overflow-hidden h-screen">
+<div bind:this={mainDiv} class="relative h-screen overflow-hidden">
 	{#await jellyfinGetUsers()}
-		<div>NON</div>
 		<!-- TODO: If the Jellyfin instance is unreachable, show it to the user, add a timeout ? -->
+		<div class="flex h-full items-center justify-center">
+			<ScaleOut color="#FFD230" />
+		</div>
 	{:then users}
 		<div class="z-10">
-			<div class="flex gap-2 rounded-xs items-center justify-center pt-20">
-				<div class="rounded-full bg-amber-300 h-11 w-11"></div>
-				<h1 class="font-display uppercase font-semibold tracking-wider text-5xl">
+			<div class="flex items-center justify-center gap-2 rounded-xs pt-20">
+				<div class="h-11 w-11 rounded-full bg-amber-300"></div>
+				<h1 class="font-display text-5xl font-semibold tracking-wider uppercase">
 					Reiverr
 				</h1>
 			</div>
 			<h1
-				class="flex font-display font-semibold text-4xl items-center justify-center pt-10 w-screen"
+				class="font-display flex w-screen items-center justify-center pt-10 text-4xl font-semibold"
 			>
 				{$_('login.whoWatching')}
 			</h1>
 			<div
-				class="absolute items-center top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-full sm:w-1/2"
+				class="absolute top-1/2 left-1/2 w-full -translate-x-1/2 -translate-y-1/2 items-center sm:w-1/2"
 			>
 				<UserCarousel
 					klass="transition duration-300 ease-in-out {userSelected || manualLogin
@@ -88,33 +101,46 @@
 						: 'visible'}"
 				>
 					{#each users.data as user (user)}
-						<UserCard {user} onclick={() => askForPassword(user)}></UserCard>
+						<UserCard
+							{user}
+							onclick={() => askForPassword(user)}
+							clickable={!data.oidcOnly}
+						></UserCard>
 					{/each}
 				</UserCarousel>
 			</div>
 			<div
 				class="flex justify-center pt-100 transition duration-300 ease-in-out {userSelected ||
 				manualLogin
-					? 'opacity-0 invisible'
+					? 'invisible opacity-0'
 					: ''}"
 			>
-				<Button
-					variant="tertiary"
-					onclick={() => {
-						manualLogin = true;
-					}}
-				>
-					<span class="mr-1">{$_('login.manualLogin')}</span><Keyboard size="20" />
-				</Button>
+				<div class="flex flex-col items-center space-y-2">
+					<Button
+						variant="tertiary"
+						onclick={() => {
+							manualLogin = true;
+						}}
+						disabled={data.oidcOnly}
+					>
+						<span class="mr-1">{$_('login.manualLogin')}</span><Keyboard size="20" />
+					</Button>
+					{#if data.oidcEnabled}
+						<Button variant="tertiary" href={'/login?oidc'}>
+							<span class="mr-1">{data.oidcLabel ?? $_('login.oidcLogin')}</span
+							><IdCard size="20" />
+						</Button>
+					{/if}
+				</div>
 			</div>
 		</div>
 
 		<div class="z-10">
 			<button
-				class="absolute items-center left-1/2 -translate-x-35 -translate-y-95 transition duration-300 ease-in-out {userSelected ||
+				class="absolute left-1/2 -translate-x-35 -translate-y-95 items-center transition duration-300 ease-in-out {userSelected ||
 				manualLogin
 					? 'visible opacity-100'
-					: 'opacity-0 invisible'}"
+					: 'invisible opacity-0'}"
 				disabled={isInputDisabled}
 				onclick={() => {
 					errored = false;
@@ -160,10 +186,10 @@
 					onchange={() => (errored = false)}
 				/>
 				<div
-					class="absolute items-center left-1/2 -translate-x-1/2 transition duration-300 ease-in-out {userSelected ||
+					class="absolute left-1/2 -translate-x-1/2 items-center transition duration-300 ease-in-out {userSelected ||
 					manualLogin
-						? 'visible opacity-90 -translate-y-25'
-						: 'opacity-0 translate-y-30 invisible'}"
+						? 'visible -translate-y-25 opacity-90'
+						: 'invisible translate-y-30 opacity-0'}"
 				>
 					<Button type="submit" variant="secondary" disabled={isInputDisabled}>
 						<span class="mr-1">{$_('login.logIn')}</span>

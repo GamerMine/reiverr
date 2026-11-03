@@ -1,9 +1,9 @@
 <script lang="ts">
-	import IconButton from '$lib/components/controls/IconButton.svelte';
-	import AccountIImage from '$lib/components/images/AccountIImage.svelte';
-	import AccountPane from '$lib/components/navigation/navbar/AccountPane.svelte';
-	import NotificationsPane from '$lib/components/navigation/navbar/NotificationsPane.svelte';
-	import { getCompletedTasks } from '$lib/remote/tasks.remote.ts';
+	import IconButton from '#lib/components/controls/IconButton.svelte';
+	import AccountIImage from '#lib/components/images/AccountIImage.svelte';
+	import AccountPane from '#lib/components/navigation/navbar/AccountPane.svelte';
+	import NotificationsPane from '#lib/components/navigation/navbar/NotificationsPane.svelte';
+	import { getCompletedTasks } from '#lib/remote/tasks.remote.ts';
 	import { TaskState } from '@reiverr/db/types';
 
 	let openAccountMenu = $state(false);

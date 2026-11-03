@@ -2,7 +2,7 @@
 	import { addMessages, init, locale } from 'svelte-i18n';
 	import en from '../../lang/en.json';
 	import fr from '../../lang/fr.json';
-	import { settings } from '$lib/stores/settings.svelte.js';
+	import { settings } from '#lib/stores/settings.svelte.js';
 
 	addMessages('en', en);
 	addMessages('fr', fr);

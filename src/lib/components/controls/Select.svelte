@@ -2,10 +2,10 @@
 	import classNames from 'classnames';
 	import { CaretDown, Cross2 } from 'svelte-radix';
 	import { onMount, setContext, type Snippet } from 'svelte';
-	import type { SelectOption } from '$lib/utils/types';
+	import type { SelectOption } from '#lib/utils/types.js';
 	import { SvelteSet } from 'svelte/reactivity';
 	import { _ } from 'svelte-i18n';
-	import { portal } from '$lib/utils/utils';
+	import { portal } from '#lib/utils/utils.js';
 
 	let {
 		value = $bindable(undefined),

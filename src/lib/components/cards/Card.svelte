@@ -1,14 +1,14 @@
 <script lang="ts">
-	import type { TitleType } from '$lib/utils/types';
-	import { formatMinutesToTime } from '$lib/utils/utils';
+	import type { TitleType } from '#lib/utils/types.js';
+	import { formatMinutesToTime } from '#lib/utils/utils.js';
 	import classNames from 'classnames';
 	import { Clock, Star } from 'svelte-radix';
-	import { openTitleModal } from '$lib/stores/modal.store';
-	import ContextMenu from '$lib/components/controls/ContextMenu.svelte';
-	import LibraryItemContextItems from '$lib/components/controls/LibraryItemContextItems.svelte';
+	import { openTitleModal } from '#lib/stores/modal.store.js';
+	import ContextMenu from '#lib/components/controls/ContextMenu.svelte';
+	import LibraryItemContextItems from '#lib/components/controls/LibraryItemContextItems.svelte';
 	import ProgressBar from '../layout/ProgressBar.svelte';
 	import { onMount } from 'svelte';
-	import { jellyfinGetItems } from '$lib/remote/jellyfin.remote';
+	import { jellyfinGetItems } from '#lib/remote/jellyfin.remote.js';
 	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
 
 	let {

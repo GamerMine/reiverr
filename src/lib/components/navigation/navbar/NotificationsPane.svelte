@@ -3,7 +3,7 @@
 	import { ChevronLeft } from 'svelte-radix';
 	import { _ } from 'svelte-i18n';
 	import classNames from 'classnames';
-	import Divider from '$lib/components/layout/Divider.svelte';
+	import Divider from '#lib/components/layout/Divider.svelte';
 	import { TaskState, type TaskStatus } from '@reiverr/db/types';
 
 	let {

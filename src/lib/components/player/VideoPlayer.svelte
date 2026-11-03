@@ -1,6 +1,6 @@
 <script lang="ts">
-	import getDeviceProfile from '$lib/components/player/playback-profiles';
-	import { getQualities } from '$lib/components/player/qualities';
+	import getDeviceProfile from '#lib/components/player/playback-profiles/index.js';
+	import { getQualities } from '#lib/components/player/qualities.js';
 	import classNames from 'classnames';
 	import Hls from 'hls.js';
 	import {
@@ -17,22 +17,22 @@
 	} from 'svelte-radix';
 	import { onDestroy, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
-	import { contextMenu } from '$lib/components/controls/ContextMenu';
-	import SelectableContextMenuItem from '$lib/components/controls/SelectableContextMenuItem.svelte';
-	import IconButton from '$lib/components/controls/IconButton.svelte';
-	import { modalStack } from '$lib/stores/modal.store';
-	import Slider from '$lib/components/controls/Slider.svelte';
+	import { contextMenu } from '#lib/components/controls/ContextMenu.js';
+	import SelectableContextMenuItem from '#lib/components/controls/SelectableContextMenuItem.svelte';
+	import IconButton from '#lib/components/controls/IconButton.svelte';
+	import { modalStack } from '#lib/stores/modal.store.js';
+	import Slider from '#lib/components/controls/Slider.svelte';
 	import { playerState } from './VideoPlayer';
 	import { linear } from 'svelte/easing';
-	import ContextMenuButton from '$lib/components/controls/ContextMenuButton.svelte';
-	import { settings } from '$lib/stores/settings.svelte';
+	import ContextMenuButton from '#lib/components/controls/ContextMenuButton.svelte';
+	import { settings } from '#lib/stores/settings.svelte.js';
 	import {
 		jellyfinDeleteActiveEncoding,
 		jellyfinGetContinueWatching,
 		jellyfinGetItemById,
 		jellyfinGetPlaySession,
 		jellyfinUpdateProgress
-	} from '$lib/remote/jellyfin.remote.ts';
+	} from '#lib/remote/jellyfin.remote.ts';
 
 	let { modalId }: { modalId: symbol } = $props();
 

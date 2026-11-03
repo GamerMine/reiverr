@@ -13,7 +13,7 @@ import {
 	isWebOS,
 	isXbox,
 	safariVersion
-} from '$lib/utils/browser-detection.ts';
+} from '#lib/utils/browser-detection.ts';
 import type {
 	JellyfinCodecProfile,
 	JellyfinProfileCondition,

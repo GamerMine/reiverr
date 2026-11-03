@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { version } from '$app/environment';
+	import { version } from '$app/env';
 	import { Cross2 } from 'svelte-radix';
-	import IconButton from '$lib/components/controls/IconButton.svelte';
-	import Button from '$lib/components/controls/Button.svelte';
+	import IconButton from '#lib/components/controls/IconButton.svelte';
+	import Button from '#lib/components/controls/Button.svelte';
 	import { _ } from 'svelte-i18n';
 
 	let visible = true;
@@ -40,17 +40,16 @@
 			<a href="https://github.com/GamerMine/reiverr"
 				>{latestVersion} {$_('update.updateAvailable')}</a
 			>
+
 			<div class="absolute right-4 inset-y-0 flex items-center gap-2">
 				<Button
 					variant="tertiary"
 					size="xs"
 					onclick={() => localStorage.setItem('skippedVersion', latestVersion)}
+					>{$_('update.skipVersion')}</Button
 				>
-					{$_('update.skipVersion')}
-				</Button>
-				<IconButton onclick={() => (visible = false)}>
-					<Cross2 size="20" />
-				</IconButton>
+
+				<IconButton onclick={() => (visible = false)}><Cross2 size="20" /></IconButton>
 			</div>
 		</div>
 	{/if}

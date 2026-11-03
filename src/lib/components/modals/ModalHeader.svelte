@@ -1,6 +1,6 @@
 <script lang="ts">
 	import classNames from 'classnames';
-	import IconButton from '$lib/components/controls/IconButton.svelte';
+	import IconButton from '#lib/components/controls/IconButton.svelte';
 	import { ChevronLeft, Cross2 } from 'svelte-radix';
 	import type { Snippet } from 'svelte';
 

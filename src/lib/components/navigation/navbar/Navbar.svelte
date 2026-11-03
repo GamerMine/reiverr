@@ -3,14 +3,14 @@
 	import classNames from 'classnames';
 	import { page } from '$app/state';
 	import TitleSearchModal from '../../modals/TitleSearchModal.svelte';
-	import IconButton from '$lib/components/controls/IconButton.svelte';
+	import IconButton from '#lib/components/controls/IconButton.svelte';
 	import { fade } from 'svelte/transition';
-	import { modalStack } from '$lib/stores/modal.store';
+	import { modalStack } from '#lib/stores/modal.store.js';
 	import { _ } from 'svelte-i18n';
-	import Divider from '$lib/components/layout/Divider.svelte';
-	import { jellyfinDisconnect } from '$lib/remote/jellyfin.remote.js';
+	import Divider from '#lib/components/layout/Divider.svelte';
 	import { goto } from '$app/navigation';
-	import Account from '$lib/components/navigation/navbar/Account.svelte';
+	import Account from '#lib/components/navigation/navbar/Account.svelte';
+	import { logout } from '#lib/remote/login.remote.ts';
 
 	let y = $state(0);
 	let transparent = true;
@@ -57,13 +57,13 @@
 <div class={classNames(baseStyle, 'hidden sm:grid')}>
 	<a
 		href="/"
-		class="hidden sm:flex gap-2 items-center hover:text-inherit selectable rounded-xs px-2 -mx-2"
+		class="selectable -mx-2 hidden items-center gap-2 rounded-xs px-2 hover:text-inherit sm:flex"
 	>
-		<div class="rounded-full bg-amber-300 h-4 w-4"></div>
-		<h1 class="font-display uppercase font-semibold tracking-wider text-xl">Reiverr</h1>
+		<div class="h-4 w-4 rounded-full bg-amber-300"></div>
+		<h1 class="font-display text-xl font-semibold tracking-wider uppercase">Reiverr</h1>
 	</a>
 	<div
-		class="flex items-center justify-center gap-4 md:gap-8 font-normal text-sm tracking-wider text-zinc-200"
+		class="flex items-center justify-center gap-4 text-sm font-normal tracking-wider text-zinc-200 md:gap-8"
 	>
 		<a href="/" class={page && getLinkStyle('/')}>
 			{$_('navbar.home')}
@@ -75,7 +75,7 @@
 			{$_('navbar.sources')}
 		</a>
 	</div>
-	<div class="flex gap-2 items-center">
+	<div class="flex items-center gap-2">
 		<IconButton onclick={openSearchModal}>
 			<MagnifyingGlass size="20" />
 		</IconButton>
@@ -86,10 +86,10 @@
 <div class={classNames(baseStyle, ' grid sm:hidden')}>
 	<a
 		href="/static"
-		class="flex gap-2 items-center hover:text-inherit selectable rounded-xs px-2 -mx-2"
+		class="selectable -mx-2 flex items-center gap-2 rounded-xs px-2 hover:text-inherit"
 	>
-		<div class="rounded-full bg-amber-300 h-4 w-4"></div>
-		<h1 class="font-display uppercase font-semibold tracking-wider text-xl">Reiverr</h1>
+		<div class="h-4 w-4 rounded-full bg-amber-300"></div>
+		<h1 class="font-display text-xl font-semibold tracking-wider uppercase">Reiverr</h1>
 	</a>
 	<div></div>
 	<div class="flex items-center gap-2">
@@ -111,10 +111,10 @@
 
 {#if isMobileMenuVisible}
 	<div
-		class="fixed inset-0 pt-16 bottom-0 bg-stone-900/50 backdrop-blur-2xl z-9 grid grid-rows-3 transition-all ease-linear"
+		class="fixed inset-0 bottom-0 z-9 grid grid-rows-3 bg-stone-900/50 pt-16 backdrop-blur-2xl transition-all ease-linear"
 		transition:fade={{ duration: 150 }}
 	>
-		<div class="row-span-2 flex flex-col gap-4 items-center justify-center">
+		<div class="row-span-2 flex flex-col items-center justify-center gap-4">
 			<a
 				onclick={() => (isMobileMenuVisible = false)}
 				href="/static"
@@ -147,11 +147,11 @@
 			<a
 				onclick={async () => {
 					isMobileMenuVisible = false;
-					await jellyfinDisconnect();
+					await logout();
 					await goto('/');
 				}}
-				href="/login"
-				class={page && getLinkStyle('/login')}
+				href="/auth/login"
+				class={page && getLinkStyle('/auth/login')}
 			>
 				{$_('navbar.userMenu.logout')}
 			</a>

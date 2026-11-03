@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { settings } from '$lib/stores/settings.svelte.js';
-	import { formatSize } from '$lib/utils/utils.js';
-	import SonarrIcon from '$lib/components/icons/SonarrIcon.svelte';
+	import { settings } from '#lib/stores/settings.svelte.js';
+	import { formatSize } from '#lib/utils/utils.js';
+	import SonarrIcon from '#lib/components/icons/SonarrIcon.svelte';
 	import StatsContainer from './StatsContainer.svelte';
 	import StatsPlaceholder from './StatsPlaceholder.svelte';
-	import { sonarrGetDiskspace, sonarrGetSeries } from '$lib/remote/sonarr.remote';
+	import { sonarrGetDiskspace, sonarrGetSeries } from '#lib/remote/sonarr.remote.js';
 
 	let { large = false }: { large?: boolean } = $props();
 

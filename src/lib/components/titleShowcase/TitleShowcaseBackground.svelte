@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { TMDB_IMAGES_ORIGINAL } from '$lib/utils/constants';
+	import { TMDB_IMAGES_ORIGINAL } from '#lib/utils/constants.js';
 	import classNames from 'classnames';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
-	import YoutubePlayer from '../YoutubePlayer.svelte';
-	import { settings } from '$lib/stores/settings.svelte.js';
+	import YoutubePlayer from '../player/YoutubePlayer.svelte';
+	import { settings } from '#lib/stores/settings.svelte.js';
 
 	const TRAILER_TIMEOUT = 3000;
 	const TRAILER_LOAD_TIME = 1000;
@@ -77,7 +77,7 @@
 	{#key tmdbId}
 		<div
 			style={"background-image: url('" + TMDB_IMAGES_ORIGINAL + backdropUri + "');"}
-			class={classNames('fixed inset-0 bg-cover bg-center z-[-1]')}
+			class={classNames('fixed inset-0 z-[-1] bg-cover bg-center')}
 			in:fade={{ duration: ANIMATION_DURATION * 2 }}
 			out:fade={{ duration: ANIMATION_DURATION * 2, delay: ANIMATION_DURATION }}
 		></div>
@@ -85,7 +85,7 @@
 {/if}
 {#if trailerId && settings.userSettings.interface.autoplayTrailers && trailerMounted}
 	<div
-		class={classNames('absolute inset-0 transition-opacity z-[-1]', {
+		class={classNames('absolute inset-0 z-[-1] transition-opacity', {
 			'opacity-100': trailerVisible,
 			'opacity-0': !trailerVisible
 		})}
@@ -96,9 +96,9 @@
 {/if}
 {#if UIVisible}
 	<div
-		class="absolute inset-0 bg-gradient-to-t from-stone-950 from-10% via-darken via-60% to-darken
-		z-[-1]"
+		class="via-darken to-darken absolute inset-0 z-[-1] bg-gradient-to-t from-stone-950 from-10%
+		via-60%"
 	></div>
 {:else if !UIVisible}
-	<div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-darken z-[-1]"></div>
+	<div class="from-darken absolute inset-x-0 top-0 z-[-1] h-24 bg-gradient-to-b"></div>
 {/if}

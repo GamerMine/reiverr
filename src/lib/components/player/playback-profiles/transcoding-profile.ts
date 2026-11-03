@@ -19,7 +19,7 @@ import {
 	isChromiumBased,
 	isAndroid,
 	isTizen
-} from '$lib/utils/browser-detection.ts';
+} from '#lib/utils/browser-detection.ts';
 import type { JellyfinTranscodingProfile } from '@reiverr/connectors/types/jellyfin';
 
 /**

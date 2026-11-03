@@ -1,10 +1,11 @@
 import type { PageServerLoad } from './$types';
 import { FilteringProfilesEntity, GlobalSettingsEntity } from '@reiverr/db/entities';
-import { assertUserAuth } from '$lib/server/utils.server.ts';
 
-export const load: PageServerLoad = async ({ cookies }) => {
-	const { isAdmin } = await assertUserAuth(cookies);
-
+export const load: PageServerLoad = async ({
+	locals: {
+		user: { isAdmin }
+	}
+}) => {
 	if (!isAdmin) return { isAdmin: false };
 
 	const filteringProfiles = await FilteringProfilesEntity.getAll();

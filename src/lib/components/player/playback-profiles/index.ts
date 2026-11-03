@@ -31,7 +31,7 @@ import { getTranscodingProfiles } from './transcoding-profile.ts';
 import { getSubtitleProfiles } from './subtitle-profile.ts';
 import type { JellyfinDeviceProfile } from '@reiverr/connectors/types/jellyfin';
 import * as v from 'valibot';
-import { OptionalNumberSchema, OptionalStringSchema } from '$lib/utils/types.ts';
+import { OptionalNumberSchema, OptionalStringSchema } from '#lib/utils/schemas.ts';
 
 /**
  * Creates a device profile containing supported codecs for the active Cast device.

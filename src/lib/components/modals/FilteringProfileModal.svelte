@@ -1,22 +1,22 @@
 <script lang="ts">
-	import ModalHeader from '$lib/components/modals/ModalHeader.svelte';
+	import ModalHeader from '#lib/components/modals/ModalHeader.svelte';
 	import { _ } from 'svelte-i18n';
-	import { modalStack } from '$lib/stores/modal.store';
-	import Select from '$lib/components/controls/Select.svelte';
-	import { QUALITY_DEFS } from '$lib/utils/constants';
-	import Input from '$lib/components/controls/Input.svelte';
-	import ModalContainer from '$lib/components/modals/ModalContainer.svelte';
+	import { modalStack } from '#lib/stores/modal.store.js';
+	import Select from '#lib/components/controls/Select.svelte';
+	import { QUALITY_DEFS } from '#lib/utils/constants.js';
+	import Input from '#lib/components/controls/Input.svelte';
+	import ModalContainer from '#lib/components/modals/ModalContainer.svelte';
 	import { Plus, Pencil2 } from 'svelte-radix';
-	import FormButton from '$lib/components/controls/FormButton.svelte';
+	import FormButton from '#lib/components/controls/FormButton.svelte';
 	import {
 		createErrorNotification,
 		createSuccessNotification
-	} from '$lib/stores/notification.store';
+	} from '#lib/stores/notification.store.js';
 	import { invalidateAll } from '$app/navigation';
-	import Option from '$lib/components/controls/Option.svelte';
+	import Option from '#lib/components/controls/Option.svelte';
 	import type { FilteringProfile } from '@reiverr/db/types';
-	import Toggle from '$lib/components/controls/Toggle.svelte';
-	import { createUpdateFilteringProfile } from '$lib/remote/settings.remote';
+	import Toggle from '#lib/components/controls/Toggle.svelte';
+	import { createUpdateFilteringProfile } from '#lib/remote/settings.remote.js';
 
 	let {
 		modalId,

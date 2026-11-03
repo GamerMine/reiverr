@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { TMDB_POSTER_SMALL } from '$lib/utils/constants';
-	import { formatMinutesToTime } from '$lib/utils/utils';
+	import { TMDB_POSTER_SMALL } from '#lib/utils/constants.js';
+	import { formatMinutesToTime } from '#lib/utils/utils.js';
 	import classNames from 'classnames';
 	import { DotFilled } from 'svelte-radix';
 	import { fly } from 'svelte/transition';
-	import Poster from '$lib/components/cards/Poster.svelte';
-	import type { TitleType } from '$lib/utils/types';
-	import { openTitleModal } from '$lib/stores/modal.store';
-	import { TMDB_MOVIE_GENRES } from '$lib/apis/tmdb/tmdbApi';
-	import { settings } from '$lib/stores/settings.svelte.js';
+	import Poster from '#lib/components/cards/Poster.svelte';
+	import type { TitleType } from '#lib/utils/types.js';
+	import { openTitleModal } from '#lib/stores/modal.store.js';
+	import { TMDB_MOVIE_GENRES } from '#lib/apis/tmdb/tmdbApi.js';
+	import { settings } from '#lib/stores/settings.svelte.js';
 
 	const ANIMATION_DURATION = settings.userSettings.interface.animationDuration;
 

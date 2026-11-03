@@ -1,21 +1,21 @@
 <script lang="ts">
-	import { getTmdbMovie, getTmdbPopularMovies } from '$lib/apis/tmdb/tmdbApi';
+	import { getTmdbMovie, getTmdbPopularMovies } from '#lib/apis/tmdb/tmdbApi.js';
 	import classNames from 'classnames';
-	import Carousel from '$lib/components/carousel/Carousel.svelte';
-	import CarouselPlaceholderItems from '$lib/components/carousel/CarouselPlaceholderItems.svelte';
-	import EpisodeCard from '$lib/components/cards/EpisodeCard.svelte';
+	import Carousel from '#lib/components/carousel/Carousel.svelte';
+	import CarouselPlaceholderItems from '#lib/components/carousel/CarouselPlaceholderItems.svelte';
+	import EpisodeCard from '#lib/components/cards/EpisodeCard.svelte';
 	import TitleShowcase from './TitleShowcaseBackground.svelte';
 	import TitleShowcaseVisuals from './TitleShowcaseVisuals.svelte';
-	import PageDots from '$lib/components/controls/PageDots.svelte';
-	import IconButton from '$lib/components/controls/IconButton.svelte';
+	import PageDots from '#lib/components/controls/PageDots.svelte';
+	import IconButton from '#lib/components/controls/IconButton.svelte';
 	import { ChevronLeft, ChevronRight } from 'svelte-radix';
 	import {
 		jellyfinGetContinueWatching,
 		jellyfinGetItems,
 		jellyfinGetNextUp
-	} from '$lib/remote/jellyfin.remote';
+	} from '#lib/remote/jellyfin.remote.js';
 	import { _ } from 'svelte-i18n';
-	import { getJellyfinBackdrop } from '$lib/utils/utils.ts';
+	import { getJellyfinBackdrop } from '#lib/utils/utils.ts';
 	import { onMount } from 'svelte';
 
 	let hideUI = false;

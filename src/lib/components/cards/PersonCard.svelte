@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { TitleType } from '$lib/utils/types';
-	import { TMDB_PROFILE_SMALL } from '$lib/utils/constants';
-	import { openTitleModal } from '$lib/stores/modal.store';
+	import type { TitleType } from '#lib/utils/types.js';
+	import { TMDB_PROFILE_SMALL } from '#lib/utils/constants.js';
+	import { openTitleModal } from '#lib/stores/modal.store.js';
 	import classNames from 'classnames';
 
 	let {

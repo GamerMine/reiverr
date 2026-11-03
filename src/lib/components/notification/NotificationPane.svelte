@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { notificationStack } from '$lib/stores/notification.store';
+	import { notificationStack } from '#lib/stores/notification.store.js';
 	import { flip } from 'svelte/animate';
 </script>
 

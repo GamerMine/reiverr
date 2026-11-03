@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import PersonPage from './PersonPage.svelte';
+	import PersonPage from '#lib/components/pages/PersonPage.svelte';
 
 	let { data }: { data: PageData } = $props();
 

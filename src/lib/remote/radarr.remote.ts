@@ -1,14 +1,14 @@
 import { command, getRequestEvent, query } from '$app/server';
 import * as v from 'valibot';
-import { assertUserAuth } from '$lib/server/utils.server';
 import { FilteringProfilesEntity, GlobalSettingsEntity } from '@reiverr/db/entities';
-import { ApiSchema, type Result } from '$lib/utils/types.ts';
+import { type Result } from '#lib/utils/types.ts';
 import { scheduleTask } from '../../tasksWorker/scheduler.server';
 import type { RadarrQueueResource } from '@reiverr/connectors/types/radarr';
 import Connectors, { RadarrConnector } from '@reiverr/connectors';
 import { TaskType } from '@reiverr/db/types';
 import { MovieAddSchema, MovieRemoveSchema } from '../../tasksWorker/types.ts';
 import Logger, { LogLevel } from '@reiverr/logging';
+import { ApiSchema } from '#lib/utils/schemas.ts';
 
 const logger = Logger.getLogger('RadarrRemote');
 
@@ -47,8 +47,10 @@ async function getCachedQueue() {
 
 export const radarrGetQueue = query.live(async function* () {
 	while (true) {
-		const { cookies } = getRequestEvent();
-		if (!(await assertUserAuth(cookies)).userId) {
+		const {
+			locals: { user }
+		} = getRequestEvent();
+		if (!user.userId) {
 			yield { success: false, error: 'general.connectionRequired' };
 			await new Promise((f) => setTimeout(f, 2000));
 			continue;
@@ -60,9 +62,10 @@ export const radarrGetQueue = query.live(async function* () {
 });
 
 export const radarrGetMovies = query(async () => {
-	const { cookies } = getRequestEvent();
-	if (!(await assertUserAuth(cookies)).userId)
-		return { success: false, error: 'general.connectionRequired' };
+	const {
+		locals: { user }
+	} = getRequestEvent();
+	if (!user.userId) return { success: false, error: 'general.connectionRequired' };
 
 	const { radarrConnector: conn } = await Connectors.getInstance();
 	if (!conn) {
@@ -77,32 +80,37 @@ export const radarrGetMovies = query(async () => {
 });
 
 export const radarrAddMovie = command(MovieAddSchema, async (movie): Promise<Result<undefined>> => {
-	const { cookies } = getRequestEvent();
-	const { userId } = await assertUserAuth(cookies);
-	if (!userId) return { success: false, error: 'general.connectionRequired' };
+	const {
+		locals: { user }
+	} = getRequestEvent();
+
+	if (!user.userId) return { success: false, error: 'general.connectionRequired' };
 
 	const defaultFp = await FilteringProfilesEntity.findOne({ where: { isDefault: true } });
 	if (!defaultFp) return { success: false, error: 'settings.misc.noDefaultFilteringProfile' };
 
-	await scheduleTask(userId, TaskType.RADARR_MOVIE_ADD, movie);
+	await scheduleTask(user.userId, TaskType.RADARR_MOVIE_ADD, movie);
 
 	return { success: true };
 });
 
 export const radarrRemoveMovie = command(MovieRemoveSchema, async (series) => {
-	const { cookies } = getRequestEvent();
-	const { userId } = await assertUserAuth(cookies);
-	if (!userId) return { success: false, error: 'general.connectionRequired' };
+	const {
+		locals: { user }
+	} = getRequestEvent();
 
-	await scheduleTask(userId, TaskType.RADARR_MOVIE_REMOVE, series);
+	if (!user.userId) return { success: false, error: 'general.connectionRequired' };
+
+	await scheduleTask(user.userId, TaskType.RADARR_MOVIE_REMOVE, series);
 
 	return { success: true };
 });
 
 export const radarrGetDiskspace = query(async () => {
-	const { cookies } = getRequestEvent();
-	if (!(await assertUserAuth(cookies)).userId)
-		return { success: false, error: 'general.connectionRequired' };
+	const {
+		locals: { user }
+	} = getRequestEvent();
+	if (!user.userId) return { success: false, error: 'general.connectionRequired' };
 
 	const { radarrConnector: conn } = await Connectors.getInstance();
 	if (!conn) {

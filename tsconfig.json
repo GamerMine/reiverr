@@ -1,27 +1,16 @@
 {
-	"extends": "./.svelte-kit/tsconfig.json",
-	"compilerOptions": {
-		"allowJs": true,
-		"checkJs": true,
-		"esModuleInterop": true,
-		"forceConsistentCasingInFileNames": true,
-		"resolveJsonModule": true,
-		"skipLibCheck": true,
-		"sourceMap": true,
-		"strict": true,
-		"target": "ES2022",
-		"types": ["node"],
-		"typeRoots": ["node_modules/@types"],
-		"module": "ES2022",
-		"lib": ["es2022"],
-		"emitDecoratorMetadata": true,
-		"experimentalDecorators": true,
-		"strictPropertyInitialization": false,
-		"verbatimModuleSyntax": true,
-		"allowImportingTsExtensions": true
-	}
-	// Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
-	//
-	// If you want to overwrite includes/excludes, make sure to copy over the relevant includes/excludes
-	// from the referenced tsconfig.json - TypeScript does not merge them in
+  "extends": "$app/tsconfig",
+  "compilerOptions": {
+    "sourceMap": true,
+    "strict": true,
+    "target": "ES2022",
+    "types": ["$app/types", "node"],
+    "typeRoots": ["node_modules/@types"],
+    "module": "ES2022",
+    "lib": ["es2022"],
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false
+  },
+  "include": ["src", "vite.config.ts", "tests"]
 }

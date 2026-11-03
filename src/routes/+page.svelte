@@ -1,20 +1,20 @@
 <script lang="ts">
-	import { getPosterProps, TmdbApiOpen } from '$lib/apis/tmdb/tmdbApi';
-	import Carousel from '$lib/components/carousel/Carousel.svelte';
-	import GenreCard from '$lib/components/cards/GenreCard.svelte';
-	import NetworkCard from '$lib/components/cards/NetworkCard.svelte';
-	import PersonCard from '$lib/components/cards/PersonCard.svelte';
-	import Poster from '$lib/components/cards/Poster.svelte';
-	import TitleShowcases from './components/titleShowcase/TitleShowcasesContainer.svelte';
-	import { genres, networks } from '$lib/utils/discover';
-	import type { TitleType } from '$lib/utils/types';
-	import { formatDateToYearMonthDay } from '$lib/utils/utils';
+	import { getPosterProps, TmdbApiOpen } from '#lib/apis/tmdb/tmdbApi.js';
+	import Carousel from '#lib/components/carousel/Carousel.svelte';
+	import GenreCard from '#lib/components/cards/GenreCard.svelte';
+	import NetworkCard from '#lib/components/cards/NetworkCard.svelte';
+	import PersonCard from '#lib/components/cards/PersonCard.svelte';
+	import Poster from '#lib/components/cards/Poster.svelte';
+	import TitleShowcases from '../lib/components/titleShowcase/TitleShowcasesContainer.svelte';
+	import { genres, networks } from '#lib/utils/discover.js';
+	import type { TitleType } from '#lib/utils/types.js';
+	import { formatDateToYearMonthDay } from '#lib/utils/utils.js';
 	import type { ComponentProps } from 'svelte';
 	import { _ } from 'svelte-i18n';
 	import { fade } from 'svelte/transition';
-	import { tmdbDataFormat } from '$lib/utils/utils.js';
-	import { settings } from '$lib/stores/settings.svelte';
-	import { jellyfinGetItems } from '$lib/remote/jellyfin.remote';
+	import { tmdbDataFormat } from '#lib/utils/utils.js';
+	import { settings } from '#lib/stores/settings.svelte.js';
+	import { jellyfinGetItems } from '#lib/remote/jellyfin.remote.js';
 
 	const fetchCardProps = async (
 		items: {
@@ -148,7 +148,7 @@
 <TitleShowcases />
 
 <div
-	class="flex flex-col gap-12 py-6 bg-stone-950"
+	class="flex flex-col gap-12 bg-stone-950 py-6"
 	in:fade|global={{
 		duration: settings.userSettings.interface.animationDuration,
 		delay: settings.userSettings.interface.animationDuration

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { Genre } from '$lib/utils/discover';
-	import { capitalize } from '$lib/utils/utils';
+	import type { Genre } from '#lib/utils/discover.js';
+	import { capitalize } from '#lib/utils/utils.js';
 
 	let { genre }: { genre: Genre } = $props();
 </script>

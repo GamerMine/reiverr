@@ -2,14 +2,14 @@
 	import classNames from 'classnames';
 	import { Check } from 'svelte-radix';
 	import { fade } from 'svelte/transition';
-	import ContextMenu from '$lib/components/controls/ContextMenu.svelte';
-	import ContextMenuItem from '$lib/components/controls/ContextMenuItem.svelte';
-	import PlayButton from '$lib/components/controls/PlayButton.svelte';
+	import ContextMenu from '#lib/components/controls/ContextMenu.svelte';
+	import ContextMenuItem from '#lib/components/controls/ContextMenuItem.svelte';
+	import PlayButton from '#lib/components/controls/PlayButton.svelte';
 	import ProgressBar from '../layout/ProgressBar.svelte';
-	import { playerState } from '$lib/components/player/VideoPlayer';
+	import { playerState } from '#lib/components/player/VideoPlayer.js';
 	import type { Snippet } from 'svelte';
 	import { _ } from 'svelte-i18n';
-	import { jellyfinSetItemWatched } from '$lib/remote/jellyfin.remote';
+	import { jellyfinSetItemWatched } from '#lib/remote/jellyfin.remote.js';
 
 	let {
 		backdropUrl,

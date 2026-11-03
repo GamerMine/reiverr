@@ -1,17 +1,19 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import I18n from '$lib/components/text/I18n.svelte';
-	import DynamicModal from '$lib/components/modals/DynamicModal.svelte';
-	import Navbar from '$lib/components/navigation/navbar/Navbar.svelte';
-	import UpdateChecker from '$lib/components/layout/UpdateChecker.svelte';
+	import I18n from '#lib/components/text/I18n.svelte';
+	import DynamicModal from '#lib/components/modals/DynamicModal.svelte';
+	import Navbar from '#lib/components/navigation/navbar/Navbar.svelte';
+	import UpdateChecker from '#lib/components/layout/UpdateChecker.svelte';
 	import '../app.css';
 	import type { LayoutServerData } from './$types';
-	import NotificationPane from '$lib/components/notification/NotificationPane.svelte';
+	import NotificationPane from '#lib/components/notification/NotificationPane.svelte';
 	import { type Snippet } from 'svelte';
-	import { settings } from '$lib/stores/settings.svelte';
+	import { settings } from '#lib/stores/settings.svelte.js';
 	import { CrossCircled } from 'svelte-radix';
 	import { fade } from 'svelte/transition';
 	import { _ } from 'svelte-i18n';
+	import OidcTokenRenewer from '#lib/components/navigation/OidcTokenRenewer.svelte';
+	import { isProtected } from '#lib/utils/utils.ts';
 
 	let { data, children }: { data: LayoutServerData; children: Snippet } = $props();
 
@@ -35,8 +37,11 @@
 
 <I18n />
 <div class="app">
-	{#if !['/login', '/setup'].includes(page.url.pathname)}
+	{#if isProtected(page.url)}
 		<Navbar />
+		{#if data.isOidc}
+			<OidcTokenRenewer />
+		{/if}
 	{/if}
 	<main>
 		{@render children?.()}

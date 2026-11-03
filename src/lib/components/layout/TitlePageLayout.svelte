@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { TMDB_IMAGES_ORIGINAL, TMDB_POSTER_SMALL } from '$lib/utils/constants';
-	import type { TitleType } from '$lib/utils/types';
+	import { TMDB_IMAGES_ORIGINAL, TMDB_POSTER_SMALL } from '#lib/utils/constants.js';
+	import type { TitleType } from '#lib/utils/types.js';
 	import classNames from 'classnames';
 	import { ChevronLeft, Cross2, ExternalLink } from 'svelte-radix';
-	import IconButton from '$lib/components/controls/IconButton.svelte';
-	import LazyImg from '$lib/components/images/LazyImg.svelte';
-	import TruncatedText from '$lib/components/text/TruncatedText.svelte';
+	import IconButton from '#lib/components/controls/IconButton.svelte';
+	import LazyImg from '#lib/components/images/LazyImg.svelte';
+	import TruncatedText from '#lib/components/text/TruncatedText.svelte';
 	import type { Snippet } from 'svelte';
 
 	interface titleInformation {

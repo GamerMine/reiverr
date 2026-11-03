@@ -4,38 +4,42 @@
 		getTmdbMovieRecommendations,
 		getTmdbMovieSimilar,
 		type TmdbMovieFull2
-	} from '$lib/apis/tmdb/tmdbApi';
-	import Button from '$lib/components/controls/Button.svelte';
-	import Card from '$lib/components/cards/Card.svelte';
-	import { fetchCardTmdbProps } from '$lib/components/cards/card';
-	import Carousel from '$lib/components/carousel/Carousel.svelte';
-	import CarouselPlaceholderItems from '$lib/components/carousel/CarouselPlaceholderItems.svelte';
-	import PersonCard from '$lib/components/cards/PersonCard.svelte';
-	import ProgressBar from '$lib/components/layout/ProgressBar.svelte';
-	import OpenInButton from '$lib/components/TitlePageLayout/OpenInButton.svelte';
-	import TitlePageLayout from '$lib/components/TitlePageLayout/TitlePageLayout.svelte';
-	import { playerState } from '$lib/components/player/VideoPlayer';
-	import { formatSize } from '$lib/utils/utils';
+	} from '#lib/apis/tmdb/tmdbApi.js';
+	import Button from '#lib/components/controls/Button.svelte';
+	import Card from '#lib/components/cards/Card.svelte';
+	import { fetchCardTmdbProps } from '#lib/components/cards/card.js';
+	import Carousel from '#lib/components/carousel/Carousel.svelte';
+	import CarouselPlaceholderItems from '#lib/components/carousel/CarouselPlaceholderItems.svelte';
+	import PersonCard from '#lib/components/cards/PersonCard.svelte';
+	import ProgressBar from '#lib/components/layout/ProgressBar.svelte';
+	import OpenInButton from '#lib/components/TitlePageLayout/OpenInButton.svelte';
+	import TitlePageLayout from '#lib/components/layout/TitlePageLayout.svelte';
+	import { playerState } from '#lib/components/player/VideoPlayer.js';
+	import { formatSize } from '#lib/utils/utils.js';
 	import classNames from 'classnames';
 	import { ActivityLog, ChevronRight, Clock, DotFilled, Trash } from 'svelte-radix';
 	import { type ComponentProps, onMount } from 'svelte';
 	import { _ } from 'svelte-i18n';
-	import { settings } from '$lib/stores/settings.svelte';
-	import { radarrAddMovie, radarrGetMovies, radarrRemoveMovie } from '$lib/remote/radarr.remote';
-	import Select from '$lib/components/controls/Select.svelte';
-	import Option from '$lib/components/controls/Option.svelte';
-	import { TMDB_BASE_MOVIE_URL } from '$lib/utils/constants';
-	import { jellyfinGetItems } from '$lib/remote/jellyfin.remote';
+	import { settings } from '#lib/stores/settings.svelte.js';
+	import {
+		radarrAddMovie,
+		radarrGetMovies,
+		radarrRemoveMovie
+	} from '#lib/remote/radarr.remote.js';
+	import Select from '#lib/components/controls/Select.svelte';
+	import Option from '#lib/components/controls/Option.svelte';
+	import { TMDB_BASE_MOVIE_URL } from '#lib/utils/constants.js';
+	import { jellyfinGetItems } from '#lib/remote/jellyfin.remote.js';
 	import {
 		createErrorNotification,
 		createSuccessNotification
-	} from '$lib/stores/notification.store';
+	} from '#lib/stores/notification.store.js';
 	import type { RadarrMovieResource } from '@reiverr/connectors/types/radarr';
-	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
-	import { getQueuedTasks } from '$lib/remote/tasks.remote.ts';
+	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/radarr';
+	import { getQueuedTasks } from '#lib/remote/tasks.remote.ts';
 	import { type MovieAdd, type MovieRemove } from '../../../tasksWorker/types.ts';
 	import { TaskType } from '@reiverr/db/types';
-	import ConfirmDialog from '$lib/components/controls/ConfirmDialog.svelte';
+	import ConfirmDialog from '#lib/components/controls/ConfirmDialog.svelte';
 
 	let {
 		tmdbId,
@@ -203,7 +207,7 @@
 
 		{#snippet title_right()}
 			<div
-				class="flex gap-2 items-center flex-row-reverse justify-end lg:flex-row lg:justify-start"
+				class="flex flex-row-reverse items-center justify-end gap-2 lg:flex-row lg:justify-start"
 			>
 				{#if jellyfinGetItems().loading || radarrGetMovies().loading}
 					<div class="placeholder h-10 w-48 rounded-xl"></div>
@@ -264,7 +268,7 @@
 
 		{#snippet info_components()}
 			<div class="col-span-2 lg:col-span-1">
-				<p class="text-zinc-400 text-sm">{$_('library.content.directedBy')}</p>
+				<p class="text-sm text-zinc-400">{$_('library.content.directedBy')}</p>
 				<h2 class="font-medium">
 					{tmdbMovie?.credits.crew
 						?.filter((c) => c.job === 'Director')
@@ -273,7 +277,7 @@
 				</h2>
 			</div>
 			<div class="col-span-2 lg:col-span-1">
-				<p class="text-zinc-400 text-sm">{$_('library.content.releaseDate')}</p>
+				<p class="text-sm text-zinc-400">{$_('library.content.releaseDate')}</p>
 				<h2 class="font-medium">
 					{new Date(tmdbMovie?.release_date || Date.now()).toLocaleDateString(
 						settings.userSettings.interface.language,
@@ -287,7 +291,7 @@
 			</div>
 			{#if tmdbMovie?.budget}
 				<div class="col-span-2 lg:col-span-1">
-					<p class="text-zinc-400 text-sm">{$_('library.content.budget')}</p>
+					<p class="text-sm text-zinc-400">{$_('library.content.budget')}</p>
 					<h2 class="font-medium">
 						{tmdbMovie?.budget?.toLocaleString('en-US', {
 							style: 'currency',
@@ -298,7 +302,7 @@
 			{/if}
 			{#if tmdbMovie?.revenue}
 				<div class="col-span-2 lg:col-span-1">
-					<p class="text-zinc-400 text-sm">{$_('library.content.revenue')}</p>
+					<p class="text-sm text-zinc-400">{$_('library.content.revenue')}</p>
 					<h2 class="font-medium">
 						{tmdbMovie?.revenue?.toLocaleString('en-US', {
 							style: 'currency',
@@ -308,13 +312,13 @@
 				</div>
 			{/if}
 			<div class="col-span-2 lg:col-span-1">
-				<p class="text-zinc-400 text-sm">{$_('library.content.status')}</p>
+				<p class="text-sm text-zinc-400">{$_('library.content.status')}</p>
 				<h2 class="font-medium">
 					{tmdbMovie?.status}
 				</h2>
 			</div>
 			<div class="col-span-2 lg:col-span-1">
-				<p class="text-zinc-400 text-sm">{$_('library.content.runtime')}</p>
+				<p class="text-sm text-zinc-400">{$_('library.content.runtime')}</p>
 				<h2 class="font-medium">
 					{tmdbMovie?.runtime} Minutes
 				</h2>
@@ -325,7 +329,7 @@
 			{#if radarrMovie}
 				{#if radarrMovie?.movieFile?.quality}
 					<div class="col-span-2 lg:col-span-1">
-						<p class="text-zinc-400 text-sm">Video</p>
+						<p class="text-sm text-zinc-400">Video</p>
 						<h2 class="font-medium">
 							{radarrMovie?.movieFile?.quality.quality?.type}
 						</h2>
@@ -333,14 +337,14 @@
 				{/if}
 				{#if radarrMovie?.movieFile?.size}
 					<div class="col-span-2 lg:col-span-1">
-						<p class="text-zinc-400 text-sm">{$_('library.content.sizeDisk')}</p>
+						<p class="text-sm text-zinc-400">{$_('library.content.sizeDisk')}</p>
 						<h2 class="font-medium">
 							{formatSize(radarrMovie?.movieFile?.size || 0)}
 						</h2>
 					</div>
 				{/if}
 			{:else if radarrGetMovies().loading}
-				<div class="flex gap-4 flex-wrap col-span-4 sm:col-span-6 mt-4">
+				<div class="col-span-4 mt-4 flex flex-wrap gap-4 sm:col-span-6">
 					<div class="placeholder h-10 w-40 rounded-xl"></div>
 					<div class="placeholder h-10 w-40 rounded-xl"></div>
 				</div>
@@ -351,14 +355,14 @@
 			{#await preloadRecommendationData()}
 				<Carousel gradientFromColor="from-stone-950">
 					{#snippet title()}
-						<div class="font-medium text-lg">{$_('library.content.castAndCrew')}</div>
+						<div class="text-lg font-medium">{$_('library.content.castAndCrew')}</div>
 					{/snippet}
 					<CarouselPlaceholderItems />
 				</Carousel>
 
 				<Carousel gradientFromColor="from-stone-950">
 					{#snippet title()}
-						<div class="font-medium text-lg">
+						<div class="text-lg font-medium">
 							{$_('library.content.recommendations')}
 						</div>
 					{/snippet}
@@ -367,7 +371,7 @@
 
 				<Carousel gradientFromColor="from-stone-950">
 					{#snippet title()}
-						<div class="font-medium text-lg">{$_('library.content.similarSeries')}</div>
+						<div class="text-lg font-medium">{$_('library.content.similarSeries')}</div>
 					{/snippet}
 					<CarouselPlaceholderItems />
 				</Carousel>
@@ -375,7 +379,7 @@
 				{#if castProps?.length}
 					<Carousel gradientFromColor="from-stone-950">
 						{#snippet title()}
-							<div class="font-medium text-lg">
+							<div class="text-lg font-medium">
 								{$_('library.content.castAndCrew')}
 							</div>
 						{/snippet}
@@ -388,7 +392,7 @@
 				{#if tmdbRecommendationProps?.length}
 					<Carousel gradientFromColor="from-stone-950">
 						{#snippet title()}
-							<div class="font-medium text-lg">
+							<div class="text-lg font-medium">
 								{$_('library.content.recommendations')}
 							</div>
 						{/snippet}
@@ -401,7 +405,7 @@
 				{#if tmdbSimilarProps?.length}
 					<Carousel gradientFromColor="from-stone-950">
 						{#snippet title()}
-							<div class="font-medium text-lg">
+							<div class="text-lg font-medium">
 								{$_('library.content.similarMovies')}
 							</div>
 						{/snippet}

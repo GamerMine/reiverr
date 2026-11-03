@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import MoviePage from './MoviePage.svelte';
+	import MoviePage from '#lib/components/pages/MoviePage.svelte';
 
 	let { data }: { data: PageData } = $props();
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import CardPlaceholder from '$lib/components/cards/CardPlaceholder.svelte';
+	import CardPlaceholder from '#lib/components/cards/CardPlaceholder.svelte';
 
 	let {
 		size = 'md',

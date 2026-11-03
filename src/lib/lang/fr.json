@@ -178,6 +178,7 @@
     "invalidCredential": "Identifiants invalides",
     "logIn": "Se connecter",
     "manualLogin": "Connexion Manuelle",
+    "oidcLogin": "Connexion SSO",
     "password": "Mot de passe",
     "unknownError": "Erreur inconnue",
     "username": "Nom d'utilisateur",

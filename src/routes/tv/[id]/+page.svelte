@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import SeriesPage from './SeriesPage.svelte';
+	import SeriesPage from '#lib/components/pages/SeriesPage.svelte';
 	import { onMount } from 'svelte';
 
 	let { data }: { data: PageData } = $props();

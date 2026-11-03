@@ -1,13 +1,13 @@
-import { command, getRequestEvent, query } from '$app/server';
-import { assertUserAuth } from '$lib/server/utils.server';
+import { command, getRequestEvent, query, type RemoteQueryFunction } from '$app/server';
+import { logoutUser } from '#lib/server/auth/auth.js';
 import * as v from 'valibot';
 import Connectors, { JellyfinConnector } from '@reiverr/connectors';
-import type { RemoteQueryFunction } from '@sveltejs/kit';
-import { ApiSchema, type Result } from '$lib/utils/types.ts';
+import { type Result } from '#lib/utils/types.ts';
 import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
-import { JellyfinDeviceProfileSchema } from '$lib/components/player/playback-profiles';
+import { JellyfinDeviceProfileSchema } from '#lib/components/player/playback-profiles/index.js';
 import { GlobalSettingsEntity } from '@reiverr/db/entities';
 import Logger, { LogLevel } from '@reiverr/logging';
+import { ApiSchema } from '#lib/utils/schemas.ts';
 
 const logger = Logger.getLogger('JellyfinRemote');
 
@@ -19,12 +19,13 @@ export const jellyfinIsHealthy = query(v.optional(ApiSchema), async (api) => {
 
 export const jellyfinGetItems: RemoteQueryFunction<void, Result<JellyfinBaseItemDto[]>> = query(
 	async () => {
-		const { cookies } = getRequestEvent();
-		const { userId } = await assertUserAuth(cookies);
-		if (!userId) return { success: false, error: 'general.connectionRequired' };
+		const {
+			locals: { user }
+		} = getRequestEvent();
+
 		const conn = (await Connectors.getInstance()).jellyfinConnector;
 
-		const items = await conn.getItems(userId, true, ['Movie', 'Series']);
+		const items = await conn.getItems(user.userId, true, ['Movie', 'Series']);
 		if (!items.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(items.error, null, 2));
 
 		return {
@@ -35,32 +36,33 @@ export const jellyfinGetItems: RemoteQueryFunction<void, Result<JellyfinBaseItem
 );
 
 export const jellyfinGetItemById = query(v.string(), async (itemId) => {
-	const { cookies } = getRequestEvent();
-	const { userId } = await assertUserAuth(cookies);
-	if (!userId) return { success: false, error: 'general.connectionRequired' };
+	const {
+		locals: { user }
+	} = getRequestEvent();
+
+	if (!user.userId) return { success: false, error: 'general.connectionRequired' };
 	const conn = (await Connectors.getInstance()).jellyfinConnector;
 
-	const item = await conn.getItemById(userId, itemId);
+	const item = await conn.getItemById(user.userId, itemId);
+
 	if (!item.response.ok)
 		logger.log(
 			LogLevel.ERROR,
 			`${item.response.status} ${item.response.statusText} ${JSON.stringify(item.error, null, 2)}`
 		);
 
-	return {
-		success: item.response.ok,
-		data: item.data
-	};
+	return { success: item.response.ok, data: item.data };
 });
 
 export const jellyfinGetEpisodes: RemoteQueryFunction<void, Result<JellyfinBaseItemDto[]>> = query(
 	async () => {
-		const { cookies } = getRequestEvent();
-		const { userId } = await assertUserAuth(cookies);
-		if (!userId) return { success: false, error: 'general.connectionRequired' };
+		const {
+			locals: { user }
+		} = getRequestEvent();
+
 		const conn = (await Connectors.getInstance()).jellyfinConnector;
 
-		const items = await conn.getItems(userId, undefined, ['Series', 'Episode']);
+		const items = await conn.getItems(user.userId, undefined, ['Series', 'Episode']);
 		if (!items.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(items.error, null, 2));
 
 		return {
@@ -97,12 +99,13 @@ export const jellyfinGetUsers = query(async () => {
 
 export const jellyfinGetNextUp: RemoteQueryFunction<void, Result<JellyfinBaseItemDto[]>> = query(
 	async () => {
-		const { cookies } = getRequestEvent();
-		const { userId } = await assertUserAuth(cookies);
-		if (!userId) return { success: false, error: 'general.connectionRequired' };
+		const {
+			locals: { user }
+		} = getRequestEvent();
+
 		const conn = (await Connectors.getInstance()).jellyfinConnector;
 
-		const items = await conn.getShowsNextUp(userId);
+		const items = await conn.getShowsNextUp(user.userId);
 		if (!items.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(items.error, null, 2));
 
 		return {
@@ -116,12 +119,13 @@ export const jellyfinGetContinueWatching: RemoteQueryFunction<
 	void,
 	Result<JellyfinBaseItemDto[]>
 > = query(async () => {
-	const { cookies } = getRequestEvent();
-	const { userId } = await assertUserAuth(cookies);
-	if (!userId) return { success: false, error: 'general.connectionRequired' };
+	const {
+		locals: { user }
+	} = getRequestEvent();
+
 	const conn = (await Connectors.getInstance()).jellyfinConnector;
 
-	const items = await conn.getUserItemsResume(userId);
+	const items = await conn.getUserItemsResume(user.userId);
 	if (!items.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(items.error, null, 2));
 
 	return {
@@ -133,14 +137,15 @@ export const jellyfinGetContinueWatching: RemoteQueryFunction<
 export const jellyfinSetItemWatched = command(
 	v.object({ id: v.string(), watched: v.boolean() }),
 	async (item) => {
-		const { cookies } = getRequestEvent();
-		const { userId } = await assertUserAuth(cookies);
-		if (!userId) return { success: false, error: 'general.connectionRequired' };
+		const {
+			locals: { user }
+		} = getRequestEvent();
+
 		const conn = (await Connectors.getInstance()).jellyfinConnector;
 
 		let res;
-		if (item.watched) res = await conn.postUserPlayedItems(userId, item.id);
-		else res = await conn.deleteUserPlayedItems(userId, item.id);
+		if (item.watched) res = await conn.postUserPlayedItems(user.userId, item.id);
+		else res = await conn.deleteUserPlayedItems(user.userId, item.id);
 		if (!res.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(res.error, null, 2));
 
 		return { success: res.response.ok };
@@ -153,12 +158,17 @@ export const jellyfinUpdateProgress = command(
 		positionTicks: v.number()
 	}),
 	async (data) => {
-		const { cookies } = getRequestEvent();
-		const { userId } = await assertUserAuth(cookies);
-		if (!userId) return { success: false, error: 'general.connectionRequired' };
+		const {
+			locals: { user }
+		} = getRequestEvent();
+
 		const conn = (await Connectors.getInstance()).jellyfinConnector;
 
-		const res = await conn.postUserItemsByIdUserData(userId, data.itemId, data.positionTicks);
+		const res = await conn.postUserItemsByIdUserData(
+			user.userId,
+			data.itemId,
+			data.positionTicks
+		);
 		if (!res.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(res.error, null, 2));
 
 		return { success: res.response.ok };
@@ -166,12 +176,13 @@ export const jellyfinUpdateProgress = command(
 );
 
 export const jellyfinDeleteActiveEncoding = command(v.string(), async (playSessionId) => {
-	const { cookies } = getRequestEvent();
-	const { username } = await assertUserAuth(cookies);
-	if (!username) return { success: false, error: 'general.connectionRequired' };
+	const {
+		locals: { user }
+	} = getRequestEvent();
+
 	const conn = (await Connectors.getInstance()).jellyfinConnector;
 
-	const res = await conn.deleteVideosActiveEncodings(username, playSessionId);
+	const res = await conn.deleteVideosActiveEncodings(user.username, playSessionId);
 	if (!res.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(res.error, null, 2));
 
 	return { success: res.response.ok };
@@ -185,18 +196,19 @@ export const jellyfinGetPlaySession = command(
 		maxStreamingBitrate: v.number()
 	}),
 	async (data) => {
-		const { cookies } = getRequestEvent();
-		const { userId } = await assertUserAuth(cookies);
-		if (!userId) return { success: false, error: 'general.connectionRequired' };
-		const conn = (await Connectors.getInstance()).jellyfinConnector;
+		const {
+			locals: { user }
+		} = getRequestEvent();
 
+		const conn = (await Connectors.getInstance()).jellyfinConnector;
 		const session = await conn.postItemsByIdPlaybackInfo(
-			userId,
+			user.userId,
 			data.itemId,
 			data.maxStreamingBitrate,
 			data.startTimeTicks,
 			data.deviceProfile
 		);
+
 		if (!session.response.ok)
 			logger.log(LogLevel.ERROR, JSON.stringify(session.error, null, 2));
 
@@ -216,8 +228,3 @@ export const jellyfinGetPlaySession = command(
 		};
 	}
 );
-
-export const jellyfinDisconnect = command(async () => {
-	const { cookies } = getRequestEvent();
-	cookies.delete('access_token', { path: '/' });
-});

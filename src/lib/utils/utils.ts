@@ -1,6 +1,6 @@
 import { locale } from 'svelte-i18n';
 import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
-import { settings } from '$lib/stores/settings.svelte.ts';
+import { settings } from '#lib/stores/settings.svelte.ts';
 
 export function formatMinutesToTime(minutes: number) {
 	const days = Math.floor(minutes / 60 / 24);
@@ -74,3 +74,7 @@ export const getJellyfinBackdrop = (item: JellyfinBaseItemDto, quality = 100) =>
 		}/Images/Primary?quality=${quality}&tag=${item?.ImageTags?.Primary}`;
 	}
 };
+
+export function isProtected(url?: Readonly<{ pathname: string }> | null) {
+	return !(url && url.pathname.match(/^\/auth.*|^\/setup.*/));
+}

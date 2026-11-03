@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Network } from '$lib/utils/discover';
+	import type { Network } from '#lib/utils/discover.js';
 
 	let { network }: { network: Network } = $props();
 </script>

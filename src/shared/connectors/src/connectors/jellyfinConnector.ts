@@ -116,6 +116,16 @@ export class JellyfinConnector {
 		});
 	}
 
+	public async getUser(userId: string) {
+		return await this.client.GET('/Users/{userId}', {
+			params: {
+				path: {
+					userId
+				}
+			}
+		});
+	}
+
 	public async getUserItemsResume(userId: string) {
 		return await this.client.GET('/UserItems/Resume', {
 			params: {
@@ -203,5 +213,44 @@ export class JellyfinConnector {
 		const hashBuffer = await crypto.subtle.digest('SHA-256', textAsBuffer);
 		const hashArray = Array.from(new Uint8Array(hashBuffer));
 		return hashArray.map((item) => item.toString(16).padStart(2, '0')).join('');
+	}
+
+	public async postCreateUserByName(name: string, password?: string) {
+		return await this.client.POST('/Users/New', {
+			body: {
+				Name: name,
+				Password: password
+			}
+		});
+	}
+
+	public async postUpdateUser(userId: string, name: string) {
+		return await this.client.POST('/Users', {
+			params: {
+				query: {
+					userId
+				}
+			},
+			body: { Name: name }
+		});
+	}
+
+	public async postUpdateUserPolicy(userId: string, isAdmin: boolean) {
+		return await this.client.POST('/Users/{userId}/Policy', {
+			params: {
+				path: {
+					userId
+				}
+			},
+			body: {
+				IsAdministrator: isAdmin,
+				IsHidden: false,
+				EnableCollectionManagement: false,
+				EnableSubtitleManagement: false,
+				EnableLyricManagement: false,
+				AuthenticationProviderId: 'oidc',
+				PasswordResetProviderId: 'oidc'
+			}
+		});
 	}
 }

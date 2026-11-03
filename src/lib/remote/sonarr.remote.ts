@@ -1,14 +1,14 @@
 import { command, getRequestEvent, query } from '$app/server';
 import * as v from 'valibot';
-import { ApiSchema, type Result } from '$lib/utils/types.ts';
+import { type Result } from '#lib/utils/types.ts';
 import { FilteringProfilesEntity, GlobalSettingsEntity } from '@reiverr/db/entities';
-import { assertUserAuth } from '$lib/server/utils.server';
 import { scheduleTask } from '../../tasksWorker/scheduler.server';
 import type { SonarrQueueResource } from '@reiverr/connectors/types/sonarr';
 import Connectors, { SonarrConnector } from '@reiverr/connectors';
 import { TaskType } from '@reiverr/db/types';
 import { SeriesAddSchema, SeriesRemoveSchema } from '../../tasksWorker/types';
 import Logger, { LogLevel } from '@reiverr/logging';
+import { ApiSchema } from '#lib/utils/schemas.ts';
 
 const logger = Logger.getLogger('SonarrRemote');
 
@@ -27,10 +27,6 @@ export const sonarrGetRootFolders = query(v.optional(ApiSchema), async (api) => 
 });
 
 export const sonarrGetSeries = query(async () => {
-	const { cookies } = getRequestEvent();
-	if (!(await assertUserAuth(cookies)).userId)
-		return { success: false, error: 'general.connectionRequired' };
-
 	const { sonarrConnector: conn } = await Connectors.getInstance();
 	if (!conn) {
 		logger.log(LogLevel.WARNING, 'Cannot get Sonarr series: Sonarr is unavailable');
@@ -44,24 +40,24 @@ export const sonarrGetSeries = query(async () => {
 });
 
 export const sonarrAddSeries = command(SeriesAddSchema, async (series) => {
-	const { cookies } = getRequestEvent();
-	const { userId } = await assertUserAuth(cookies);
-	if (!userId) return { success: false, error: 'general.connectionRequired' };
+	const {
+		locals: { user }
+	} = getRequestEvent();
 
 	const defaultFp = await FilteringProfilesEntity.findOne({ where: { isDefault: true } });
 	if (!defaultFp) return { success: false, error: 'settings.misc.noDefaultFilteringProfile' };
 
-	await scheduleTask(userId, TaskType.SONARR_SERIES_ADD, series);
+	await scheduleTask(user.userId, TaskType.SONARR_SERIES_ADD, series);
 
 	return { success: true };
 });
 
 export const sonarrRemoveSeries = command(SeriesRemoveSchema, async (seriesId) => {
-	const { cookies } = getRequestEvent();
-	const { userId } = await assertUserAuth(cookies);
-	if (!userId) return { success: false, error: 'general.connectionRequired' };
+	const {
+		locals: { user }
+	} = getRequestEvent();
 
-	await scheduleTask(userId, TaskType.SONARR_SERIES_REMOVE, seriesId);
+	await scheduleTask(user.userId, TaskType.SONARR_SERIES_REMOVE, seriesId);
 
 	return { success: true };
 });
@@ -86,23 +82,12 @@ async function getCachedQueue() {
 
 export const sonarrGetQueue = query.live(async function* () {
 	while (true) {
-		const { cookies } = getRequestEvent();
-		if (!(await assertUserAuth(cookies)).userId) {
-			yield { success: false, error: 'general.connectionRequired' };
-			await new Promise((f) => setTimeout(f, 2000));
-			continue;
-		}
-
 		yield await getCachedQueue();
 		await new Promise((f) => setTimeout(f, 2000));
 	}
 });
 
 export const sonarrGetDiskspace = query(async () => {
-	const { cookies } = getRequestEvent();
-	if (!(await assertUserAuth(cookies)).userId)
-		return { success: false, error: 'general.connectionRequired' };
-
 	const { sonarrConnector: conn } = await Connectors.getInstance();
 	if (!conn) {
 		logger.log(LogLevel.WARNING, 'Cannot get Sonarr diskspace: Sonarr is unavailable');

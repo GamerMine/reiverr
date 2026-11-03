@@ -1,7 +1,7 @@
 import { command, form, getRequestEvent } from '$app/server';
 import * as v from 'valibot';
-import { assertUserAuth } from '$lib/server/utils.server';
-import { QUALITY_DEFS } from '$lib/utils/constants.ts';
+import { ACCESS_TOKEN_COOKIE } from '#lib/server/auth/auth.js';
+import { QUALITY_DEFS } from '#lib/utils/constants.ts';
 import { In, IsNull, Not } from 'typeorm';
 import { scheduleTask } from '../../tasksWorker/scheduler.server';
 import {
@@ -12,13 +12,14 @@ import {
 	UserSettingsEntity
 } from '@reiverr/db/entities';
 import { type FilteringProfile, FilteringProfileSchema, TaskType } from '@reiverr/db/types';
-import { OptionalStringSchema, type Result } from '$lib/utils/types.ts';
+import { type Result } from '#lib/utils/types.ts';
 import Connectors, {
 	JellyfinConnector,
 	RadarrConnector,
 	SonarrConnector
 } from '@reiverr/connectors';
 import { PlatformSchema } from '../../tasksWorker/types.ts';
+import { OptionalStringSchema } from '#lib/utils/schemas.ts';
 
 export const saveSettings = form(
 	v.object({
@@ -42,8 +43,13 @@ export const saveSettings = form(
 		adminUserCanChooseProfile: v.optional(v.boolean(), false)
 	}),
 	async (settings): Promise<Result<{ needLogin: boolean }>> => {
-		const { cookies } = getRequestEvent();
-		const { userId, isAdmin } = await assertUserAuth(cookies);
+		const {
+			locals: {
+				user: { userId, isAdmin }
+			},
+			cookies
+		} = getRequestEvent();
+
 		if (!userId) return { success: false, error: 'general.connectionRequired' };
 
 		await UserSettingsEntity.upsert(
@@ -79,7 +85,7 @@ export const saveSettings = form(
 				if (connection) {
 					globalSettings.jellyfinBaseUrl = settings.adminJellyfinBaseUrl;
 					globalSettings.jellyfinApiKey = settings.adminJellyfinApiKey;
-					cookies.delete('access_token', { path: '/' });
+					cookies.delete(ACCESS_TOKEN_COOKIE, { path: '/' });
 					needLogin = true;
 				} else {
 					return { success: false, error: 'settings.misc.checkJellyfinCredentials' };
@@ -237,7 +243,7 @@ export const createUpdateFilteringProfile = form(
 		profileId
 	}): Promise<Result<undefined>> => {
 		const { cookies } = getRequestEvent();
-		const { isAdmin, userId } = await assertUserAuth(cookies);
+		const { isAdmin, userId } = await getUser(cookies);
 		if (!userId || !isAdmin) return { success: false, error: 'general.connectionRequired' };
 
 		for (const quality of qualities) {
@@ -279,7 +285,7 @@ export const createUpdateFilteringProfile = form(
 
 export const deleteFilteringProfile = command(FilteringProfileSchema, async (profile) => {
 	const { cookies } = getRequestEvent();
-	const { isAdmin, userId } = await assertUserAuth(cookies);
+	const { isAdmin, userId } = await getUser(cookies);
 	if (!userId || !isAdmin) return { success: false, error: 'general.connectionRequired' };
 
 	await QualityProfilesEntity.delete({
@@ -294,7 +300,7 @@ export const deleteFilteringProfile = command(FilteringProfileSchema, async (pro
 
 export const deleteIntegration = command(PlatformSchema, async (platform) => {
 	const { cookies } = getRequestEvent();
-	const { isAdmin } = await assertUserAuth(cookies);
+	const { isAdmin } = await getUser(cookies);
 	if (!isAdmin) return { success: false, error: 'general.connectionRequired' };
 
 	const globalSettings = await GlobalSettingsEntity.getDefault();

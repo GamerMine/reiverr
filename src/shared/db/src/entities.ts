@@ -5,6 +5,7 @@ import { CustomFormatsEntity } from './entities/CustomFormats.js';
 import { QualityProfilesEntity } from './entities/QualityProfiles.js';
 import { TaskEntity } from './entities/Task.js';
 import { TaskExecutionEntity } from './entities/TaskExecution.js';
+import { OidcIdentityEntity } from './entities/OidcIdentity.js';
 
 export {
 	GlobalSettingsEntity,
@@ -13,5 +14,6 @@ export {
 	CustomFormatsEntity,
 	QualityProfilesEntity,
 	TaskEntity,
-	TaskExecutionEntity
+	TaskExecutionEntity,
+	OidcIdentityEntity
 };

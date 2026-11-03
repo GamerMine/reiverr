@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { notificationStack } from '$lib/stores/notification.store';
+	import { notificationStack } from '#lib/stores/notification.store.js';
 	import classNames from 'classnames';
 	import { Cross2, ExclamationTriangle } from 'svelte-radix';
 	import { fade, fly } from 'svelte/transition';
-	import IconButton from '$lib/components/controls/IconButton.svelte';
+	import IconButton from '#lib/components/controls/IconButton.svelte';
 
 	let {
 		id,

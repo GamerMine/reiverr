@@ -1,6 +1,6 @@
 <script lang="ts">
 	import classNames from 'classnames';
-	import { modalStack } from '$lib/stores/modal.store';
+	import { modalStack } from '#lib/stores/modal.store.js';
 	import { onDestroy } from 'svelte';
 	import { fade } from 'svelte/transition';
 

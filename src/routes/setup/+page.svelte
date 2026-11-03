@@ -1,13 +1,13 @@
 <script lang="ts">
-	import Button from '$lib/components/controls/Button.svelte';
+	import Button from '#lib/components/controls/Button.svelte';
 	import { ArrowRight, ArrowLeft, Update } from 'svelte-radix';
 	import { onMount } from 'svelte';
-	import { animateBackground } from '$lib/utils/animation';
+	import { animateBackground } from '#lib/utils/animation.js';
 	import { _ } from 'svelte-i18n';
-	import Input from '$lib/components/controls/Input.svelte';
+	import Input from '#lib/components/controls/Input.svelte';
 	import { enhance } from '$app/forms';
-	import { createErrorNotification } from '$lib/stores/notification.store';
-	import { setTmpLanguage } from '$lib/utils/utils';
+	import { createErrorNotification } from '#lib/stores/notification.store.js';
+	import { setTmpLanguage } from '#lib/utils/utils.js';
 	import { goto } from '$app/navigation';
 
 	let mainDiv: HTMLDivElement | undefined = $state();

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Button from '$lib/components/controls/Button.svelte';
-	import { testAddTask } from '$lib/remote/test.remote.ts';
+	import Button from '#lib/components/controls/Button.svelte';
+	import { testAddTask } from '#lib/remote/test.remote.ts';
 </script>
 
 <div class="min-h-screen w-full sm:pt-24 gap-2 px-10">

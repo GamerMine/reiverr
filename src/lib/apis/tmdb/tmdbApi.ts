@@ -1,9 +1,9 @@
-import { browser } from '$app/environment';
-import { TMDB_API_KEY, TMDB_BACKDROP_SMALL } from '$lib/utils/constants.ts';
+import { browser } from '$app/env';
+import { TMDB_API_KEY, TMDB_BACKDROP_SMALL } from '#lib/utils/constants.ts';
 import createClient from 'openapi-fetch';
 import type { operations, paths } from './tmdb.generated';
-import type { TitleType } from '$lib/utils/types.ts';
-import { settings } from '$lib/stores/settings.svelte.js';
+import type { TitleType } from '#lib/utils/types.ts';
+import { settings } from '#lib/stores/settings.svelte.js';
 
 const CACHE_ONE_DAY = 'max-age=86400';
 
@@ -121,7 +121,6 @@ export const getTmdbSeriesSeason = async (
 
 export const getTmdbSeriesSeasons = (tmdbId: number, seasons: number) =>
 	[...Array(seasons).keys()].map((i) => getTmdbSeriesSeason(tmdbId, i + 1));
-
 export const getTmdbSeriesBackdrop = async (tmdbId: number) =>
 	getTmdbCache(backdropCache, tmdbId, () =>
 		getTmdbSeries(tmdbId)
@@ -138,7 +137,6 @@ export const getTmdbSeriesBackdrop = async (tmdbId: number) =>
 					)?.file_path
 			)
 	);
-
 export const getTmdbMovieBackdrop = async (tmdbId: number) =>
 	getTmdbCache(backdropCache, tmdbId, () =>
 		getTmdbMovie(tmdbId)
@@ -170,48 +168,24 @@ export const getTmdbPopularMovies = () =>
 
 export const getTmdbSeriesRecommendations = (tmdbId: number) =>
 	TmdbApiOpen.GET('/3/tv/{series_id}/recommendations', {
-		params: {
-			path: {
-				series_id: tmdbId
-			}
-		}
+		params: { path: { series_id: tmdbId } }
 	}).then((res) => res.data?.results || []);
-
 export const getTmdbSeriesSimilar = (tmdbId: number) =>
 	TmdbApiOpen.GET('/3/tv/{series_id}/similar', {
-		params: {
-			path: {
-				series_id: String(tmdbId)
-			}
-		}
+		params: { path: { series_id: String(tmdbId) } }
 	}).then((res) => res.data?.results || []);
-
 export const getTmdbMovieRecommendations = (tmdbId: number) =>
 	TmdbApiOpen.GET('/3/movie/{movie_id}/recommendations', {
-		params: {
-			path: {
-				movie_id: tmdbId
-			}
-		}
+		params: { path: { movie_id: tmdbId } }
 	}).then((res): TmdbMovie2[] => res.data?.results || []);
-
 export const getTmdbMovieSimilar = (tmdbId: number) =>
-	TmdbApiOpen.GET('/3/movie/{movie_id}/similar', {
-		params: {
-			path: {
-				movie_id: tmdbId
-			}
-		}
-	}).then((res) => res.data?.results || []);
-
+	TmdbApiOpen.GET('/3/movie/{movie_id}/similar', { params: { path: { movie_id: tmdbId } } }).then(
+		(res) => res.data?.results || []
+	);
 export const searchTmdbTitles = (query: string) =>
-	TmdbApiOpen.GET('/3/search/multi', {
-		params: {
-			query: {
-				query
-			}
-		}
-	}).then((res) => res.data?.results || []);
+	TmdbApiOpen.GET('/3/search/multi', { params: { query: { query } } }).then(
+		(res) => res.data?.results || []
+	);
 
 export const getPosterProps = async (
 	item: {
@@ -246,9 +220,7 @@ export const getPosterProps = async (
 export const getTmdbPerson = async (person_id: number) =>
 	TmdbApiOpen.GET('/3/person/{person_id}', {
 		params: {
-			path: {
-				person_id: person_id
-			},
+			path: { person_id },
 			query: {
 				language: settings.userSettings.interface.language,
 				append_to_response: 'images,movie_credits,tv_credits,external_ids'

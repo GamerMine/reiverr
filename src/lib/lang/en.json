@@ -178,6 +178,7 @@
     "invalidCredential": "Invalid credentials",
     "logIn": "Log in",
     "manualLogin": "Manual Login",
+    "oidcLogin": "SSO Login",
     "password": "Password",
     "unknownError": "Unknown error",
     "username": "Username",

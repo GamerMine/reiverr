@@ -7,6 +7,7 @@ import { CustomFormatsEntity } from './entities/CustomFormats.js';
 import { QualityProfilesEntity } from './entities/QualityProfiles.js';
 import { TaskEntity } from './entities/Task.js';
 import { TaskExecutionEntity } from './entities/TaskExecution.js';
+import { OidcIdentityEntity } from './entities/OidcIdentity.js';
 import type { DbConfig } from './types.js';
 
 class TypeOrm {
@@ -40,7 +41,8 @@ class TypeOrm {
 					CustomFormatsEntity,
 					QualityProfilesEntity,
 					TaskEntity,
-					TaskExecutionEntity
+					TaskExecutionEntity,
+					OidcIdentityEntity
 				],
 				logging: false
 			} as DataSourceOptions)
