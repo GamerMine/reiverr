@@ -25,7 +25,7 @@
 	{:else}
 		<p class="mb-5 text-2xl">{data.oidcError}</p>
 		<p class="text-1xl mb-5">{data.oidcErrorDescription}</p>
-		<Button variant="primary" href="/login">
+		<Button variant="primary" href="/auth/login">
 			<span class="flex"><ChevronLeft />{$_('login.goBack')}</span>
 		</Button>
 	{/if}

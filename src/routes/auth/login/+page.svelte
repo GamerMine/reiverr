@@ -126,7 +126,7 @@
 						<span class="mr-1">{$_('login.manualLogin')}</span><Keyboard size="20" />
 					</Button>
 					{#if data.oidcEnabled}
-						<Button variant="tertiary" href={'/login?oidc'}>
+						<Button variant="tertiary" href={'/auth/login?oidc'}>
 							<span class="mr-1">{data.oidcLabel ?? $_('login.oidcLogin')}</span
 							><IdCard size="20" />
 						</Button>
