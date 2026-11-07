@@ -32,7 +32,7 @@
 
 	{#if modal.group === modal.id}
 		<div
-			class="fixed inset-0 bg-stone-950/80 z-20"
+			class="fixed inset-0 z-20 bg-stone-950/80"
 			transition:fade|global={{
 				duration: 150
 			}}
@@ -43,7 +43,7 @@
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<div
 		class={classNames(
-			'fixed inset-0 justify-center items-center z-20 overflow-hidden flex transition-opacity reltaive',
+			'reltaive fixed inset-0 z-20 flex items-center justify-center overflow-hidden transition-opacity',
 			{
 				'opacity-0': hidden
 			}

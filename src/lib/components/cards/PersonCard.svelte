@@ -27,9 +27,9 @@
 
 <button
 	class={classNames(
-		'flex flex-col justify-start gap-3 p-4 rounded-xl overflow-hidden relative shadow-lg shrink-0 selectable hover:text-inherit hover:bg-stone-800 focus-visible:bg-stone-800 bg-stone-900 group text-left',
+		'selectable group relative flex shrink-0 flex-col justify-start gap-3 overflow-hidden rounded-xl bg-stone-900 p-4 text-left shadow-lg hover:bg-stone-800 hover:text-inherit focus-visible:bg-stone-800',
 		{
-			'w-36 h-56': size === 'md',
+			'h-56 w-36': size === 'md',
 			'h-52': size === 'lg',
 			'w-full': size === 'dynamic'
 		}
@@ -42,16 +42,16 @@
 		}
 	}}
 >
-	<div class="mx-auto rounded-full overflow-hidden shrink-0 aspect-square w-full bg-zinc-200/20">
+	<div class="mx-auto aspect-square w-full shrink-0 overflow-hidden rounded-full bg-zinc-200/20">
 		<div
 			style={"background-image: url('" + TMDB_PROFILE_SMALL + backdropUri + "')"}
-			class="bg-center bg-cover group-hover:scale-105 group-focus-visible:scale-105 transition-transform
-			w-full h-full"
+			class="h-full w-full bg-cover bg-center transition-transform
+			group-hover:scale-105 group-focus-visible:scale-105"
 		></div>
 	</div>
 	<div>
-		<h2 class="text-sm text-zinc-300 font-medium line-clamp-1">{subtitle}</h2>
-		<h1 class="font-semibold line-clamp-2">
+		<h2 class="line-clamp-1 text-sm font-medium text-zinc-300">{subtitle}</h2>
+		<h1 class="line-clamp-2 font-semibold">
 			{name}
 		</h1>
 	</div>

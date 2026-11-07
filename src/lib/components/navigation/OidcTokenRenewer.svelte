@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import Logger, { LogLevel } from '@reiverr/logging';
 
 	const logger = Logger.getLogger('OidcTokenRenewer');
@@ -14,7 +15,7 @@
 	function cancel() {
 		logger.log(LogLevel.ERROR, 'Unable to renew token');
 		if (renewalInProgress) {
-			goto('/auth/login');
+			goto(resolve('/auth/login', {}));
 		}
 	}
 
@@ -44,5 +45,5 @@
 </script>
 
 {#if renewalInProgress}
-	<iframe class="hidden" src="/auth/login?oidc&silent"></iframe>
+	<iframe title="OIDC Token renewer" class="hidden" src="/auth/login?oidc&silent"></iframe>
 {/if}

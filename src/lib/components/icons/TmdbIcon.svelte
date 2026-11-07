@@ -13,10 +13,10 @@
 			x2="185.04"
 			y2="66.7"
 			gradientUnits="userSpaceOnUse"
-			><stop offset="0" stop-color="#90cea1" /><stop offset="0.56" stop-color="#3cbec9" /><stop
-				offset="1"
-				stop-color="#00b3e5"
-			/></linearGradient
+			><stop offset="0" stop-color="#90cea1" /><stop
+				offset="0.56"
+				stop-color="#3cbec9"
+			/><stop offset="1" stop-color="#00b3e5" /></linearGradient
 		></defs
 	><title>Asset 4</title><g id="Layer_2" data-name="Layer 2"
 		><g id="Layer_1-2" data-name="Layer 1"

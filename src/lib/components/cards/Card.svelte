@@ -58,8 +58,8 @@
 	{/snippet}
 	<button
 		class={classNames(
-			'rounded-sm overflow-hidden relative shadow-lg shrink-0 aspect-video selectable hover:text-inherit flex flex-col justify-between group placeholder-image',
-			'p-2 px-3 gap-2',
+			'selectable group placeholder-image relative flex aspect-video shrink-0 flex-col justify-between overflow-hidden rounded-sm shadow-lg hover:text-inherit',
+			'gap-2 p-2 px-3',
 			{
 				'h-40': size === 'md',
 				'h-60': size === 'lg',
@@ -76,31 +76,31 @@
 	>
 		<div
 			style={"background-image: url('" + backdropUrl + "')"}
-			class="absolute inset-0 bg-center bg-cover group-hover:scale-105 group-focus-visible:scale-105
-			transition-transform"
+			class="absolute inset-0 bg-cover bg-center transition-transform group-hover:scale-105
+			group-focus-visible:scale-105"
 		></div>
 		<div
 			class={classNames(
-				'absolute inset-0 transition-opacity bg-darken sm:bg-opacity-100 bg-opacity-50',
+				'bg-darken sm:bg-opacity-100 bg-opacity-50 absolute inset-0 transition-opacity',
 				{
 					'opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100': available
 				}
 			)}
 		></div>
 		<div
-			class="flex flex-col justify-between flex-1 transition-opacity cursor-pointer relative opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100"
+			class="relative flex flex-1 cursor-pointer flex-col justify-between opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
 		>
 			<div class="text-left">
-				<h1 class="font-bold tracking-wider text-lg">{title}</h1>
-				<div class="text-xs text-zinc-300 tracking-wider font-medium">
+				<h1 class="text-lg font-bold tracking-wider">{title}</h1>
+				<div class="text-xs font-medium tracking-wider text-zinc-300">
 					{genres
 						.map((genre) => genre.charAt(0).toUpperCase() + genre.slice(1))
 						.join(', ')}
 				</div>
 			</div>
-			<div class="flex justify-between items-end">
+			<div class="flex items-end justify-between">
 				{#if completionTime}
-					<div class="text-sm font-medium text-zinc-200 tracking-wide">
+					<div class="text-sm font-medium tracking-wide text-zinc-200">
 						Downloaded in <b
 							>{formatMinutesToTime(
 								(new Date(completionTime).getTime() - Date.now()) / 1000 / 60
@@ -109,7 +109,7 @@
 					</div>
 				{:else}
 					{#if runtimeMinutes}
-						<div class="flex gap-1.5 items-center">
+						<div class="flex items-center gap-1.5">
 							<Clock />
 							<div class="text-sm text-zinc-200">
 								{progress
@@ -127,7 +127,7 @@
 					{/if}
 
 					{#if rating}
-						<div class="flex gap-1.5 items-center">
+						<div class="flex items-center gap-1.5">
 							<Star />
 							<div class="text-sm text-zinc-200">
 								{rating.toFixed(1)}

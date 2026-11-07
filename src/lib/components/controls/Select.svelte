@@ -138,15 +138,15 @@
 
 {@render children?.()}
 <div>
-	<div class="flex flex-wrap gap-2 max-h-24 overflow-y-auto">
+	<div class="flex max-h-24 flex-wrap gap-2 overflow-y-auto">
 		{#if multiple && typeof selectedValues === 'object'}
 			{#each selectedValues as value (value)}
-				<div class="bg-amber-300 px-2 py-1 rounded-2xl flex gap-1">
+				<div class="flex gap-1 rounded-2xl bg-amber-300 px-2 py-1">
 					<p class="text-xs text-black">{getLabel(value)}</p>
 					<Cross2
 						color="black"
 						size="17"
-						class=" rounded-2xl hover:bg-amber-500 p-0.5"
+						class=" rounded-2xl p-0.5 hover:bg-amber-500"
 						onclick={() => removeValue(value)}
 					/>
 				</div>
@@ -157,11 +157,11 @@
 	<div bind:this={selectElt}>
 		<button
 			bind:this={triggerElt}
-			class={classNames('relative rounded-lg py-1.5 cursor-pointer text-nowrap', {
+			class={classNames('relative cursor-pointer rounded-lg py-1.5 text-nowrap', {
 				'bg-zinc-800': variant === 'secondary',
 				'bg-white text-black': variant === 'primary',
-				'opacity-50 cursor-default': disabled,
-				'animate-pulse pointer-events-none': loading
+				'cursor-default opacity-50': disabled,
+				'pointer-events-none animate-pulse': loading
 			})}
 			onclick={() => {
 				if (!disabled || !loading) {
@@ -172,9 +172,9 @@
 			type="button"
 		>
 			{#if multiple || showOnlyPlaceholder}
-				<h2 class="pl-2 pr-8">{placeholder}</h2>
+				<h2 class="pr-8 pl-2">{placeholder}</h2>
 			{:else}
-				<h2 class="pl-2 pr-8">{getLabel(selectedOptionLabel)}</h2>
+				<h2 class="pr-8 pl-2">{getLabel(selectedOptionLabel)}</h2>
 			{/if}
 			<div class="absolute inset-y-0 right-2 flex items-center justify-center">
 				<CaretDown size="20" />
@@ -184,7 +184,7 @@
 </div>
 
 <div
-	class={classNames('text-center bg-zinc-800 z-100 rounded-md overflow-y-auto max-h-80', {
+	class={classNames('z-100 max-h-80 overflow-y-auto rounded-md bg-zinc-800 text-center', {
 		hidden: !dropdownOpen
 	})}
 	style={dropdownStyle}
@@ -194,7 +194,7 @@
 		{#if !multiple || !(typeof selectedValues === 'object' && selectedValues.includes(option.value))}
 			<button
 				type="button"
-				class="py-1 px-2 hover:bg-zinc-700 cursor-default w-full"
+				class="w-full cursor-default px-2 py-1 hover:bg-zinc-700"
 				onclick={() => addValue(option)}
 			>
 				{option.label}

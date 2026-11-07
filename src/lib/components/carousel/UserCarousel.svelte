@@ -40,15 +40,15 @@
 	});
 </script>
 
-<div class={classNames('flex flex-col gap-4 group/carousel', klass)}>
-	<div class={'flex justify-between items-center gap-4 ' + scrollClass}>
+<div class={classNames('group/carousel flex flex-col gap-4', klass)}>
+	<div class={'flex items-center justify-between gap-4 ' + scrollClass}>
 		{@render title?.()}
 		{#if !title}
-			<div class="font-semibold text-xl">{heading}</div>
+			<div class="text-xl font-semibold">{heading}</div>
 		{/if}
 		<div
 			class={classNames(
-				'flex gap-2 sm:opacity-0 transition-opacity sm:group-hover/carousel:opacity-100',
+				'flex gap-2 transition-opacity sm:opacity-0 sm:group-hover/carousel:opacity-100',
 				{
 					hidden: carousel_scroll_width
 				}
@@ -80,7 +80,7 @@
 	<div class="relative">
 		<div
 			class={classNames(
-				'flex overflow-x-scroll items-center overflow-y-visible scrollbar-hide gap-4 relative p-1 justify-center',
+				'relative scrollbar-hide flex items-center justify-center gap-4 overflow-x-scroll overflow-y-visible p-1',
 				scrollClass
 			)}
 			bind:this={carousel}

@@ -62,7 +62,7 @@
 <!-- Desktop -->
 <div
 	style={'height: ' + imageHeight.toFixed() + 'px'}
-	class={classNames('hidden sm:block inset-x-0 bg-center bg-cover bg-stone-950', {
+	class={classNames('inset-x-0 hidden bg-stone-950 bg-cover bg-center sm:block', {
 		absolute: isModal,
 		fixed: !isModal
 	})}
@@ -72,7 +72,7 @@
 			src={TMDB_IMAGES_ORIGINAL + getBackdropUri(titleInformation.backdropUriCandidates)}
 			klass="h-full"
 		>
-			<div class="absolute inset-0 bg-darken"></div>
+			<div class="bg-darken absolute inset-0"></div>
 		</LazyImg>
 	{/if}
 </div>
@@ -80,24 +80,24 @@
 <!-- Mobile -->
 <div
 	style={'height: ' + imageHeight.toFixed() + 'px'}
-	class="sm:hidden fixed inset-x-0 bg-center bg-cover bg-stone-950"
+	class="fixed inset-x-0 bg-stone-950 bg-cover bg-center sm:hidden"
 >
 	{#if titleInformation}
 		<LazyImg src={TMDB_IMAGES_ORIGINAL + titleInformation.posterPath} klass="h-full">
-			<div class="absolute inset-0 bg-darken"></div>
+			<div class="bg-darken absolute inset-0"></div>
 		</LazyImg>
 	{/if}
 </div>
 
-<div class="flex flex-col min-h-screen">
+<div class="flex min-h-screen flex-col">
 	<div
-		class={classNames('flex flex-col relative z-1', {
+		class={classNames('relative z-1 flex flex-col', {
 			'h-[85vh] sm:h-screen': !isModal,
 			'': isModal
 		})}
 	>
 		<div
-			class={classNames('flex-1 relative flex pt-24 px-2 sm:px-4 lg:px-8 pb-6', {
+			class={classNames('relative flex flex-1 px-2 pt-24 pb-6 sm:px-4 lg:px-8', {
 				'min-h-[60vh]': isModal
 			})}
 			bind:clientHeight={topHeight}
@@ -106,23 +106,23 @@
 				{#if titleInformation}
 					<a
 						href={`/${titleInformation.type}/${titleInformation.tmdbId}`}
-						class="absolute top-8 right-4 sm:right-8 z-10 hover:bg-white/15 hover:rounded-4xl ease-in-out duration-300"
+						class="absolute top-8 right-4 z-10 duration-300 ease-in-out hover:rounded-4xl hover:bg-white/15 sm:right-8"
 					>
 						<IconButton>
 							<ExternalLink size="20" />
 						</IconButton>
 					</a>
 				{/if}
-				<div class="absolute top-8 left-4 sm:left-8 z-10">
+				<div class="absolute top-8 left-4 z-10 sm:left-8">
 					<button
-						class="flex items-center sm:hidden font-medium"
+						class="flex items-center font-medium sm:hidden"
 						onclick={handleCloseModal}
 					>
 						<ChevronLeft size="20" />
 						Back
 					</button>
 					<div
-						class="hidden sm:block hover:bg-white/15 hover:rounded-4xl ease-in-out duration-300"
+						class="hidden duration-300 ease-in-out hover:rounded-4xl hover:bg-white/15 sm:block"
 					>
 						<IconButton onclick={handleCloseModal}>
 							<Cross2 size="20" />
@@ -131,10 +131,10 @@
 				</div>
 			{/if}
 			<div class="absolute inset-0 bg-linear-to-t from-stone-950 to-30%"></div>
-			<div class="z-1 flex-1 flex justify-end gap-8 items-end max-w-screen-2xl mx-auto">
+			<div class="z-1 mx-auto flex max-w-screen-2xl flex-1 items-end justify-end gap-8">
 				{#if titleInformation}
 					<div
-						class="aspect-2/3 w-52 bg-center bg-cover rounded-md hidden sm:block"
+						class="hidden aspect-2/3 w-52 rounded-md bg-cover bg-center sm:block"
 						style={"background-image: url('" +
 							TMDB_POSTER_SMALL +
 							titleInformation.posterPath +
@@ -142,13 +142,13 @@
 					></div>
 				{:else}
 					<div
-						class="aspect-2/3 w-52 bg-center bg-cover rounded-md hidden sm:block placeholder"
+						class="placeholder hidden aspect-2/3 w-52 rounded-md bg-cover bg-center sm:block"
 					></div>
 				{/if}
-				<div class="flex-1 flex gap-4 justify-between flex-col lg:flex-row lg:items-end">
+				<div class="flex flex-1 flex-col justify-between gap-4 lg:flex-row lg:items-end">
 					<div>
 						<div
-							class="text-zinc-300 text-sm uppercase font-semibold flex items-center gap-1"
+							class="flex items-center gap-1 text-sm font-semibold text-zinc-300 uppercase"
 						>
 							{@render title_info?.()}
 							{#if !title_info}
@@ -156,11 +156,11 @@
 							{/if}
 						</div>
 						{#if titleInformation}
-							<h1 class="text-4xl sm:text-5xl md:text-6xl font-semibold">
+							<h1 class="text-4xl font-semibold sm:text-5xl md:text-6xl">
 								{titleInformation.title}
 							</h1>
 						{:else}
-							<h1 class="text-4xl sm:text-5xl md:text-6xl placeholder-text mt-2">
+							<h1 class="placeholder-text mt-2 text-4xl sm:text-5xl md:text-6xl">
 								Placeholder
 							</h1>
 						{/if}
@@ -171,8 +171,8 @@
 				</div>
 			</div>
 		</div>
-		<div bind:clientHeight={bottomHeight} class="pb-6 bg-stone-950">
-			<div class="max-w-screen-2xl mx-auto">
+		<div bind:clientHeight={bottomHeight} class="bg-stone-950 pb-6">
+			<div class="mx-auto max-w-screen-2xl">
 				{@render episodes_carousel?.()}
 			</div>
 		</div>
@@ -180,40 +180,40 @@
 
 	<div
 		class={classNames(
-			'flex-1 flex flex-col gap-6 bg-stone-950 px-2 sm:px-4 lg:px-8 pb-6 relative',
+			'relative flex flex-1 flex-col gap-6 bg-stone-950 px-2 pb-6 sm:px-4 lg:px-8',
 			{
 				'2xl:px-0': !isModal
 			}
 		)}
 	>
 		<div
-			class="grid grid-cols-4 sm:grid-cols-6 gap-4 sm:gap-x-8 rounded-xl py-4 max-w-screen-2xl 2xl:mx-auto"
+			class="grid max-w-screen-2xl grid-cols-4 gap-4 rounded-xl py-4 sm:grid-cols-6 sm:gap-x-8 2xl:mx-auto"
 		>
 			{@render info_description?.()}
 			{#if !info_description}
 				<div
-					class="flex flex-col gap-3 max-w-5xl row-span-3 col-span-4 sm:col-span-6 lg:col-span-3 mb-4 lg:mr-8"
+					class="col-span-4 row-span-3 mb-4 flex max-w-5xl flex-col gap-3 sm:col-span-6 lg:col-span-3 lg:mr-8"
 				>
 					<!-- TODO: If there is no overview text available for a language, try getting it in another language -->
 					{#if titleInformation}
-						<div class="flex gap-4 justify-between">
-							<h1 class="font-semibold text-xl sm:text-2xl">
+						<div class="flex justify-between gap-4">
+							<h1 class="text-xl font-semibold sm:text-2xl">
 								{titleInformation.tagline}
 							</h1>
 						</div>
 						<TruncatedText
-							class="pl-4 border-l-2 text-sm sm:text-base text-zinc-300"
+							class="border-l-2 pl-4 text-sm text-zinc-300 sm:text-base"
 							text={titleInformation.overview}
 						/>
 					{:else}
-						<div class="flex gap-4 justify-between">
-							<h1 class="font-semibold text-xl sm:text-2xl placeholder-text">
+						<div class="flex justify-between gap-4">
+							<h1 class="placeholder-text text-xl font-semibold sm:text-2xl">
 								Placeholder
 							</h1>
 						</div>
 						<div class="flex">
-							<div class="mr-4 placeholder w-1 shrink-0 rounded-sm"></div>
-							<p class="text-sm sm:text-base placeholder-text">
+							<div class="placeholder mr-4 w-1 shrink-0 rounded-sm"></div>
+							<p class="placeholder-text text-sm sm:text-base">
 								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur
 								sit amet sem eget dolor lobortis mollis. Aliquam semper imperdiet mi
 								nec viverra. Praesent ac ligula congue, aliquam diam nec,
@@ -227,7 +227,7 @@
 			{@render info_components?.()}
 			{@render servarr_components?.()}
 			{#if !servarr_components}
-				<div class="flex gap-4 flex-wrap col-span-4 sm:col-span-6 mt-4">
+				<div class="col-span-4 mt-4 flex flex-wrap gap-4 sm:col-span-6">
 					<div class="placeholder h-10 w-40 rounded-xl"></div>
 					<div class="placeholder h-10 w-40 rounded-xl"></div>
 				</div>

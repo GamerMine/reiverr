@@ -1,5 +1,10 @@
-import { command, getRequestEvent, query, type RemoteQueryFunction } from '$app/server';
+import { getRequestEvent, query, type RemoteQueryFunction } from '$app/server';
 import { logoutUser } from '#lib/server/auth/auth.js';
+import {
+	adminQuery,
+	protectedCommand,
+	protectedQuery
+} from '#lib/server/auth/remote-guards.ts';
 import * as v from 'valibot';
 import Connectors, { JellyfinConnector } from '@reiverr/connectors';
 import { type Result } from '#lib/utils/types.ts';
@@ -11,21 +16,26 @@ import { ApiSchema } from '#lib/utils/schemas.ts';
 
 const logger = Logger.getLogger('JellyfinRemote');
 
-export const jellyfinIsHealthy = query(v.optional(ApiSchema), async (api) => {
+export const jellyfinIsHealthy = adminQuery(v.optional(ApiSchema), async (api) => {
 	if (api?.url && api.key) return await new JellyfinConnector(api.url, api.key).isHealthy();
 	const creds = await GlobalSettingsEntity.getJellyfinApi();
 	return await new JellyfinConnector(creds.apiUrl ?? '', creds.apiKey ?? '').isHealthy();
 });
 
-export const jellyfinGetItems: RemoteQueryFunction<void, Result<JellyfinBaseItemDto[]>> = query(
+export const jellyfinGetItems: RemoteQueryFunction<
+	void,
+	Result<JellyfinBaseItemDto[]>
+> = protectedQuery(
 	async () => {
 		const {
-			locals: { user }
+			locals: {
+				user: { userId }
+			}
 		} = getRequestEvent();
 
 		const conn = (await Connectors.getInstance()).jellyfinConnector;
 
-		const items = await conn.getItems(user.userId, true, ['Movie', 'Series']);
+		const items = await conn.getItems(userId!, true, ['Movie', 'Series']);
 		if (!items.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(items.error, null, 2));
 
 		return {
@@ -35,15 +45,16 @@ export const jellyfinGetItems: RemoteQueryFunction<void, Result<JellyfinBaseItem
 	}
 );
 
-export const jellyfinGetItemById = query(v.string(), async (itemId) => {
+export const jellyfinGetItemById = protectedQuery(v.string(), async (itemId) => {
 	const {
-		locals: { user }
+		locals: {
+			user: { userId }
+		}
 	} = getRequestEvent();
 
-	if (!user.userId) return { success: false, error: 'general.connectionRequired' };
 	const conn = (await Connectors.getInstance()).jellyfinConnector;
 
-	const item = await conn.getItemById(user.userId, itemId);
+	const item = await conn.getItemById(userId!, itemId);
 
 	if (!item.response.ok)
 		logger.log(
@@ -54,15 +65,20 @@ export const jellyfinGetItemById = query(v.string(), async (itemId) => {
 	return { success: item.response.ok, data: item.data };
 });
 
-export const jellyfinGetEpisodes: RemoteQueryFunction<void, Result<JellyfinBaseItemDto[]>> = query(
+export const jellyfinGetEpisodes: RemoteQueryFunction<
+	void,
+	Result<JellyfinBaseItemDto[]>
+> = protectedQuery(
 	async () => {
 		const {
-			locals: { user }
+			locals: {
+				user: { userId }
+			}
 		} = getRequestEvent();
 
 		const conn = (await Connectors.getInstance()).jellyfinConnector;
 
-		const items = await conn.getItems(user.userId, undefined, ['Series', 'Episode']);
+		const items = await conn.getItems(userId!, undefined, ['Series', 'Episode']);
 		if (!items.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(items.error, null, 2));
 
 		return {
@@ -97,15 +113,20 @@ export const jellyfinGetUsers = query(async () => {
 	};
 });
 
-export const jellyfinGetNextUp: RemoteQueryFunction<void, Result<JellyfinBaseItemDto[]>> = query(
+export const jellyfinGetNextUp: RemoteQueryFunction<
+	void,
+	Result<JellyfinBaseItemDto[]>
+> = protectedQuery(
 	async () => {
 		const {
-			locals: { user }
+			locals: {
+				user: { userId }
+			}
 		} = getRequestEvent();
 
 		const conn = (await Connectors.getInstance()).jellyfinConnector;
 
-		const items = await conn.getShowsNextUp(user.userId);
+		const items = await conn.getShowsNextUp(userId!);
 		if (!items.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(items.error, null, 2));
 
 		return {
@@ -118,14 +139,16 @@ export const jellyfinGetNextUp: RemoteQueryFunction<void, Result<JellyfinBaseIte
 export const jellyfinGetContinueWatching: RemoteQueryFunction<
 	void,
 	Result<JellyfinBaseItemDto[]>
-> = query(async () => {
+> = protectedQuery(async () => {
 	const {
-		locals: { user }
+		locals: {
+			user: { userId }
+		}
 	} = getRequestEvent();
 
 	const conn = (await Connectors.getInstance()).jellyfinConnector;
 
-	const items = await conn.getUserItemsResume(user.userId);
+	const items = await conn.getUserItemsResume(userId!);
 	if (!items.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(items.error, null, 2));
 
 	return {
@@ -134,61 +157,63 @@ export const jellyfinGetContinueWatching: RemoteQueryFunction<
 	};
 });
 
-export const jellyfinSetItemWatched = command(
+export const jellyfinSetItemWatched = protectedCommand(
 	v.object({ id: v.string(), watched: v.boolean() }),
 	async (item) => {
 		const {
-			locals: { user }
+			locals: {
+				user: { userId }
+			}
 		} = getRequestEvent();
 
 		const conn = (await Connectors.getInstance()).jellyfinConnector;
 
 		let res;
-		if (item.watched) res = await conn.postUserPlayedItems(user.userId, item.id);
-		else res = await conn.deleteUserPlayedItems(user.userId, item.id);
+		if (item.watched) res = await conn.postUserPlayedItems(userId!, item.id);
+		else res = await conn.deleteUserPlayedItems(userId!, item.id);
 		if (!res.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(res.error, null, 2));
 
 		return { success: res.response.ok };
 	}
 );
 
-export const jellyfinUpdateProgress = command(
+export const jellyfinUpdateProgress = protectedCommand(
 	v.object({
 		itemId: v.string(),
 		positionTicks: v.number()
 	}),
 	async (data) => {
 		const {
-			locals: { user }
+			locals: {
+				user: { userId }
+			}
 		} = getRequestEvent();
 
 		const conn = (await Connectors.getInstance()).jellyfinConnector;
 
-		const res = await conn.postUserItemsByIdUserData(
-			user.userId,
-			data.itemId,
-			data.positionTicks
-		);
+		const res = await conn.postUserItemsByIdUserData(userId!, data.itemId, data.positionTicks);
 		if (!res.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(res.error, null, 2));
 
 		return { success: res.response.ok };
 	}
 );
 
-export const jellyfinDeleteActiveEncoding = command(v.string(), async (playSessionId) => {
+export const jellyfinDeleteActiveEncoding = protectedCommand(v.string(), async (playSessionId) => {
 	const {
-		locals: { user }
+		locals: {
+			user: { username }
+		}
 	} = getRequestEvent();
 
 	const conn = (await Connectors.getInstance()).jellyfinConnector;
 
-	const res = await conn.deleteVideosActiveEncodings(user.username, playSessionId);
+	const res = await conn.deleteVideosActiveEncodings(username, playSessionId);
 	if (!res.response.ok) logger.log(LogLevel.ERROR, JSON.stringify(res.error, null, 2));
 
 	return { success: res.response.ok };
 });
 
-export const jellyfinGetPlaySession = command(
+export const jellyfinGetPlaySession = protectedCommand(
 	v.object({
 		itemId: v.string(),
 		deviceProfile: JellyfinDeviceProfileSchema,
@@ -197,12 +222,14 @@ export const jellyfinGetPlaySession = command(
 	}),
 	async (data) => {
 		const {
-			locals: { user }
+			locals: {
+				user: { userId }
+			}
 		} = getRequestEvent();
 
 		const conn = (await Connectors.getInstance()).jellyfinConnector;
 		const session = await conn.postItemsByIdPlaybackInfo(
-			user.userId,
+			userId!,
 			data.itemId,
 			data.maxStreamingBitrate,
 			data.startTimeTicks,

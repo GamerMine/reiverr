@@ -2,10 +2,12 @@ import { DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE } from
 
 import TypeOrm from '@reiverr/db';
 import type { Handle, ServerInit } from '@sveltejs/kit/hooks';
-import { getUser } from '#lib/server/auth/auth.ts';
+import { getUser, guestUser, isProtected } from '#lib/server/auth/auth.ts';
 import { GlobalSettingsEntity, UserSettingsEntity } from '@reiverr/db/entities';
 import { redirect } from '@sveltejs/kit';
-import { isProtected } from '#lib/utils/utils.ts';
+import { defaultUserSettings } from '@reiverr/db/types';
+import Logger from '@reiverr/logging';
+import { LogLevel } from '@reiverr/logging';
 
 const databaseTypes = [
 	'postgres',
@@ -33,26 +35,39 @@ export const init: ServerInit = async () => {
 	import('./tasksWorker/scheduler.server');
 };
 
+const LOGGER = Logger.getLogger('Filter');
+
 export const handle: Handle = async ({ event, resolve }) => {
 	const globalSettings = await GlobalSettingsEntity.getClient();
+
+	event.locals.user = guestUser();
+	event.locals.settings = { globalSettings, userSettings: defaultUserSettings };
 
 	if (globalSettings.jellyfin.baseUrl) {
 		const user = await getUser(event.cookies);
 		event.locals.user = user;
 
-		if (user.userId === '' && isProtected(event.url)) {
-			if (event.isRemoteRequest) {
-				return { success: false, error: 'general.connectionRequired' };
+		if (!user.userId) {
+			if (isProtected(event.url)) {
+				if (event.isRemoteRequest) {
+					return await resolve(event);
+				} else {
+					LOGGER.log(LogLevel.INFO, 'User is not logged in: redirected to login page');
+					return redirect(302, '/auth/login');
+				}
 			} else {
-				redirect(302, '/auth/login');
+				return await resolve(event);
 			}
+		} else {
+			event.locals.settings.userSettings = await UserSettingsEntity.getUserSettings(
+				user.userId
+			);
+			return await resolve(event);
 		}
-
-		const userSettings = await UserSettingsEntity.getUserSettings(user.userId);
-		event.locals.settings = { globalSettings, userSettings };
-	} else if (event.url && !event.url.pathname.match(/^\/setup.*/) && event.isRemoteRequest) {
+	} else if (event.url && !event.url.pathname.match(/^\/setup.*/) && !event.isRemoteRequest) {
+		LOGGER.log(LogLevel.INFO, 'Server is not configured: redirected to setup page');
 		return redirect(302, '/setup');
+	} else {
+		return await resolve(event);
 	}
-
-	return await resolve(event);
 };

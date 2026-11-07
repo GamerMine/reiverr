@@ -17,6 +17,7 @@ import {
 	ACCESS_TYPE_COOKIE,
 	AccessType,
 	cookiesParam,
+	guestUser,
 	logoutUser
 } from '#lib/server/auth/auth.ts';
 import { OidcIdentityEntity } from '@reiverr/db/entities';
@@ -75,7 +76,7 @@ export async function initiateLogin(cookies: Cookies, silent?: boolean) {
 	const state = client.randomState();
 	let nonce;
 
-	let parameters = {
+	const parameters = {
 		redirect_uri: `${APP_URL}auth/callback`,
 		scope: OIDC_SCOPE ?? 'openid groups profile',
 		code_challenge: codeChallenge,
@@ -84,14 +85,14 @@ export async function initiateLogin(cookies: Cookies, silent?: boolean) {
 	};
 
 	if (silent) {
-		// @ts-ignore
+		// @ts-expect-error TS is bad
 		parameters.prompt = 'none';
 	}
 
 	if (!config.serverMetadata().supportsPKCE()) {
 		nonce = client.randomNonce();
 
-		// @ts-ignore
+		// @ts-expect-error TS is bad
 		parameters.nonce = nonce;
 	}
 
@@ -115,15 +116,15 @@ export async function completeLogin(url: URL, cookies: Cookies) {
 
 	logoutUser(cookies);
 
-	let tokens = await client.authorizationCodeGrant(config, url, {
+	const tokens = await client.authorizationCodeGrant(config, url, {
 		pkceCodeVerifier: codeVerifier,
 		expectedState: state,
 		expectedNonce: nonce
 	});
 
-	let claims = tokens.claims()!;
+	const claims = tokens.claims()!;
 
-	let userInfo = await client.fetchUserInfo(config, tokens.access_token, claims.sub);
+	const userInfo = await client.fetchUserInfo(config, tokens.access_token, claims.sub);
 
 	const rawGroups = claims[OIDC_GROUPS_CLAIM ?? 'groups'];
 	const groups = Array.isArray(rawGroups) ? rawGroups.map(String) : [];
@@ -143,7 +144,7 @@ export async function completeLogin(url: URL, cookies: Cookies) {
 		userId: data.Id,
 		username: '',
 		isAdmin,
-		expires: Date.now() + 1000 * 60 * 5
+		expires: Date.now() + SESSION_TTL
 	});
 
 	cookies.set(ACCESS_TYPE_COOKIE, AccessType.OIDC, cookiesParam());
@@ -160,7 +161,6 @@ export function checkOidcSession(accessToken: string) {
 			SESSIONS.delete(accessToken as UUID);
 		} else {
 			return {
-				isConnected: true,
 				userId: session.userId,
 				username: session.username,
 				isAdmin: session.isAdmin
@@ -168,7 +168,7 @@ export function checkOidcSession(accessToken: string) {
 		}
 	}
 
-	return { isConnected: false, isAdmin: false };
+	return guestUser();
 }
 
 export function destroyOidcSession(accessToken?: string | null) {
@@ -193,7 +193,7 @@ async function syncWithJellyfin(sub: string, name: string, isAdmin: boolean) {
 		if (userData.Name !== name) {
 			logger.log(LogLevel.INFO, `Correcting name of ${name}`);
 
-			let updateUser = await conn.postUpdateUser(id.userId, name);
+			const updateUser = await conn.postUpdateUser(id.userId, name);
 			if (!updateUser.response.ok) {
 				logger.log(LogLevel.ERROR, JSON.stringify(updateUser.error, null, 2));
 			}
@@ -202,7 +202,7 @@ async function syncWithJellyfin(sub: string, name: string, isAdmin: boolean) {
 		if (userData.Policy.IsAdministrator !== isAdmin) {
 			logger.log(LogLevel.INFO, `Correcting policy of ${name}`);
 
-			let updateUserPolicy = await conn.postUpdateUserPolicy(id.userId, isAdmin);
+			const updateUserPolicy = await conn.postUpdateUserPolicy(id.userId, isAdmin);
 			if (!updateUserPolicy.response.ok) {
 				logger.log(LogLevel.ERROR, JSON.stringify(updateUserPolicy.error, null, 2));
 			}
@@ -214,7 +214,7 @@ async function syncWithJellyfin(sub: string, name: string, isAdmin: boolean) {
 			throw new Error('Unable to list users of Jellyfin');
 		}
 
-		let user = users.data?.find((user) => user.name === name);
+		let user = users.data?.find((user) => user.Name === name);
 		if (!user) {
 			logger.log(
 				LogLevel.INFO,
@@ -227,7 +227,7 @@ async function syncWithJellyfin(sub: string, name: string, isAdmin: boolean) {
 				throw new Error(`Unable create new user ${name}`);
 			}
 
-			let updateUserPolicy = await conn.postUpdateUserPolicy(newUser.data.Id, isAdmin);
+			const updateUserPolicy = await conn.postUpdateUserPolicy(newUser.data.Id, isAdmin);
 			if (!updateUserPolicy.response.ok) {
 				logger.log(LogLevel.ERROR, JSON.stringify(updateUserPolicy.error, null, 2));
 			}

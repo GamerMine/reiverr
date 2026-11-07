@@ -14,7 +14,7 @@
 </script>
 
 <div
-	class={classNames('rounded-xl overflow-hidden shadow-lg placeholder shrink-0', {
+	class={classNames('placeholder shrink-0 overflow-hidden rounded-xl shadow-lg', {
 		'aspect-video': orientation === 'landscape',
 		'aspect-[2/3]': orientation === 'portrait',
 		'w-44': size === 'md' && orientation === 'portrait',

@@ -12,7 +12,7 @@
 </script>
 
 <ContextMenuItem {onclick}>
-	<div class="flex items-center gap-2 justify-between cursor-pointer">
+	<div class="flex cursor-pointer items-center justify-between gap-2">
 		<Check
 			size="20"
 			class={classNames({
@@ -20,7 +20,7 @@
 				'opacity-100': selected
 			})}
 		/>
-		<div class="flex items-center text-left w-32">
+		<div class="flex w-32 items-center text-left">
 			{@render children?.()}
 		</div>
 	</div>

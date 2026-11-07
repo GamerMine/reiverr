@@ -86,7 +86,7 @@
 {#if $contextMenu === id}
 	{#key fixedPosition}
 		<div
-			class={`${position} z-50 my-2 px-1 py-1 bg-zinc-800/50 rounded-lg backdrop-blur-xl flex flex-col w-max`}
+			class={`${position} z-50 my-2 flex w-max flex-col rounded-lg bg-zinc-800/50 px-1 py-1 backdrop-blur-xl`}
 			style={position === 'fixed'
 				? `left: ${
 						fixedPosition.x -
@@ -106,7 +106,7 @@
 			{#if !title}
 				{#if heading}
 					<h2
-						class="text-xs text-zinc-200 opacity-60 tracking-wide font-semibold px-3 py-1 line-clamp-1 text-left"
+						class="line-clamp-1 px-3 py-1 text-left text-xs font-semibold tracking-wide text-zinc-200 opacity-60"
 					>
 						{heading}
 					</h2>

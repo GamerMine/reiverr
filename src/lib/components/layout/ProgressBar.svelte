@@ -9,7 +9,7 @@
 	});
 </script>
 
-<div class="h-1 bg-zinc-200/20 rounded-full overflow-hidden">
+<div class="h-1 overflow-hidden rounded-full bg-zinc-200/20">
 	<div
 		style={'max-width: ' + (mounted ? progress : 0) + '%'}
 		class="h-full bg-zinc-200/80 transition-[max-width] delay-200 duration-500"

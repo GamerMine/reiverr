@@ -5,6 +5,6 @@
 </script>
 
 <!-- TODO: Add horizontal carousel fade effect -->
-<div class="max-h-[70vh] scrollbar-hide overflow-y-scroll">
+<div class="scrollbar-hide max-h-[70vh] overflow-y-scroll">
 	{@render children?.()}
 </div>

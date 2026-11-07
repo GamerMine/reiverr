@@ -2,8 +2,8 @@
 	let { videoId }: { videoId: string } = $props();
 </script>
 
-<div class="overflow-hidden w-full h-full">
-	<div class="youtube-container scale-[150%] h-full w-full">
+<div class="h-full w-full overflow-hidden">
+	<div class="youtube-container h-full w-full scale-[150%]">
 		<iframe
 			src={'https://www.youtube-nocookie.com/embed/' +
 				videoId +

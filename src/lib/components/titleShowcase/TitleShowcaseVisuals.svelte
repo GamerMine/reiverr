@@ -60,7 +60,7 @@
 
 <div
 	class={classNames(
-		'flex gap-6 items-end transition-opacity row-[1/2] col-[1/3] md:row-[1/3] md:col-[1/2]',
+		'col-[1/3] row-[1/2] flex items-end gap-6 transition-opacity md:col-[1/2] md:row-[1/3]',
 		{
 			'opacity-0': hideUI
 		}
@@ -78,10 +78,10 @@
 			{tmdbId}
 		/>
 	</div>
-	<div class="flex flex-col col-span-3 gap-4 max-w-screen-md">
+	<div class="col-span-3 flex max-w-screen-md flex-col gap-4">
 		<div class="flex flex-col gap-1">
 			<div
-				class="flex items-center gap-1 uppercase text-sm text-zinc-300 font-semibold tracking-wider"
+				class="flex items-center gap-1 text-sm font-semibold tracking-wider text-zinc-300 uppercase"
 				in:fly={{ y: -5, delay: ANIMATION_DURATION, duration: ANIMATION_DURATION }}
 				out:fly={{ y: 5, duration: ANIMATION_DURATION }}
 			>
@@ -115,7 +115,7 @@
 		>
 			{#each genres.slice(0, 3) as genre}
 				<span
-					class="backdrop-blur-lg rounded-full bg-zinc-400/20 p-1.5 px-4 font-medium text-sm grow-0"
+					class="grow-0 rounded-full bg-zinc-400/20 p-1.5 px-4 text-sm font-medium backdrop-blur-lg"
 				>
 					{genre}
 				</span>

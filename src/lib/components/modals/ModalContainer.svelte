@@ -6,7 +6,7 @@
 </script>
 
 <div
-	class="max-w-3xl self-start mt-[10vh] bg-[#33333388] backdrop-blur-xl rounded-sm flex flex-col flex-1 mx-4 sm:mx-16 lg:mx-24 drop-shadow-xl"
+	class="mx-4 mt-[10vh] flex max-w-3xl flex-1 flex-col self-start rounded-sm bg-[#33333388] drop-shadow-xl backdrop-blur-xl sm:mx-16 lg:mx-24"
 	in:fly|global={{ y: 20, duration: 200, delay: 200 }}
 	out:fly|global={{ y: 20, duration: 200 }}
 >

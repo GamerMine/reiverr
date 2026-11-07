@@ -3,7 +3,7 @@
 	import { flip } from 'svelte/animate';
 </script>
 
-<div class="fixed bottom-8 right-8 z-50 flex flex-col gap-4">
+<div class="fixed right-8 bottom-8 z-50 flex flex-col gap-4">
 	{#each $notificationStack as notification (notification.id)}
 		<div animate:flip={{ duration: 500 }}>
 			<svelte:component

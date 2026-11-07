@@ -33,16 +33,16 @@
 <button
 	{onclick}
 	class={classNames(
-		'p-1.5 px-4 text-sm text-zinc-200 rounded-lg border',
+		'rounded-lg border p-1.5 px-4 text-sm text-zinc-200',
 		'hover:bg-opacity-30 transition-colors',
-		'flex items-center gap-2 justify-center',
+		'flex items-center justify-center gap-2',
 		{
-			'bg-green-500/20 text-green-200 border-green-900': type === 'success',
-			'bg-red-500/20 text-red-200 border-red-900': type === 'error',
-			'bg-white text-zinc-900 font-extrabold': type === 'base',
-			'hover:bg-amber-400 focus-within:bg-amber-400 hover:border-amber-400 focus-within:border-amber-400':
+			'border-green-900 bg-green-500/20 text-green-200': type === 'success',
+			'border-red-900 bg-red-500/20 text-red-200': type === 'error',
+			'bg-white font-extrabold text-zinc-900': type === 'base',
+			'focus-within:border-amber-400 focus-within:bg-amber-400 hover:border-amber-400 hover:bg-amber-400':
 				type === 'base' && !disabled,
-			'cursor-not-allowed opacity-75 pointer-events-none': disabled || loading
+			'pointer-events-none cursor-not-allowed opacity-75': disabled || loading
 		},
 		klass
 	)}

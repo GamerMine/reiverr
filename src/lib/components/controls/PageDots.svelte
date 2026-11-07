@@ -30,7 +30,7 @@
 		<div onclick={() => onJump(i)}>
 			<DotFilled
 				class={classNames(
-					'transition-transform hover:scale-150 hover:opacity-50 cursor-pointer text-zinc-200',
+					'cursor-pointer text-zinc-200 transition-transform hover:scale-150 hover:opacity-50',
 					{
 						'opacity-50': i === index,
 						'opacity-20': i !== index
