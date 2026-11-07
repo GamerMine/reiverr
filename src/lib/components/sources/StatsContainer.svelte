@@ -33,34 +33,38 @@
 </script>
 
 <div
-	class={classNames('relative w-full mx-auto px-6 rounded-xl overflow-hidden', {
+	class={classNames('relative mx-auto w-full overflow-hidden rounded-xl px-6', {
 		'h-16': !large,
 		'h-28': large
 	})}
 	style={'background-color: ' + color + ';'}
 >
 	<div
-		class="absolute left-0 inset-y-0 bg-[#ffffff22]"
+		class="absolute inset-y-0 left-0 bg-[#ffffff22]"
 		style={'width: ' + fillPercentage + '%;'}
 	></div>
 	{#if large}
 		{@render icon?.()}
 	{/if}
 	<div
-		class={classNames('relative z-[1] flex flex-1 h-full', {
-			'justify-between items-center': !large,
+		class={classNames('relative z-[1] flex h-full flex-1', {
+			'items-center justify-between': !large,
 			'flex-col justify-center gap-2': large
 		})}
 	>
 		<div class="flex flex-col">
-			<h3 class="text-zinc-400 font-medium text-xs tracking-wider">{subtitle}</h3>
-			<a target="_blank" {href} class="text-zinc-200 font-bold text-xl tracking-wide">{title}</a>
+			<h3 class="text-xs font-medium tracking-wider text-zinc-400">{subtitle}</h3>
+			<a target="_blank" {href} class="text-xl font-bold tracking-wide text-zinc-200"
+				>{title}</a
+			>
 		</div>
 		<div class="flex gap-8">
 			{#each stats as { title, value }}
 				<div class="flex flex-col items-center gap-0.5">
-					<h3 class="uppercase text-zinc-400 font-medium text-xs tracking-wider">{title}</h3>
-					<div class="font-medium text-sm">{value}</div>
+					<h3 class="text-xs font-medium tracking-wider text-zinc-400 uppercase">
+						{title}
+					</h3>
+					<div class="text-sm font-medium">{value}</div>
 				</div>
 			{/each}
 		</div>

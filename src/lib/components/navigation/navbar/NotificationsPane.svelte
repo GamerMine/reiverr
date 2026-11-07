@@ -24,7 +24,7 @@
 </script>
 
 <div
-	class="fixed top-20 right-3 bg-neutral-800 rounded-xl p-2 min-w-2xs max-w-sm"
+	class="fixed top-20 right-3 max-w-sm min-w-2xs rounded-xl bg-neutral-800 p-2"
 	transition:slide={{ duration: 500 }}
 >
 	<a class="flex cursor-pointer" onclick={back}>
@@ -32,10 +32,10 @@
 		<p>{$_('settings.misc.back')}</p>
 	</a>
 	<Divider />
-	<div class="bg-neutral-700 p-1 rounded-xl overflow-y-auto max-h-60">
+	<div class="max-h-60 overflow-y-auto rounded-xl bg-neutral-700 p-1">
 		{#each tasks as task}
 			<div
-				class={classNames('bg-green-500/10 p-2 rounded-md mt-1', {
+				class={classNames('mt-1 rounded-md bg-green-500/10 p-2', {
 					'bg-red-500/10': task.state === TaskState.ERROR
 				})}
 			>

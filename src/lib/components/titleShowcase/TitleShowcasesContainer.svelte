@@ -156,17 +156,17 @@
 	const PADDING = 'px-4 lg:px-8 2xl:px-16';
 </script>
 
-<div class="h-screen flex flex-col relative pb-6 gap-6 xl:gap-8 overflow-hidden">
+<div class="relative flex h-screen flex-col gap-6 overflow-hidden pb-6 xl:gap-8">
 	{#if !hideUI}
 		<div
-			class="absolute top-1/2 right-6 hover:bg-white/15 hover:rounded-4xl ease-in-out duration-300"
+			class="absolute top-1/2 right-6 duration-300 ease-in-out hover:rounded-4xl hover:bg-white/15"
 		>
 			<IconButton onclick={onNext}>
 				<ChevronRight size="38" />
 			</IconButton>
 		</div>
 		<div
-			class="absolute top-1/2 left-6 hover:bg-white/15 hover:rounded-4xl ease-in-out duration-300"
+			class="absolute top-1/2 left-6 duration-300 ease-in-out hover:rounded-4xl hover:bg-white/15"
 		>
 			<IconButton onclick={onPrevious}>
 				<ChevronLeft size="38" />
@@ -175,7 +175,7 @@
 	{/if}
 	<div
 		class={classNames(
-			'flex-1 grid grid-cols-[1fr_max-content] grid-rows-[1fr_max-content] items-end gap-6',
+			'grid flex-1 grid-cols-[1fr_max-content] grid-rows-[1fr_max-content] items-end gap-6',
 			PADDING
 		)}
 	>
@@ -196,7 +196,7 @@
 				/>
 			{/key}
 			<div
-				class="md:relative self-stretch flex justify-center items-end row-start-2 row-span-1 col-start-1 col-span-2 md:row-start-1 md:row-span-2 md:col-start-2 md:col-span-2"
+				class="col-span-2 col-start-1 row-span-1 row-start-2 flex items-end justify-center self-stretch md:relative md:col-span-2 md:col-start-2 md:row-span-2 md:row-start-1"
 			>
 				<PageDots index={showcaseIndex} length={clampedPopularMovies.length} {onJump} />
 			</div>

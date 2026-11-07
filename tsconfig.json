@@ -12,5 +12,5 @@
     "experimentalDecorators": true,
     "strictPropertyInitialization": false
   },
-  "include": ["src", "vite.config.ts", "tests"]
+  "include": ["src", "vite.config.ts", "tests", "prettier.config.js"]
 }

@@ -33,18 +33,18 @@ Local Library & Playback
 ### Manual Instructions
 
 1. Requirements:
-   - Node v20.19 or greater
-   - NPM v10.8.2 or greater
+    - Node v20.19 or greater
+    - NPM v10.8.2 or greater
 2. Clone the repository
 3. Build the app:
-   ```sh
-   npm install
-   npm run build
-   ```
+    ```sh
+    npm install
+    npm run build
+    ```
 4. Start the app:
-   ```sh
-   npm run deploy
-   ```
+    ```sh
+    npm run deploy
+    ```
 
 ### Reiverr will be accessible via port 9494 by default.
 

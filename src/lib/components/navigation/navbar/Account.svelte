@@ -47,7 +47,7 @@
 
 <div class="flex">
 	{#if showErrorTooltip}
-		<div class="rounded-full bg-red-600 min-w-4 max-h-4 flex justify-center">
+		<div class="flex max-h-4 min-w-4 justify-center rounded-full bg-red-600">
 			<p class="text-xs">!</p>
 		</div>
 	{/if}

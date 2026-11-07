@@ -1,4 +1,10 @@
-import { command, getRequestEvent, query } from '$app/server';
+import { getRequestEvent } from '$app/server';
+import {
+	adminQuery,
+	protectedCommand,
+	protectedQuery,
+	protectedQueryLive
+} from '#lib/server/auth/remote-guards.ts';
 import * as v from 'valibot';
 import { FilteringProfilesEntity, GlobalSettingsEntity } from '@reiverr/db/entities';
 import { type Result } from '#lib/utils/types.ts';
@@ -12,13 +18,13 @@ import { ApiSchema } from '#lib/utils/schemas.ts';
 
 const logger = Logger.getLogger('RadarrRemote');
 
-export const radarrIsHealthy = query(v.optional(ApiSchema), async (api) => {
+export const radarrIsHealthy = adminQuery(v.optional(ApiSchema), async (api) => {
 	if (api && api.url && api.key) return await new RadarrConnector(api.url, api.key).isHealthy();
 	const creds = await GlobalSettingsEntity.getRadarrApi();
 	return await new RadarrConnector(creds?.apiUrl ?? '', creds?.apiKey ?? '').isHealthy();
 });
 
-export const radarrGetRootFolders = query(v.optional(ApiSchema), async (api) => {
+export const radarrGetRootFolders = adminQuery(v.optional(ApiSchema), async (api) => {
 	if (api && api.url && api.key)
 		return (await new RadarrConnector(api.url, api.key).getRootFolder()).data;
 	const creds = await GlobalSettingsEntity.getRadarrApi();
@@ -45,28 +51,14 @@ async function getCachedQueue() {
 	return cachedQueue;
 }
 
-export const radarrGetQueue = query.live(async function* () {
+export const radarrGetQueue = protectedQueryLive(async function* () {
 	while (true) {
-		const {
-			locals: { user }
-		} = getRequestEvent();
-		if (!user.userId) {
-			yield { success: false, error: 'general.connectionRequired' };
-			await new Promise((f) => setTimeout(f, 2000));
-			continue;
-		}
-
 		yield await getCachedQueue();
 		await new Promise((f) => setTimeout(f, 2000));
 	}
 });
 
-export const radarrGetMovies = query(async () => {
-	const {
-		locals: { user }
-	} = getRequestEvent();
-	if (!user.userId) return { success: false, error: 'general.connectionRequired' };
-
+export const radarrGetMovies = protectedQuery(async () => {
 	const { radarrConnector: conn } = await Connectors.getInstance();
 	if (!conn) {
 		logger.log(LogLevel.WARNING, 'Cannot get Radarr movies: Radarr is unavailable');
@@ -79,39 +71,34 @@ export const radarrGetMovies = query(async () => {
 	return { success: movies.response.ok, data: movies.data };
 });
 
-export const radarrAddMovie = command(MovieAddSchema, async (movie): Promise<Result<undefined>> => {
+export const radarrAddMovie = protectedCommand(MovieAddSchema, async (movie): Promise<Result<undefined>> => {
 	const {
-		locals: { user }
+		locals: {
+			user: { userId }
+		}
 	} = getRequestEvent();
-
-	if (!user.userId) return { success: false, error: 'general.connectionRequired' };
 
 	const defaultFp = await FilteringProfilesEntity.findOne({ where: { isDefault: true } });
 	if (!defaultFp) return { success: false, error: 'settings.misc.noDefaultFilteringProfile' };
 
-	await scheduleTask(user.userId, TaskType.RADARR_MOVIE_ADD, movie);
+	await scheduleTask(userId!, TaskType.RADARR_MOVIE_ADD, movie);
 
 	return { success: true };
 });
 
-export const radarrRemoveMovie = command(MovieRemoveSchema, async (series) => {
+export const radarrRemoveMovie = protectedCommand(MovieRemoveSchema, async (series) => {
 	const {
-		locals: { user }
+		locals: {
+			user: { userId }
+		}
 	} = getRequestEvent();
 
-	if (!user.userId) return { success: false, error: 'general.connectionRequired' };
-
-	await scheduleTask(user.userId, TaskType.RADARR_MOVIE_REMOVE, series);
+	await scheduleTask(userId!,TaskType.RADARR_MOVIE_REMOVE, series);
 
 	return { success: true };
 });
 
-export const radarrGetDiskspace = query(async () => {
-	const {
-		locals: { user }
-	} = getRequestEvent();
-	if (!user.userId) return { success: false, error: 'general.connectionRequired' };
-
+export const radarrGetDiskspace = protectedQuery(async () => {
 	const { radarrConnector: conn } = await Connectors.getInstance();
 	if (!conn) {
 		logger.log(LogLevel.WARNING, 'Cannot get Radarr diskspace: Radarr is unavailable');

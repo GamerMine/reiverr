@@ -1,1 +1,1 @@
-<div class="bg-zinc-200/20 h-0.5 mx-3 my-1 rounded-full"></div>
+<div class="mx-3 my-1 h-0.5 rounded-full bg-zinc-200/20"></div>

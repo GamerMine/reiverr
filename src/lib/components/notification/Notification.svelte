@@ -29,7 +29,7 @@
 </script>
 
 <div
-	class={classNames('rounded-lg backdrop-blur-xl overflow-hidden', 'flex flex-col w-72', {
+	class={classNames('overflow-hidden rounded-lg backdrop-blur-xl', 'flex w-72 flex-col', {
 		'bg-green-900/60': type === 'success',
 		'bg-zinc-900/60': type === 'info',
 		'bg-red-900/60': type === 'error',
@@ -40,7 +40,7 @@
 >
 	<div class="relative">
 		<div
-			class={classNames('left-0 absolute bg-zinc-200/10 h-full w-full', {
+			class={classNames('absolute left-0 h-full w-full bg-zinc-200/10', {
 				'animate-timer': duration
 			})}
 			style="animation-duration: {duration - 1000}ms;"
@@ -51,7 +51,7 @@
 				{#if type !== 'info'}
 					<ExclamationTriangle size="12" />
 				{/if}
-				<h1 class="text-zinc-200 font-medium text-sm">{title}</h1>
+				<h1 class="text-sm font-medium text-zinc-200">{title}</h1>
 			</div>
 			<IconButton onclick={handleClose}>
 				<Cross2 size="15" />
@@ -59,7 +59,7 @@
 		</div>
 	</div>
 
-	<div class="flex-1 flex flex-col p-2 px-3">
+	<div class="flex flex-1 flex-col p-2 px-3">
 		<p class="text-sm text-zinc-400">{description}</p>
 	</div>
 </div>

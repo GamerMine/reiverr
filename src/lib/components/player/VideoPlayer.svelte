@@ -337,7 +337,7 @@
 
 <div
 	class={classNames(
-		'bg-black w-screen h-[100dvh] sm:h-screen relative flex items-center justify-center',
+		'relative flex h-[100dvh] w-screen items-center justify-center bg-black sm:h-screen',
 		{
 			'cursor-none': !uiVisible
 		}
@@ -346,7 +346,7 @@
 	out:fade|global={{ duration: 200, easing: linear }}
 >
 	<div
-		class="w-screen h-screen flex items-center justify-center"
+		class="flex h-screen w-screen items-center justify-center"
 		bind:this={videoWrapper}
 		onmousemove={() => handleUserInteraction(false)}
 		ontouchend={(e) => {
@@ -371,7 +371,7 @@
 			}}
 			bind:volume
 			bind:muted={mute}
-			class="sm:w-full sm:h-full"
+			class="sm:h-full sm:w-full"
 			playsinline={true}
 			ondblclick={(e) => {
 				e.preventDefault();
@@ -383,12 +383,12 @@
 		{#if uiVisible}
 			<!-- Video controls -->
 			<div
-				class="absolute bottom-0 w-screen bg-linear-to-t from-black/80 via-60% via-black-opacity-80 to-transparent"
+				class="via-black-opacity-80 absolute bottom-0 w-screen bg-linear-to-t from-black/80 via-60% to-transparent"
 				ontouchend={(e) => e.stopPropagation()}
 				transition:fade={{ duration: 100 }}
 			>
-				<div class="flex flex-col items-center p-4 gap-2 w-full">
-					<div class="flex items-center text-sm w-full">
+				<div class="flex w-full flex-col items-center gap-2 p-4">
+					<div class="flex w-full items-center text-sm">
 						<span class="whitespace-nowrap tabular-nums"
 							>{secondsToTime(displayedTime, duration > 3600)}</span
 						>
@@ -407,7 +407,7 @@
 						>
 					</div>
 
-					<div class="flex items-center justify-between mb-2 w-full">
+					<div class="mb-2 flex w-full items-center justify-between">
 						<IconButton onclick={() => (paused = !paused)}>
 							{#if (!seeking && paused) || (seeking && playerStateBeforeSeek)}
 								<Play size="20" />

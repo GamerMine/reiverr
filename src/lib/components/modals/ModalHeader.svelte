@@ -15,12 +15,12 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="flex text-zinc-200 items-center p-3 px-5 gap-4 border-b border-zinc-700">
+<div class="flex items-center gap-4 border-b border-zinc-700 p-3 px-5 text-zinc-200">
 	{@render children?.()}
 	{#if !children}
 		{#if text}
 			<button
-				class={classNames('flex-1 flex items-center gap-1', {
+				class={classNames('flex flex-1 items-center gap-1', {
 					'cursor-pointer text-zinc-300 hover:text-zinc-200': !!back,
 					'cursor-default': !back
 				})}

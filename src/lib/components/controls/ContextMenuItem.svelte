@@ -12,9 +12,9 @@
 <button
 	{onclick}
 	class={classNames(
-		'text-sm font-medium tracking-wide px-3 py-1 hover:bg-zinc-200/10 rounded-md text-left cursor-default',
+		'cursor-default rounded-md px-3 py-1 text-left text-sm font-medium tracking-wide hover:bg-zinc-200/10',
 		{
-			'opacity-75 pointer-events-none': disabled
+			'pointer-events-none opacity-75': disabled
 		}
 	)}
 >

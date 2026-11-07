@@ -20,7 +20,7 @@
 			{text.slice(0, maxLength).trim()}...
 		{/if}
 		<button
-			class="underline hover:text-zinc-100 text-zinc-400"
+			class="text-zinc-400 underline hover:text-zinc-100"
 			onclick={() => (viewAll = !viewAll)}
 		>
 			{viewAll ? $_('library.content.viewLess') : $_('library.content.viewAll')}

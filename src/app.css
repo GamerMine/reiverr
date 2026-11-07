@@ -1,10 +1,10 @@
-@import "tailwindcss/preflight";
+@import 'tailwindcss/preflight';
 @tailwind utilities;
 @reference "tailwindcss";
 
 @layer base {
 	button:not(:disabled),
-	[role="button"]:not(:disabled) {
+	[role='button']:not(:disabled) {
 		cursor: pointer;
 	}
 }
@@ -18,7 +18,7 @@
 }
 
 @utility scrollbar-hide {
-	@apply [-ms-overflow-style:none] scrollbar-none [&::-webkit-scrollbar]:hidden
+	@apply scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden;
 }
 
 a {
@@ -26,7 +26,7 @@ a {
 }
 
 .placeholder {
-	@apply bg-zinc-700/40 animate-pulse;
+	@apply animate-pulse bg-zinc-700/40;
 }
 
 .placeholder-image {
@@ -34,7 +34,7 @@ a {
 }
 
 .placeholder-text {
-	@apply bg-zinc-700/40 animate-pulse text-transparent rounded-lg select-none;
+	@apply animate-pulse rounded-lg bg-zinc-700/40 text-transparent select-none;
 }
 
 .selectable {

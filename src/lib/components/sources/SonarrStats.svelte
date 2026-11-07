@@ -53,7 +53,7 @@
 		color="#8aacfd21"
 	>
 		{#snippet icon()}
-			<SonarrIcon class="absolute opacity-20 p-4 h-full inset-y-0 right-2" />
+			<SonarrIcon class="absolute inset-y-0 right-2 h-full p-4 opacity-20" />
 		{/snippet}
 	</StatsContainer>
 {/await}

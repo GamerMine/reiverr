@@ -1,4 +1,10 @@
-import { command, getRequestEvent, query } from '$app/server';
+import { getRequestEvent } from '$app/server';
+import {
+	adminQuery,
+	protectedCommand,
+	protectedQuery,
+	protectedQueryLive
+} from '#lib/server/auth/remote-guards.ts';
 import * as v from 'valibot';
 import { type Result } from '#lib/utils/types.ts';
 import { FilteringProfilesEntity, GlobalSettingsEntity } from '@reiverr/db/entities';
@@ -12,13 +18,13 @@ import { ApiSchema } from '#lib/utils/schemas.ts';
 
 const logger = Logger.getLogger('SonarrRemote');
 
-export const sonarrIsHealthy = query(v.optional(ApiSchema), async (api) => {
+export const sonarrIsHealthy = adminQuery(v.optional(ApiSchema), async (api) => {
 	if (api && api.url && api.key) return await new SonarrConnector(api.url, api.key).isHealthy();
 	const creds = await GlobalSettingsEntity.getSonarrApi();
 	return await new SonarrConnector(creds?.apiUrl ?? '', creds?.apiKey ?? '').isHealthy();
 });
 
-export const sonarrGetRootFolders = query(v.optional(ApiSchema), async (api) => {
+export const sonarrGetRootFolders = adminQuery(v.optional(ApiSchema), async (api) => {
 	if (api && api.url && api.key)
 		return (await new SonarrConnector(api.url, api.key).getRootFolder()).data;
 	const creds = await GlobalSettingsEntity.getSonarrApi();
@@ -26,7 +32,7 @@ export const sonarrGetRootFolders = query(v.optional(ApiSchema), async (api) => 
 		.data;
 });
 
-export const sonarrGetSeries = query(async () => {
+export const sonarrGetSeries = protectedQuery(async () => {
 	const { sonarrConnector: conn } = await Connectors.getInstance();
 	if (!conn) {
 		logger.log(LogLevel.WARNING, 'Cannot get Sonarr series: Sonarr is unavailable');
@@ -39,25 +45,29 @@ export const sonarrGetSeries = query(async () => {
 	return { success: series.response.ok, data: series.data };
 });
 
-export const sonarrAddSeries = command(SeriesAddSchema, async (series) => {
+export const sonarrAddSeries = protectedCommand(SeriesAddSchema, async (series) => {
 	const {
-		locals: { user }
+		locals: {
+			user: { userId }
+		}
 	} = getRequestEvent();
 
 	const defaultFp = await FilteringProfilesEntity.findOne({ where: { isDefault: true } });
 	if (!defaultFp) return { success: false, error: 'settings.misc.noDefaultFilteringProfile' };
 
-	await scheduleTask(user.userId, TaskType.SONARR_SERIES_ADD, series);
+	await scheduleTask(userId!,TaskType.SONARR_SERIES_ADD, series);
 
 	return { success: true };
 });
 
-export const sonarrRemoveSeries = command(SeriesRemoveSchema, async (seriesId) => {
+export const sonarrRemoveSeries = protectedCommand(SeriesRemoveSchema, async (seriesId) => {
 	const {
-		locals: { user }
+		locals: {
+			user: { userId }
+		}
 	} = getRequestEvent();
 
-	await scheduleTask(user.userId, TaskType.SONARR_SERIES_REMOVE, seriesId);
+	await scheduleTask(userId!,TaskType.SONARR_SERIES_REMOVE, seriesId);
 
 	return { success: true };
 });
@@ -80,14 +90,14 @@ async function getCachedQueue() {
 	return cachedQueue;
 }
 
-export const sonarrGetQueue = query.live(async function* () {
+export const sonarrGetQueue = protectedQueryLive(async function* () {
 	while (true) {
 		yield await getCachedQueue();
 		await new Promise((f) => setTimeout(f, 2000));
 	}
 });
 
-export const sonarrGetDiskspace = query(async () => {
+export const sonarrGetDiskspace = protectedQuery(async () => {
 	const { sonarrConnector: conn } = await Connectors.getInstance();
 	if (!conn) {
 		logger.log(LogLevel.WARNING, 'Cannot get Sonarr diskspace: Sonarr is unavailable');

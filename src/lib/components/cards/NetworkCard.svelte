@@ -6,12 +6,12 @@
 
 <a
 	href={`/discover/network/${network.name}`}
-	class="block border rounded-xl h-52 w-96 bg-zinc-900 border-stone-700 cursor-pointer p-12 text-zinc-300 hover:text-amber-200 transition-all relative group selectable shrink-0 max-w-[100%]"
+	class="group selectable relative block h-52 w-96 max-w-[100%] shrink-0 cursor-pointer rounded-xl border border-stone-700 bg-zinc-900 p-12 text-zinc-300 transition-all hover:text-amber-200"
 	aria-label="network"
 >
 	<div
-		class="absolute inset-10 bg-zinc-300 sm:hover:bg-amber-200 sm:group-hover:scale-105
-		transition-all"
+		class="absolute inset-10 bg-zinc-300 transition-all sm:group-hover:scale-105
+		sm:hover:bg-amber-200"
 		style={"mask-image: url('/networks/" +
 			network.name +
 			".svg'); mask-size: contain; mask-repeat: no-repeat; mask-position: center;"}

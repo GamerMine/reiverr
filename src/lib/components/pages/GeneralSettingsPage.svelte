@@ -17,12 +17,12 @@
 <div
 	class={classNames({
 		hidden: !visible,
-		'grid grid-cols-[1fr_min-content] justify-items-start place-items-center gap-4 text-zinc-400':
+		'grid grid-cols-[1fr_min-content] place-items-center justify-items-start gap-4 text-zinc-400':
 			visible
 	})}
 >
 	<h1
-		class="font-medium text-xl text-zinc-200 tracking-wide col-span-2 border-b border-zinc-800 justify-self-stretch pb-2 mt-8"
+		class="col-span-2 mt-8 justify-self-stretch border-b border-zinc-800 pb-2 text-xl font-medium tracking-wide text-zinc-200"
 	>
 		{$_('settings.general.userInterface.userInterface')}
 	</h1>
@@ -54,7 +54,7 @@
 	/>
 
 	<h1
-		class="font-medium text-xl text-zinc-200 tracking-wide col-span-2 border-b border-zinc-800 justify-self-stretch pb-2 mt-8"
+		class="col-span-2 mt-8 justify-self-stretch border-b border-zinc-800 pb-2 text-xl font-medium tracking-wide text-zinc-200"
 	>
 		{$_('settings.general.discovery.discovery')}
 	</h1>
@@ -81,7 +81,7 @@
 		<h2>
 			{$_('settings.general.discovery.includedLanguages')}
 		</h2>
-		<p class="text-sm text-zinc-500 mt-1">
+		<p class="mt-1 text-sm text-zinc-500">
 			{$_('settings.general.discovery.includedLanguagesDescription')}
 		</p>
 	</div>

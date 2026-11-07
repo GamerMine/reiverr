@@ -1,0 +1,241 @@
+<script lang="ts">
+	import Button from '#lib/components/controls/Button.svelte';
+	import { ArrowRight, ArrowLeft, Update } from 'svelte-radix';
+	import { _ as _ } from 'svelte-i18n';
+	import Input from '#lib/components/controls/Input.svelte';
+	import { enhance } from '$app/forms';
+	import { createErrorNotification } from '#lib/stores/notification.store.js';
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
+
+	let enableJellyfinConfigForm: boolean = $state(false);
+	let jellyfinForm: HTMLFormElement | undefined = $state();
+	let jellyfinFormBaseURL: string = $state('');
+	let jellyfinFormAPIKey: string = $state('');
+
+	let isTransitioning: boolean = $state(false);
+	let disableNext: boolean = $state(false);
+	let isInputDisabled: boolean = $state(false);
+
+	let page: number = $state(0);
+	let needValidation: boolean = $state(false);
+	let nextBtnType: 'button' | 'submit' = $state('button');
+	let nextBtnForm: string | undefined = $state();
+	let pageTitle: string = $state('');
+	let pageDesc: string = $state('');
+	let pageInstr: string = $state('');
+	let errorMessage: string | undefined = $state();
+	let nextButtonText: string = $state('settings.misc.next');
+	let nextButtonAction: () => void = $state(defaultNextAction);
+
+	function gotoNextPage() {
+		isTransitioning = true;
+		setTimeout(() => {
+			page++;
+			setupPage(page);
+			isTransitioning = false;
+		}, 310);
+	}
+
+	function gotoPrevPage() {
+		isTransitioning = true;
+		setTimeout(() => {
+			page--;
+			setupPage(page);
+			isTransitioning = false;
+		}, 310);
+	}
+
+	function setupPage(pageNumber: number) {
+		switch (pageNumber) {
+			case 1: {
+				enableJellyfinConfigForm = true;
+				disableNext = true;
+				nextBtnType = 'submit';
+				nextBtnForm = 'jellyfinForm';
+				needValidation = true;
+				nextButtonText = 'settings.misc.next';
+				nextButtonAction = defaultNextAction;
+				break;
+			}
+			case 2: {
+				enableJellyfinConfigForm = false;
+				disableNext = false;
+				nextBtnType = 'button';
+				nextBtnForm = undefined;
+				needValidation = false;
+				errorMessage = undefined;
+				nextButtonText = 'settings.misc.finish';
+				nextButtonAction = () => goto(resolve('/(public)/auth/login', {}));
+				break;
+			}
+			default: {
+				if (jellyfinForm) {
+					jellyfinForm.className = 'opacity-0 invisible absolute';
+				}
+				enableJellyfinConfigForm = false;
+				disableNext = false;
+				nextBtnType = 'button';
+				nextBtnForm = undefined;
+				needValidation = false;
+				errorMessage = undefined;
+				nextButtonText = 'settings.misc.next';
+				nextButtonAction = defaultNextAction;
+			}
+		}
+	}
+
+	function defaultNextAction(): void {
+		if (needValidation) {
+			return;
+		}
+		gotoNextPage();
+	}
+
+	function onJellyfinInputChange() {
+		disableNext =
+			!(
+				jellyfinFormBaseURL.startsWith('http://') ||
+				jellyfinFormBaseURL.startsWith('https://')
+			) || jellyfinFormAPIKey.length === 0;
+		errorMessage = undefined;
+	}
+
+	$effect(() => {
+		switch (page) {
+			case 0: {
+				pageTitle = $_('setup.welcomeOnReiverr');
+				pageDesc = $_('setup.page1_1');
+				pageInstr = $_('setup.page1_2');
+				break;
+			}
+			case 1: {
+				pageTitle = $_('setup.configureJellyfin');
+				pageDesc = $_('setup.page2_1');
+				pageInstr = $_('setup.page2_2');
+				break;
+			}
+			case 2: {
+				pageTitle = $_('setup.configurationFinished');
+				pageDesc = $_('setup.page3_1');
+				pageInstr = $_('setup.page3_2');
+			}
+		}
+
+		if (errorMessage) {
+			createErrorNotification($_('setup.errors.unableConnect'), errorMessage);
+		}
+	});
+</script>
+
+<div class="contents">
+	<div class="z-10 flex items-center justify-center gap-2 rounded-xs pt-20">
+		<div class="h-11 w-11 rounded-full bg-amber-300"></div>
+		<h1 class="font-display text-5xl font-semibold tracking-wider uppercase">Reiverr</h1>
+	</div>
+	<h1
+		class="font-display z-10 flex w-screen items-center justify-center pt-10 text-4xl font-semibold"
+	>
+		{$_('setup.welcome')}
+	</h1>
+	<div
+		class="absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 items-center rounded-xl bg-zinc-900/60 p-6"
+	>
+		<div
+			class="transition duration-300 ease-in-out {isTransitioning
+				? 'invisible opacity-0'
+				: 'visible opacity-100'}"
+		>
+			<h1 class="flex justify-center pb-5 text-3xl">{pageTitle}</h1>
+			<p class="pb-5 text-justify">
+				{pageDesc}
+			</p>
+			<p class="text-justify">
+				{pageInstr}
+			</p>
+		</div>
+		<form
+			bind:this={jellyfinForm}
+			id="jellyfinForm"
+			class="flex justify-center pt-8 transition duration-300 ease-in-out {isTransitioning ||
+			!enableJellyfinConfigForm
+				? 'invisible opacity-0'
+				: 'visible opacity-100 delay-100'}"
+			method="POST"
+			use:enhance={() => {
+				isInputDisabled = true;
+				return async ({ result }) => {
+					if (result.type !== 'success') {
+						isInputDisabled = false;
+						if (result.data?.code === 1) {
+							errorMessage = $_('setup.errors.invalidURL');
+						} else if (result.data?.code === 2) {
+							errorMessage = $_('setup.errors.invalidAPIKey');
+						} else {
+							errorMessage = $_('general.unknownError');
+						}
+					} else {
+						isInputDisabled = false;
+						gotoNextPage();
+					}
+				};
+			}}
+		>
+			<div class="flex-wrap space-y-5">
+				<div class="flex-wrap">
+					<label for="baseURL">{$_('setup.jellyfinURLInput')}</label>
+					<Input
+						placeholder="http://localhost:8096"
+						type="text"
+						name="baseURL"
+						disabled={isInputDisabled}
+						onchange={(e) => {
+							jellyfinFormBaseURL = e;
+							onJellyfinInputChange();
+						}}
+					></Input>
+				</div>
+				<div class="flex-wrap">
+					<label for="apiKey">{$_('setup.apiKeyInput')}</label>
+					<Input
+						placeholder="6d75582d1c874c97bd73fbef278df8c7"
+						type="password"
+						name="apiKey"
+						disabled={isInputDisabled}
+						onchange={(e) => {
+							jellyfinFormAPIKey = e;
+							onJellyfinInputChange();
+						}}
+					></Input>
+				</div>
+			</div>
+		</form>
+		<div class="flex justify-between pt-10">
+			<div>
+				<Button
+					variant="tertiary"
+					disabled={page === 0 || isTransitioning || isInputDisabled}
+					onclick={() => gotoPrevPage()}
+				>
+					<ArrowLeft size="20" /><span class="mr-1">{$_('settings.misc.back')}</span>
+				</Button>
+			</div>
+			<div>
+				<Button
+					type={nextBtnType}
+					form={nextBtnForm}
+					variant="secondary"
+					disabled={isTransitioning || disableNext || isInputDisabled}
+					onclick={nextButtonAction}
+				>
+					<span class="mr-1">{$_(nextButtonText)}</span>
+					{#if isInputDisabled}
+						<Update class="animate-spin" size="20" />
+					{:else}
+						<ArrowRight size="20" />
+					{/if}
+				</Button>
+			</div>
+		</div>
+	</div>
+</div>

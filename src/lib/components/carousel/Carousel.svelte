@@ -43,15 +43,15 @@
 	});
 </script>
 
-<div class={classNames('flex flex-col gap-4 group/carousel', className)}>
-	<div class={'flex justify-between items-center gap-4 ' + scrollClass}>
+<div class={classNames('group/carousel flex flex-col gap-4', className)}>
+	<div class={'flex items-center justify-between gap-4 ' + scrollClass}>
 		{@render title?.()}
 		{#if !title}
-			<div class="font-semibold text-xl">{heading}</div>
+			<div class="text-xl font-semibold">{heading}</div>
 		{/if}
 		<div
 			class={classNames(
-				'flex gap-2 sm:opacity-0 transition-opacity sm:group-hover/carousel:opacity-100',
+				'flex gap-2 transition-opacity sm:opacity-0 sm:group-hover/carousel:opacity-100',
 				{
 					hidden: carousel_scroll_width
 				}
@@ -83,7 +83,7 @@
 	<div class="relative">
 		<div
 			class={classNames(
-				'flex overflow-x-scroll items-center overflow-y-visible scrollbar-hide gap-4 relative p-1',
+				'relative scrollbar-hide flex items-center gap-4 overflow-x-scroll overflow-y-visible p-1',
 				scrollClass
 			)}
 			bind:this={carousel}
@@ -97,14 +97,14 @@
 		{#if scrollX > 50}
 			<div
 				transition:fade={{ duration: 200 }}
-				class={'absolute inset-y-0 left-0 w-0 sm:w-16 md:w-24 bg-linear-to-r ' +
+				class={'absolute inset-y-0 left-0 w-0 bg-linear-to-r sm:w-16 md:w-24 ' +
 					gradientFromColor}
 			></div>
 		{/if}
 		{#if carousel && scrollX < carousel?.scrollWidth - carousel?.clientWidth - 50}
 			<div
 				transition:fade={{ duration: 200 }}
-				class={'absolute inset-y-0 right-0 w-0 sm:w-16 md:w-24 bg-linear-to-l ' +
+				class={'absolute inset-y-0 right-0 w-0 bg-linear-to-l sm:w-16 md:w-24 ' +
 					gradientFromColor}
 			></div>
 		{/if}
