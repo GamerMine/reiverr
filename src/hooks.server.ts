@@ -2,11 +2,10 @@ import { DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE } from
 
 import TypeOrm from '@reiverr/db';
 import type { Handle, ServerInit } from '@sveltejs/kit/hooks';
-import { assertUserAuth, getUser } from '#lib/server/auth/auth.ts';
-import { GlobalSettingsEntity } from '@reiverr/db/dist/entities/GlobalSettings.ts';
+import { getUser } from '#lib/server/auth/auth.ts';
+import { GlobalSettingsEntity, UserSettingsEntity } from '@reiverr/db/entities';
 import { redirect } from '@sveltejs/kit';
 import { isProtected } from '#lib/utils/utils.ts';
-import { UserSettingsEntity } from '@reiverr/db/dist/entities/UserSettings.ts';
 
 const databaseTypes = [
 	'postgres',
