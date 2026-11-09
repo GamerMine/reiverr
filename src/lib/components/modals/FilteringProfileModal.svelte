@@ -59,7 +59,7 @@
 				disableInputs = false;
 			}
 		})}
-		class="grid grid-cols-2 p-4 gap-3 items-center"
+		class="grid grid-cols-2 items-center gap-3 p-4"
 		onsubmit={() => (disableInputs = true)}
 	>
 		<h2>

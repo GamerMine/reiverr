@@ -8,7 +8,7 @@ declare global {
 		// interface Error {}
 		interface Locals {
 			user: {
-				userId: string;
+				userId: string | null;
 				username: string;
 				isAdmin: boolean;
 				isOidc: boolean;
@@ -17,6 +17,7 @@ declare global {
 				globalSettings: GlobalSettings;
 				userSettings: UserSettings;
 			};
+			error: string | undefined;
 		}
 		// interface PageData {}
 		// interface Platform {}

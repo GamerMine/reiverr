@@ -1,4 +1,5 @@
-import { command, form, getRequestEvent } from '$app/server';
+import { getRequestEvent } from '$app/server';
+import { adminCommand, adminForm, protectedForm } from '#lib/server/auth/remote-guards.ts';
 import * as v from 'valibot';
 import { ACCESS_TOKEN_COOKIE } from '#lib/server/auth/auth.js';
 import { QUALITY_DEFS } from '#lib/utils/constants.ts';
@@ -21,7 +22,7 @@ import Connectors, {
 import { PlatformSchema } from '../../tasksWorker/types.ts';
 import { OptionalStringSchema } from '#lib/utils/schemas.ts';
 
-export const saveSettings = form(
+export const saveSettings = protectedForm(
 	v.object({
 		userLanguage: v.string(),
 		userAutoplayTrailers: v.optional(v.boolean(), false),
@@ -50,11 +51,9 @@ export const saveSettings = form(
 			cookies
 		} = getRequestEvent();
 
-		if (!userId) return { success: false, error: 'general.connectionRequired' };
-
 		await UserSettingsEntity.upsert(
 			{
-				userId: userId,
+				userId: userId!,
 				language: settings.userLanguage,
 				autoplayTrailers: settings.userAutoplayTrailers,
 				animationDuration: settings.userAnimationDuration,
@@ -114,7 +113,9 @@ export const saveSettings = form(
 				radarrHealthy = await new RadarrConnector(
 					globalSettings.radarrBaseUrl ?? '',
 					globalSettings.radarrApiKey ?? ''
-				).isHealthy();
+				)
+					.isHealthy()
+					.catch(() => false);
 			}
 
 			// If Radarr connection is possible, checks for the configuration
@@ -148,7 +149,9 @@ export const saveSettings = form(
 				sonarrHealthy = await new SonarrConnector(
 					globalSettings.sonarrBaseUrl ?? '',
 					globalSettings.sonarrApiKey ?? ''
-				).isHealthy();
+				)
+					.isHealthy()
+					.catch(() => false);
 			}
 
 			// If Sonarr connection is possible, checks for the configuration
@@ -191,7 +194,7 @@ export const saveSettings = form(
 					})
 				).affected ?? 1) > 0 || customFormatModified;
 			if (customFormatModified || changed)
-				await scheduleTask(userId, TaskType.SYNC_CUSTOM_FORMATS, undefined);
+				await scheduleTask(userId!, TaskType.SYNC_CUSTOM_FORMATS, undefined);
 
 			const [filteringProfiles, formats] = await Promise.all([
 				FilteringProfilesEntity.find(),
@@ -217,7 +220,7 @@ export const saveSettings = form(
 				).identifiers.length > 0 || qualityProfileModified;
 
 			if (qualityProfileModified || changed)
-				await scheduleTask(userId, TaskType.SYNC_QUALITY_PROFILES, []);
+				await scheduleTask(userId!, TaskType.SYNC_QUALITY_PROFILES, []);
 		}
 
 		return {
@@ -227,7 +230,7 @@ export const saveSettings = form(
 	}
 );
 
-export const createUpdateFilteringProfile = form(
+export const createUpdateFilteringProfile = adminForm(
 	v.object({
 		profileName: v.pipe(v.string(), v.nonEmpty()),
 		isDefault: v.optional(v.boolean()),
@@ -242,9 +245,11 @@ export const createUpdateFilteringProfile = form(
 		action,
 		profileId
 	}): Promise<Result<undefined>> => {
-		const { cookies } = getRequestEvent();
-		const { isAdmin, userId } = await getUser(cookies);
-		if (!userId || !isAdmin) return { success: false, error: 'general.connectionRequired' };
+		const {
+			locals: {
+				user: { userId }
+			}
+		} = getRequestEvent();
 
 		for (const quality of qualities) {
 			if (!QUALITY_DEFS.includes(quality))
@@ -277,32 +282,30 @@ export const createUpdateFilteringProfile = form(
 			);
 		}
 
-		await scheduleTask(userId, TaskType.SYNC_QUALITY_PROFILES, profileId ? [profileId] : []);
+		await scheduleTask(userId!, TaskType.SYNC_QUALITY_PROFILES, profileId ? [profileId] : []);
 
 		return { success: true };
 	}
 );
 
-export const deleteFilteringProfile = command(FilteringProfileSchema, async (profile) => {
-	const { cookies } = getRequestEvent();
-	const { isAdmin, userId } = await getUser(cookies);
-	if (!userId || !isAdmin) return { success: false, error: 'general.connectionRequired' };
+export const deleteFilteringProfile = adminCommand(FilteringProfileSchema, async (profile) => {
+	const {
+		locals: {
+			user: { userId }
+		}
+	} = getRequestEvent();
 
 	await QualityProfilesEntity.delete({
 		filteringProfile: { id: profile.id }
 	});
 
 	await FilteringProfilesEntity.deleteFilteringProfile(profile.id);
-	await scheduleTask(userId, TaskType.SYNC_QUALITY_PROFILES, []);
+	await scheduleTask(userId!, TaskType.SYNC_QUALITY_PROFILES, []);
 
 	return { success: true };
 });
 
-export const deleteIntegration = command(PlatformSchema, async (platform) => {
-	const { cookies } = getRequestEvent();
-	const { isAdmin } = await getUser(cookies);
-	if (!isAdmin) return { success: false, error: 'general.connectionRequired' };
-
+export const deleteIntegration = adminCommand(PlatformSchema, async (platform) => {
 	const globalSettings = await GlobalSettingsEntity.getDefault();
 	switch (platform) {
 		case 'radarr':

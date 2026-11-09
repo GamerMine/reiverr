@@ -1,9 +1,8 @@
-import { type Cookies, redirect } from '@sveltejs/kit';
+import { type Cookies } from '@sveltejs/kit';
 import { checkOidcSession, destroyOidcSession, OIDC_LOGIN_COOKIE } from '#lib/server/auth/oidc.ts';
 import { APP_URL } from '$app/env/public';
 import { OIDC_ENABLED } from '$app/env/private';
 import { checkSession } from '#lib/server/auth/login.ts';
-import { isProtected } from '#lib/utils/utils.ts';
 
 export const ACCESS_TYPE_COOKIE = 'access_type';
 export const ACCESS_TOKEN_COOKIE = 'access_token';
@@ -23,22 +22,22 @@ export function cookiesParam(age?: number) {
 	};
 }
 
+export function isProtected(url?: Readonly<{ pathname: string }> | null) {
+	return !(url && url.pathname.match(/^\/auth.*|^\/setup.*/));
+}
+
 export async function getUser(cookies: Cookies): Promise<{
-	userId: string;
+	userId: string | null;
 	username: string;
 	isAdmin: boolean;
 	isOidc: boolean;
 }> {
 	const accessToken = cookies.get(ACCESS_TOKEN_COOKIE) ?? '';
-	const isOidc = cookies.get(ACCESS_TYPE_COOKIE) === AccessType.OIDC && OIDC_ENABLED;
+	const isOidc = cookies.get(ACCESS_TYPE_COOKIE) === AccessType.OIDC && (OIDC_ENABLED as boolean);
 
-	const { isConnected, userId, username, isAdmin } = isOidc
-		? checkOidcSession(accessToken)
-		: await checkSession(accessToken);
+	const user = isOidc ? checkOidcSession(accessToken) : await checkSession(accessToken);
 
-	return isConnected
-		? { userId: userId ?? '', username: username ?? '', isAdmin, isOidc }
-		: { userId: '', username: '', isAdmin: false, isOidc };
+	return { ...user, isOidc };
 }
 
 export function logoutUser(cookies: Cookies) {
@@ -47,4 +46,8 @@ export function logoutUser(cookies: Cookies) {
 	cookies.delete(OIDC_LOGIN_COOKIE);
 	cookies.delete(ACCESS_TYPE_COOKIE);
 	cookies.delete(ACCESS_TOKEN_COOKIE);
+}
+
+export function guestUser() {
+	return { userId: null, username: 'Guest', isAdmin: false, isOidc: false };
 }

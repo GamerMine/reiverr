@@ -22,14 +22,14 @@
 <div>
 	<a
 		class={classNames(
-			'block bg-zinc-700 py-6 rounded-md cursor-pointer hover:bg-amber-300 hover:text-black transition-colors duration-200',
-			{ 'cursor-default animate-pulse': loading }
+			'block cursor-pointer rounded-md bg-zinc-700 py-6 transition-colors duration-200 hover:bg-amber-300 hover:text-black',
+			{ 'animate-pulse cursor-default': loading }
 		)}
 		onclick={() => (opened = loading ? opened : !opened)}
 	>
-		<div class="flex mx-4">
+		<div class="mx-4 flex">
 			<ChevronRight
-				class={classNames('rotate-0 transition-transform mr-2', { 'rotate-90': opened })}
+				class={classNames('mr-2 rotate-0 transition-transform', { 'rotate-90': opened })}
 			/>
 			{@render summary?.()}
 		</div>

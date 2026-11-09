@@ -62,12 +62,12 @@
 </script>
 
 <a
-	class="space-y-3 w-30 p-2 rounded-md transition duration-300 ease-in-out block {clickable
-		? 'hover:bg-stone-900/60 cursor-pointer'
+	class="block w-30 space-y-3 rounded-md p-2 transition duration-300 ease-in-out {clickable
+		? 'cursor-pointer hover:bg-stone-900/60'
 		: 'cursor-default'} {klass}"
 	{onclick}
 >
-	<div class="rounded-md w-26 h-26 bg-stone-900/60 flex items-center justify-center">
+	<div class="flex h-26 w-26 items-center justify-center rounded-md bg-stone-900/60">
 		<div bind:this={contentDiv}></div>
 	</div>
 	<div class="flex justify-center-safe truncate text-stone-300">{user?.Name || ''}</div>

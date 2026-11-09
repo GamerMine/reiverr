@@ -96,8 +96,8 @@
 	<a
 		{onclick}
 		class={classNames(
-			'aspect-video bg-center bg-cover rounded-lg overflow-hidden transition-opacity shadow-lg selectable shrink-0 placeholder-image relative block',
-			'flex flex-col px-2 lg:px-3 py-2 gap-2 text-left cursor-pointer',
+			'selectable placeholder-image relative block aspect-video shrink-0 overflow-hidden rounded-lg bg-cover bg-center shadow-lg transition-opacity',
+			'flex cursor-pointer flex-col gap-2 px-2 py-2 text-left lg:px-3',
 			{
 				'h-44': size === 'md',
 				'h-36 lg:h-44': size === 'sm',
@@ -112,14 +112,14 @@
 	>
 		<div
 			class={classNames(
-				'flex-1 flex flex-col justify-between relative group-hover:opacity-0 group-focus-visible:opacity-0 transition-all',
-				'text-xs lg:text-sm font-medium text-zinc-300',
+				'relative flex flex-1 flex-col justify-between transition-all group-hover:opacity-0 group-focus-visible:opacity-0',
+				'text-xs font-medium text-zinc-300 lg:text-sm',
 				{
 					'opacity-15': !jellyfinId
 				}
 			)}
 		>
-			<div class="flex justify-between items-center">
+			<div class="flex items-center justify-between">
 				<div>
 					{@render left_top?.()}
 					{#if !left_top}
@@ -142,7 +142,7 @@
 					{#if !right_top}
 						{#if watched}
 							<div
-								class="flex backdrop-blur-md bg-black/40 px-2 rounded-md font-bold items-center"
+								class="flex items-center rounded-md bg-black/40 px-2 font-bold backdrop-blur-md"
 							>
 								<Check size="25" />
 								<p>{$_('library.watched')}</p>
@@ -165,10 +165,10 @@
 				{#if !left_bottom}
 					<div class="flex flex-col items-start">
 						{#if subtitle}
-							<h2 class="text-zinc-300 text-sm font-medium">{subtitle}</h2>
+							<h2 class="text-sm font-medium text-zinc-300">{subtitle}</h2>
 						{/if}
 						{#if title}
-							<h1 class="text-zinc-200 text-base font-medium text-left line-clamp-2">
+							<h1 class="line-clamp-2 text-left text-base font-medium text-zinc-200">
 								{title}
 							</h1>
 						{/if}
@@ -178,7 +178,7 @@
 			</div>
 		</div>
 		{#if progress}
-			<div class="relative group-hover:opacity-0 transition-opacity">
+			<div class="relative transition-opacity group-hover:opacity-0">
 				<ProgressBar {progress} />
 			</div>
 		{/if}

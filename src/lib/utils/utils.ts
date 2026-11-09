@@ -74,7 +74,3 @@ export const getJellyfinBackdrop = (item: JellyfinBaseItemDto, quality = 100) =>
 		}/Images/Primary?quality=${quality}&tag=${item?.ImageTags?.Primary}`;
 	}
 };
-
-export function isProtected(url?: Readonly<{ pathname: string }> | null) {
-	return !(url && url.pathname.match(/^\/auth.*|^\/setup.*/));
-}

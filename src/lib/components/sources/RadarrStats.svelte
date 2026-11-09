@@ -47,7 +47,7 @@
 		fillPercentage={((spaceTotal - spaceLeft) / spaceTotal) * 100}
 	>
 		{#snippet icon()}
-			<RadarrIcon class="absolute opacity-20 p-4 h-full inset-y-0 right-2" />
+			<RadarrIcon class="absolute inset-y-0 right-2 h-full p-4 opacity-20" />
 		{/snippet}
 	</StatsContainer>
 {/await}

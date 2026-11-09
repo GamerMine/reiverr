@@ -35,13 +35,13 @@
 {#await fetchLatestVersion() then latestVersion}
 	{#if checkVersionLatest(latestVersion) && visible}
 		<div
-			class="fixed inset-x-0 bottom-0 p-3 flex items-center justify-center z-20 bg-stone-800 text-sm"
+			class="fixed inset-x-0 bottom-0 z-20 flex items-center justify-center bg-stone-800 p-3 text-sm"
 		>
 			<a href="https://github.com/GamerMine/reiverr"
 				>{latestVersion} {$_('update.updateAvailable')}</a
 			>
 
-			<div class="absolute right-4 inset-y-0 flex items-center gap-2">
+			<div class="absolute inset-y-0 right-4 flex items-center gap-2">
 				<Button
 					variant="tertiary"
 					size="xs"

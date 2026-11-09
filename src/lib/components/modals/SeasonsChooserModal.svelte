@@ -72,15 +72,15 @@
 
 <ModalContainer>
 	<ModalHeader close={userClose} text={$_('ui.modal.seasonsChooser.title')} />
-	<div class="m-2 space-y-2 max-h-150 overflow-auto">
+	<div class="m-2 max-h-150 space-y-2 overflow-auto">
 		{#if loading || !seasonsData}
 			<Accordion loading={true} />
 		{:else}
 			{#each seasonsData as data, si (data.seasonNumber)}
 				<Accordion>
 					{#snippet summary()}
-						<div class="flex flex-1 justify-between mx-2">
-							<p class="font-bold flex items-center">
+						<div class="mx-2 flex flex-1 justify-between">
+							<p class="flex items-center font-bold">
 								{$_('library.content.season')}
 								{data.seasonNumber}
 							</p>
@@ -92,22 +92,22 @@
 						</div>
 					{/snippet}
 					{#snippet content()}
-						<div class="space-y-2 overflow-auto max-h-110">
+						<div class="max-h-110 space-y-2 overflow-auto">
 							{#each data.episodes as episode, ei (episode.episodeNumber)}
-								<div class="flex bg-zinc-600 rounded-md">
+								<div class="flex rounded-md bg-zinc-600">
 									<img
 										src={episode.backdropUrl}
 										alt={episode.title}
 										class="max-w-35 rounded-tl-md"
 									/>
 									<div
-										class="grid grid-flow-col grid-cols-3 place-content-center space-x-1 mx-2"
+										class="mx-2 grid grid-flow-col grid-cols-3 place-content-center space-x-1"
 									>
-										<p class="col-span-1 text-sm font-bold flex items-center">
+										<p class="col-span-1 flex items-center text-sm font-bold">
 											{episode.title}
 										</p>
 										<TruncatedText
-											class="text-sm col-span-3 p-2"
+											class="col-span-3 p-2 text-sm"
 											text={episode.overview}
 											maxLength={120}
 										/>
@@ -125,7 +125,7 @@
 			{/each}
 		{/if}
 	</div>
-	<div class="flex justify-end mr-2 mb-2">
+	<div class="mr-2 mb-2 flex justify-end">
 		<Button type="button" variant="primary" onclick={confirm}>
 			<span class="flex">OK</span>
 		</Button>

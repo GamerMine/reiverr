@@ -8,7 +8,7 @@
 <div
 	class={classNames(
 		klass,
-		'backdrop-blur-lg rounded-full bg-[#00000044] text-zinc-300 hover:text-zinc-200 p-2'
+		'rounded-full bg-[#00000044] p-2 text-zinc-300 backdrop-blur-lg hover:text-zinc-200'
 	)}
 	{onclick}
 >

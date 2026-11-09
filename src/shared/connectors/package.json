@@ -3,12 +3,8 @@
   "version": "0.0.1",
   "description": "Shared API connectors for Reiverr",
   "type": "module",
-  "dependencies": {
-
-  },
-  "devDependencies": {
-
-  },
+  "dependencies": {},
+  "devDependencies": {},
   "scripts": {
     "build": "tsc"
   },

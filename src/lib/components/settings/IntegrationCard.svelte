@@ -18,15 +18,15 @@
 </script>
 
 <div
-	class={classNames('border border-zinc-800 rounded-xl p-4 flex flex-col gap-4', {
+	class={classNames('flex flex-col gap-4 rounded-xl border border-zinc-800 p-4', {
 		// 'border-zinc-800': status === 'connected'
 		// 'border-zinc-800': status === 'disconnected'
 	})}
 >
 	<div class="flex items-baseline justify-between">
-		<a class="text-zinc-200 text-xl font-medium" target="_blank" {href}>{title}</a>
+		<a class="text-xl font-medium text-zinc-200" target="_blank" {href}>{title}</a>
 		<div
-			class={classNames('w-3 h-3 rounded-full', {
+			class={classNames('h-3 w-3 rounded-full', {
 				'bg-green-600': status === 'connected',
 				'bg-zinc-600': status === 'disconnected',
 				'bg-amber-500': status === 'error'

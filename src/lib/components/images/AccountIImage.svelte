@@ -69,8 +69,8 @@
 
 <div
 	bind:this={userImgDiv}
-	class={classNames(`flex items-center justify-center bg-stone-800/90 rounded-md`, klass)}
+	class={classNames(`flex items-center justify-center rounded-md bg-stone-800/90`, klass)}
 	style={`min-width: ${sizePx}; width: ${sizePx}; min-height: ${sizePx}; height: ${sizePx};`}
 >
-	<h1 class="uppercase text-2xl">?</h1>
+	<h1 class="text-2xl uppercase">?</h1>
 </div>

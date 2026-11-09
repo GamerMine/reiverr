@@ -1,179 +1,200 @@
 name: reiverr-dev
 
 services:
-  postgres:
-    container_name: postgres
-    image: postgres:14.2-alpine
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-    volumes:
-      - ./cache/postgres:/var/lib/postgresql/data
-    networks:
-      - non-isolated
-    restart: unless-stopped
+    postgres:
+        container_name: postgres
+        image: postgres:14.2-alpine
+        ports:
+            - '5432:5432'
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+            - POSTGRES_DB=postgres
+        volumes:
+            - ./cache/postgres:/var/lib/postgresql/data
+        networks:
+            - non-isolated
+        restart: unless-stopped
 
-  jellyfin:
-    container_name: jellyfin
-    image: jellyfin/jellyfin:latest
-    ports:
-      - "8096:8096/tcp"
-      - "7359:7359/udp"
-    volumes:
-      - ./cache/jellyfin/config:/config
-      - ./cache/jellyfin/cache:/cache
-      - ./cache/jellyfin/media:/media
-    networks:
-      - non-isolated
-    restart: unless-stopped
+    jellyfin:
+        container_name: jellyfin
+        image: jellyfin/jellyfin:latest
+        ports:
+            - '8096:8096/tcp'
+            - '7359:7359/udp'
+        volumes:
+            - ./cache/jellyfin/config:/config
+            - ./cache/jellyfin/cache:/cache
+            - ./cache/jellyfin/media:/media
+        networks:
+            - non-isolated
+        restart: unless-stopped
 
-  radarr:
-    container_name: radarr
-    image: linuxserver/radarr:latest
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Paris
-    ports:
-      - "7878:7878"
-    volumes:
-      - ./cache/radarr/config:/config
-      - ./cache/jellyfin/media:/movies
-      - ./cache/radarr/downloads:/downloads
-    networks:
-      non-isolated:
-      isolated:
-        ipv4_address: 173.19.0.6
-    restart: unless-stopped
+    radarr:
+        container_name: radarr
+        image: linuxserver/radarr:latest
+        environment:
+            - PUID=1000
+            - PGID=1000
+            - TZ=Europe/Paris
+        ports:
+            - '7878:7878'
+        volumes:
+            - ./cache/radarr/config:/config
+            - ./cache/jellyfin/media:/movies
+            - ./cache/radarr/downloads:/downloads
+        networks:
+            non-isolated:
+            isolated:
+                ipv4_address: 173.19.0.6
+        restart: unless-stopped
 
-  sonarr:
-    container_name: sonarr
-    image: linuxserver/sonarr:latest
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Paris
-    ports:
-      - "8989:8989"
-    volumes:
-      - ./cache/sonarr/config:/config
-      - ./cache/jellyfin/media:/tv
-      - ./cache/sonarr/downloads:/downloads
-    networks:
-      non-isolated:
-      isolated:
-        ipv4_address: 173.19.0.5
+    sonarr:
+        container_name: sonarr
+        image: linuxserver/sonarr:latest
+        environment:
+            - PUID=1000
+            - PGID=1000
+            - TZ=Europe/Paris
+        ports:
+            - '8989:8989'
+        volumes:
+            - ./cache/sonarr/config:/config
+            - ./cache/jellyfin/media:/tv
+            - ./cache/sonarr/downloads:/downloads
+        networks:
+            non-isolated:
+            isolated:
+                ipv4_address: 173.19.0.5
 
-    restart: unless-stopped
+        restart: unless-stopped
 
-  prowlarr:
-    container_name: prowlarr
-    image: linuxserver/prowlarr:latest
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Paris
-    ports:
-      - "9696:9696"
-    volumes:
-      - ./cache/prowlarr/config:/config
-    networks:
-      - non-isolated
-    restart: unless-stopped
+    prowlarr:
+        container_name: prowlarr
+        image: linuxserver/prowlarr:latest
+        environment:
+            - PUID=1000
+            - PGID=1000
+            - TZ=Europe/Paris
+        ports:
+            - '9696:9696'
+        volumes:
+            - ./cache/prowlarr/config:/config
+        networks:
+            - non-isolated
+        restart: unless-stopped
 
-  flaresolverr:
-    container_name: flaresolverr
-    image: ghcr.io/flaresolverr/flaresolverr:v3.4.6
-    environment:
-      - LOG_LEVEL=info
-    ports:
-      - "8191:8191"
-    networks:
-      - non-isolated
-    restart: unless-stopped
+    flaresolverr:
+        container_name: flaresolverr
+        image: ghcr.io/flaresolverr/flaresolverr:v3.4.6
+        environment:
+            - LOG_LEVEL=info
+        ports:
+            - '8191:8191'
+        networks:
+            - non-isolated
+        restart: unless-stopped
 
-  transmission:
-    image: ghcr.io/linuxserver/transmission:latest
-    container_name: transmission
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Paris
-    volumes:
-      - ./cache/transmission:/config
-      - ./cache/transmission/downloads:/downloads #optional
-    ports:
-      - "9091:9091"
-    networks:
-      isolated:
-        ipv4_address: 173.19.0.4
-    restart: unless-stopped
+    transmission:
+        image: ghcr.io/linuxserver/transmission:latest
+        container_name: transmission
+        environment:
+            - PUID=1000
+            - PGID=1000
+            - TZ=Europe/Paris
+        volumes:
+            - ./cache/transmission:/config
+            - ./cache/transmission/downloads:/downloads #optional
+        ports:
+            - '9091:9091'
+        networks:
+            isolated:
+                ipv4_address: 173.19.0.4
+        restart: unless-stopped
 
-  qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:latest
-    container_name: qbittorrent
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Paris
-      - WEBUI_PORT=8080
-      - TORRENTING_PORT=6881
-    volumes:
-      - ./cache/qbittorrent/config:/config
-      - ./cache/qbittorrent/downloads:/downloads
-    ports:
-      - "8080:8080"
-    networks:
-      isolated:
-        ipv4_address: 173.19.0.2
-    restart: unless-stopped
+    qbittorrent:
+        image: lscr.io/linuxserver/qbittorrent:latest
+        container_name: qbittorrent
+        environment:
+            - PUID=1000
+            - PGID=1000
+            - TZ=Europe/Paris
+            - WEBUI_PORT=8080
+            - TORRENTING_PORT=6881
+        volumes:
+            - ./cache/qbittorrent/config:/config
+            - ./cache/qbittorrent/downloads:/downloads
+        ports:
+            - '8080:8080'
+        networks:
+            isolated:
+                ipv4_address: 173.19.0.2
+        restart: unless-stopped
 
-  bitmagnet:
-    image: ghcr.io/bitmagnet-io/bitmagnet:latest
-    container_name: bitmagnet
-    ports:
-      - "3333:3333"
-    restart: unless-stopped
-    environment:
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PASSWORD=postgres
-      - TMDB_ENABLED=false
-    volumes:
-      - ./cache/bitmagnet:/root/.config/bitmagnet
-    command:
-      - worker
-      - run
-      - --keys=http_server
-      - --keys=queue_server
-    networks:
-      - non-isolated
+    bitmagnet:
+        image: ghcr.io/bitmagnet-io/bitmagnet:latest
+        container_name: bitmagnet
+        ports:
+            - '3333:3333'
+        restart: unless-stopped
+        environment:
+            - POSTGRES_HOST=postgres
+            - POSTGRES_PASSWORD=postgres
+            - TMDB_ENABLED=false
+        volumes:
+            - ./cache/bitmagnet:/root/.config/bitmagnet
+        command:
+            - worker
+            - run
+            - --keys=http_server
+            - --keys=queue_server
+        networks:
+            - non-isolated
 
-  oidc:
-    image: ghcr.io/navikt/mock-oauth2-server:3.0.1
-    environment:
-      SERVER_PORT: '8000'
-      JSON_CONFIG: '{"interactiveLogin": false}'
-    ports:
-      - '8000:8000'
-    networks:
-      - non-isolated
+    oidc:
+        image: ghcr.io/navikt/mock-oauth2-server:3.0.1
+        environment:
+            SERVER_PORT: '8000'
+            JSON_CONFIG: |
+                {
+                  "interactiveLogin": false,
+                  "tokenCallbacks": [
+                    {
+                      "issuerId": "default",
+                      "tokenExpiry": 3600,
+                      "requestMappings": [
+                        {
+                          "requestParam": "grant_type",
+                          "match": "*",
+                          "claims": {
+                            "sub": "00000000-0000-0000-0000-000000000001",
+                            "name": "Dev User",
+                            "preferred_username": "dev.user",
+                            "groups": ["admins", "users"]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+        ports:
+            - '8000:8000'
+        networks:
+            - non-isolated
 
-  opentracker:
-    image: lednerb/opentracker-docker:latest
-    container_name: opentracker
-    restart: unless-stopped
-    networks:
-      isolated:
-        ipv4_address: 173.19.0.3
+    opentracker:
+        image: lednerb/opentracker-docker:latest
+        container_name: opentracker
+        restart: unless-stopped
+        networks:
+            isolated:
+                ipv4_address: 173.19.0.3
 
 networks:
-  isolated:
-    internal: true
-    ipam:
-      config:
-        - subnet: 173.19.0.0/16
-  non-isolated:
-    driver: bridge
+    isolated:
+        internal: true
+        ipam:
+            config:
+                - subnet: 173.19.0.0/16
+    non-isolated:
+        driver: bridge

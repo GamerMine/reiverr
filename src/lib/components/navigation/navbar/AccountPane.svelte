@@ -8,6 +8,7 @@
 	import { goto } from '$app/navigation';
 	import type { JellyfinUserDto } from '@reiverr/connectors/types/jellyfin';
 	import { logout } from '#lib/remote/login.remote.ts';
+	import { resolve } from '$app/paths';
 
 	let {
 		onclick = () => {}
@@ -38,7 +39,7 @@
 				class="w-full"
 				onclick={async () => {
 					onclick();
-					await goto('/settings');
+					await goto(resolve('/settings', {}));
 				}}
 			>
 				<Gear size="20"></Gear><span class="ml-2 flex"
@@ -65,7 +66,7 @@
 				onclick={async () => {
 					onclick();
 					await logout();
-					await goto('/auth/login?logout');
+					await goto(resolve('/auth/login?logout', {}));
 				}}
 			>
 				<Exit size="20"></Exit><span class="ml-2 flex">{$_('navbar.userMenu.logout')}</span>

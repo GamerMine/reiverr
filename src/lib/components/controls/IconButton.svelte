@@ -19,9 +19,9 @@
 
 <button
 	class={classNames(
-		'text-zinc-300 hover:text-zinc-50 p-1 flex items-center justify-center selectable rounded-xs shrink-0',
+		'selectable flex shrink-0 items-center justify-center rounded-xs p-1 text-zinc-300 hover:text-zinc-50',
 		{
-			'opacity-30 cursor-not-allowed pointer-events-none': disabled,
+			'pointer-events-none cursor-not-allowed opacity-30': disabled,
 			'cursor-pointer': !disabled
 		},
 		className
