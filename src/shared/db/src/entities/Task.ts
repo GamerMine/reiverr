@@ -97,7 +97,7 @@ export class TaskEntity extends BaseEntity {
 				}
 			],
 			order: {
-				executed: 'ASC'
+				executed: 'DESC'
 			},
 			relations: { executions: true, user: true },
 			take: 20

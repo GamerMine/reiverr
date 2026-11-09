@@ -101,6 +101,7 @@
   },
   "library": {
     "LibraryItemContext": {
+      "addRemoveSeriesEpisodes": "Ajouter/Supprimer des épisodes",
       "markUnwatched": "Marquer comme non vu",
       "markWatched": "Marquer comme vu",
       "openJellyfin": "Ouvrir dans Jellyfin",
@@ -227,7 +228,7 @@
       },
       "sonarrSeriesAdd": {
         "error": "La série '{name}' n'as pas pu être ajoutée à la file d'attente. Réessayez plus tard.",
-        "success": "La série '{name}' à été ajouté à la file d'attente. Il sera disponible une fois téléchargé."
+        "success": "La série '{name}' à été ajouté à la file d'attente. Elle sera disponible une fois téléchargé."
       },
       "sonarrSeriesRemove": {
         "error": "La série '{name}' n'as pas pu être supprimée. Réessayez plus tard.",

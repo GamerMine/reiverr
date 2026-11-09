@@ -1,6 +1,4 @@
-import { defaultGlobalSettings, defaultUserSettings, type Settings } from '@reiverr/db/types';
+import { type Settings } from '@reiverr/db/types';
+import { getUserSettings } from '#lib/remote/settings.remote.ts';
 
-export const settings: Settings = $state({
-	userSettings: defaultUserSettings,
-	globalSettings: defaultGlobalSettings
-});
+export const settings: Settings = $state(getUserSettings().current?.data);

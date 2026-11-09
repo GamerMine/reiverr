@@ -3,7 +3,6 @@ import { isMainThread, Worker } from 'node:worker_threads';
 import { TaskType } from '@reiverr/db/types';
 import { tasksWorkerFilename } from './worker.ts';
 import Logger, { LogLevel } from '@reiverr/logging';
-import vars from '../env.ts';
 
 let workerInstance: Worker;
 const logger = Logger.getLogger('Scheduler');
