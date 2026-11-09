@@ -44,11 +44,11 @@
 		createSuccessNotification
 	} from '#lib/stores/notification.store.js';
 	import { jellyfinGetEpisodes } from '#lib/remote/jellyfin.remote.js';
-	import type { SonarrSeriesResource } from '@reiverr/connectors/types/radarr';
+	import type { SonarrSeriesResource } from '@reiverr/connectors/types/sonarr';
 	import { getQueuedTasks } from '#lib/remote/tasks.remote.ts';
 	import { type SeriesAdd, type SeriesRemove } from '../../../tasksWorker/types.ts';
 	import { TaskType } from '@reiverr/db/types';
-	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/radarr';
+	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
 	import ConfirmDialog from '#lib/components/controls/ConfirmDialog.svelte';
 
 	let {
@@ -73,6 +73,7 @@
 	let isBeingAdded = $state(false);
 	let isBeingRemoved = $state(false);
 	let showRemoveConfirmDialog = $state(false);
+	let addToSonarrLoading = $state(false);
 
 	const jellyfinEpisodeData: {
 		[key: string]: {
@@ -175,7 +176,6 @@
 		});
 	}
 
-	let addToSonarrLoading = $state(false);
 	async function addToSonarr(language: string) {
 		addToSonarrLoading = true;
 
@@ -200,11 +200,6 @@
 						$_('ui.notification.header.episodesAdded'),
 						$_('ui.notification.description.episodesAdded')
 					);
-					sonarrGetSeries()
-						.refresh()
-						.then(() => {
-							addToSonarrLoading = false;
-						});
 				} else {
 					createErrorNotification(
 						$_('general.error'),
@@ -213,6 +208,7 @@
 				}
 			});
 		}
+		addToSonarrLoading = false;
 	}
 
 	function removeSeries(confirm: boolean) {

@@ -101,6 +101,7 @@
   },
   "library": {
     "LibraryItemContext": {
+      "addRemoveSeriesEpisodes": "Add/Remove episodes",
       "markUnwatched": "Mark as unwatched",
       "markWatched": "Mark as watched",
       "openJellyfin": "Open in Jellyfin",

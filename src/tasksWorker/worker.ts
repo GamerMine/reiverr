@@ -98,16 +98,6 @@ async function scheduleExecution(task: TaskEntity) {
 	}
 }
 
-/*async function unscheduleExecution(task: TaskEntity) {
-	const scheduling = schedulings.get(task.uuid);
-
-	if (scheduling) {
-		scheduling.close();
-		schedulings.delete(task.uuid);
-		task.scheduled = null;
-	}
-}*/
-
 async function queueExecution(task: TaskEntity) {
 	if (task.type in taskExecutors) {
 		try {

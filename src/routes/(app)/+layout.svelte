@@ -2,12 +2,12 @@
 	import Navbar from '#lib/components/navigation/navbar/Navbar.svelte';
 	import '../../app.css';
 	import type { LayoutServerData } from './$types';
-	import { type Snippet } from 'svelte';
-	import { settings } from '#lib/stores/settings.svelte.js';
+	import { onMount, type Snippet } from 'svelte';
 	import { CrossCircled } from 'svelte-radix';
 	import { fade } from 'svelte/transition';
 	import { _ } from 'svelte-i18n';
 	import OidcTokenRenewer from '#lib/components/navigation/OidcTokenRenewer.svelte';
+	import { getUserSettings } from '#lib/remote/settings.remote.ts';
 
 	let { data, children }: { data: LayoutServerData; children: Snippet } = $props();
 
@@ -15,18 +15,9 @@
 	let showCriticalError: boolean = $state(false);
 
 	// This has been done to prevent showing the 'state_referenced_locally' warning.
-	$effect(() => {
-		if (data.settings) {
-			settings.userSettings = data.settings.userSettings;
-			settings.globalSettings = data.settings.globalSettings;
-		} else {
-			criticalErrorMessage = data.error;
-			showCriticalError = true;
-			setTimeout(() => {
-				window.location.reload();
-			}, 20000);
-		}
-	});
+	onMount(() => {
+		getUserSettings().refresh()
+	})
 </script>
 
 <Navbar />

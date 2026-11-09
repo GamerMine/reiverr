@@ -8,6 +8,7 @@ import { redirect } from '@sveltejs/kit';
 import { defaultUserSettings } from '@reiverr/db/types';
 import Logger from '@reiverr/logging';
 import { LogLevel } from '@reiverr/logging';
+import { getUserSettings } from '#lib/remote/settings.remote.ts';
 
 const databaseTypes = [
 	'postgres',
@@ -59,9 +60,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 				return await resolve(event);
 			}
 		} else {
-			event.locals.settings.userSettings = await UserSettingsEntity.getUserSettings(
-				user.userId
-			);
+			await getUserSettings();
 			return await resolve(event);
 		}
 	} else if (event.url && !event.url.pathname.match(/^\/setup.*/) && !event.isRemoteRequest) {
