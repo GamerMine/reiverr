@@ -1,19 +1,6 @@
 import { command, form, getRequestEvent, query } from '$app/server';
 import { error } from '@sveltejs/kit';
 
-/**
- * Wrappers around SvelteKit remote functions that enforce permissions.
- *
- * - `protected*`: the user must be logged in (401 `general.connectionRequired`)
- * - `admin*`: the user must be logged in as an administrator
- *   (401 `general.connectionRequired` when logged out, 403 `general.unauthorizedAction` otherwise)
- *
- * The error message is an i18n key, to be translated client side.
- *
- * NB: this file must not be named `remote.ts` (or `*.remote.ts`): SvelteKit would treat it as a
- * remote functions module and require every export to be a remote function.
- */
-
 function requireUser() {
 	const {
 		locals: { user }
