@@ -199,10 +199,18 @@
     "userMenu": {
       "administrator": "Administrateur",
       "logout": "Se déconnecter",
-      "notifications": "Notifications",
       "settings": "Paramètres",
+      "tasks": "Tâches",
       "user": "Utilisateur"
     }
+  },
+  "tasks": {
+    "empty": "Aucune tâche",
+    "history": "Historique",
+    "inProgress": "En cours",
+    "running": "En cours d'exécution…",
+    "scheduled": "Programmée",
+    "scheduledAt": "Programmée : {date}"
   },
   "search": {
     "noRecentSearches": "Aucune recherche récente",

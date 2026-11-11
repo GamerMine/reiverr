@@ -193,10 +193,18 @@
     "userMenu": {
       "administrator": "Administrator",
       "logout": "Logout",
-      "notifications": "Notifications",
       "settings": "Settings",
+      "tasks": "Tasks",
       "user": "User"
     }
+  },
+  "tasks": {
+    "empty": "No tasks",
+    "history": "History",
+    "inProgress": "In progress",
+    "running": "Running…",
+    "scheduled": "Scheduled",
+    "scheduledAt": "Scheduled: {date}"
   },
   "search": {
     "noRecentSearches": "No recent searches",
@@ -219,7 +227,7 @@
     },
     "tasks": {
       "radarrMovieAdd": {
-        "error": "Le film '{name}' cannot be added to the queue. Please try again later.",
+        "error": "The movie '{name}' cannot be added to the queue. Please try again later.",
         "success": "The movie '{name}' has been added to the queue. It will be available once downloaded."
       },
       "radarrMovieRemove": {

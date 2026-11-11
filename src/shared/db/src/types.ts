@@ -111,6 +111,7 @@ export enum TaskType {
 
 export const TaskState = {
 	QUEUED: 'queued',
+	RUNNING: 'running',
 	ERROR: 'error',
 	CANCELED: 'canceled',
 	COMPLETED: 'completed'
@@ -123,5 +124,6 @@ export type TaskStatus = {
 	type: TaskType;
 	data?: unknown | undefined;
 	state: TaskStateType;
-	completionDate: Date;
+	completionDate: Date | null;
+	scheduledDate?: Date | null;
 };

@@ -117,6 +117,8 @@ export class TaskEntity extends BaseEntity {
 			state = TaskState.COMPLETED;
 		} else if (tasks.canceled) {
 			state = TaskState.CANCELED;
+		} else if (tasks.executions?.some((e) => e.started && !e.finished)) {
+			state = TaskState.RUNNING;
 		}
 
 		return {
@@ -125,7 +127,8 @@ export class TaskEntity extends BaseEntity {
 			type: tasks.type,
 			data: tasks.data,
 			state,
-			completionDate: tasks.executed
+			completionDate: tasks.executed,
+			scheduledDate: tasks.scheduled
 		};
 	}
 }

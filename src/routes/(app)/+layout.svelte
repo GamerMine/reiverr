@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Navbar from '#lib/components/navigation/navbar/Navbar.svelte';
+	import TasksOSD from '#lib/components/tasks/TasksOSD.svelte';
 	import '../../app.css';
 	import type { LayoutServerData } from './$types';
 	import { type Snippet } from 'svelte';
@@ -15,6 +16,7 @@
 </script>
 
 <Navbar />
+<TasksOSD />
 {#if data.isOidc}
 	<OidcTokenRenewer />
 {/if}

@@ -8,11 +8,12 @@
 	import { goto } from '$app/navigation';
 	import type { JellyfinUserDto } from '@unifarr/connectors/types/jellyfin';
 	import { logout } from '#lib/remote/login.remote.ts';
+	import { tasksMenu } from '#lib/stores/tasksMenu.svelte.ts';
 
 	let {
 		onclick = () => {}
 	}: {
-		onclick?: (menu?: 'notifications' | undefined) => void;
+		onclick?: () => void;
 	} = $props();
 
 	let user: JellyfinUserDto = JSON.parse(localStorage.getItem('user') || '{}') || undefined;
@@ -49,12 +50,19 @@
 				variant="tertiary"
 				class="mt-1 w-full"
 				onclick={async () => {
-					onclick('notifications');
+					tasksMenu.open();
+					onclick();
 				}}
 			>
 				<ActivityLog size="20"></ActivityLog><span class="ml-2 flex"
-					>{$_('navbar.userMenu.notifications')}</span
+					>{$_('navbar.userMenu.tasks')}</span
 				>
+				{#if tasksMenu.unseenError}
+					<span
+						class="ml-auto flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 text-xs"
+						>!</span
+					>
+				{/if}
 			</Button>
 		</div>
 		<Divider />
