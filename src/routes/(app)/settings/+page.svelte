@@ -248,10 +248,10 @@
 		</div>
 		<div class="flex items-center justify-center gap-8 bg-stone-950 p-4 text-zinc-500">
 			<div>v{version}</div>
-			<a href="https://github.com/GamerMine/reiverr/releases" target="_blank">
+			<a href="https://github.com/GamerMine/unifarr/releases" target="_blank">
 				{$_('settings.misc.changelog')}
 			</a>
-			<a href="https://github.com/GamerMine/reiverr" target="_blank">GitHub</a>
+			<a href="https://github.com/GamerMine/unifarr" target="_blank">GitHub</a>
 		</div>
 	</div>
 </div>

@@ -1,16 +1,16 @@
-# Reiverr v1
+# Unifarr
 
-![Stargazers](https://img.shields.io/github/stars/GamerMine/reiverr)
-![GitHub issues](https://img.shields.io/github/issues/GamerMine/reiverr)
+![Stargazers](https://img.shields.io/github/stars/GamerMine/unifarr)
+![GitHub issues](https://img.shields.io/github/issues/GamerMine/unifarr)
 
-Reiverr is a project that aims to create a single UI for interacting with TMDB, Jellyfin, Radarr and Sonarr, as well as be an alternative to Overseerr.
-This is a fork of Reiverr v1 which was no longer developped in favor of a v2, made for connected TVs. The original project was being developped by [aleksilassila](https://github.com/aleksilassila).
+Unifarr is a project that aims to create a single UI for interacting with TMDB, Jellyfin, Radarr and Sonarr, as well as be an alternative to Overseerr.
+This is a fork of Reiverr v1 which was no longer developped in favor of a v2/v3, made for connected TVs. The original project was being developped by [aleksilassila](https://github.com/aleksilassila).
 
 If you need something that will work well on TVs, I encourage you to check out the [original project](https://github.com/aleksilassila/reiverr).
 
 This project is not ready for production uses. Many features are still missing / being tested and changed.
 
-![Demo Video](.github/images/reiverr-demo.gif)
+![Demo Video](.github/images/demo.gif)
 
 # List of major features
 
@@ -27,7 +27,7 @@ Local Library & Playback
 - Create requests for movies & TV shows in Radarr & Sonarr
 - Manage local library files
 - View Radarr & Sonarr stats (disk space, items, etc.)
-- Manage Radarr & Sonarr queue from Reiverr
+- Manage Radarr & Sonarr queue from Unifarr
 - Support for SyncPlay
 
 ### Manual Instructions
@@ -46,9 +46,9 @@ Local Library & Playback
     npm run deploy
     ```
 
-### Reiverr will be accessible via port 9494 by default.
+### Unifarr will be accessible via port 9494 by default.
 
-If you have any questions or run into issues or bugs, you can start a [discussion](https://github.com/GamerMine/reiverr/discussions), or open an [issue](https://github.com/GamerMine/reiverr/issues).
+If you have any questions or run into issues or bugs, you can start a [discussion](https://github.com/GamerMine/unifarr/discussions), or open an [issue](https://github.com/GamerMine/unifarr/issues).
 
 # Development
 

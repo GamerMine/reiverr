@@ -10,7 +10,7 @@
 	const skippedVersion = localStorage.getItem('skippedVersion') || '';
 
 	async function fetchLatestVersion() {
-		return await fetch('https://api.github.com/repos/GamerMine/reiverr/tags', {
+		return await fetch('https://api.github.com/repos/GamerMine/unifarr/tags', {
 			method: 'GET'
 		}).then(
 			async (res) =>
@@ -37,7 +37,7 @@
 		<div
 			class="fixed inset-x-0 bottom-0 z-20 flex items-center justify-center bg-stone-800 p-3 text-sm"
 		>
-			<a href="https://github.com/GamerMine/reiverr"
+			<a href="https://github.com/GamerMine/unifarr"
 				>{latestVersion} {$_('update.updateAvailable')}</a
 			>
 
