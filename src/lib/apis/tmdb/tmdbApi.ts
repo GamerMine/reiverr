@@ -68,14 +68,43 @@ export const TmdbApiOpen = createClient<paths>({
 	}
 });
 
+const FALLBACK_LANGUAGE = 'en-US';
+const isMissing = (v: unknown) => typeof v !== 'string' || !v.trim();
+
+/** Fetch in the user's language, then fill empty `keys` from en-US when TMDB has no translation. */
+async function withLanguageFallback<T extends object>(
+	fetcher: (language: string) => Promise<T | undefined>,
+	keys: string[]
+): Promise<T | undefined> {
+	const language = settings.userSettings.interface.language;
+	const localized = await fetcher(language);
+	if (!localized || language === FALLBACK_LANGUAGE) return localized;
+	const record = localized as Record<string, unknown>;
+	if (!keys.some((k) => isMissing(record[k]))) return localized;
+
+	const fallback = (await fetcher(FALLBACK_LANGUAGE)) as Record<string, unknown> | undefined;
+	if (!fallback) return localized;
+	const merged: Record<string, unknown> = { ...record };
+	for (const k of keys) {
+		if (isMissing(merged[k]) && !isMissing(fallback[k])) merged[k] = fallback[k];
+	}
+	return merged as T;
+}
+
 export const getTmdbMovie = async (tmdbId: number) =>
+	withLanguageFallback<TmdbMovieFull2>(
+		(language) => fetchTmdbMovie(tmdbId, language),
+		['title', 'overview', 'tagline']
+	);
+
+const fetchTmdbMovie = async (tmdbId: number, language: string) =>
 	await TmdbApiOpen.GET('/3/movie/{movie_id}', {
 		params: {
 			path: {
 				movie_id: tmdbId
 			},
 			query: {
-				language: settings.userSettings.interface.language,
+				language,
 				append_to_response: 'videos,credits,external_ids,images',
 				...({
 					include_image_language: settings.userSettings.interface.language + ',en,null'
@@ -85,13 +114,22 @@ export const getTmdbMovie = async (tmdbId: number) =>
 	}).then((res) => res.data as TmdbMovieFull2 | undefined);
 
 export const getTmdbSeries = async (tmdbId: number): Promise<TmdbSeriesFull2 | undefined> =>
+	withLanguageFallback<TmdbSeriesFull2>(
+		(language) => fetchTmdbSeries(tmdbId, language),
+		['name', 'overview', 'tagline']
+	);
+
+const fetchTmdbSeries = async (
+	tmdbId: number,
+	language: string
+): Promise<TmdbSeriesFull2 | undefined> =>
 	await TmdbApiOpen.GET('/3/tv/{series_id}', {
 		params: {
 			path: {
 				series_id: tmdbId
 			},
 			query: {
-				language: settings.userSettings.interface.language,
+				language,
 				append_to_response: 'videos,aggregate_credits,external_ids,images',
 				...({
 					include_image_language: settings.userSettings.interface.language + ',en,null'
@@ -103,21 +141,45 @@ export const getTmdbSeries = async (tmdbId: number): Promise<TmdbSeriesFull2 | u
 		}
 	}).then((res) => res.data as TmdbSeriesFull2 | undefined);
 
-export const getTmdbSeriesSeason = async (
-	tmdbId: number,
-	season: number
-): Promise<TmdbSeason | undefined> =>
+const fetchTmdbSeason = (tmdbId: number, season: number, language: string) =>
 	TmdbApiOpen.GET('/3/tv/{series_id}/season/{season_number}', {
 		params: {
 			path: {
 				series_id: tmdbId,
 				season_number: season
 			},
-			query: {
-				language: settings.userSettings.interface.language
-			}
+			query: { language }
 		}
 	}).then((res) => res.data);
+
+export const getTmdbSeriesSeason = async (
+	tmdbId: number,
+	season: number
+): Promise<TmdbSeason | undefined> => {
+	const language = settings.userSettings.interface.language;
+	const localized = await fetchTmdbSeason(tmdbId, season, language);
+	if (!localized || language === FALLBACK_LANGUAGE) return localized;
+
+	// TMDB returns empty fields when a translation is missing: fall back to en-US.
+	if (!localized.episodes?.some((e) => isMissing(e.name) || isMissing(e.overview)))
+		return localized;
+
+	const fallback = await fetchTmdbSeason(tmdbId, season, FALLBACK_LANGUAGE);
+	if (!fallback) return localized;
+
+	return {
+		...localized,
+		overview: isMissing(localized.overview) ? fallback.overview : localized.overview,
+		episodes: localized.episodes?.map((e) => {
+			const fb = fallback.episodes?.find((f) => f.episode_number === e.episode_number);
+			return {
+				...e,
+				name: isMissing(e.name) ? (fb?.name ?? e.name) : e.name,
+				overview: isMissing(e.overview) ? (fb?.overview ?? e.overview) : e.overview
+			};
+		})
+	};
+};
 
 export const getTmdbSeriesSeasons = (tmdbId: number, seasons: number) =>
 	[...Array(seasons).keys()].map((i) => getTmdbSeriesSeason(tmdbId, i + 1));
@@ -218,11 +280,17 @@ export const getPosterProps = async (
 };
 
 export const getTmdbPerson = async (person_id: number) =>
+	withLanguageFallback<TmdbPersonFull>(
+		(language) => fetchTmdbPerson(person_id, language),
+		['biography']
+	);
+
+const fetchTmdbPerson = async (person_id: number, language: string) =>
 	TmdbApiOpen.GET('/3/person/{person_id}', {
 		params: {
 			path: { person_id },
 			query: {
-				language: settings.userSettings.interface.language,
+				language,
 				append_to_response: 'images,movie_credits,tv_credits,external_ids'
 			}
 		}
