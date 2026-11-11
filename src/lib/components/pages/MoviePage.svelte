@@ -20,7 +20,6 @@
 	import { ActivityLog, ChevronRight, Clock, DotFilled, Trash } from 'svelte-radix';
 	import { type ComponentProps, onMount } from 'svelte';
 	import { _ } from 'svelte-i18n';
-	import { settings } from '#lib/stores/settings.svelte.js';
 	import {
 		radarrAddMovie,
 		radarrGetMovies,
@@ -35,11 +34,12 @@
 		createSuccessNotification
 	} from '#lib/stores/notification.store.js';
 	import type { RadarrMovieResource } from '@reiverr/connectors/types/radarr';
-	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/radarr';
+	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
 	import { getQueuedTasks } from '#lib/remote/tasks.remote.ts';
 	import { type MovieAdd, type MovieRemove } from '../../../tasksWorker/types.ts';
 	import { TaskType } from '@reiverr/db/types';
 	import ConfirmDialog from '#lib/components/controls/ConfirmDialog.svelte';
+	import { settings } from '#lib/stores/settings.svelte.ts';
 
 	let {
 		tmdbId,
@@ -238,7 +238,7 @@
 							variant="primary"
 							showOnlyPlaceholder
 						>
-							{#each settings.globalSettings.general.downloadLanguages as language}
+							{#each settings.globalSettings.general.downloadLanguages as language (language)}
 								<Option value={language} label={$_('languages.' + language)} />
 							{/each}
 						</Select>

@@ -5,7 +5,7 @@
 	import { Plus, StarFilled, Star, Trash } from 'svelte-radix';
 	import { modalStack } from '#lib/stores/modal.store.js';
 	import FilteringProfileModal from '#lib/components/modals/FilteringProfileModal.svelte';
-	import type { FilteringProfile, GlobalSettings } from '@reiverr/db';
+	import type { FilteringProfile, GlobalSettings } from '@reiverr/db/types';
 	import { deleteFilteringProfile, saveSettings } from '#lib/remote/settings.remote.js';
 	import { invalidateAll } from '$app/navigation';
 	import {

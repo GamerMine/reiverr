@@ -146,6 +146,11 @@
       "viewAll": "View All",
       "viewLess": "View Less"
     },
+    "emptyState": {
+      "available": "Your Jellyfin library items will appear here.",
+      "unavailable": "Your Radarr and Sonarr items that aren't available will appear here.",
+      "watched": "Your watched Jellyfin items will appear here."
+    },
     "loadMore": "Load More",
     "missingConfiguration": "Configure Radarr, Sonarr and Jellyfin to watch and manage your library",
     "personPage": {
@@ -353,6 +358,9 @@
     "page3_2": "Click on Finish to finish the configuration.",
     "welcome": "Welcome!",
     "welcomeOnReiverr": "Welcome on Reiverr!"
+  },
+  "sources": {
+    "empty": "Your configured sources will appear here."
   },
   "titleShowcase": {
     "details": "Details",
