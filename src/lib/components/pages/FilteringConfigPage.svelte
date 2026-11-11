@@ -7,7 +7,7 @@
 	import FilteringProfileModal from '#lib/components/modals/FilteringProfileModal.svelte';
 	import type { FilteringProfile, GlobalSettings } from '@reiverr/db/types';
 	import { deleteFilteringProfile, saveSettings } from '#lib/remote/settings.remote.js';
-	import { invalidateAll } from '$app/navigation';
+	import { refreshAll } from '$app/navigation';
 	import {
 		createErrorNotification,
 		createSuccessNotification
@@ -15,6 +15,7 @@
 	import { LANGUAGES } from '#lib/utils/constants.js';
 	import Select from '#lib/components/controls/Select.svelte';
 	import Option from '#lib/components/controls/Option.svelte';
+	import { onMount } from 'svelte';
 
 	let {
 		visible,
@@ -45,7 +46,7 @@
 	async function deleteProfile(e: MouseEvent, profile: FilteringProfile) {
 		e.stopPropagation();
 		const res = await deleteFilteringProfile(profile);
-		await invalidateAll();
+		await refreshAll();
 		if (res.success) {
 			createSuccessNotification(
 				$_('general.success'),

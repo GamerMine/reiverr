@@ -191,11 +191,6 @@
 					bind:userSettings={currSettings.userSettings}
 					visible={openTab === 'general'}
 				/>
-				<FilteringConfigPage
-					visible={openTab === 'userFiltering'}
-					profiles={data.filteringProfiles}
-					bind:userFilteringProfileId={currSettings.userSettings.filteringProfileId}
-				/>
 
 				{#if data.isAdmin}
 					<IntegrationSettingsPage
@@ -209,6 +204,12 @@
 							bind:globalSettings={currSettings.globalSettings}
 						/>
 					{/if}
+				{:else}
+					<FilteringConfigPage
+						visible={openTab === 'userFiltering'}
+						profiles={data.filteringProfiles}
+						bind:userFilteringProfileId={currSettings.userSettings.filteringProfileId}
+					/>
 				{/if}
 			</form>
 		</div>

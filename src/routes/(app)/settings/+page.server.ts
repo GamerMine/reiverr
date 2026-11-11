@@ -7,8 +7,6 @@ export const load: PageServerLoad = async ({
 		settings
 	}
 }) => {
-	if (!isAdmin) return { isAdmin: false };
-
 	const filteringProfiles = await FilteringProfilesEntity.getAll();
 
 	return {

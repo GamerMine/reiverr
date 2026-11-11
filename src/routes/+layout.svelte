@@ -13,7 +13,6 @@
 	onMount(() => {
 		settings.globalSettings = data.settings.globalSettings;
 		settings.userSettings = data.settings.userSettings;
-		console.log($state.snapshot(settings));
 	});
 </script>
 

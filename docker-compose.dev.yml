@@ -186,6 +186,9 @@ services:
         image: lednerb/opentracker-docker:latest
         container_name: opentracker
         restart: unless-stopped
+        ports:
+            - '6969:6969'
+            - '6969:6969/udp'
         networks:
             isolated:
                 ipv4_address: 173.19.0.3
