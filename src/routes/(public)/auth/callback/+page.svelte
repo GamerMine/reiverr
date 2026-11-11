@@ -3,7 +3,6 @@
 	import { _ } from 'svelte-i18n';
 	import { ChevronLeft } from 'svelte-radix';
 	import { ScaleOut } from 'svelte-loading-spinners';
-	import { login } from '#lib/remote/login.remote.ts';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 
@@ -13,7 +12,7 @@
 		if (data.user) {
 			localStorage.setItem('user', JSON.stringify(data.user));
 			window.parent.postMessage('tokenRenewed');
-			setTimeout(() => goto(resolve('/(app)', {})), 1000);
+			setTimeout(() => goto(resolve('/', {})), 1000);
 		} else {
 			window.parent.postMessage('tokenNotRenewed');
 		}

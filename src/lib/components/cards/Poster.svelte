@@ -50,16 +50,18 @@
 		bottom_left?: Snippet;
 		bottom_right?: Snippet;
 	} = $props();
-</script>
 
-<a
-	onclick={() => {
+	function click() {
 		if (openInModal && tmdbId) {
 			openTitleModal(tmdbId, type);
 		} else {
 			window.location.href = tmdbId ? `/${type}/${tmdbId}` : '#';
 		}
-	}}
+	}
+</script>
+
+<button
+	onclick={click}
 	class={classNames(
 		'selectable group relative flex shrink-0 cursor-pointer overflow-hidden rounded-xl text-left hover:text-inherit',
 		{
@@ -125,7 +127,7 @@
 			<PlayButton
 				onclick={(e) => {
 					e.preventDefault();
-					jellyfinId && playerState.streamJellyfinId(jellyfinId);
+					if (jellyfinId) playerState.streamJellyfinId(jellyfinId);
 				}}
 				klass="sm:opacity-0 group-hover:opacity-100 transition-opacity"
 			/>
@@ -139,4 +141,4 @@
 			<ProgressBar {progress} />
 		</div>
 	{/if}
-</a>
+</button>

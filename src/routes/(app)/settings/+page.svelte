@@ -15,7 +15,7 @@
 	import ConfirmDialog from '#lib/components/controls/ConfirmDialog.svelte';
 	import FilteringConfigPage from '#lib/components/pages/FilteringConfigPage.svelte';
 	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import Option from '#lib/components/controls/Option.svelte';
 	import { saveSettings } from '#lib/remote/settings.remote.js';
 
@@ -25,6 +25,7 @@
 
 	let openTab: Section = $state('general');
 
+	// eslint-disable-next-line svelte/prefer-writable-derived
 	let currSettings: Settings = $state($state.snapshot(settings));
 	let valuesChanged = $state(false);
 
@@ -63,10 +64,13 @@
 	$effect(() => {
 		if (saveSettings.result) {
 			if (saveSettings.result.success) {
-				if (saveSettings.result.data?.needLogin) {
+				if (saveSettings.result.data!.needLogin) {
 					showConfirmDialog($_('settings.misc.jellyfinConfirmChangesDialog')).then(
 						location.reload
 					);
+				} else {
+					settings.globalSettings = saveSettings.result.data!.globalSettings;
+					settings.userSettings = saveSettings.result.data!.userSettings;
 				}
 			} else {
 				createErrorNotification(
@@ -94,6 +98,10 @@
 		}
 
 		valuesChanged = JSON.stringify(settings) !== JSON.stringify(currSettings);
+	});
+
+	$effect(() => {
+		currSettings = $state.snapshot(settings);
 	});
 </script>
 

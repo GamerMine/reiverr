@@ -5,9 +5,16 @@
 	import UpdateChecker from '#lib/components/layout/UpdateChecker.svelte';
 	import '../app.css';
 	import NotificationPane from '#lib/components/notification/NotificationPane.svelte';
-	import { type Snippet } from 'svelte';
+	import { settings } from '#lib/stores/settings.svelte.ts';
+	import { onMount } from 'svelte';
 
-	let { children }: { children: Snippet } = $props();
+	let { data, children } = $props();
+
+	onMount(() => {
+		settings.globalSettings = data.settings.globalSettings;
+		settings.userSettings = data.settings.userSettings;
+		console.log($state.snapshot(settings));
+	});
 </script>
 
 <I18n />

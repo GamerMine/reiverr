@@ -1,10 +1,5 @@
 import { getRequestEvent } from '$app/server';
-import {
-	adminCommand,
-	adminForm,
-	protectedForm,
-	protectedQuery
-} from '#lib/server/auth/remote-guards.ts';
+import { adminCommand, adminForm, protectedForm } from '#lib/server/auth/remote-guards.ts';
 import * as v from 'valibot';
 import { ACCESS_TOKEN_COOKIE } from '#lib/server/auth/auth.js';
 import { QUALITY_DEFS } from '#lib/utils/constants.ts';
@@ -48,7 +43,7 @@ export const saveSettings = protectedForm(
 		adminDownloadLanguages: v.optional(v.array(v.string())),
 		adminUserCanChooseProfile: v.optional(v.boolean(), false)
 	}),
-	async (settings): Promise<Result<{ needLogin: boolean }>> => {
+	async (settings) => {
 		const {
 			locals: {
 				user: { userId, isAdmin }
@@ -230,25 +225,14 @@ export const saveSettings = protectedForm(
 
 		return {
 			success: true,
-			data: { needLogin }
+			data: {
+				needLogin,
+				globalSettings: await GlobalSettingsEntity.getClient(),
+				userSettings: await UserSettingsEntity.getUserSettings(userId!)
+			}
 		};
 	}
 );
-
-export const getUserSettings = protectedQuery(async (): Promise<Result<Settings>> => {
-	const {
-		locals: {
-			user: { userId }
-		}
-	} = getRequestEvent();
-	const globalSettings = await GlobalSettingsEntity.getClient();
-	const userSettings = await UserSettingsEntity.getUserSettings(userId);
-
-	return {
-		success: true,
-		data: { globalSettings, userSettings },
-	}
-});
 
 export const createUpdateFilteringProfile = adminForm(
 	v.object({

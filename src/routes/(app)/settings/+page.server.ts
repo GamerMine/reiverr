@@ -1,9 +1,10 @@
 import type { PageServerLoad } from './$types';
-import { FilteringProfilesEntity, GlobalSettingsEntity } from '@reiverr/db/entities';
+import { FilteringProfilesEntity } from '@reiverr/db/entities';
 
 export const load: PageServerLoad = async ({
 	locals: {
-		user: { isAdmin }
+		user: { isAdmin },
+		settings
 	}
 }) => {
 	if (!isAdmin) return { isAdmin: false };
@@ -13,7 +14,7 @@ export const load: PageServerLoad = async ({
 	return {
 		isAdmin,
 		filteringProfiles:
-			isAdmin || (await GlobalSettingsEntity.getClient()).general.userCanChooseProfile
+			isAdmin || settings.globalSettings.general.userCanChooseProfile
 				? filteringProfiles
 				: undefined
 	};

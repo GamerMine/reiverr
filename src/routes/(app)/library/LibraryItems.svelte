@@ -314,11 +314,13 @@
 				<Poster {...prop} />
 			{:else}
 				<div class="col-span-full mb-64 flex flex-1 font-medium text-zinc-500">
-					{openTab === 'available'
-						? 'Your Jellyfin library items will appear here.'
-						: openTab === 'watched'
-							? 'Your watched Jellyfin items will appear here.'
-							: "Your Radarr and Sonarr items that aren't available will appear here."}
+					{$_(
+						openTab === 'available'
+							? 'library.emptyState.available'
+							: openTab === 'watched'
+								? 'library.emptyState.watched'
+								: 'library.emptyState.unavailable'
+					)}
 				</div>
 			{/each}
 		{/if}
