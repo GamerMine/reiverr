@@ -11,14 +11,14 @@ import {
 	GlobalSettingsEntity,
 	QualityProfilesEntity,
 	UserSettingsEntity
-} from '@reiverr/db/entities';
-import { type FilteringProfile, FilteringProfileSchema, TaskType } from '@reiverr/db/types';
+} from '@unifarr/db/entities';
+import { type FilteringProfile, FilteringProfileSchema, TaskType } from '@unifarr/db/types';
 import { type Result } from '#lib/utils/types.ts';
 import Connectors, {
 	JellyfinConnector,
 	RadarrConnector,
 	SonarrConnector
-} from '@reiverr/connectors';
+} from '@unifarr/connectors';
 import { PlatformSchema } from '../../tasksWorker/types.ts';
 import { OptionalStringSchema } from '#lib/utils/schemas.ts';
 

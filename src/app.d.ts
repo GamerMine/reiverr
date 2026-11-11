@@ -1,7 +1,7 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 
-import type { GlobalSettings, UserSettings } from '@reiverr/db';
+import type { GlobalSettings, UserSettings } from '@unifarr/db';
 
 declare global {
 	namespace App {

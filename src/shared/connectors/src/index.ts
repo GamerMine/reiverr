@@ -1,4 +1,4 @@
-import { GlobalSettingsEntity } from '@reiverr/db/entities';
+import { GlobalSettingsEntity } from '@unifarr/db/entities';
 import { RadarrConnector } from './connectors/radarrConnector.js';
 import { SonarrConnector } from './connectors/sonarrConnector.js';
 import { JellyfinConnector } from './connectors/jellyfinConnector.js';

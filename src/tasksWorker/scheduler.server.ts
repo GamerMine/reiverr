@@ -1,8 +1,8 @@
-import { TaskEntity, UserSettingsEntity } from '@reiverr/db/entities';
+import { TaskEntity, UserSettingsEntity } from '@unifarr/db/entities';
 import { isMainThread, Worker } from 'node:worker_threads';
-import { TaskType } from '@reiverr/db/types';
+import { TaskType } from '@unifarr/db/types';
 import { tasksWorkerFilename } from './worker.ts';
-import Logger, { LogLevel } from '@reiverr/logging';
+import Logger, { LogLevel } from '@unifarr/logging';
 
 let workerInstance: Worker;
 const logger = Logger.getLogger('Scheduler');

@@ -5,10 +5,10 @@ import {
 	FilteringProfilesEntity,
 	GlobalSettingsEntity,
 	QualityProfilesEntity
-} from '@reiverr/db/entities';
-import Connectors from '@reiverr/connectors';
-import { SonarrMapper } from '@reiverr/connectors/mappers';
-import Logger, { LogLevel } from '@reiverr/logging';
+} from '@unifarr/db/entities';
+import Connectors from '@unifarr/connectors';
+import { SonarrMapper } from '@unifarr/connectors/mappers';
+import Logger, { LogLevel } from '@unifarr/logging';
 
 const logger = Logger.getLogger('Task:SonarrSeriesAdd');
 

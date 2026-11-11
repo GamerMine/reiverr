@@ -22,7 +22,7 @@
 }
 
 a {
-	@reference hover:bg-amber-200;
+	@reference hover:bg-purple-400;
 }
 
 .placeholder {

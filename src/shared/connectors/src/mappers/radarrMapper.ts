@@ -7,7 +7,7 @@ import type {
 	RadarrQualityProfileQualityItemResource,
 	RadarrQualityProfileResource
 } from '../types/radarrTypes.js';
-import Logger, { LogLevel } from '@reiverr/logging';
+import Logger, { LogLevel } from '@unifarr/logging';
 
 const logger = Logger.getLogger('RadarrRemote');
 
@@ -19,10 +19,10 @@ export class RadarrMapper {
 
 	public static customFormatResource(langId: number, lang: string): RadarrCustomFormatResource {
 		return {
-			name: `Not ${lang} [Reiverr]`,
+			name: `Not ${lang} [Unifarr]`,
 			specifications: [
 				{
-					name: `Not ${lang} [Reiverr]`,
+					name: `Not ${lang} [Unifarr]`,
 					implementation: 'LanguageSpecification',
 					negate: true,
 					required: false,
@@ -79,7 +79,7 @@ export class RadarrMapper {
 		}));
 
 		return {
-			name: `${name} - ${lang} [Reiverr]`,
+			name: `${name} - ${lang} [Unifarr]`,
 			cutoff,
 			items,
 			formatItems,

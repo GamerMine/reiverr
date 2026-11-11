@@ -1,6 +1,6 @@
 import { getRequestEvent } from '$app/server';
 import { protectedQueryLive } from '#lib/server/auth/remote-guards.ts';
-import { TaskEntity } from '@reiverr/db/entities';
+import { TaskEntity } from '@unifarr/db/entities';
 import * as v from 'valibot';
 
 export const getQueuedTasks = protectedQueryLive(v.optional(v.boolean()), async function* (all) {

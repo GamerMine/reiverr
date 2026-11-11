@@ -11,7 +11,6 @@
 	import { goto } from '$app/navigation';
 	import Account from '#lib/components/navigation/navbar/Account.svelte';
 	import { logout } from '#lib/remote/login.remote.ts';
-	import { resolve } from '$app/paths';
 
 	let y = $state(0);
 	let transparent = true;
@@ -22,7 +21,7 @@
 
 	function getLinkStyle(path: string) {
 		return classNames('selectable rounded-xs px-2 -mx-2 sm:text-base text-xl', {
-			'text-amber-200': page.url.pathname === path,
+			'text-purple-300': page.url.pathname === path,
 			'hover:text-zinc-50 cursor-pointer': page.url.pathname !== path
 		});
 	}
@@ -57,22 +56,22 @@
 
 <div class={classNames(baseStyle, 'hidden sm:grid')}>
 	<a
-		href={resolve('/(app)', {})}
+		href="/"
 		class="selectable -mx-2 hidden items-center gap-2 rounded-xs px-2 hover:text-inherit sm:flex"
 	>
-		<div class="h-4 w-4 rounded-full bg-amber-300"></div>
-		<h1 class="font-display text-xl font-semibold tracking-wider uppercase">Reiverr</h1>
+		<div class="h-4 w-4 rotate-45 rounded-sm bg-purple-500"></div>
+		<h1 class="font-display text-xl font-semibold tracking-wider uppercase">Unifarr</h1>
 	</a>
 	<div
 		class="flex items-center justify-center gap-4 text-sm font-normal tracking-wider text-zinc-200 md:gap-8"
 	>
-		<a href={resolve('/(app)', {})} class={page && getLinkStyle('/')}>
+		<a href="/" class={page && getLinkStyle('/')}>
 			{$_('navbar.home')}
 		</a>
-		<a href={resolve('/(app)/library', {})} class={page && getLinkStyle('/library')}>
+		<a href="/library" class={page && getLinkStyle('/library')}>
 			{$_('navbar.library')}
 		</a>
-		<a href={resolve('/(app)/sources', {})} class={page && getLinkStyle('/sources')}>
+		<a href="/sources" class={page && getLinkStyle('/sources')}>
 			{$_('navbar.sources')}
 		</a>
 	</div>
@@ -86,11 +85,11 @@
 
 <div class={classNames(baseStyle, ' grid sm:hidden')}>
 	<a
-		href={resolve('/(app)/static', {})}
+		href="/static"
 		class="selectable -mx-2 flex items-center gap-2 rounded-xs px-2 hover:text-inherit"
 	>
-		<div class="h-4 w-4 rounded-full bg-amber-300"></div>
-		<h1 class="font-display text-xl font-semibold tracking-wider uppercase">Reiverr</h1>
+		<div class="h-4 w-4 rotate-45 rounded-sm bg-purple-500"></div>
+		<h1 class="font-display text-xl font-semibold tracking-wider uppercase">Unifarr</h1>
 	</a>
 	<div></div>
 	<div class="flex items-center gap-2">
@@ -118,21 +117,21 @@
 		<div class="row-span-2 flex flex-col items-center justify-center gap-4">
 			<a
 				onclick={() => (isMobileMenuVisible = false)}
-				href={resolve('/(app)/static', {})}
+				href="/static"
 				class={page && getLinkStyle('/')}
 			>
 				{$_('navbar.home')}
 			</a>
 			<a
 				onclick={() => (isMobileMenuVisible = false)}
-				href={resolve('/(app)/library', {})}
+				href="/library"
 				class={page && getLinkStyle('/library')}
 			>
 				{$_('navbar.library')}
 			</a>
 			<a
 				onclick={() => (isMobileMenuVisible = false)}
-				href={resolve('/(app)/sources', {})}
+				href="/sources"
 				class={page && getLinkStyle('/sources')}
 			>
 				{$_('navbar.sources')}
@@ -140,7 +139,7 @@
 			<Divider />
 			<a
 				onclick={() => (isMobileMenuVisible = false)}
-				href={resolve('/(app)/settings', {})}
+				href="/settings"
 				class={page && getLinkStyle('/settings')}
 			>
 				{$_('navbar.userMenu.settings')}
@@ -149,9 +148,9 @@
 				onclick={async () => {
 					isMobileMenuVisible = false;
 					await logout();
-					await goto(resolve('/', {}));
+					await goto('/');
 				}}
-				href={resolve('/(public)/auth/login', {})}
+				href="/(public)/auth/login"
 				class={page && getLinkStyle('/auth/login')}
 			>
 				{$_('navbar.userMenu.logout')}

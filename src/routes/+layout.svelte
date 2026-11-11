@@ -6,11 +6,10 @@
 	import '../app.css';
 	import NotificationPane from '#lib/components/notification/NotificationPane.svelte';
 	import { settings } from '#lib/stores/settings.svelte.ts';
-	import { onMount } from 'svelte';
 
 	let { data, children } = $props();
 
-	onMount(() => {
+	$effect.pre(() => {
 		settings.globalSettings = data.settings.globalSettings;
 		settings.userSettings = data.settings.userSettings;
 	});

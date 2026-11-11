@@ -20,7 +20,7 @@ import {
 	isAndroid,
 	isTizen
 } from '#lib/utils/browser-detection.ts';
-import type { JellyfinTranscodingProfile } from '@reiverr/connectors/types/jellyfin';
+import type { JellyfinTranscodingProfile } from '@unifarr/connectors/types/jellyfin';
 
 /**
  * Returns a valid TranscodingProfile for the current platform.

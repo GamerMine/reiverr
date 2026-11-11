@@ -1,9 +1,9 @@
-name: reiverr-prod
+name: unifarr-prod
 
 services:
-    reiverr-frontend:
-        container_name: reiverr-prod
-        image: ghcr.io/gamermine/reiverr:latest
+    unifarr-frontend:
+        container_name: unifarr-prod
+        image: ghcr.io/gamermine/unifarr:latest
         build:
             context: .
             target: production

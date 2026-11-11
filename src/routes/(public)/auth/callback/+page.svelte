@@ -21,7 +21,7 @@
 
 <div class="flex h-screen flex-col items-center justify-center">
 	{#if data.user}
-		<ScaleOut color="#FFD230" />
+		<ScaleOut color="#C27AFF" />
 	{:else}
 		<p class="mb-5 text-2xl">{data.oidcError}</p>
 		<p class="text-1xl mb-5">{data.oidcErrorDescription}</p>

@@ -5,7 +5,7 @@
 	import { Plus, StarFilled, Star, Trash } from 'svelte-radix';
 	import { modalStack } from '#lib/stores/modal.store.js';
 	import FilteringProfileModal from '#lib/components/modals/FilteringProfileModal.svelte';
-	import type { FilteringProfile, GlobalSettings } from '@reiverr/db/types';
+	import type { FilteringProfile, GlobalSettings } from '@unifarr/db';
 	import { deleteFilteringProfile, saveSettings } from '#lib/remote/settings.remote.js';
 	import { refreshAll } from '$app/navigation';
 	import {
@@ -169,7 +169,7 @@
 						<p class="mt-1.5 flex flex-wrap gap-1 border-t pt-1 text-zinc-500">
 							{$_('settings.filtering.qualities')}:&nbsp;
 							{#each profile.qualities as quality (quality)}
-								<span class="rounded-2xl bg-amber-300 px-2 py-1 text-xs text-black"
+								<span class="rounded-2xl bg-purple-400 px-2 py-1 text-xs text-black"
 									>{quality}</span
 								>
 							{/each}

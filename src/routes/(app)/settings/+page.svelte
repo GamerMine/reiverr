@@ -2,20 +2,19 @@
 	import { version } from '$app/env';
 	import Select from '#lib/components/controls/Select.svelte';
 	import classNames from 'classnames';
-	import { ChevronLeft } from 'svelte-radix';
+	import { Check, ChevronLeft, Cross2 } from 'svelte-radix';
 	import GeneralSettingsPage from '#lib/components/pages/GeneralSettingsPage.svelte';
 	import IntegrationSettingsPage from '#lib/components/pages/IntegrationSettingsPage.svelte';
 	import { fade } from 'svelte/transition';
 	import { _ } from 'svelte-i18n';
 	import { createErrorNotification } from '#lib/stores/notification.store.js';
-	import type { Settings } from '@reiverr/db/types';
+	import type { Settings } from '@unifarr/db/types';
 	import { settings } from '#lib/stores/settings.svelte.js';
 	import Button from '#lib/components/controls/Button.svelte';
 	import type { PageProps } from './$types';
 	import ConfirmDialog from '#lib/components/controls/ConfirmDialog.svelte';
 	import FilteringConfigPage from '#lib/components/pages/FilteringConfigPage.svelte';
-	import { goto } from '$app/navigation';
-	import { onMount, untrack } from 'svelte';
+	import { untrack } from 'svelte';
 	import Option from '#lib/components/controls/Option.svelte';
 	import { saveSettings } from '#lib/remote/settings.remote.js';
 
@@ -25,9 +24,17 @@
 
 	let openTab: Section = $state('general');
 
-	// eslint-disable-next-line svelte/prefer-writable-derived
 	let currSettings: Settings = $state($state.snapshot(settings));
 	let valuesChanged = $state(false);
+
+	$effect(() => {
+		const snapshot = $state.snapshot(settings);
+		untrack(() => {
+			currSettings = snapshot;
+		});
+	});
+
+	let handledResult: unknown = null;
 
 	let confirmDialogVisible = $state(false);
 	let confirmDialogMessage = $state('');
@@ -35,7 +42,7 @@
 
 	const getNavButtonStyle = (section: Section) =>
 		classNames('rounded-xl p-2 px-6 font-medium text-left', {
-			'text-black bg-lighten bg-amber-300': openTab === section,
+			'text-black bg-lighten bg-purple-400': openTab === section,
 			'text-zinc-300 hover:text-zinc-200': openTab !== section
 		});
 
@@ -52,32 +59,34 @@
 		confirmDialogResolve();
 	}
 
-	function setTab(section: Section) {
-		openTab = section;
-		goto(`?#${openTab}`);
+	function cancelChanges() {
+		currSettings = $state.snapshot(settings);
 	}
 
-	onMount(() => {
-		if (location.hash) openTab = location.hash.slice(1) as Section;
-	});
+	function setTab(section: Section) {
+		openTab = section;
+	}
 
 	$effect(() => {
-		if (saveSettings.result) {
-			if (saveSettings.result.success) {
-				if (saveSettings.result.data!.needLogin) {
-					showConfirmDialog($_('settings.misc.jellyfinConfirmChangesDialog')).then(
-						location.reload
-					);
-				} else {
-					settings.globalSettings = saveSettings.result.data!.globalSettings;
-					settings.userSettings = saveSettings.result.data!.userSettings;
-				}
-			} else {
-				createErrorNotification(
-					$_('general.error'),
-					$_(saveSettings.result.error ?? 'general.unknownError')
+		const result = saveSettings.result;
+		if (!result || result === handledResult) return;
+		handledResult = result;
+
+		if (result.success) {
+			if (result.data) {
+				settings.globalSettings = result.data.globalSettings;
+				settings.userSettings = result.data.userSettings;
+			}
+			if (result.data?.needLogin) {
+				showConfirmDialog($_('settings.misc.jellyfinConfirmChangesDialog')).then(() =>
+					location.reload()
 				);
 			}
+		} else {
+			createErrorNotification(
+				$_('general.error'),
+				$_(result.error ?? 'general.unknownError')
+			);
 		}
 	});
 
@@ -97,13 +106,33 @@
 			return;
 		}
 
-		valuesChanged = JSON.stringify(settings) !== JSON.stringify(currSettings);
-	});
-
-	$effect(() => {
-		currSettings = $state.snapshot(settings);
+		valuesChanged =
+			JSON.stringify($state.snapshot(settings)) !==
+			JSON.stringify($state.snapshot(currSettings));
 	});
 </script>
+
+{#snippet actionButtons()}
+	<Button
+		disabled={!valuesChanged}
+		form="settingsForm"
+		type="submit"
+		variant="success"
+		class="justify-center"
+	>
+		{$_('settings.misc.saveChanges')}
+		<Check size="18" />
+	</Button>
+	<Button
+		disabled={!valuesChanged}
+		onclick={cancelChanges}
+		variant="error"
+		class="justify-center"
+	>
+		{$_('settings.misc.cancel')}
+		<Cross2 size="18" />
+	</Button>
+{/snippet}
 
 <div
 	class="flex min-h-screen w-full flex-1 flex-col sm:h-screen sm:flex-row sm:pt-24"
@@ -158,13 +187,7 @@
 			{/if}
 		</div>
 		<div class="flex flex-col gap-2">
-			<Button disabled={!valuesChanged} form="settingsForm" type="submit" variant="success">
-				{$_('settings.misc.saveChanges')}
-			</Button>
-			<!-- FIXME: Reset button disabled for now  -->
-			<Button onclick={() => {}} variant="error">
-				{$_('settings.misc.resetToDefaults')}
-			</Button>
+			{@render actionButtons()}
 		</div>
 	</div>
 
@@ -186,7 +209,13 @@
 
 	<div class="flex flex-1 flex-col justify-between border-t border-zinc-800">
 		<div class="h-screen scrollbar-custom overflow-x-hidden overflow-y-auto px-8">
-			<form {...saveSettings} class="mx-auto mb-auto w-full max-w-3xl" id="settingsForm">
+			<form
+				{...saveSettings.enhance(async ({ submit }) => {
+					await submit();
+				})}
+				class="mx-auto mb-auto w-full max-w-3xl"
+				id="settingsForm"
+			>
 				<GeneralSettingsPage
 					bind:userSettings={currSettings.userSettings}
 					visible={openTab === 'general'}
@@ -204,7 +233,8 @@
 							bind:globalSettings={currSettings.globalSettings}
 						/>
 					{/if}
-				{:else}
+				{/if}
+				{#if data.filteringProfiles}
 					<FilteringConfigPage
 						visible={openTab === 'userFiltering'}
 						profiles={data.filteringProfiles}
@@ -214,13 +244,7 @@
 			</form>
 		</div>
 		<div class="flex flex-wrap items-center justify-center space-x-2 px-8 pt-4 sm:hidden">
-			<Button disabled={!valuesChanged} form="settingsForm" type="submit" variant="success">
-				{$_('settings.misc.saveChanges')}
-			</Button>
-			<!-- FIXME: Reset button disabled for now  -->
-			<Button onclick={() => {}} variant="error">
-				{$_('settings.misc.resetToDefaults')}
-			</Button>
+			{@render actionButtons()}
 		</div>
 		<div class="flex items-center justify-center gap-8 bg-stone-950 p-4 text-zinc-500">
 			<div>v{version}</div>

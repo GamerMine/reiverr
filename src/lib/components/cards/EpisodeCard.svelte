@@ -9,6 +9,8 @@
 	import { playerState } from '#lib/components/player/VideoPlayer.js';
 	import type { Snippet } from 'svelte';
 	import { _ } from 'svelte-i18n';
+	import { settings } from '#lib/stores/settings.svelte.js';
+	import { PLACEHOLDER_BACKDROP } from '#lib/utils/constants.js';
 	import { jellyfinSetItemWatched } from '#lib/remote/jellyfin.remote.js';
 
 	let {
@@ -84,19 +86,19 @@
 			onclick={handleSetWatched}
 			disabled={!handleSetWatched || watched || !jellyfinId}
 		>
-			Mark as watched
+			{$_('library.LibraryItemContext.markWatched')}
 		</ContextMenuItem>
 		<ContextMenuItem
 			onclick={handleSetUnwatched}
 			disabled={!handleSetUnwatched || !watched || !jellyfinId}
 		>
-			Mark as unwatched
+			{$_('library.LibraryItemContext.markUnwatched')}
 		</ContextMenuItem>
 	{/snippet}
 	<a
 		{onclick}
 		class={classNames(
-			'selectable placeholder-image relative block aspect-video shrink-0 overflow-hidden rounded-lg bg-cover bg-center shadow-lg transition-opacity',
+			'selectable placeholder-image relative block aspect-video shrink-0 overflow-hidden rounded-lg shadow-lg transition-opacity',
 			'flex cursor-pointer flex-col gap-2 px-2 py-2 text-left lg:px-3',
 			{
 				'h-44': size === 'md',
@@ -106,16 +108,25 @@
 				'cursor-default!': !jellyfinId
 			}
 		)}
-		style={"background-image: url('" + backdropUrl + "');"}
 		in:fade|global={{ duration: 100, delay: 100 }}
 		out:fade|global={{ duration: 100 }}
 	>
 		<div
+			class={classNames('absolute inset-0 bg-cover bg-center transition-transform', {
+				'group-hover:scale-105 group-focus-visible:scale-105': !!jellyfinId,
+				grayscale: !jellyfinId
+			})}
+			style={"background-image: url('" + (backdropUrl || PLACEHOLDER_BACKDROP) + "');"}
+		></div>
+		{#if !jellyfinId}
+			<div class="absolute inset-0 bg-black/60"></div>
+		{/if}
+		<div
 			class={classNames(
-				'relative flex flex-1 flex-col justify-between transition-all group-hover:opacity-0 group-focus-visible:opacity-0',
+				'relative flex flex-1 flex-col justify-between transition-all',
 				'text-xs font-medium text-zinc-300 lg:text-sm',
 				{
-					'opacity-15': !jellyfinId
+					'group-hover:opacity-0 group-focus-visible:opacity-0': !!jellyfinId
 				}
 			)}
 		>
@@ -125,7 +136,7 @@
 					{#if !left_top}
 						{#if airDate && airDate > new Date()}
 							<p>
-								{airDate.toLocaleString('en-US', {
+								{airDate.toLocaleString(settings.userSettings.interface.language, {
 									month: 'short',
 									day: 'numeric',
 									hour: 'numeric',

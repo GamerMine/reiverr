@@ -12,6 +12,8 @@
 	import Button from '#lib/components/controls/Button.svelte';
 	import TruncatedText from '#lib/components/text/TruncatedText.svelte';
 	import Toggle from '#lib/components/controls/Toggle.svelte';
+	import LazyImg from '#lib/components/images/LazyImg.svelte';
+	import { PLACEHOLDER_BACKDROP } from '#lib/utils/constants.js';
 	import { onMount } from 'svelte';
 
 	let {
@@ -35,6 +37,17 @@
 	function confirm() {
 		modalStack.close(modalId);
 		endChoice($state.snapshot(seasonsData));
+	}
+
+	let allChecked = $derived(seasonsData.length > 0 && seasonsData.every((s) => s.checked));
+
+	function allToggle(checked: boolean) {
+		for (const season of seasonsData) {
+			season.checked = checked;
+			season.episodes.forEach((e: EpisodeDataWithCheck) => {
+				e.checked = checked;
+			});
+		}
 	}
 
 	function seasonToggle(seasonNumber: number, checked: boolean) {
@@ -72,6 +85,12 @@
 
 <ModalContainer>
 	<ModalHeader close={userClose} text={$_('ui.modal.seasonsChooser.title')} />
+	{#if !loading}
+		<div class="mx-2 mt-2 flex items-center justify-between px-6">
+			<p class="text-sm font-medium">{$_('ui.modal.seasonsChooser.selectAll')}</p>
+			<Toggle class="flex items-center" checked={allChecked} onchange={allToggle} />
+		</div>
+	{/if}
 	<div class="m-2 max-h-150 space-y-2 overflow-auto">
 		{#if loading || !seasonsData}
 			<Accordion loading={true} />
@@ -94,29 +113,33 @@
 					{#snippet content()}
 						<div class="max-h-110 space-y-2 overflow-auto">
 							{#each data.episodes as episode, ei (episode.episodeNumber)}
-								<div class="flex rounded-md bg-zinc-600">
-									<img
-										src={episode.backdropUrl}
+								<div class="flex items-start gap-3 py-1">
+									<LazyImg
+										src={episode.backdropUrl || PLACEHOLDER_BACKDROP}
 										alt={episode.title}
-										class="max-w-35 rounded-tl-md"
+										klass="aspect-video w-35 shrink-0 overflow-hidden rounded-lg"
 									/>
-									<div
-										class="mx-2 grid grid-flow-col grid-cols-3 place-content-center space-x-1"
-									>
-										<p class="col-span-1 flex items-center text-sm font-bold">
-											{episode.title}
+									<div class="min-w-0 flex-1">
+										<p class="text-sm font-bold">
+											{episode.episodeNumber}. {episode.title}
 										</p>
-										<TruncatedText
-											class="col-span-3 p-2 text-sm"
-											text={episode.overview}
-											maxLength={120}
-										/>
-										<Toggle
-											class="col-span-1 flex items-center justify-center"
-											bind:checked={seasonsData[si].episodes[ei].checked}
-											onchange={(v) => episodeToggle(data.seasonNumber, v)}
-										/>
+										{#if episode.overview?.trim()}
+											<TruncatedText
+												class="text-sm"
+												text={episode.overview}
+												maxLines={3}
+											/>
+										{:else}
+											<p class="text-sm text-zinc-500 italic">
+												{$_('ui.modal.seasonsChooser.noDescription')}
+											</p>
+										{/if}
 									</div>
+									<Toggle
+										class="mr-2 flex shrink-0 items-center justify-center self-center"
+										bind:checked={seasonsData[si].episodes[ei].checked}
+										onchange={(v) => episodeToggle(data.seasonNumber, v)}
+									/>
 								</div>
 							{/each}
 						</div>

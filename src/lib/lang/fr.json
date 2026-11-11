@@ -1,5 +1,5 @@
 {
-  "appName": "Reiverr",
+  "appName": "Unifarr",
   "data": {
     "known_for_department": {
       "acting": "Acteur",
@@ -121,6 +121,7 @@
       "episodeRunTime": "Longueur des épisodes",
       "firstAirDate": "Première date de diffusion",
       "get": "Obtenir",
+      "getIn": "Obtenir en {language}",
       "lastAirDate": "Dernière diffusion",
       "minLeft": "min restante(s)",
       "movie": "Film",
@@ -326,7 +327,7 @@
       "radarrConfigurationInvalid": "La configuration de Radarr est invalide. Vérifiez le champ Dossier racine.",
       "radarrRemoveConfirmDialog": "Vous êtes sur le point de supprimer l'intégration Radarr. Voulez-vous continuer ?",
       "resetToDefaults": "Réinitialiser aux paramètres par défaut",
-      "saveChanges": "Sauvegarder les modifications",
+      "saveChanges": "Sauvegarder",
       "sonarrConfigurationInvalid": "La configuration de Sonarr est invalide. Vérifiez le champ Dossier racine.",
       "sonarrRemoveConfirmDialog": "Vous êtes sur le point de supprimer l'intégration Sonarr. Voulez-vous continuer ?"
     },
@@ -352,12 +353,12 @@
     "jellyfinURLInput": "URL de Jellyfin",
     "page1_1": "Cet assistant va vous guider pas à pas, afin de configurer vos service et personnaliser votre expérience.",
     "page1_2": "Cliquez sur Suivant pour continuer la configuration. Tous les paramètres pourrons êtres modifiés ultérieurement.",
-    "page2_1": "Afin d'utiliser Reiverr, il est nécessaire de fournir l'URL que vous utilisez pour accéder à Jellyfin, ainsi que la clé API Jellyfin. Cet clé ne sera utilisé que pour l'authentification des utilisateurs. Vous pouvez récupérer votre clé API sur Jellyfin dans Tableau de bord > Clés API.",
+    "page2_1": "Afin d'utiliser Unifarr, il est nécessaire de fournir l'URL que vous utilisez pour accéder à Jellyfin, ainsi que la clé API Jellyfin. Cet clé ne sera utilisé que pour l'authentification des utilisateurs. Vous pouvez récupérer votre clé API sur Jellyfin dans Tableau de bord > Clés API.",
     "page2_2": "Merci de compléter le(s) champ(s) ci-desous :",
     "page3_1": "Ça y est, Jellyfin est configuré !",
     "page3_2": "Cliquez sur Terminer pour terminer la configuration.",
     "welcome": "Bienvenue !",
-    "welcomeOnReiverr": "Bienvenue sur Reiverr !"
+    "welcomeOnUnifarr": "Bienvenue sur Unifarr !"
   },
   "sources": {
     "empty": "Vos sources configurées apparaîtront ici."
@@ -371,7 +372,9 @@
   "ui": {
     "modal": {
       "seasonsChooser": {
-        "title": "Choix des saisons"
+        "title": "Choix des saisons",
+        "selectAll": "Toutes les saisons",
+        "noDescription": "Aucune description"
       }
     },
     "notification": {

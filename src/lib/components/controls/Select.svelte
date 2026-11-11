@@ -54,11 +54,20 @@
 
 		const rect = triggerElt.getBoundingClientRect();
 
+		// Fit the content (never narrower than the trigger); align to the right edge
+		// of the trigger when it sits in the right half of the viewport.
+		const horizontal =
+			rect.left > window.innerWidth / 2
+				? `right: ${window.innerWidth - rect.right}px;`
+				: `left: ${rect.left}px;`;
+
 		dropdownStyle = `
 		position: fixed;
 		top: ${rect.bottom + 4}px;
-		left: ${rect.left}px;
-		width: ${rect.width}px;
+		${horizontal}
+		min-width: ${rect.width}px;
+		width: max-content;
+		max-width: calc(100vw - 1rem);
 		z-index: 1000;
 	`;
 	}
@@ -91,7 +100,7 @@
 			}
 		} else {
 			dropdownOpen = false;
-			selectedOptionLabel = option.label;
+			selectedOptionLabel = option.value;
 			selectedValues = option.value;
 		}
 		value = option.value;
@@ -138,10 +147,14 @@
 
 {@render children?.()}
 <div>
-	<div class="flex max-h-24 flex-wrap gap-2 overflow-y-auto">
+	<div
+		class={classNames('flex max-h-24 flex-wrap gap-2 overflow-y-auto', {
+			'mb-2': multiple && typeof selectedValues === 'object' && selectedValues.length > 0
+		})}
+	>
 		{#if multiple && typeof selectedValues === 'object'}
 			{#each selectedValues as value (value)}
-				<div class="flex gap-1 rounded-2xl bg-amber-300 px-2 py-1">
+				<div class="flex gap-1 rounded-2xl bg-purple-400 px-2 py-1">
 					<p class="text-xs text-black">{getLabel(value)}</p>
 					<Cross2
 						color="black"
@@ -184,9 +197,12 @@
 </div>
 
 <div
-	class={classNames('z-100 max-h-80 overflow-y-auto rounded-md bg-zinc-800 text-center', {
-		hidden: !dropdownOpen
-	})}
+	class={classNames(
+		'z-100 flex max-h-80 flex-col gap-0.5 overflow-y-auto rounded-lg bg-zinc-800/50 p-1 backdrop-blur-xl',
+		{
+			hidden: !dropdownOpen
+		}
+	)}
 	style={dropdownStyle}
 	use:portal
 >
@@ -194,7 +210,7 @@
 		{#if !multiple || !(typeof selectedValues === 'object' && selectedValues.includes(option.value))}
 			<button
 				type="button"
-				class="w-full cursor-default px-2 py-1 hover:bg-zinc-700"
+				class="cursor-default rounded-md px-3 py-1 text-left text-sm font-medium tracking-wide text-nowrap hover:bg-zinc-200/10"
 				onclick={() => addValue(option)}
 			>
 				{option.label}

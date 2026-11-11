@@ -4,7 +4,7 @@
 	import Button from '#lib/components/controls/Button.svelte';
 	import ContextMenuButton from '#lib/components/controls/ContextMenuButton.svelte';
 	import LibraryItemContextItems from '#lib/components/controls/LibraryItemContextItems.svelte';
-	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
+	import type { JellyfinBaseItemDto } from '@unifarr/connectors/types/jellyfin';
 
 	let {
 		title = '',

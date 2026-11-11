@@ -1,5 +1,5 @@
 import { locale } from 'svelte-i18n';
-import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
+import type { JellyfinBaseItemDto } from '@unifarr/connectors/types/jellyfin';
 import { settings } from '#lib/stores/settings.svelte.ts';
 
 export function formatMinutesToTime(minutes: number) {

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { jellyfinGetUserImage } from '#lib/remote/jellyfin.remote.js';
-	import type { JellyfinUserDto } from '@reiverr/connectors/types/radarr';
+	import type { JellyfinUserDto } from '@unifarr/connectors/types/radarr';
 
 	let {
 		user,

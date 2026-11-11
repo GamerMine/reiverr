@@ -1,7 +1,7 @@
 {
-  "name": "@reiverr/db",
+  "name": "@unifarr/db",
   "version": "0.0.1",
-  "description": "Shared database access for Reiverr",
+  "description": "Shared database access for Unifarr",
   "type": "module",
   "dependencies": {
     "typeorm": "^1.0.0",

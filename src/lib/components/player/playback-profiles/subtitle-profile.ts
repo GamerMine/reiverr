@@ -2,7 +2,7 @@
  * @deprecated - Check @/utils/playback-profiles/index
  */
 
-import type { JellyfinSubtitleProfile } from '@reiverr/connectors/types/jellyfin';
+import type { JellyfinSubtitleProfile } from '@unifarr/connectors/types/jellyfin';
 
 /**
  * Returns a valid SubtitleProfile for the current platform.

@@ -8,9 +8,9 @@
 	import CardPlaceholder from '#lib/components/cards/CardPlaceholder.svelte';
 	import { tick, type ComponentProps, onMount } from 'svelte';
 	import Poster from '#lib/components/cards/Poster.svelte';
-	import type { RadarrMediaCover, RadarrMovieResource } from '@reiverr/connectors/types/radarr';
-	import type { SonarrMediaCover, SonarrSeriesResource } from '@reiverr/connectors/types/radarr';
-	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/radarr';
+	import type { RadarrMediaCover, RadarrMovieResource } from '@unifarr/connectors/types/radarr';
+	import type { SonarrMediaCover, SonarrSeriesResource } from '@unifarr/connectors/types/radarr';
+	import type { JellyfinBaseItemDto } from '@unifarr/connectors/types/radarr';
 	import Button from '#lib/components/controls/Button.svelte';
 	import ContextMenu from '#lib/components/controls/ContextMenu.svelte';
 	import SelectableContextMenuItem from '#lib/components/controls/SelectableContextMenuItem.svelte';
@@ -314,13 +314,11 @@
 				<Poster {...prop} />
 			{:else}
 				<div class="col-span-full mb-64 flex flex-1 font-medium text-zinc-500">
-					{$_(
-						openTab === 'available'
-							? 'library.emptyState.available'
-							: openTab === 'watched'
-								? 'library.emptyState.watched'
-								: 'library.emptyState.unavailable'
-					)}
+					{openTab === 'available'
+						? 'Your Jellyfin library items will appear here.'
+						: openTab === 'watched'
+							? 'Your watched Jellyfin items will appear here.'
+							: "Your Radarr and Sonarr items that aren't available will appear here."}
 				</div>
 			{/each}
 		{/if}

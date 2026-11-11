@@ -1,8 +1,8 @@
 import type { TaskExecutor, TaskQueueCallback } from '../scheduler.server';
 import * as v from 'valibot';
-import Connectors from '@reiverr/connectors';
+import Connectors from '@unifarr/connectors';
 import { SeriesRemoveSchema } from '../types.ts';
-import Logger, { LogLevel } from '@reiverr/logging';
+import Logger, { LogLevel } from '@unifarr/logging';
 
 const logger = Logger.getLogger('Task:SonarrSeriesRemove');
 

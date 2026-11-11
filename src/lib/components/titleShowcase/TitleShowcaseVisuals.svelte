@@ -96,7 +96,7 @@
 			<button
 				onclick={handleOpenTitle}
 				class={classNames(
-					'text-left font-medium tracking-wider text-stone-200 hover:text-amber-200',
+					'text-left font-medium tracking-wider text-stone-200 hover:text-purple-300',
 					{
 						'text-5xl sm:text-6xl 2xl:text-7xl': title.length < 15,
 						'text-4xl sm:text-5xl 2xl:text-6xl': title.length >= 15

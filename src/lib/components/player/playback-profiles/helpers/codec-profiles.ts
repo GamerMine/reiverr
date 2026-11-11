@@ -19,7 +19,7 @@ import type {
 	JellyfinProfileCondition,
 	JellyfinProfileConditionType,
 	JellyfinProfileConditionValue
-} from '@reiverr/connectors/types/jellyfin';
+} from '@unifarr/connectors/types/jellyfin';
 
 /**
  * Gets the max video bitrate

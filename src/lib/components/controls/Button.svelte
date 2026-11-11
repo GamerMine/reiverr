@@ -52,10 +52,10 @@
 			{
 				'bg-white text-zinc-900 font-extrabold backdrop-blur-lg rounded-lg':
 					variant === 'primary',
-				'hover:bg-amber-400 focus-within:bg-amber-400 hover:border-amber-400 focus-within:border-amber-400':
+				'hover:bg-purple-500 focus-within:bg-purple-500 hover:border-amber-400 focus-within:border-amber-400':
 					variant === 'primary' && !disabled,
 				'text-zinc-200 bg-zinc-600/20 backdrop-blur-lg rounded-lg': variant === 'secondary',
-				'focus-visible:bg-amber-300 focus-visible:text-zinc-800 hover:bg-amber-300 hover:text-zinc-800':
+				'focus-visible:bg-purple-400 focus-visible:text-zinc-800 hover:bg-purple-400 hover:text-zinc-800':
 					variant === 'secondary' && !disabled,
 				'rounded-lg': variant === 'tertiary',
 				'focus-visible:bg-zinc-200 focus-visible:text-zinc-800 hover:bg-zinc-200 hover:text-zinc-800':

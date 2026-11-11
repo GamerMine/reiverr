@@ -7,9 +7,10 @@
 	import ContextMenu from '#lib/components/controls/ContextMenu.svelte';
 	import LibraryItemContextItems from '#lib/components/controls/LibraryItemContextItems.svelte';
 	import ProgressBar from '../layout/ProgressBar.svelte';
+	import LazyImg from '#lib/components/images/LazyImg.svelte';
 	import { onMount } from 'svelte';
 	import { jellyfinGetItems } from '#lib/remote/jellyfin.remote.js';
-	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
+	import type { JellyfinBaseItemDto } from '@unifarr/connectors/types/jellyfin';
 
 	let {
 		tmdbId,
@@ -58,7 +59,7 @@
 	{/snippet}
 	<button
 		class={classNames(
-			'selectable group placeholder-image relative flex aspect-video shrink-0 flex-col justify-between overflow-hidden rounded-sm shadow-lg hover:text-inherit',
+			'selectable group placeholder-image relative flex aspect-video shrink-0 flex-col justify-between overflow-hidden rounded-xl shadow-lg hover:text-inherit',
 			'gap-2 p-2 px-3',
 			{
 				'h-40': size === 'md',
@@ -74,18 +75,14 @@
 			}
 		}}
 	>
+		<LazyImg
+			src={backdropUrl}
+			klass="absolute inset-0 transition-transform group-hover:scale-105 group-focus-visible:scale-105"
+		/>
 		<div
-			style={"background-image: url('" + backdropUrl + "')"}
-			class="absolute inset-0 bg-cover bg-center transition-transform group-hover:scale-105
-			group-focus-visible:scale-105"
-		></div>
-		<div
-			class={classNames(
-				'bg-darken sm:bg-opacity-100 bg-opacity-50 absolute inset-0 transition-opacity',
-				{
-					'opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100': available
-				}
-			)}
+			class={classNames('absolute inset-0 bg-black/60 transition-opacity', {
+				'opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100': available
+			})}
 		></div>
 		<div
 			class="relative flex flex-1 cursor-pointer flex-col justify-between opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"

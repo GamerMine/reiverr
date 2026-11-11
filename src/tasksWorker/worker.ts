@@ -1,7 +1,7 @@
 import { isMainThread, parentPort, workerData } from 'node:worker_threads';
-import { TaskEntity, TaskExecutionEntity } from '@reiverr/db/entities';
-import TypeOrm from '@reiverr/db';
-import { TaskType } from '@reiverr/db/types';
+import { TaskEntity, TaskExecutionEntity } from '@unifarr/db/entities';
+import TypeOrm from '@unifarr/db';
+import { TaskType } from '@unifarr/db/types';
 import { TestTask } from './tasks/test.server.ts';
 import { SyncCustomFormats } from './tasks/syncCustomFormats.server.ts';
 import { SyncQualityProfiles } from './tasks/syncQualityProfiles.server.ts';
@@ -11,7 +11,7 @@ import { SonarrSeriesAdd } from './tasks/sonarrSeriesAdd.server.ts';
 import { SonarrSeriesRemove } from './tasks/sonarrSeriesRemove.server.ts';
 import type { TaskExecutor } from './scheduler.server.ts';
 import { CronExpressionParser } from 'cron-parser';
-import Logger, { LogLevel } from '@reiverr/logging';
+import Logger, { LogLevel } from '@unifarr/logging';
 
 export const tasksWorkerFilename = import.meta.url;
 

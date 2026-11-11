@@ -1,13 +1,13 @@
 import type { TaskExecutor, TaskQueueCallback } from '../scheduler.server';
 import { PlatformWithDataSchema } from '../types.ts';
 import * as v from 'valibot';
-import { QualityProfilesEntity } from '@reiverr/db/entities';
+import { QualityProfilesEntity } from '@unifarr/db/entities';
 import { arrayDifference } from '../utils.server.ts';
-import Connectors, { RadarrConnector, SonarrConnector } from '@reiverr/connectors';
-import type { RadarrQualityDefinitionResource } from '@reiverr/connectors/types/radarr';
-import { RadarrMapper, SonarrMapper } from '@reiverr/connectors/mappers';
-import type { SonarrQualityDefinitionResource } from '@reiverr/connectors/types/sonarr';
-import Logger, { LogLevel } from '@reiverr/logging';
+import Connectors, { RadarrConnector, SonarrConnector } from '@unifarr/connectors';
+import type { RadarrQualityDefinitionResource } from '@unifarr/connectors/types/radarr';
+import { RadarrMapper, SonarrMapper } from '@unifarr/connectors/mappers';
+import type { SonarrQualityDefinitionResource } from '@unifarr/connectors/types/sonarr';
+import Logger, { LogLevel } from '@unifarr/logging';
 
 const ModifiedProfilesIdsSchema = v.array(v.number());
 const logger = Logger.getLogger('Task:SyncQualityProfiles');

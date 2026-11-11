@@ -13,9 +13,9 @@
 	import { radarrGetQueue } from '#lib/remote/radarr.remote.js';
 	import { sonarrGetQueue } from '#lib/remote/sonarr.remote.js';
 	import { jellyfinGetItems } from '#lib/remote/jellyfin.remote.js';
-	import type { RadarrMediaCover, RadarrQueueStatus } from '@reiverr/connectors/types/radarr';
-	import type { SonarrMediaCover, SonarrQueueStatus } from '@reiverr/connectors/types/radarr';
-	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/radarr';
+	import type { RadarrMediaCover, RadarrQueueStatus } from '@unifarr/connectors/types/radarr';
+	import type { SonarrMediaCover, SonarrQueueStatus } from '@unifarr/connectors/types/radarr';
+	import type { JellyfinBaseItemDto } from '@unifarr/connectors/types/radarr';
 	import { getJellyfinBackdrop, getJellyfinPosterUrl } from '#lib/utils/utils.ts';
 
 	let noItems = false;
@@ -73,75 +73,10 @@
 			delay: settings.userSettings.interface.animationDuration
 		}}
 		out:fade|global={{ duration: settings.userSettings.interface.animationDuration }}
-	>
-		<div class="relative pt-24">
-			{#await showcasePromise then showcase}
-				<LazyImg
-					src={(showcase && getJellyfinBackdrop(showcase)) || PLACEHOLDER_BACKDROP}
-					klass="absolute inset-0"
-				/>
-			{/await}
-			<div class="to-darken absolute inset-0 bg-linear-to-t from-stone-950 to-80%"></div>
-			<div
-				class="relative z-1 mx-auto max-w-screen-2xl overflow-hidden px-2 pt-32 pb-12 md:px-8 xl:pt-56"
-			>
-				<h1
-					class="absolute right-8 bottom-12 z-[-1] hidden text-9xl font-bold text-amber-200 uppercase opacity-10 xl:block"
-				>
-					Library
-				</h1>
-				<div class="flex items-end gap-4">
-					{#await showcasePromise}
-						<div class="placeholder aspect-2/3 w-32 rounded-lg shadow-lg"></div>
-						<div class="flex flex-col gap-2">
-							<div class="placeholder-text w-20">Placeholder</div>
-							<div class="placeholder-text w-[50vw] text-3xl sm:text-4xl md:text-5xl">
-								Placeholder
-							</div>
-							<div class="mt-2 flex gap-2">
-								<div class="placeholder-text h-10 w-28"></div>
-								<div class="placeholder-text h-10 w-28"></div>
-							</div>
-						</div>
-					{:then showcase}
-						<div
-							style={"background-image: url('" +
-								(showcase ? getJellyfinPosterUrl(showcase) : '') +
-								"');"}
-							class="aspect-2/3 w-32 shrink-0 rounded-lg bg-cover bg-center shadow-lg"
-						></div>
-						<div>
-							<p class="font-medium text-zinc-400">{$_('discover.LatestAddition')}</p>
-							<h1 class="text-3xl font-semibold sm:text-4xl md:text-5xl">
-								{showcase?.Name}
-							</h1>
-							<div class="mt-4 flex gap-2">
-								<Button
-									variant="primary"
-									onclick={() =>
-										showcase?.Id && playerState.streamJellyfinId(showcase?.Id)}
-								>
-									{$_('library.content.play')}<ChevronRight size="20" />
-								</Button>
-								<Button
-									href={`/${showcase?.Type === 'Movie' ? 'movie' : 'series'}/${
-										showcase?.ProviderIds?.Tmdb || showcase?.ProviderIds?.Tvdb
-									}`}
-								>
-									<span>{$_('titleShowcase.details')}</span><ChevronRight
-										size="20"
-									/>
-								</Button>
-							</div>
-						</div>
-					{/await}
-				</div>
-			</div>
-		</div>
-	</div>
+	></div>
 
 	<div
-		class="px-2 py-4 md:px-8"
+		class="px-2 py-4 pt-24 md:px-8"
 		in:fade|global={{
 			duration: settings.userSettings.interface.animationDuration,
 			delay: settings.userSettings.interface.animationDuration

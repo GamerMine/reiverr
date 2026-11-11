@@ -1,4 +1,4 @@
-import Connectors from '@reiverr/connectors';
+import Connectors from '@unifarr/connectors';
 import { guestUser } from './auth';
 
 export async function checkSession(accessToken: string) {

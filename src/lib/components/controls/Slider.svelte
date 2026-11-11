@@ -37,7 +37,7 @@
 
 			<!-- Primary progress -->
 			<div
-				class="absolute top-0 h-full bg-amber-300"
+				class="absolute top-0 h-full bg-purple-400"
 				style="width: {(primaryValue / max) * 100}%;"
 				bind:offsetWidth={progressBarOffset}
 			></div>
@@ -45,7 +45,7 @@
 
 		<div
 			class="absolute top-1/2 mx-2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 transform
-			cursor-pointer rounded-full bg-amber-200 opacity-0 drop-shadow-md transition-opacity
+			cursor-pointer rounded-full bg-purple-300 opacity-0 drop-shadow-md transition-opacity
 			duration-100 group-hover:opacity-100"
 			style="left: {progressBarOffset}px;"
 		></div>

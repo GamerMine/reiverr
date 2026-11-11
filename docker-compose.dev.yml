@@ -1,4 +1,4 @@
-name: reiverr-dev
+name: unifarr-dev
 
 services:
     postgres:

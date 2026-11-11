@@ -6,7 +6,7 @@
 	import { ISO_REGIONS } from '#lib/utils/iso-regions.js';
 	import { _, dictionary } from 'svelte-i18n';
 	import classNames from 'classnames';
-	import type { UserSettings } from '@reiverr/db/types';
+	import type { UserSettings } from '@unifarr/db';
 	import Option from '#lib/components/controls/Option.svelte';
 	import { saveSettings } from '#lib/remote/settings.remote.js';
 

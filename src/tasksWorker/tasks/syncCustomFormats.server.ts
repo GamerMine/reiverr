@@ -2,12 +2,12 @@ import type { TaskExecutor, TaskQueueCallback } from '../scheduler.server';
 import { PlatformSchema } from '../types.ts';
 import * as v from 'valibot';
 import { arrayDifference } from '../utils.server.ts';
-import { CustomFormatsEntity } from '@reiverr/db/entities';
-import Connectors, { RadarrConnector, SonarrConnector } from '@reiverr/connectors';
-import type { RadarrLanguageResource } from '@reiverr/connectors/types/radarr';
-import { RadarrMapper, SonarrMapper } from '@reiverr/connectors/mappers';
-import type { SonarrLanguageResource } from '@reiverr/connectors/types/sonarr';
-import Logger, { LogLevel } from '@reiverr/logging';
+import { CustomFormatsEntity } from '@unifarr/db/entities';
+import Connectors, { RadarrConnector, SonarrConnector } from '@unifarr/connectors';
+import type { RadarrLanguageResource } from '@unifarr/connectors/types/radarr';
+import { RadarrMapper, SonarrMapper } from '@unifarr/connectors/mappers';
+import type { SonarrLanguageResource } from '@unifarr/connectors/types/sonarr';
+import Logger, { LogLevel } from '@unifarr/logging';
 
 const logger = Logger.getLogger('Task:SyncCustomFormats');
 

@@ -8,7 +8,7 @@ import { hasMkvSupport } from './helpers/transcoding-formats.ts';
 import { getSupportedWebMAudioCodecs } from './helpers/webm-audio-formats.ts';
 import { getSupportedWebMVideoCodecs } from './helpers/webm-video-formats.ts';
 import { getSupportedAudioCodecs } from './helpers/audio-formats.ts';
-import type { JellyfinDirectPlayProfile } from '@reiverr/connectors/types/jellyfin';
+import type { JellyfinDirectPlayProfile } from '@unifarr/connectors/types/jellyfin';
 
 /**
  * Returns a valid DirectPlayProfile for the current platform.

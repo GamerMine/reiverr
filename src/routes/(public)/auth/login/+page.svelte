@@ -11,7 +11,7 @@
 	import { goto } from '$app/navigation';
 	import { login } from '#lib/remote/login.remote.ts';
 	import { ScaleOut } from 'svelte-loading-spinners';
-	import type { JellyfinUserDto } from '@reiverr/connectors/types/radarr';
+	import type { JellyfinUserDto } from '@unifarr/connectors/types/radarr';
 	import { resolve } from '$app/paths';
 
 	let { data } = $props();
@@ -57,14 +57,14 @@
 	{#await jellyfinGetUsers()}
 		<!-- TODO: If the Jellyfin instance is unreachable, show it to the user, add a timeout ? -->
 		<div class="flex h-full items-center justify-center">
-			<ScaleOut color="#FFD230" />
+			<ScaleOut color="#C27AFF" />
 		</div>
 	{:then users}
 		<div class="z-10">
 			<div class="flex items-center justify-center gap-2 rounded-xs pt-20">
-				<div class="h-11 w-11 rounded-full bg-amber-300"></div>
+				<div class="mr-2 h-10 w-10 rotate-45 rounded-md bg-purple-500"></div>
 				<h1 class="font-display text-5xl font-semibold tracking-wider uppercase">
-					Reiverr
+					Unifarr
 				</h1>
 			</div>
 			<h1

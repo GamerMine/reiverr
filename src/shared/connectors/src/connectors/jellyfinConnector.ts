@@ -1,7 +1,7 @@
 import createClient, { type Client } from 'openapi-fetch';
 import type { paths } from '../generated/jellyfin.generated.js';
 import { JellyfinDeviceProfile } from '../types/jellyfinTypes.js';
-import Logger, { LogLevel } from '@reiverr/logging';
+import Logger, { LogLevel } from '@unifarr/logging';
 
 const logger = Logger.getLogger('JellyfinRemote');
 
@@ -9,7 +9,7 @@ export class JellyfinConnector {
 	private client: Client<paths>;
 	private url: string;
 
-	public static JELLYFIN_CLIENT = 'Reiverr Web Client';
+	public static JELLYFIN_CLIENT = 'Unifarr Web Client';
 
 	public constructor(baseUrl: string, apiKey: string) {
 		this.client = createClient<paths>({

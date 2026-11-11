@@ -4,7 +4,7 @@
 	import AccountPane from '#lib/components/navigation/navbar/AccountPane.svelte';
 	import NotificationsPane from '#lib/components/navigation/navbar/NotificationsPane.svelte';
 	import { getCompletedTasks } from '#lib/remote/tasks.remote.ts';
-	import { TaskState } from '@reiverr/db/types';
+	import { TaskState } from '@unifarr/db/types';
 
 	let openAccountMenu = $state(false);
 	let openNotificationsMenu = $state(false);

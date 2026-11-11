@@ -4,11 +4,11 @@ import {
 	FilteringProfilesEntity,
 	GlobalSettingsEntity,
 	QualityProfilesEntity
-} from '@reiverr/db/entities';
-import Connectors from '@reiverr/connectors';
-import { RadarrMapper } from '@reiverr/connectors/mappers';
+} from '@unifarr/db/entities';
+import Connectors from '@unifarr/connectors';
+import { RadarrMapper } from '@unifarr/connectors/mappers';
 import { MovieAddSchema } from '../types.ts';
-import Logger, { LogLevel } from '@reiverr/logging';
+import Logger, { LogLevel } from '@unifarr/logging';
 
 const logger = Logger.getLogger('Task:RadarrMovieAdd');
 

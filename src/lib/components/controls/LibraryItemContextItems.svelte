@@ -3,8 +3,9 @@
 	import Divider from '../layout/Divider.svelte';
 	import ContextMenuItem from './ContextMenuItem.svelte';
 	import { _ } from 'svelte-i18n';
+	import { settings } from '#lib/stores/settings.svelte.js';
 	import { jellyfinSetItemWatched } from '#lib/remote/jellyfin.remote.js';
-	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
+	import type { JellyfinBaseItemDto } from '@unifarr/connectors/types/radarr';
 
 	let {
 		jellyfinItem = undefined,
@@ -16,9 +17,11 @@
 		tmdbId: number;
 	} = $props();
 
-	let watched = $derived(
-		jellyfinItem?.UserData?.Played !== undefined ? jellyfinItem.UserData?.Played : false
-	);
+	let watched = $state(false);
+	$effect(() => {
+		watched =
+			jellyfinItem?.UserData?.Played !== undefined ? jellyfinItem.UserData?.Played : false;
+	});
 
 	function handleSetWatched() {
 		if (jellyfinItem?.Id) {

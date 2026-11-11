@@ -1,5 +1,9 @@
 <script lang="ts">
-	import { TMDB_IMAGES_ORIGINAL, TMDB_POSTER_SMALL } from '#lib/utils/constants.js';
+	import {
+		PLACEHOLDER_BACKDROP,
+		TMDB_IMAGES_ORIGINAL,
+		TMDB_POSTER_SMALL
+	} from '#lib/utils/constants.js';
 	import type { TitleType } from '#lib/utils/types.js';
 	import classNames from 'classnames';
 	import { ChevronLeft, Cross2, ExternalLink } from 'svelte-radix';
@@ -14,7 +18,7 @@
 		title: string;
 		tagline: string;
 		overview: string;
-		backdropUriCandidates: string[];
+		backdropUriCandidates?: string[];
 		posterPath: string;
 	}
 
@@ -69,7 +73,9 @@
 >
 	{#if titleInformation}
 		<LazyImg
-			src={TMDB_IMAGES_ORIGINAL + getBackdropUri(titleInformation.backdropUriCandidates)}
+			src={titleInformation.backdropUriCandidates
+				? TMDB_IMAGES_ORIGINAL + getBackdropUri(titleInformation.backdropUriCandidates)
+				: PLACEHOLDER_BACKDROP}
 			klass="h-full"
 		>
 			<div class="bg-darken absolute inset-0"></div>

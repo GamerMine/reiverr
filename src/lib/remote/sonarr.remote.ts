@@ -7,13 +7,13 @@ import {
 } from '#lib/server/auth/remote-guards.ts';
 import * as v from 'valibot';
 import { type Result } from '#lib/utils/types.ts';
-import { FilteringProfilesEntity, GlobalSettingsEntity } from '@reiverr/db/entities';
+import { FilteringProfilesEntity, GlobalSettingsEntity } from '@unifarr/db/entities';
 import { scheduleTask } from '../../tasksWorker/scheduler.server';
-import type { SonarrQueueResource } from '@reiverr/connectors/types/sonarr';
-import Connectors, { SonarrConnector } from '@reiverr/connectors';
-import { TaskType } from '@reiverr/db/types';
+import type { SonarrQueueResource } from '@unifarr/connectors/types/sonarr';
+import Connectors, { SonarrConnector } from '@unifarr/connectors';
+import { TaskType } from '@unifarr/db/types';
 import { SeriesAddSchema, SeriesRemoveSchema } from '../../tasksWorker/types';
-import Logger, { LogLevel } from '@reiverr/logging';
+import Logger, { LogLevel } from '@unifarr/logging';
 import { ApiSchema } from '#lib/utils/schemas.ts';
 
 const logger = Logger.getLogger('SonarrRemote');
@@ -55,7 +55,7 @@ export const sonarrAddSeries = protectedCommand(SeriesAddSchema, async (series) 
 	const defaultFp = await FilteringProfilesEntity.findOne({ where: { isDefault: true } });
 	if (!defaultFp) return { success: false, error: 'settings.misc.noDefaultFilteringProfile' };
 
-	await scheduleTask(userId!,TaskType.SONARR_SERIES_ADD, series);
+	await scheduleTask(userId!, TaskType.SONARR_SERIES_ADD, series);
 
 	return { success: true };
 });
@@ -67,7 +67,7 @@ export const sonarrRemoveSeries = protectedCommand(SeriesRemoveSchema, async (se
 		}
 	} = getRequestEvent();
 
-	await scheduleTask(userId!,TaskType.SONARR_SERIES_REMOVE, seriesId);
+	await scheduleTask(userId!, TaskType.SONARR_SERIES_REMOVE, seriesId);
 
 	return { success: true };
 });

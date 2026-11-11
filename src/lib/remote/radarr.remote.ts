@@ -6,14 +6,14 @@ import {
 	protectedQueryLive
 } from '#lib/server/auth/remote-guards.ts';
 import * as v from 'valibot';
-import { FilteringProfilesEntity, GlobalSettingsEntity } from '@reiverr/db/entities';
+import { FilteringProfilesEntity, GlobalSettingsEntity } from '@unifarr/db/entities';
 import { type Result } from '#lib/utils/types.ts';
 import { scheduleTask } from '../../tasksWorker/scheduler.server';
-import type { RadarrQueueResource } from '@reiverr/connectors/types/radarr';
-import Connectors, { RadarrConnector } from '@reiverr/connectors';
-import { TaskType } from '@reiverr/db/types';
+import type { RadarrQueueResource } from '@unifarr/connectors/types/radarr';
+import Connectors, { RadarrConnector } from '@unifarr/connectors';
+import { TaskType } from '@unifarr/db/types';
 import { MovieAddSchema, MovieRemoveSchema } from '../../tasksWorker/types.ts';
-import Logger, { LogLevel } from '@reiverr/logging';
+import Logger, { LogLevel } from '@unifarr/logging';
 import { ApiSchema } from '#lib/utils/schemas.ts';
 
 const logger = Logger.getLogger('RadarrRemote');
@@ -71,20 +71,23 @@ export const radarrGetMovies = protectedQuery(async () => {
 	return { success: movies.response.ok, data: movies.data };
 });
 
-export const radarrAddMovie = protectedCommand(MovieAddSchema, async (movie): Promise<Result<undefined>> => {
-	const {
-		locals: {
-			user: { userId }
-		}
-	} = getRequestEvent();
+export const radarrAddMovie = protectedCommand(
+	MovieAddSchema,
+	async (movie): Promise<Result<undefined>> => {
+		const {
+			locals: {
+				user: { userId }
+			}
+		} = getRequestEvent();
 
-	const defaultFp = await FilteringProfilesEntity.findOne({ where: { isDefault: true } });
-	if (!defaultFp) return { success: false, error: 'settings.misc.noDefaultFilteringProfile' };
+		const defaultFp = await FilteringProfilesEntity.findOne({ where: { isDefault: true } });
+		if (!defaultFp) return { success: false, error: 'settings.misc.noDefaultFilteringProfile' };
 
-	await scheduleTask(userId!, TaskType.RADARR_MOVIE_ADD, movie);
+		await scheduleTask(userId!, TaskType.RADARR_MOVIE_ADD, movie);
 
-	return { success: true };
-});
+		return { success: true };
+	}
+);
 
 export const radarrRemoveMovie = protectedCommand(MovieRemoveSchema, async (series) => {
 	const {
@@ -93,7 +96,7 @@ export const radarrRemoveMovie = protectedCommand(MovieRemoveSchema, async (seri
 		}
 	} = getRequestEvent();
 
-	await scheduleTask(userId!,TaskType.RADARR_MOVIE_REMOVE, series);
+	await scheduleTask(userId!, TaskType.RADARR_MOVIE_REMOVE, series);
 
 	return { success: true };
 });

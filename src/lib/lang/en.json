@@ -1,5 +1,5 @@
 {
-  "appName": "Reiverr",
+  "appName": "Unifarr",
   "data": {
     "known_for_department": {
       "acting": "Acting",
@@ -101,7 +101,6 @@
   },
   "library": {
     "LibraryItemContext": {
-      "addRemoveSeriesEpisodes": "Add/Remove episodes",
       "markUnwatched": "Mark as unwatched",
       "markWatched": "Mark as watched",
       "openJellyfin": "Open in Jellyfin",
@@ -121,6 +120,7 @@
       "episodeRunTime": "Episode Runtime",
       "firstAirDate": "First Air Date",
       "get": "Get",
+      "getIn": "Get in {language}",
       "lastAirDate": "Last Air Date",
       "minLeft": "min left",
       "movie": "Movie",
@@ -145,11 +145,6 @@
       "status": "Status",
       "viewAll": "View All",
       "viewLess": "View Less"
-    },
-    "emptyState": {
-      "available": "Your Jellyfin library items will appear here.",
-      "unavailable": "Your Radarr and Sonarr items that aren't available will appear here.",
-      "watched": "Your watched Jellyfin items will appear here."
     },
     "loadMore": "Load More",
     "missingConfiguration": "Configure Radarr, Sonarr and Jellyfin to watch and manage your library",
@@ -352,15 +347,12 @@
     "jellyfinURLInput": "Jellyfin URL",
     "page1_1": "This wizard will guide you step by step to configure your services and customize your experience.",
     "page1_2": "Click Next to continue setup. All settings can be changed later.",
-    "page2_1": "To use Reiverr, you must provide the URL you use to access Jellyfin and the Jellyfin API key. This key will be used for user authentication only. You will find the API key under Dashboard > API Keys on Jellyfin.",
+    "page2_1": "To use Unifarr, you must provide the URL you use to access Jellyfin and the Jellyfin API key. This key will be used for user authentication only. You will find the API key under Dashboard > API Keys on Jellyfin.",
     "page2_2": "Please fill in all the fields below :",
     "page3_1": "That's it, Jellyfin is ready !",
     "page3_2": "Click on Finish to finish the configuration.",
     "welcome": "Welcome!",
-    "welcomeOnReiverr": "Welcome on Reiverr!"
-  },
-  "sources": {
-    "empty": "Your configured sources will appear here."
+    "welcomeOnUnifarr": "Welcome on Unifarr!"
   },
   "titleShowcase": {
     "details": "Details",
@@ -371,7 +363,9 @@
   "ui": {
     "modal": {
       "seasonsChooser": {
-        "title": "Seasons chooser"
+        "title": "Seasons chooser",
+        "selectAll": "All seasons",
+        "noDescription": "No description"
       }
     },
     "notification": {

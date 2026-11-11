@@ -40,7 +40,7 @@
 			'border-green-900 bg-green-500/20 text-green-200': type === 'success',
 			'border-red-900 bg-red-500/20 text-red-200': type === 'error',
 			'bg-white font-extrabold text-zinc-900': type === 'base',
-			'focus-within:border-amber-400 focus-within:bg-amber-400 hover:border-amber-400 hover:bg-amber-400':
+			'focus-within:border-amber-400 focus-within:bg-purple-500 hover:border-amber-400 hover:bg-purple-500':
 				type === 'base' && !disabled,
 			'pointer-events-none cursor-not-allowed opacity-75': disabled || loading
 		},

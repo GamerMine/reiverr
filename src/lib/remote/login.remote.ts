@@ -1,9 +1,9 @@
 import { form, command, getRequestEvent } from '$app/server';
 import * as v from 'valibot';
-import Connectors from '@reiverr/connectors';
+import Connectors from '@unifarr/connectors';
 import { getBrowserName } from '#lib/utils/browser-detection.ts';
 import { version } from '$app/env';
-import Logger, { LogLevel } from '@reiverr/logging';
+import Logger, { LogLevel } from '@unifarr/logging';
 import {
 	ACCESS_TOKEN_COOKIE,
 	ACCESS_TYPE_COOKIE,

@@ -5,7 +5,6 @@
 		getTmdbMovieSimilar,
 		type TmdbMovieFull2
 	} from '#lib/apis/tmdb/tmdbApi.js';
-	import Button from '#lib/components/controls/Button.svelte';
 	import Card from '#lib/components/cards/Card.svelte';
 	import { fetchCardTmdbProps } from '#lib/components/cards/card.js';
 	import Carousel from '#lib/components/carousel/Carousel.svelte';
@@ -13,33 +12,32 @@
 	import PersonCard from '#lib/components/cards/PersonCard.svelte';
 	import ProgressBar from '#lib/components/layout/ProgressBar.svelte';
 	import OpenInButton from '#lib/components/TitlePageLayout/OpenInButton.svelte';
+	import ManageMovieButton from '#lib/components/TitlePageLayout/ManageMovieButton.svelte';
 	import TitlePageLayout from '#lib/components/layout/TitlePageLayout.svelte';
 	import { playerState } from '#lib/components/player/VideoPlayer.js';
 	import { formatSize } from '#lib/utils/utils.js';
 	import classNames from 'classnames';
-	import { ActivityLog, ChevronRight, Clock, DotFilled, Trash } from 'svelte-radix';
+	import { DotFilled } from 'svelte-radix';
 	import { type ComponentProps, onMount } from 'svelte';
 	import { _ } from 'svelte-i18n';
+	import { settings } from '#lib/stores/settings.svelte.js';
 	import {
 		radarrAddMovie,
 		radarrGetMovies,
 		radarrRemoveMovie
 	} from '#lib/remote/radarr.remote.js';
-	import Select from '#lib/components/controls/Select.svelte';
-	import Option from '#lib/components/controls/Option.svelte';
 	import { TMDB_BASE_MOVIE_URL } from '#lib/utils/constants.js';
 	import { jellyfinGetItems } from '#lib/remote/jellyfin.remote.js';
 	import {
 		createErrorNotification,
 		createSuccessNotification
 	} from '#lib/stores/notification.store.js';
-	import type { RadarrMovieResource } from '@reiverr/connectors/types/radarr';
-	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
+	import type { RadarrMovieResource } from '@unifarr/connectors/types/radarr';
+	import type { JellyfinBaseItemDto } from '@unifarr/connectors/types/jellyfin';
 	import { getQueuedTasks } from '#lib/remote/tasks.remote.ts';
 	import { type MovieAdd, type MovieRemove } from '../../../tasksWorker/types.ts';
-	import { TaskType } from '@reiverr/db/types';
+	import { TaskType } from '@unifarr/db/types';
 	import ConfirmDialog from '#lib/components/controls/ConfirmDialog.svelte';
-	import { settings } from '#lib/stores/settings.svelte.ts';
 
 	let {
 		tmdbId,
@@ -212,56 +210,17 @@
 				{#if jellyfinGetItems().loading || radarrGetMovies().loading}
 					<div class="placeholder h-10 w-48 rounded-xl"></div>
 				{:else}
+					<ManageMovieButton
+						{isBeingRemoved}
+						{isBeingAdded}
+						{jellyfinItem}
+						{radarrMovie}
+						addLoading={addToRadarrLoading}
+						onPlay={play}
+						onAdd={addToRadarr}
+						onRemove={() => (showRemoveConfirmDialog = true)}
+					/>
 					<OpenInButton title={tmdbMovie?.title} {jellyfinItem} type="movie" {tmdbId} />
-					{#if isBeingRemoved}
-						<Button variant="secondary" disabled>
-							<Clock size="20" /><span class="ml-2"
-								>{$_('library.content.beingRemoved')}</span
-							>
-						</Button>
-					{:else if jellyfinItem}
-						<Button variant="primary" onclick={play}>
-							<span>{$_('library.content.play')}</span><ChevronRight size="20" />
-						</Button>
-						<Button
-							variant="error"
-							class="px-2!"
-							onclick={() => (showRemoveConfirmDialog = true)}
-						>
-							<Trash size="20" />
-						</Button>
-					{:else if !radarrMovie && settings.globalSettings.radarr.baseUrl && !isBeingAdded}
-						<Select
-							disabled={addToRadarrLoading}
-							onchange={addToRadarr}
-							placeholder={$_('library.content.get')}
-							variant="primary"
-							showOnlyPlaceholder
-						>
-							{#each settings.globalSettings.general.downloadLanguages as language (language)}
-								<Option value={language} label={$_('languages.' + language)} />
-							{/each}
-						</Select>
-					{:else if radarrMovie}
-						<Button variant="secondary" disabled>
-							<ActivityLog size="20" /><span class="ml-2"
-								>{$_('library.content.queued')}</span
-							>
-						</Button>
-						<Button
-							variant="error"
-							class="px-2!"
-							onclick={() => (showRemoveConfirmDialog = true)}
-						>
-							<Trash size="20" />
-						</Button>
-					{:else if isBeingAdded}
-						<Button variant="secondary" disabled>
-							<Clock size="20" /><span class="ml-2"
-								>{$_('library.content.beingAdded')}</span
-							>
-						</Button>
-					{/if}
 				{/if}
 			</div>
 		{/snippet}

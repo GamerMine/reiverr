@@ -1,12 +1,11 @@
 <script lang="ts">
 	import Button from '#lib/components/controls/Button.svelte';
 	import { ArrowRight, ArrowLeft, Update } from 'svelte-radix';
-	import { _ as _ } from 'svelte-i18n';
+	import { _ } from 'svelte-i18n';
 	import Input from '#lib/components/controls/Input.svelte';
 	import { enhance } from '$app/forms';
 	import { createErrorNotification } from '#lib/stores/notification.store.js';
 	import { goto } from '$app/navigation';
-	import { resolve } from '$app/paths';
 
 	let enableJellyfinConfigForm: boolean = $state(false);
 	let jellyfinForm: HTMLFormElement | undefined = $state();
@@ -25,7 +24,7 @@
 	let pageDesc: string = $state('');
 	let pageInstr: string = $state('');
 	let errorMessage: string | undefined = $state();
-	let nextButtonText: string = $state('settings.misc.next');
+	let nextButtonText: string = $state($_('settings.misc.next'));
 	let nextButtonAction: () => void = $state(defaultNextAction);
 
 	function gotoNextPage() {
@@ -54,7 +53,6 @@
 				nextBtnType = 'submit';
 				nextBtnForm = 'jellyfinForm';
 				needValidation = true;
-				nextButtonText = 'settings.misc.next';
 				nextButtonAction = defaultNextAction;
 				break;
 			}
@@ -65,8 +63,8 @@
 				nextBtnForm = undefined;
 				needValidation = false;
 				errorMessage = undefined;
-				nextButtonText = 'settings.misc.finish';
-				nextButtonAction = () => goto(resolve('/(public)/auth/login', {}));
+				nextButtonText = $_('settings.misc.finish');
+				nextButtonAction = () => goto('/auth/login');
 				break;
 			}
 			default: {
@@ -79,7 +77,6 @@
 				nextBtnForm = undefined;
 				needValidation = false;
 				errorMessage = undefined;
-				nextButtonText = 'settings.misc.next';
 				nextButtonAction = defaultNextAction;
 			}
 		}
@@ -104,7 +101,7 @@
 	$effect(() => {
 		switch (page) {
 			case 0: {
-				pageTitle = $_('setup.welcomeOnReiverr');
+				pageTitle = $_('setup.welcomeOnUnifarr');
 				pageDesc = $_('setup.page1_1');
 				pageInstr = $_('setup.page1_2');
 				break;
@@ -130,8 +127,8 @@
 
 <div class="contents">
 	<div class="z-10 flex items-center justify-center gap-2 rounded-xs pt-20">
-		<div class="h-11 w-11 rounded-full bg-amber-300"></div>
-		<h1 class="font-display text-5xl font-semibold tracking-wider uppercase">Reiverr</h1>
+		<div class="mr-2 h-10 w-10 rotate-45 rounded-md bg-purple-500"></div>
+		<h1 class="font-display text-5xl font-semibold tracking-wider uppercase">Unifarr</h1>
 	</div>
 	<h1
 		class="font-display z-10 flex w-screen items-center justify-center pt-10 text-4xl font-semibold"
@@ -228,7 +225,7 @@
 					disabled={isTransitioning || disableNext || isInputDisabled}
 					onclick={nextButtonAction}
 				>
-					<span class="mr-1">{$_(nextButtonText)}</span>
+					<span class="mr-1">{nextButtonText}</span>
 					{#if isInputDisabled}
 						<Update class="animate-spin" size="20" />
 					{:else}

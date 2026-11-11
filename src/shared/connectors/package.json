@@ -1,7 +1,7 @@
 {
-  "name": "@reiverr/connectors",
+  "name": "@unifarr/connectors",
   "version": "0.0.1",
-  "description": "Shared API connectors for Reiverr",
+  "description": "Shared API connectors for Unifarr",
   "type": "module",
   "dependencies": {},
   "devDependencies": {},

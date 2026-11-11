@@ -1,7 +1,7 @@
 {
-  "name": "@reiverr/logging",
+  "name": "@unifarr/logging",
   "version": "0.0.1",
-  "description": "Shared logger for Reiverr",
+  "description": "Shared logger for Unifarr",
   "type": "module",
   "scripts": {
     "build": "tsc"

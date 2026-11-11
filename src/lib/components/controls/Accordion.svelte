@@ -20,9 +20,9 @@
 </script>
 
 <div>
-	<a
+	<button
 		class={classNames(
-			'block cursor-pointer rounded-md bg-zinc-700 py-6 transition-colors duration-200 hover:bg-amber-300 hover:text-black',
+			'block w-full cursor-pointer rounded-md bg-zinc-700 py-6 transition-colors duration-200 hover:bg-zinc-300 hover:text-black',
 			{ 'animate-pulse cursor-default': loading }
 		)}
 		onclick={() => (opened = loading ? opened : !opened)}
@@ -33,7 +33,7 @@
 			/>
 			{@render summary?.()}
 		</div>
-	</a>
+	</button>
 	{#if opened}
 		<div transition:slide={{ duration: 200 }} class="bg-zinc-800 p-4">
 			{@render content?.()}

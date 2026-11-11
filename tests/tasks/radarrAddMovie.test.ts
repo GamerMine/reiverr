@@ -5,7 +5,7 @@ import {
 	FilteringProfilesEntity,
 	GlobalSettingsEntity,
 	QualityProfilesEntity
-} from '@reiverr/db/entities';
+} from '@unifarr/db/entities';
 
 const { postMovieMock } = vi.hoisted(() => ({
 	postMovieMock: vi.fn().mockResolvedValue({ response: { ok: true } })
@@ -27,7 +27,7 @@ afterEach(() => {
 });
 
 // @ts-ignore
-vi.mock(import('@reiverr/connectors'), () => {
+vi.mock(import('@unifarr/connectors'), () => {
 	return {
 		default: {
 			getInstance: vi.fn().mockResolvedValue({
@@ -39,7 +39,7 @@ vi.mock(import('@reiverr/connectors'), () => {
 	};
 });
 // @ts-ignore
-vi.mock(import('@reiverr/db/entities'), () => ({
+vi.mock(import('@unifarr/db/entities'), () => ({
 	GlobalSettingsEntity: {
 		getDefault: vi.fn().mockResolvedValue({ radarrRootFolderPath: '/movies' })
 	},

@@ -10,8 +10,8 @@ import {
 import { APP_URL } from '$app/env/public';
 import type { Cookies } from '@sveltejs/kit';
 import { dev } from '$app/env';
-import Connectors from '@reiverr/connectors';
-import Logger, { LogLevel } from '@reiverr/logging';
+import Connectors from '@unifarr/connectors';
+import Logger, { LogLevel } from '@unifarr/logging';
 import {
 	ACCESS_TOKEN_COOKIE,
 	ACCESS_TYPE_COOKIE,
@@ -20,13 +20,13 @@ import {
 	guestUser,
 	logoutUser
 } from '#lib/server/auth/auth.ts';
-import { OidcIdentityEntity } from '@reiverr/db/entities';
+import { OidcIdentityEntity } from '@unifarr/db/entities';
 import { randomUUID, type UUID } from 'node:crypto';
 
 const logger = Logger.getLogger('OIDC');
 
 export const OIDC_LOGIN_COOKIE = 'oidc_login';
-export const SESSION_TTL = 1000 * 60 * 15;
+export const SESSION_TTL = 1000 * 60 * 60;
 
 const DISCOVER_CACHE = {
 	config: {} as client.Configuration,

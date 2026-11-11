@@ -1,14 +1,10 @@
 import { fail, redirect } from '@sveltejs/kit';
-import { GlobalSettingsEntity } from '@reiverr/db/entities';
-import type { PageServerLoad } from './$types.js';
-import { JellyfinConnector } from '@reiverr/connectors';
+import { GlobalSettingsEntity } from '@unifarr/db';
+import type { PageServerLoad } from '../../../../.svelte-kit/types/src/routes';
+import { JellyfinConnector } from '@unifarr/connectors';
 
-export const load: PageServerLoad = async ({
-	locals: {
-		settings: { globalSettings }
-	}
-}) => {
-	if (globalSettings.jellyfin.baseUrl) throw redirect(301, '/auth/login');
+export const load: PageServerLoad = async ({ locals: { settings } }) => {
+	if (settings.globalSettings.jellyfin.baseUrl) throw redirect(301, '/auth/login');
 };
 
 export const actions = {

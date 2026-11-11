@@ -6,7 +6,6 @@
 		getTmdbSeriesSimilar,
 		type TmdbSeriesFull2
 	} from '#lib/apis/tmdb/tmdbApi.js';
-	import Button from '#lib/components/controls/Button.svelte';
 	import Card from '#lib/components/cards/Card.svelte';
 	import { fetchCardTmdbProps } from '#lib/components/cards/card.js';
 	import Carousel from '#lib/components/carousel/Carousel.svelte';
@@ -15,17 +14,16 @@
 	import EpisodeCard from '#lib/components/cards/EpisodeCard.svelte';
 	import PersonCard from '#lib/components/cards/PersonCard.svelte';
 	import OpenInButton from '#lib/components/TitlePageLayout/OpenInButton.svelte';
+	import ManageSeriesButton from '#lib/components/TitlePageLayout/ManageSeriesButton.svelte';
 	import TitlePageLayout from '#lib/components/layout/TitlePageLayout.svelte';
 	import { playerState } from '#lib/components/player/VideoPlayer.js';
 	import { TMDB_BACKDROP_SMALL, TMDB_BASE_TV_URL } from '#lib/utils/constants.js';
 	import { capitalize, formatSize } from '#lib/utils/utils.js';
 	import classNames from 'classnames';
-	import { ActivityLog, ChevronLeft, ChevronRight, Clock, DotFilled, Trash } from 'svelte-radix';
+	import { ChevronLeft, DotFilled } from 'svelte-radix';
 	import { _ } from 'svelte-i18n';
 	import { tmdbDataFormat } from '#lib/utils/utils.js';
 	import { settings } from '#lib/stores/settings.svelte.js';
-	import Select from '#lib/components/controls/Select.svelte';
-	import Option from '#lib/components/controls/Option.svelte';
 	import { modalStack } from '#lib/stores/modal.store.js';
 	import SeasonsChooserModal from '#lib/components/modals/SeasonsChooserModal.svelte';
 	import { onMount } from 'svelte';
@@ -44,11 +42,11 @@
 		createSuccessNotification
 	} from '#lib/stores/notification.store.js';
 	import { jellyfinGetEpisodes } from '#lib/remote/jellyfin.remote.js';
-	import type { SonarrSeriesResource } from '@reiverr/connectors/types/sonarr';
+	import type { SonarrSeriesResource } from '@unifarr/connectors/types/radarr';
 	import { getQueuedTasks } from '#lib/remote/tasks.remote.ts';
 	import { type SeriesAdd, type SeriesRemove } from '../../../tasksWorker/types.ts';
-	import { TaskType } from '@reiverr/db/types';
-	import type { JellyfinBaseItemDto } from '@reiverr/connectors/types/jellyfin';
+	import { TaskType } from '@unifarr/db/types';
+	import type { JellyfinBaseItemDto } from '@unifarr/connectors/types/radarr';
 	import ConfirmDialog from '#lib/components/controls/ConfirmDialog.svelte';
 
 	let {
@@ -73,7 +71,6 @@
 	let isBeingAdded = $state(false);
 	let isBeingRemoved = $state(false);
 	let showRemoveConfirmDialog = $state(false);
-	let addToSonarrLoading = $state(false);
 
 	const jellyfinEpisodeData: {
 		[key: string]: {
@@ -148,7 +145,9 @@
 					s?.episodes?.map((episode) => ({
 						title: episode?.name || '',
 						subtitle: `Episode ${episode?.episode_number}`,
-						backdropUrl: TMDB_BACKDROP_SMALL + episode?.still_path || '',
+						backdropUrl: episode?.still_path
+							? TMDB_BACKDROP_SMALL + episode.still_path
+							: '',
 						airDate:
 							episode.air_date && new Date(episode.air_date) > new Date()
 								? new Date(episode.air_date)
@@ -176,11 +175,16 @@
 		});
 	}
 
+	let addToSonarrLoading = $state(false);
 	async function addToSonarr(language: string) {
 		addToSonarrLoading = true;
 
 		const res = await showSeasonsChooser();
-		if (res && tmdbSeries?.external_ids.tvdb_id) {
+		if (!res || !tmdbSeries?.external_ids.tvdb_id) {
+			addToSonarrLoading = false;
+			return;
+		}
+		{
 			sonarrAddSeries({
 				tvdbId: tmdbSeries?.external_ids.tvdb_id,
 				name: tmdbSeries.name || '',
@@ -200,15 +204,20 @@
 						$_('ui.notification.header.episodesAdded'),
 						$_('ui.notification.description.episodesAdded')
 					);
+					sonarrGetSeries()
+						.refresh()
+						.then(() => {
+							addToSonarrLoading = false;
+						});
 				} else {
 					createErrorNotification(
 						$_('general.error'),
 						$_(res.error ?? 'general.unknownError')
 					);
+					addToSonarrLoading = false;
 				}
 			});
 		}
-		addToSonarrLoading = false;
 	}
 
 	function removeSeries(confirm: boolean) {
@@ -343,60 +352,17 @@
 				{#if jellyfinGetEpisodes().loading || sonarrGetSeries().loading}
 					<div class="placeholder h-10 w-48 rounded-xl"></div>
 				{:else}
+					<ManageSeriesButton
+						{isBeingRemoved}
+						{isBeingAdded}
+						{nextJellyfinEpisode}
+						{sonarrSeries}
+						addLoading={addToSonarrLoading}
+						onPlay={playNextEpisode}
+						onAdd={addToSonarr}
+						onRemove={() => (showRemoveConfirmDialog = true)}
+					/>
 					<OpenInButton title={tmdbSeries?.name} {jellyfinItem} type="tv" {tmdbId} />
-					{#if isBeingRemoved}
-						<Button variant="secondary" disabled>
-							<Clock size="20" /><span class="ml-2"
-								>{$_('library.content.beingRemoved')}</span
-							>
-						</Button>
-					{:else if !!nextJellyfinEpisode}
-						<Button variant="primary" onclick={playNextEpisode}>
-							<span>
-								{$_('library.content.play')}
-								{`S${nextJellyfinEpisode?.ParentIndexNumber}E${nextJellyfinEpisode?.IndexNumber}`}
-							</span>
-							<ChevronRight size="20" />
-						</Button>
-						<Button
-							variant="error"
-							class="px-2!"
-							onclick={() => (showRemoveConfirmDialog = true)}
-						>
-							<Trash size="20" />
-						</Button>
-					{:else if !sonarrSeries && settings.globalSettings.sonarr.baseUrl && !isBeingAdded}
-						<Select
-							disabled={addToSonarrLoading}
-							onchange={addToSonarr}
-							placeholder={$_('library.content.get')}
-							variant="primary"
-							showOnlyPlaceholder
-						>
-							{#each settings.globalSettings.general.downloadLanguages as language}
-								<Option value={language} label={$_('languages.' + language)} />
-							{/each}
-						</Select>
-					{:else if sonarrSeries}
-						<Button variant="primary" disabled>
-							<ActivityLog size="20" /><span class="ml-2"
-								>{$_('library.content.queued')}</span
-							>
-						</Button>
-						<Button
-							variant="error"
-							class="px-2!"
-							onclick={() => (showRemoveConfirmDialog = true)}
-						>
-							<Trash size="20" />
-						</Button>
-					{:else if isBeingAdded}
-						<Button variant="secondary" disabled>
-							<Clock size="20" /><span class="ml-2"
-								>{$_('library.content.beingAdded')}</span
-							>
-						</Button>
-					{/if}
 				{/if}
 			</div>
 		{/snippet}

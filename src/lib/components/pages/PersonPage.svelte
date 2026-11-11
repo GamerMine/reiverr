@@ -145,7 +145,6 @@
 			tmdbId: Number(person?.id),
 			type: 'person',
 			title: person?.name || 'Person',
-			backdropUriCandidates: [person?.profile_path ?? ''],
 			posterPath: person?.profile_path || '',
 			tagline: person?.known_for_department
 				? $_('data.known_for_department.' + tmdbDataFormat(person?.known_for_department))

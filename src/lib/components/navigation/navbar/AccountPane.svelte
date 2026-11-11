@@ -6,9 +6,8 @@
 	import { ActivityLog, Exit, Gear } from 'svelte-radix';
 	import { _ } from 'svelte-i18n';
 	import { goto } from '$app/navigation';
-	import type { JellyfinUserDto } from '@reiverr/connectors/types/jellyfin';
+	import type { JellyfinUserDto } from '@unifarr/connectors/types/jellyfin';
 	import { logout } from '#lib/remote/login.remote.ts';
-	import { resolve } from '$app/paths';
 
 	let {
 		onclick = () => {}
@@ -39,7 +38,7 @@
 				class="w-full"
 				onclick={async () => {
 					onclick();
-					await goto(resolve('/settings', {}));
+					await goto('/settings');
 				}}
 			>
 				<Gear size="20"></Gear><span class="ml-2 flex"
@@ -66,7 +65,7 @@
 				onclick={async () => {
 					onclick();
 					await logout();
-					await goto(resolve('/auth/login?logout', {}));
+					await goto('/auth/login?logout');
 				}}
 			>
 				<Exit size="20"></Exit><span class="ml-2 flex">{$_('navbar.userMenu.logout')}</span>
