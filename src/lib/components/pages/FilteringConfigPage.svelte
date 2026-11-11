@@ -6,12 +6,7 @@
 	import { modalStack } from '#lib/stores/modal.store.js';
 	import FilteringProfileModal from '#lib/components/modals/FilteringProfileModal.svelte';
 	import type { FilteringProfile, GlobalSettings } from '@unifarr/db';
-	import { deleteFilteringProfile, saveSettings } from '#lib/remote/settings.remote.js';
-	import { refreshAll } from '$app/navigation';
-	import {
-		createErrorNotification,
-		createSuccessNotification
-	} from '#lib/stores/notification.store.js';
+	import { saveSettings } from '#lib/remote/settings.remote.js';
 	import { LANGUAGES } from '#lib/utils/constants.js';
 	import Select from '#lib/components/controls/Select.svelte';
 	import Option from '#lib/components/controls/Option.svelte';
@@ -19,7 +14,7 @@
 
 	let {
 		visible,
-		profiles = [],
+		profiles = $bindable([]),
 		globalSettings = $bindable(),
 		userFilteringProfileId = $bindable()
 	}: {
@@ -31,30 +26,35 @@
 
 	let defaultProfileId: number | undefined = $state();
 
+	// Profiles are edited in the (bound) draft only; they are sent to the server with "Save".
+	function applyProfile(profile: FilteringProfile) {
+		const others = profiles.map((p) =>
+			profile.isDefault && p.id !== profile.id ? { ...p, isDefault: false } : p
+		);
+		const index = others.findIndex((p) => p.id === profile.id);
+		if (index >= 0) others[index] = profile;
+		else others.push(profile);
+		profiles = others;
+	}
+
 	function addProfile(e: MouseEvent) {
 		e.preventDefault();
-		modalStack.create(FilteringProfileModal, {});
+		modalStack.create(FilteringProfileModal, { onSave: applyProfile });
 	}
 
 	function editProfile(e: MouseEvent, profile: FilteringProfile) {
 		e.preventDefault();
 		modalStack.create(FilteringProfileModal, {
-			editProfile: profile
+			editProfile: profile,
+			onSave: applyProfile
 		});
 	}
 
-	async function deleteProfile(e: MouseEvent, profile: FilteringProfile) {
+	function deleteProfile(e: MouseEvent, profile: FilteringProfile) {
+		e.preventDefault();
 		e.stopPropagation();
-		const res = await deleteFilteringProfile(profile);
-		await refreshAll();
-		if (res.success) {
-			createSuccessNotification(
-				$_('general.success'),
-				$_('settings.filtering.filteringProfileDeleteSuccess')
-			);
-		} else {
-			createErrorNotification($_('general.error'), $_(res.error ?? 'general.unknownError'));
-		}
+		profiles = profiles.filter((p) => p.id !== profile.id);
+		if (userFilteringProfileId === profile.id) userFilteringProfileId = undefined;
 	}
 
 	$effect(() => {
@@ -118,6 +118,7 @@
 	<div class="col-span-2 my-8 flex flex-wrap gap-2">
 		{#if globalSettings}
 			<button
+				type="button"
 				class="flex h-50 w-80 items-center justify-center rounded-md bg-neutral-900 transition-colors duration-200 hover:cursor-pointer hover:bg-neutral-800"
 				onclick={addProfile}
 			>
@@ -125,11 +126,12 @@
 				<h2>{$_('settings.filtering.addProfile')}</h2>
 			</button>
 		{/if}
-		{#each profiles as profile (profile)}
+		{#each profiles as profile (profile.id)}
 			{@const isDefault = defaultProfileId
 				? profile.id === defaultProfileId
 				: !!profile.isDefault}
 			<button
+				type="button"
 				class={classNames(
 					'flex h-50 w-80 overflow-hidden rounded-md bg-neutral-900 transition-colors duration-200 hover:bg-neutral-800',
 					{ 'hover:cursor-default': !globalSettings }
@@ -183,6 +185,12 @@
 				type="hidden"
 				name={saveSettings.fields.userFilteringProfileId.as('number').name}
 				value={userFilteringProfileId}
+			/>
+		{:else}
+			<input
+				type="hidden"
+				name={saveSettings.fields.adminFilteringProfiles.as('text').name}
+				value={JSON.stringify(profiles)}
 			/>
 		{/if}
 	</div>

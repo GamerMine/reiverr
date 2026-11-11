@@ -7,28 +7,40 @@
 	import Input from '#lib/components/controls/Input.svelte';
 	import ModalContainer from '#lib/components/modals/ModalContainer.svelte';
 	import { Plus, Pencil2 } from 'svelte-radix';
-	import FormButton from '#lib/components/controls/FormButton.svelte';
-	import {
-		createErrorNotification,
-		createSuccessNotification
-	} from '#lib/stores/notification.store.js';
-	import { invalidateAll } from '$app/navigation';
+	import Button from '#lib/components/controls/Button.svelte';
 	import Option from '#lib/components/controls/Option.svelte';
 	import type { FilteringProfile } from '@unifarr/db/types';
 	import Toggle from '#lib/components/controls/Toggle.svelte';
-	import { createUpdateFilteringProfile } from '#lib/remote/settings.remote.js';
 
 	let {
 		modalId,
-		editProfile
+		editProfile,
+		onSave
 	}: {
 		modalId: symbol;
 		editProfile?: FilteringProfile;
+		// Nothing is sent to the server here: the profile is added to the settings draft
+		// and only persisted when the user clicks "Save" on the settings page.
+		onSave: (profile: FilteringProfile) => void;
 	} = $props();
 
-	let disableInputs = $state(false);
+	let name = $state(editProfile?.name ?? '');
+	let isDefault = $state(editProfile?.isDefault ?? false);
+	let qualities: string[] = $state(editProfile ? [...editProfile.qualities] : []);
 
 	function userClose() {
+		modalStack.close(modalId);
+	}
+
+	function submit(e: SubmitEvent) {
+		e.preventDefault();
+		if (!name.trim()) return;
+		onSave({
+			id: editProfile?.id ?? -Date.now(),
+			name: name.trim(),
+			isDefault,
+			qualities: qualities.filter((q) => QUALITY_DEFS.includes(q))
+		});
 		modalStack.close(modalId);
 	}
 </script>
@@ -40,80 +52,31 @@
 			? $_('settings.filtering.editProfile')
 			: $_('settings.filtering.addProfile')}
 	/>
-	<form
-		{...createUpdateFilteringProfile.enhance(async (form) => {
-			if (await form.submit()) {
-				if (form.result?.success) {
-					modalStack.close(modalId);
-					await invalidateAll();
-					createSuccessNotification(
-						$_('general.success'),
-						$_('settings.filtering.filteringProfileCreatedSuccess')
-					);
-				} else {
-					createErrorNotification(
-						$_('general.error'),
-						$_(form.result?.error ?? 'general.unknownError')
-					);
-				}
-				disableInputs = false;
-			}
-		})}
-		class="grid grid-cols-2 items-center gap-3 p-4"
-		onsubmit={() => (disableInputs = true)}
-	>
+	<form onsubmit={submit} class="grid grid-cols-2 items-center gap-3 p-4">
 		<h2>
 			{$_('settings.filtering.profileName')}
 		</h2>
-		<Input
-			name={createUpdateFilteringProfile.fields.profileName.as('text').name}
-			type="text"
-			required
-			value={editProfile?.name}
-		/>
+		<Input type="text" required bind:value={name} />
 		<h2>
 			{$_('settings.filtering.defaultProfile')}
 		</h2>
-		<Toggle
-			name={createUpdateFilteringProfile.fields.isDefault.as('checkbox').name}
-			checked={editProfile ? editProfile.isDefault : false}
-		/>
+		<Toggle bind:checked={isDefault} />
 		<h2>
 			{$_('settings.filtering.qualities')}
 		</h2>
-		<Select
-			name={createUpdateFilteringProfile.fields.qualities.as('select multiple').name}
-			disabled={disableInputs}
-			multiple
-			selectedValues={editProfile ? editProfile.qualities : undefined}
-		>
+		<Select multiple bind:selectedValues={qualities}>
 			{#each QUALITY_DEFS as quality (quality)}
 				<Option value={quality} label={quality} />
 			{/each}
 		</Select>
 		<div class="col-start-2 flex justify-end">
-			{#if editProfile}
-				<input
-					name={createUpdateFilteringProfile.fields.profileId.as('number').name}
-					type="hidden"
-					value={editProfile.id}
-				/>
-				<FormButton
-					{...createUpdateFilteringProfile.fields.action.as('submit', 'update')}
-					type="base"
-					loading={disableInputs}
-				>
+			<Button type="submit">
+				{#if editProfile}
 					<Pencil2 size="20" /><span class="flex">{$_('general.edit')}</span>
-				</FormButton>
-			{:else}
-				<FormButton
-					{...createUpdateFilteringProfile.fields.action.as('submit', 'create')}
-					type="base"
-					loading={disableInputs}
-				>
+				{:else}
 					<Plus size="20" /><span class="flex">{$_('general.add')}</span>
-				</FormButton>
-			{/if}
+				{/if}
+			</Button>
 		</div>
 	</form>
 </ModalContainer>

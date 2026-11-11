@@ -8,7 +8,8 @@
 	import { fade } from 'svelte/transition';
 	import { _ } from 'svelte-i18n';
 	import { createErrorNotification } from '#lib/stores/notification.store.js';
-	import type { Settings } from '@unifarr/db/types';
+	import type { FilteringProfile, Settings } from '@unifarr/db/types';
+	import { invalidateAll } from '$app/navigation';
 	import { settings } from '#lib/stores/settings.svelte.js';
 	import Button from '#lib/components/controls/Button.svelte';
 	import type { PageProps } from './$types';
@@ -25,12 +26,22 @@
 	let openTab: Section = $state('general');
 
 	let currSettings: Settings = $state($state.snapshot(settings));
+	// Draft of the filtering profiles: only sent to the server when saving
+	let currProfiles: FilteringProfile[] = $state($state.snapshot(data.filteringProfiles ?? []));
 	let valuesChanged = $state(false);
 
 	$effect(() => {
 		const snapshot = $state.snapshot(settings);
 		untrack(() => {
 			currSettings = snapshot;
+		});
+	});
+
+	// Resync the profiles draft only when the server data is reloaded (after a save)
+	$effect(() => {
+		const snapshot = $state.snapshot(data.filteringProfiles ?? []);
+		untrack(() => {
+			currProfiles = snapshot;
 		});
 	});
 
@@ -61,6 +72,7 @@
 
 	function cancelChanges() {
 		currSettings = $state.snapshot(settings);
+		currProfiles = $state.snapshot(data.filteringProfiles ?? []);
 	}
 
 	function setTab(section: Section) {
@@ -77,6 +89,8 @@
 				settings.globalSettings = result.data.globalSettings;
 				settings.userSettings = result.data.userSettings;
 			}
+			// Reload the profiles (real ids replace the temporary ones)
+			invalidateAll();
 			if (result.data?.needLogin) {
 				showConfirmDialog($_('settings.misc.jellyfinConfirmChangesDialog')).then(() =>
 					location.reload()
@@ -108,7 +122,9 @@
 
 		valuesChanged =
 			JSON.stringify($state.snapshot(settings)) !==
-			JSON.stringify($state.snapshot(currSettings));
+				JSON.stringify($state.snapshot(currSettings)) ||
+			JSON.stringify($state.snapshot(data.filteringProfiles ?? [])) !==
+				JSON.stringify($state.snapshot(currProfiles));
 	});
 </script>
 
@@ -229,7 +245,7 @@
 					{#if settings.globalSettings.radarr.baseUrl || settings.globalSettings.sonarr.baseUrl}
 						<FilteringConfigPage
 							visible={openTab === 'filtering'}
-							profiles={data.filteringProfiles}
+							bind:profiles={currProfiles}
 							bind:globalSettings={currSettings.globalSettings}
 						/>
 					{/if}
@@ -237,7 +253,7 @@
 				{#if data.filteringProfiles}
 					<FilteringConfigPage
 						visible={openTab === 'userFiltering'}
-						profiles={data.filteringProfiles}
+						bind:profiles={currProfiles}
 						bind:userFilteringProfileId={currSettings.userSettings.filteringProfileId}
 					/>
 				{/if}

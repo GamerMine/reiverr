@@ -41,7 +41,10 @@ export const saveSettings = protectedForm(
 		adminSonarrApiKey: OptionalStringSchema,
 		adminSonarrRootFolderPath: OptionalStringSchema,
 		adminDownloadLanguages: v.optional(v.array(v.string())),
-		adminUserCanChooseProfile: v.optional(v.boolean(), false)
+		adminUserCanChooseProfile: v.optional(v.boolean(), false),
+		adminFilteringProfiles: v.optional(
+			v.pipe(v.string(), v.parseJson(), v.array(FilteringProfileSchema))
+		)
 	}),
 	async (settings) => {
 		const {
@@ -196,6 +199,49 @@ export const saveSettings = protectedForm(
 			if (customFormatModified || changed)
 				await scheduleTask(userId!, TaskType.SYNC_CUSTOM_FORMATS, undefined);
 
+			// Apply the filtering profiles draft (create / edit / delete)
+			let profilesStructureChanged = false;
+			const editedProfileIds: number[] = [];
+			if (settings.adminFilteringProfiles) {
+				const draft = settings.adminFilteringProfiles;
+				for (const profile of draft) {
+					for (const quality of profile.qualities) {
+						if (!QUALITY_DEFS.includes(quality))
+							return { success: false, error: 'general.invalidInputs' };
+					}
+				}
+
+				const existing = await FilteringProfilesEntity.find();
+				const existingById = new Map(existing.map((p) => [p.id, p]));
+				const keptIds = new Set(draft.filter((p) => p.id > 0).map((p) => p.id));
+				const removed = existing.filter((p) => !keptIds.has(p.id));
+				for (const profile of removed) {
+					await QualityProfilesEntity.delete({ filteringProfile: { id: profile.id } });
+					await FilteringProfilesEntity.deleteFilteringProfile(profile.id);
+				}
+				if (removed.length > 0) profilesStructureChanged = true;
+
+				// Non default profiles first so the default one is applied last
+				const sorted = [...draft].sort((a, b) => Number(a.isDefault) - Number(b.isDefault));
+				for (const profile of sorted) {
+					if (profile.id > 0) {
+						const current = existingById.get(profile.id);
+						const modified =
+							!current ||
+							current.name !== profile.name ||
+							current.isDefault !== profile.isDefault ||
+							current.qualities.join(',') !== profile.qualities.join(',');
+						if (modified) {
+							await FilteringProfilesEntity.editFilteringProfile(profile);
+							editedProfileIds.push(profile.id);
+						}
+					} else {
+						await FilteringProfilesEntity.createFilteringProfile(profile);
+						profilesStructureChanged = true;
+					}
+				}
+			}
+
 			const [filteringProfiles, formats] = await Promise.all([
 				FilteringProfilesEntity.find(),
 				CustomFormatsEntity.find()
@@ -219,8 +265,12 @@ export const saveSettings = protectedForm(
 					})
 				).identifiers.length > 0 || qualityProfileModified;
 
-			if (qualityProfileModified || changed)
+			// Full sync when profiles were created/deleted (or the integrations changed),
+			// otherwise only sync the profiles that were edited.
+			if (qualityProfileModified || changed || profilesStructureChanged)
 				await scheduleTask(userId!, TaskType.SYNC_QUALITY_PROFILES, []);
+			else if (editedProfileIds.length > 0)
+				await scheduleTask(userId!, TaskType.SYNC_QUALITY_PROFILES, editedProfileIds);
 		}
 
 		return {
@@ -233,81 +283,6 @@ export const saveSettings = protectedForm(
 		};
 	}
 );
-
-export const createUpdateFilteringProfile = adminForm(
-	v.object({
-		profileName: v.pipe(v.string(), v.nonEmpty()),
-		isDefault: v.optional(v.boolean()),
-		qualities: v.array(v.pipe(v.string(), v.nonEmpty())),
-		action: v.picklist(['create', 'update']),
-		profileId: v.optional(v.number())
-	}),
-	async ({
-		profileName,
-		isDefault,
-		qualities,
-		action,
-		profileId
-	}): Promise<Result<undefined>> => {
-		const {
-			locals: {
-				user: { userId }
-			}
-		} = getRequestEvent();
-
-		for (const quality of qualities) {
-			if (!QUALITY_DEFS.includes(quality))
-				return { success: false, error: 'general.invalidInputs' };
-		}
-
-		const profile: FilteringProfile = {
-			id: 0,
-			name: profileName,
-			qualities,
-			isDefault: !!isDefault
-		};
-
-		if (action === 'update') {
-			if (!profileId || Number.isNaN(profileId))
-				return { success: false, error: 'general.invalidInputs' };
-			profile.id = Number(profileId);
-			await FilteringProfilesEntity.editFilteringProfile(profile);
-		} else {
-			const entity = await FilteringProfilesEntity.createFilteringProfile(profile);
-			await QualityProfilesEntity.upsert(
-				(await CustomFormatsEntity.find()).map((f) => ({
-					customFormat: f,
-					filteringProfile: entity
-				})),
-				{
-					conflictPaths: ['filteringProfile', 'customFormat'],
-					skipUpdateIfNoValuesChanged: true
-				}
-			);
-		}
-
-		await scheduleTask(userId!, TaskType.SYNC_QUALITY_PROFILES, profileId ? [profileId] : []);
-
-		return { success: true };
-	}
-);
-
-export const deleteFilteringProfile = adminCommand(FilteringProfileSchema, async (profile) => {
-	const {
-		locals: {
-			user: { userId }
-		}
-	} = getRequestEvent();
-
-	await QualityProfilesEntity.delete({
-		filteringProfile: { id: profile.id }
-	});
-
-	await FilteringProfilesEntity.deleteFilteringProfile(profile.id);
-	await scheduleTask(userId!, TaskType.SYNC_QUALITY_PROFILES, []);
-
-	return { success: true };
-});
 
 export const deleteIntegration = adminCommand(PlatformSchema, async (platform) => {
 	const globalSettings = await GlobalSettingsEntity.getDefault();
